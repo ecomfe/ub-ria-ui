@@ -1,3 +1,5 @@
 dep
 test/coverage
 doc/api
+.idea
+node_modules
