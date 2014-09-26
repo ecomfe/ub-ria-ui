@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Alert - UB-RIA-UI Demo</title>
+        <script src="assets/esl.js"></script>
+        <script>
+            require.config({
+                'baseUrl': '../src',
+                'paths': {},
+                'packages': [
+                    {
+                        'name': 'mini-event',
+                        'location': '../dep/mini-event/1.0.2/src',
+                        'main': 'main'
+                    },
+                    {
+                        'name': 'underscore',
+                        'location': '../dep/underscore/1.5.2/src',
+                        'main': 'underscore'
+                    },
+                    {
+                        'name': 'moment',
+                        'location': '../dep/moment/2.7.0/src',
+                        'main': 'moment'
+                    },
+                    {
+                        'name': 'etpl',
+                        'location': '../dep/etpl/3.0.0/src',
+                        'main': 'main'
+                    },
+                    {
+                        'name': 'esui',
+                        'location': '../dep/esui/3.1.0-beta.3/src',
+                        'main': 'main'
+                    },
+                    {
+                        'name': 'esf',
+                        'location': '../dep/esf/1.0.0/src'
+                    }
+                ]
+            });
+        </script>
+        <script src="../src/shim.js"></script>
+        <link rel="stylesheet" href="assets/demo.css"/>
+        <link rel="stylesheet" href="../src/css/main.css"/>
+        <style type="text/css">
+            #table td{
+                padding: 10px 0;
+            }
+
+            #stage {
+                margin-left: 20px;
+                width: 800px;
+                height: 600px;
+                border: solid 1px #4c5567;
+            }
+
+            #container {
+                position: relative;
+                height: 550px;
+            }
+
+            #nav {
+                height: 50px;
+                font-size: 20px;
+                background-color: #4c5567;
+                color: #FFFFFF;
+            }
+
+            #reverse {
+                background: #394C57;
+                display: inline-block;
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                text-align: center;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            #toolbar {
+                margin-left: 30px;
+                display: inline-block;
+            }
+
+            #sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100px;
+                height: 100%;
+                background-color: #E8E8E8;
+                color: #555555;
+                text-align: center;
+                line-height: 550px;
+            }
+
+            #main {
+                margin-left: 100px;
+            }
+
+            .container {
+                padding: 0 30px 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>Alert</header>
+        <div id="stage">
+            <div id="nav">
+                <div id="reverse" title="就是测测你会不会点">
+                    ※
+                </div>
+                <div id="toolbar">
+                    Beidou FE
+                </div>
+            </div>
+            <div id="container">
+                <div id="sidebar">侧边栏</div>
+                <div id="main">
+                    <div id="sysinfo"></div>
+                    <div class="container">
+                        <table id="table">
+                            <tr>
+                                <td align="right">类型</td>
+                                <td>
+                                    <select data-ui-type="Select" data-ui-id="type">
+                                        <option value="warning">Warning</option>
+                                        <option value="success">Success</option>
+                                        <option value="prompt">Prompt</option>
+                                        <option value="error">Error</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">信息</td>
+                                <td>
+                                    <input class="message" value="您的账户已欠费，请尽快充值缴费" /><br />
+                                    <input class="message" value="您有两个人群未生效，请调整设置" /><br />
+                                    <input class="message" value="不得不说搭建demo页面是个费劲的过程" /><br />
+                                    <input class="message" value="Cannot believe you are still watching this." /><br />
+                                    <input class="message" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">自动关闭时间<br />不填或false表示不自动关闭</td>
+                                <td>
+                                    <input id="autoClose" />ms
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">自动轮换时间间隔<br />不填或false表示不自动轮播</td>
+                                <td>
+                                    <input id="autoSlide" value="4000" />ms
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">是否带有关闭按钮</td>
+                                <td>
+                                    <input type="checkbox" id="closeBtn" checked="checked" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right">是否带有Icon</td>
+                                <td>
+                                    <input type="checkbox" checked="checked" id="icon" />
+                                </td>
+                            </tr>
+                        </table>
+                        <button id="show">Show an Alert!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        require(
+            [
+                'esui',
+                'Alert',
+                'esui/lib',
+                'esui/Select'
+            ],
+            function (ui, alert, lib) {
+                ui.init();
+                lib.g('show').onclick = function() {
+                    var options = {};
+                    var msgType = ui.get('type').getValue();
+                    options.message = [];
+                    var messages = document.getElementsByClassName('message');
+                    for (var i = 0; i < messages.length; i++) {
+                        options.message.push(messages[i].value);
+                    }
+                    options.autoClose = lib.g('autoClose').value;
+                    options.autoSlide = lib.g('autoSlide').value;
+                    options.closeBtn = lib.g('closeBtn').checked;
+                    options.icon = lib.g('icon').checked;
+
+                    alert[msgType](options);
+                };
+            }
+        )
+        </script>
+    </body>
+</html>
