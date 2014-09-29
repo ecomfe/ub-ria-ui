@@ -417,7 +417,6 @@ define(
 
         /**
          * 多条信息时，轮换到下一页，通过设置pageIndex引起重绘来实现
-         *
          */
         function slide() {
             var pageIndex = this.pageIndex;
