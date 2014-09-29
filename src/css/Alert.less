@@ -1,0 +1,235 @@
+/**
+ * UB-RIA UI Library
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file Alert样式
+ * @author zhangyujie(zhangyujie@baidu.com)
+ */
+
+@import "./varaibles.less";
+@import "./mixin.less";
+
+@alert-show-keyframes-name: ~"@{ui-class-prefix}-alert-show";
+
+@keyframes @alert-show-keyframes-name {
+    from {
+        height: 0px;
+    }
+    to {
+        height: 50px;
+    }
+}
+
+@-webkit-keyframes @alert-show-keyframes-name {
+    from {
+        height: 0px;
+    }
+    to {
+        height: 50px;
+    }
+}
+
+.@{ui-class-prefix}-alert-toggle {
+    animation: @alert-show-keyframes-name .5s;
+    -webkit-animation: @alert-show-keyframes-name .5s;
+}
+
+.@{ui-class-prefix}-alert-container {
+    height: 50px;
+    line-height: 50px;
+    padding-left: 30px;
+    overflow: hidden;
+    div {
+        display: inline-block;
+        *display: inline;
+    }
+}
+
+.@{ui-class-prefix}-alert-icon {
+    span {
+        font-size: 22px;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+}
+
+.@{ui-class-prefix}-alert-icon-content {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+//默认消息
+.@{ui-class-prefix}-alert-text {
+    font-size: 14px;
+}
+
+@alert-stepin-keyframes-name: ~"@{ui-class-prefix}-alert-stepin";
+
+@keyframes @alert-stepin-keyframes-name {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes @alert-stepin-keyframes-name {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@alert-stepout-keyframes-name: ~"@{ui-class-prefix}-alert-stepout";
+
+@keyframes @alert-stepout-keyframes-name {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes @alert-stepout-keyframes-name {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@alert-stepin-keyframes-duration: .4s;
+@alert-stepout-keyframes-duration: .4s;
+
+.@{ui-class-prefix}-alert-item-stepin {
+    animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
+    -webkit-animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
+}
+
+.@{ui-class-prefix}-alert-item-stepout {
+    animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
+    -webkit-animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
+}
+
+.@{ui-class-prefix}-alert-item-hidden {
+    display: none;
+}
+
+//成功消息
+.@{ui-class-prefix}-alert-success {
+    color: #67bd47;
+    .@{ui-class-prefix}-alert-container {
+        background-color: #d5f1c8;
+    }
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f00c";
+    }
+}
+
+//通知类消息
+.@{ui-class-prefix}-alert-prompt {
+    color: #4acfe4;
+    .@{ui-class-prefix}-alert-container {
+        background-color: #c3f4fb;
+    }
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f05a";
+    }
+}
+
+//警告类消息
+.@{ui-class-prefix}-alert-warning {
+    color: #ff900d;
+    .@{ui-class-prefix}-alert-container {
+        background-color: #ffe8c3;
+    }
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f071";
+    }
+}
+
+//错误类消息
+.@{ui-class-prefix}-alert-error {
+    color: #ff8555;
+    .@{ui-class-prefix}-alert-container {
+        background-color: #fee8df;
+    }
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f06a";
+    }
+}
+
+// 翻页
+.@{ui-class-prefix}-alert-pager {
+    font-size: 12px;
+    font-family: Arial;
+    color: #666666;
+    float: right;
+    margin-right: 30px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    div {
+        display: inline-block;
+        *display: inline;
+        strong {
+            font-weight: bold;
+        }
+    }
+}
+.@{ui-class-prefix}-alert-index {
+    margin: 0 10px;
+}
+
+.@{ui-class-prefix}-alert-prev,
+.@{ui-class-prefix}-alert-next {
+    span {
+        cursor: pointer;
+        font-size: 14px;
+        color: #666666;
+    }
+}
+
+.@{ui-class-prefix}-alert-prev {
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f0d9";
+    }
+}
+
+.@{ui-class-prefix}-alert-next {
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f0da";
+    }
+}
+
+.@{ui-class-prefix}-alert-prev-disabled,
+.@{ui-class-prefix}-alert-next-disabled {
+    span {
+        cursor: default;
+        color: #B7B7B7;
+    }
+}
+
+// 关闭
+.@{ui-class-prefix}-alert-close{
+    float: right;
+    font-size: 16px;
+    color: #BDBDBD;
+    margin-right: 20px;
+    cursor: pointer;
+    .@{ui-class-prefix}-alert-icon-content:before {
+        content: "\f00d";
+    }
+}
