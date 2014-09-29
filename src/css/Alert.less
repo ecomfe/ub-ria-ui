@@ -46,7 +46,7 @@
 }
 
 .@{ui-class-prefix}-alert-icon {
-    i {
+    span {
         font-size: 22px;
         vertical-align: middle;
         margin-right: 10px;
@@ -68,9 +68,9 @@
     font-size: 14px;
 }
 
-@alert-fadein-keyframes-name: ~"@{ui-class-prefix}-alert-fadein";
+@alert-stepin-keyframes-name: ~"@{ui-class-prefix}-alert-stepin";
 
-@keyframes @alert-fadein-keyframes-name {
+@keyframes @alert-stepin-keyframes-name {
     from {
         opacity: 0;
     }
@@ -79,7 +79,7 @@
     }
 }
 
-@-webkit-keyframes @alert-fadein-keyframes-name {
+@-webkit-keyframes @alert-stepin-keyframes-name {
     from {
         opacity: 0;
     }
@@ -88,9 +88,9 @@
     }
 }
 
-@alert-fadeout-keyframes-name: ~"@{ui-class-prefix}-alert-fadeout";
+@alert-stepout-keyframes-name: ~"@{ui-class-prefix}-alert-stepout";
 
-@keyframes @alert-fadeout-keyframes-name {
+@keyframes @alert-stepout-keyframes-name {
     from {
         opacity: 1;
     }
@@ -99,7 +99,7 @@
     }
 }
 
-@-webkit-keyframes @alert-fadeout-keyframes-name {
+@-webkit-keyframes @alert-stepout-keyframes-name {
     from {
         opacity: 1;
     }
@@ -108,17 +108,17 @@
     }
 }
 
-@alert-fadein-keyframes-duration: .4s;
-@alert-fadeout-keyframes-duration: .4s;
+@alert-stepin-keyframes-duration: .4s;
+@alert-stepout-keyframes-duration: .4s;
 
-.@{ui-class-prefix}-alert-item-fadein {
-    animation: @alert-fadein-keyframes-name @alert-fadein-keyframes-duration;
-    -webkit-animation: @alert-fadein-keyframes-name @alert-fadein-keyframes-duration;
+.@{ui-class-prefix}-alert-item-stepin {
+    animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
+    -webkit-animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
 }
 
-.@{ui-class-prefix}-alert-item-fadeout {
-    animation: @alert-fadeout-keyframes-name @alert-fadeout-keyframes-duration;
-    -webkit-animation: @alert-fadeout-keyframes-name @alert-fadeout-keyframes-duration;
+.@{ui-class-prefix}-alert-item-stepout {
+    animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
+    -webkit-animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
 }
 
 .@{ui-class-prefix}-alert-item-hidden {
@@ -195,7 +195,7 @@
 
 .@{ui-class-prefix}-alert-prev,
 .@{ui-class-prefix}-alert-next {
-    i {
+    span {
         cursor: pointer;
         font-size: 14px;
         color: #666666;
@@ -216,7 +216,7 @@
 
 .@{ui-class-prefix}-alert-prev-disabled,
 .@{ui-class-prefix}-alert-next-disabled {
-    i {
+    span {
         cursor: default;
         color: #B7B7B7;
     }

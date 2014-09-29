@@ -119,15 +119,24 @@
             <div id="container">
                 <div id="sidebar">侧边栏</div>
                 <div id="main">
-                    <div id="sysinfo"></div>
+                    <!-- <div id="sysinfo">
+                        <div data-ui-type="Alert"
+                            data-ui-id="alert"
+                            data-ui-msg-type="success"
+                            data-ui-message="成功"
+                            data-ui-auto-close="4000"
+                            data-ui-auto-slide="1000"
+                            data-ui-icon="true"
+                            ></div>
+                    </div> -->
                     <div class="container">
                         <table id="table">
                             <tr>
                                 <td align="right">类型</td>
                                 <td>
-                                    <select data-ui-type="Select" data-ui-id="type">
+                                    <select id="type">
+                                        <option value="success">success</option>
                                         <option value="warning">Warning</option>
-                                        <option value="success">Success</option>
                                         <option value="prompt">Prompt</option>
                                         <option value="error">Error</option>
                                     </select>
@@ -178,15 +187,21 @@
             [
                 'esui',
                 'Alert',
-                'esui/lib',
-                'esui/Select'
+                'esui/lib'
             ],
             function (ui, alert, lib) {
                 ui.init();
+                // ui.get('alert').show();
                 lib.g('show').onclick = function() {
                     var options = {};
-                    var msgType = ui.get('type').getValue();
+                    var msgType = lib.g('type').value;
                     options.message = [];
+                    // options.message = [
+                    //     "您的账户已欠费，请尽快充值缴费",
+                    //     "您有两个人群未生效，请调整设置",
+                    //     "不得不说搭建demo页面是个费劲的过程",
+                    //     "Cannot believe you are still watching this."
+                    // ];
                     var messages = document.getElementsByClassName('message');
                     for (var i = 0; i < messages.length; i++) {
                         options.message.push(messages[i].value);
@@ -195,6 +210,7 @@
                     options.autoSlide = lib.g('autoSlide').value;
                     options.closeBtn = lib.g('closeBtn').checked;
                     options.icon = lib.g('icon').checked;
+                    options.container = 'main';
 
                     alert[msgType](options);
                 };

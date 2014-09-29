@@ -34,19 +34,21 @@ define(
          *      `warning`：警告：黄
          *      `error`  ：错误：红
          * @cfg {String | Array} [defaultProperties.message] 数据源数组，可兼容单条string
-         * @cfg {number} [defaultProperties.autoClose=5000] 自动关闭延迟
+         * @cfg {number} [defaultProperties.autoClose=false] 自动关闭延迟
          * @cfg {Boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
          * @cfg {number} [defaultProperties.autoSlide=4000] 多条消息自动滚动时间，Null表不自动滚动
+         * @cfg {Boolean} [defaultProperties.icon=true] 是否使用系统默认图标
+         * @cfg {Number} [defaultProperties.stepAnimationDuration=400] 切换的渐进效果时间间隔
          * @static
          */
         Alert.defaultProperties = {
             msgType: 'error',
-            container: 'sysinfo',
             autoClose: false,
             closeBtn: true,
             pageIndex: 1,
             autoSlide: 4000,
-            icon: false
+            icon: true,
+            stepAnimationDuration: 400
         };
 
         /**
@@ -68,21 +70,24 @@ define(
         Alert.prototype.initOptions = function (options) {
             var properties = {};
 
-            // 必须有父容器
-            if(!options.container && !lib.g('sysinfo')) {
-                throw new Error('Parent node(id) is needed, the default property doesn\'t work');
+            // 如果没有从html构造，则从js中构造时必须传入父容器
+            if (!this.main.parentNode && u.isEmpty(options.container)) {
+                throw new Error('Parent is needed if constructed form scripts');
             }
 
             // 兼容传入单条string
-            if(typeof(options.message) === 'string') {
+            if (typeof options.message === 'string') {
                 options.message = [options.message];
             }
 
             // message去空
             options.message = u.chain(options.message).map(lib.trim).compact().value();
-            if(options.message.length === 0) {
+            if (options.message.length === 0) {
                 throw new Error('Message cannot be empty');
             }
+
+            // 保存一份autoSlide，方便mouseout后恢复计时器使用
+            properties.oriAutoSlide = options.autoSlide;
 
             lib.extend(properties, Alert.defaultProperties, options);
             this.setProperties(properties);
@@ -109,27 +114,27 @@ define(
          * @override
          */
         Alert.prototype.initStructure = function () {
-            var self = this;
-
             var innerHTML = '';
             var parts = ['icon', 'text', 'close', 'pager'];
             u.each(parts, function(item, index) {
-                innerHTML += self.helper.getPartHTML(item, 'div');
-            });
+                innerHTML += this.helper.getPartHTML(item, 'div');
+            }, this);
 
             this.main.innerHTML = this.getInjectedPartHTML('container', 'div', innerHTML);
         };
 
         /**
          * 分页器构造
+         *
+         * @param {ESUI.Alert} self 控件实例
          */
         function buildPager(self) {
 
             // 上一条按钮
-            var prev = self.getInjectedPartHTML('prev', 'div', self.helper.getPartHTML('icon-content', 'i'));
+            var prev = self.getInjectedPartHTML('prev', 'div', self.helper.getPartHTML('icon-content', 'span'));
 
             // 下一条按钮
-            var next = self.getInjectedPartHTML('next', 'div', self.helper.getPartHTML('icon-content', 'i'));
+            var next = self.getInjectedPartHTML('next', 'div', self.helper.getPartHTML('icon-content', 'span'));
 
             // 页码
             var index = self.getInjectedPartHTML(
@@ -139,22 +144,41 @@ define(
             );
 
             // 渲染
-            var pager = self.helper.getId('pager');
-            lib.g(pager).innerHTML = prev + index + next;
+            self.helper.getPart('pager').innerHTML = prev + index + next;
             self.helper.getPart('page').innerHTML = self.pageIndex;
 
             // 绑事件
-            self.helper.addDOMEvent('prev', 'click', function(e) {
-                if(self.pageIndex > 1) {
-                    self.setProperties({pageIndex: self.pageIndex - 1});
-                }
-            });
-            self.helper.addDOMEvent('next', 'click', function(e) {
-                if(self.pageIndex < self.message.length) {
-                    self.setProperties({pageIndex: self.pageIndex + 1});
-                }
-            });
+            self.bindPagerEvent();
         }
+
+        /**
+         * 为Page绑定事件
+         */
+        Alert.prototype.bindPagerEvent = function() {
+            var self = this;
+
+            // 翻页至上一页
+            self.helper.addDOMEvent('prev', 'click', function() {
+                if (self.pageIndex > 1) {
+                    self.setProperties({ pageIndex: self.pageIndex - 1 });
+                }
+            });
+
+            // 翻页至下一页
+            self.helper.addDOMEvent('next', 'click', function() {
+                if (self.pageIndex < self.message.length) {
+                    self.setProperties({ pageIndex: self.pageIndex + 1 });
+                }
+            });
+        };
+
+        /**
+         * 移除Page的事件
+         */
+        Alert.prototype.removePagerEvent = function(prev, next) {
+            this.helper.removeDOMEvent('prev', 'click');
+            this.helper.removeDOMEvent('next', 'click');
+        };
 
         /**
          * 为控件注入Icon
@@ -181,10 +205,13 @@ define(
                  */
                 name: 'icon',
                 paint: function (self, icon) {
-                    if(icon === false) {
+
+                    // 默认为true的属性兼容从html构造传入false覆盖的情况
+                    if (!lib.trim(icon) || icon === 'false') {
+                        self.injectIcon('');
                         return;
                     }
-                    self.injectIcon(self.helper.getPartHTML('icon-content', 'i'));
+                    self.injectIcon(self.helper.getPartHTML('icon-content', 'span'));
                 }
             },
             {
@@ -199,12 +226,11 @@ define(
                         self.helper.getPart('text').innerHTML +=
                             self.getInjectedPartHTML('item', 'span', item);
                     });
-                    if(isSingle(message) === false) {
+                    if (message.length !== 1) {
                         buildPager(self);
                         var messages = lib.getChildren(self.helper.getPart('text'));
-                        var hiddenClassName = self.helper.getPartClasses('item-hidden')[0];
                         u.each(messages, function(item) {
-                            lib.addClass(item, hiddenClassName);
+                            self.helper.addPartClasses('item-hidden', item);
                         });
                     }
                 }
@@ -217,6 +243,11 @@ define(
                  */
                 name: 'msgType',
                 paint: function (self, msgType) {
+
+                    // 清理掉老的type
+                    u.each(allType, function(type) {
+                        self.helper.removePartClasses(type);
+                    });
                     self.helper.addPartClasses(self.msgType);
                 }
             },
@@ -230,50 +261,55 @@ define(
                 paint: function(self, pageIndex) {
 
                     // 只在多条下响应pageIndex
-                    if(isSingle(self.message)) {
+                    if (self.message.length === 1) {
                         return;
                     }
 
                     // 实现fade渐进效果
                     var messages = lib.getChildren(self.helper.getPart('text'));
                     var hiddenClassName = self.helper.getPartClasses('item-hidden')[0];
-                    var fadeinClassName = self.helper.getPartClasses('item-fadein')[0];
-                    var fadeoutClassName = self.helper.getPartClasses('item-fadeout')[0];
 
                     var newMessage = messages[pageIndex - 1];
                     var oldMessage = null;
 
                     u.each(messages, function(item) {
-                        if(!lib.hasClass(item, hiddenClassName)) {
+                        if (!lib.hasClass(item, hiddenClassName)) {
                             oldMessage = item;
                         }
                     });
 
-                    if(!oldMessage) {
-                        lib.removeClass(newMessage, hiddenClassName);
+                    if (!oldMessage) {
+                        self.helper.removePartClasses('item-hidden', newMessage);
                     }
                     else {
-                        lib.addClass(oldMessage, fadeoutClassName);
-                        lib.removeClass(oldMessage, fadeinClassName);
-                        clearTimeout(self.fadeTimer);
-                        self.fadeTimer = setTimeout(function() {
-                            lib.addClass(oldMessage, hiddenClassName);
-                            lib.removeClass(newMessage, hiddenClassName);
-                            lib.removeClass(newMessage, fadeoutClassName);
-                            lib.addClass(newMessage, fadeinClassName);
-                        }, 400);
+                        self.helper.removePartClasses('item-stepin', oldMessage);
+                        self.helper.addPartClasses('item-stepout', oldMessage);
+
+                        // 先disable pager，在动画执行完后绑回来
+                        self.removePagerEvent();
+
+                        clearTimeout(self.animationTimer);
+                        self.animationTimer = setTimeout(function() {
+                            self.helper.addPartClasses('item-hidden', oldMessage);
+                            self.helper.removePartClasses('item-hidden', newMessage);
+                            self.helper.removePartClasses('item-stepout', newMessage);
+                            self.helper.addPartClasses('item-stepin', newMessage);
+
+                            self.bindPagerEvent();
+
+                        }, self.stepAnimationDuration);
                     }
 
                     self.helper.getPart('page').innerHTML = pageIndex;
 
                     // 分页器边界逻辑
-                    if(pageIndex === 1) {
+                    if (pageIndex === 1) {
                         self.helper.addPartClasses('prev-disabled', 'prev');
                     }
                     else {
                         self.helper.removePartClasses('prev-disabled', 'prev');
                     }
-                    if(pageIndex === self.message.length) {
+                    if (pageIndex === self.message.length) {
                         self.helper.addPartClasses('next-disabled', 'next');
                     }
                     else {
@@ -289,15 +325,65 @@ define(
                  */
                 name: 'closeBtn',
                 paint: function(self, closeBtn) {
-                    if(closeBtn === false) {
+
+                    // 默认为true的属性兼容从html构造传入false覆盖的情况
+                    if (!lib.trim(closeBtn) || closeBtn === 'false') {
+                        self.helper.getPart('button') && self.helper.removeDOMEvent('button');
+                        self.helper.getPart('close').innerHTML = '';
                         return;
                     }
                     self.helper.getPart('close').innerHTML = '' +
-                        self.getInjectedPartHTML('button', 'div', self.helper.getPartHTML('icon-content', 'i'));
+                        self.getInjectedPartHTML('button', 'div', self.helper.getPartHTML('icon-content', 'span'));
 
                     self.helper.addDOMEvent('button', 'click', function(e) {
                         self.hide();
                     });
+                }
+            },
+            {
+                /**
+                 * @property {Number} autoSlide
+                 *
+                 * 自动轮播时间间隔
+                 */
+                name: 'autoSlide',
+                paint: function(self, autoSlide) {
+                    if (autoSlide === true) {
+                        autoSlide = 4000;
+                    }
+                    if (parseInt(autoSlide, 10) > 0) {
+                        autoSlide = parseInt(autoSlide, 10);
+                    }
+
+                    // clearTimeout(self.animationTimer);
+                    clearInterval(self.autoSlideTimer);
+                    if (self.message.length === 1 || !lib.trim(autoSlide) || autoSlide === 'false') {
+                        return;
+                    }
+                    self.autoSlideTimer = setInterval(lib.bind(slide, self), autoSlide);
+                }
+            },
+            {
+                /**
+                 * @property {Number} autoClose
+                 *
+                 * 控件自动关闭时间间隔
+                 */
+                name: 'autoClose',
+                paint: function(self, autoClose) {
+                    if (autoClose === true) {
+                        autoClose = 4000;
+                    }
+                    if (parseInt(autoClose, 10) > 0) {
+                        autoClose = parseInt(autoClose, 10);
+                    }
+
+                    // 自动关闭定时器
+                    clearTimeout(self.autoCloseTimer);
+                    if (!lib.trim(autoClose) || autoClose === 'false') {
+                        return;
+                    }
+                    self.autoCloseTimer = setTimeout(lib.bind(self.hide, self), autoClose);
                 }
             }
         );
@@ -312,7 +398,7 @@ define(
                 return;
             }
 
-            this.appendTo(lib.g(this.container));
+            this.insertBefore(lib.g(this.container).firstChild);
 
             // toggle效果实现
             this.helper.addPartClasses('toggle', 'container');
@@ -320,46 +406,29 @@ define(
             Control.prototype.show.apply(this, arguments);
             this.fire('show');
 
-            // 自动关闭定时器
-            clearTimeout(this.autoCloseTimer);
-            if (this.autoClose === true) {
-                this.autoClose = 3000;
-            }
-            if(this.autoClose) {
-                this.autoCloseTimer = setTimeout(lib.bind(this.hide, this), this.autoClose);
-            }
-
-            // 自动轮换定时及暂停重启逻辑
-            this.setAutoSlide();
+            // 自动轮换功能暂停重启逻辑
             this.helper.addDOMEvent(this.main, 'mouseover', lib.bind(function() {
-                clearInterval(this.autoSlideTimer);
-                clearTimeout(this.fadeTimer);
+                this.setProperties({ autoSlide: false });
             }, this));
-            this.helper.addDOMEvent(this.main, 'mouseout', this.setAutoSlide);
+            this.helper.addDOMEvent(this.main, 'mouseout', lib.bind(function() {
+                this.setProperties({ autoSlide: this.oriAutoSlide });
+            }, this));
         };
 
         /**
-         * 设置自动轮换
+         * 多条信息时，轮换到下一页，通过设置pageIndex引起重绘来实现
+         *
          */
-        Alert.prototype.setAutoSlide = function() {
-            clearInterval(this.autoSlideTimer);
-            if(this.autoSlide === true) {
-                this.autoSlide = 2000;
+        function slide() {
+            var pageIndex = this.pageIndex;
+            if (pageIndex === this.message.length) {
+                pageIndex = 1;
             }
-            if(!isSingle(this.message) && this.autoSlide) {
-                this.autoSlideTimer = setInterval(lib.bind(slide, this), this.autoSlide);
+            else {
+                pageIndex++;
             }
-            function slide() {
-                var pageIndex = this.pageIndex;
-                if(pageIndex === this.message.length) {
-                    pageIndex = 1;
-                }
-                else {
-                    pageIndex++;
-                }
-                this.setProperties({pageIndex: pageIndex});
-            }
-        };
+            this.setProperties({ pageIndex: pageIndex });
+        }
 
         /**
          * 隐藏提示信息
@@ -391,33 +460,17 @@ define(
         };
 
         /**
-         * 判断是否单条消息
-         *
-         * @param {Array} message 消息数组
-         * @return {Boolean} 是否单条
-         */
-        function isSingle(message) {
-            return message[1] ? false : true;
-        }
-
-        /**
          * 快捷方式注册
          */
         var allType = ['success', 'prompt', 'warning', 'error'];
-        for (var key in allType) {
-            if (allType.hasOwnProperty(key)) {
-                (function (msgType) {
-                    Alert[msgType] = function (options) {
-                        options.msgType = options.msgType || msgType;
-                        var alert = new Alert(options);
-                        Control.prototype.hide.apply(alert);
-                        alert.insertBefore(lib.g(alert.container));
-                        alert.show(options);
-                        return alert;
-                    };
-                })(allType[key]);
-            }
-        }
+        u.each(allType, function(type) {
+            Alert[type] = function(options) {
+                options.msgType = options.msgType || type;
+                var alert = new Alert(options);
+                alert.show();
+                return alert;
+            };
+        });
 
         lib.inherits(Alert, Control);
         require('esui').register(Alert);
