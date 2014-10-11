@@ -38,9 +38,8 @@
          data-ui-id="table2" data-ui-has-foot="false"
          data-ui-has-search-box="false"
          data-ui-need-batch-action="true"
-         data-ui-width="300px"
-         data-ui-empty-text="请从左侧选择你要添加的浏览器类型"
-            ></div>
+         data-ui-width="240"
+         data-ui-empty-text="请从左侧选择你要添加的浏览器类型"></div>
 </div>
 
 
@@ -198,13 +197,12 @@
 
                 table1.setProperties({datasource: datasource});
                 table1.on('change', function () {
-                    debugger
                     var newdata = this.getSelectedItems();
                     table2.setProperties({
                         datasource: {
                             id: 'root',
                             text: '根节点',
-                            childrend: newdata
+                            children: newdata
                         }
                     })
                 });
