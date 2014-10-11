@@ -1,5 +1,5 @@
 /**
- * ESUI (Enterprise Simple UI)
+ * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @ignore
