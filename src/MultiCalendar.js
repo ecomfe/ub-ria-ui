@@ -1,21 +1,22 @@
 /**
- * ESUI (Enterprise Simple UI)
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * UB-RIA-UI 1.0
+ * Copyright 2014 Baidu Inc. All rights reserved.
  *
+ * @ignore
  * @file 双日历，通过两个月份相连的日历来选择单个日期
  * @author zengxiaohui(zengxiaohui@baidu.com)
  */
 
 define(
     function(require) {
-        require('./Button');
-        require('./MonthView');
+        require('esui/Button');
+        require('esui/MonthView');
 
-        var lib = require('./lib');
-        var InputControl = require('./InputControl');
-        var helper = require('./controlHelper');
-        var Layer = require('./Layer');
-        var ui = require('./main');
+        var lib = require('esui/lib');
+        var InputControl = require('esui/InputControl');
+        var helper = require('esui/controlHelper');
+        var Layer = require('esui/Layer');
+        var ui = require('esui/main');
         var moment = require('moment');
         var u = require('underscore');
 
