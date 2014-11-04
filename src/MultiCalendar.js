@@ -84,7 +84,7 @@ define(
          *
          * @param  {MultiCalendar} multiCalendar 控件实例
          * @param  {Date} rawValue 控件当前选取日期
-         * @param  {string} state 渲染时控件状态
+         * @param  {string} state 渲染时控件状态，为`render`是首次渲染，为`repaint`则为重绘
          * @inner
          */
         function paintLayer(multiCalendar, rawValue, state) {
@@ -94,11 +94,9 @@ define(
             var range = multiCalendar.range;
             var monthViewRanges = getMonthViewRange(range);
 
-            var month = multiCalendar.rawValue.getMonth() + 1;
-            var nextMonth = (month + 1) > 12 ? 1 : (month + 1);
-            var nextYear = (month + 1) > 12
-                            ? multiCalendar.rawValue.getFullYear() + 1
-                            : multiCalendar.rawValue.getFullYear();
+            var nextMonthRawValue = moment(multiCalendar.rawValue).add(1, 'month');
+            var nextMonth = nextMonthRawValue.month() + 1;
+            var nextYear = nextMonthRawValue.year();
 
             // 当前日期和日历范围
             prevMonthView && prevMonthView.setProperties({
@@ -143,17 +141,16 @@ define(
         /**
          * 获取双日历两个日历的日历范围
          *
-         * @param  {Object} range 初始日历范围
-         * @return {Object}       包含两个日历范围的对象
+         * @param  {{begin:Date,end:Date}} range 初始日历范围
+         * @return {{prevRange:Object,nextRange:Object}} 包含两个日历范围的对象
          * @inner
          */
         function getMonthViewRange(range) {
             var ranges = {};
-            var startDate = new Date(range.begin);
-            startDate.setMonth(startDate.getMonth() + 1);
-            startDate.setDate(1);
+            var startDate = moment(range.begin).endOf('month').toDate();
+            startDate.setDate(startDate.getDate() + 1);
 
-            var endDate = new Date(range.end.getFullYear(), range.end.getMonth(), 1);
+            var endDate = moment(range.end).startOf('month').toDate();
             endDate.setDate(endDate.getDate() - 1);
 
             var prevRange = {
@@ -187,18 +184,11 @@ define(
 
             var year = prevMonthView.year;
             var month = prevMonthView.month + 1;
-
-            if (month + 1 > 12) {
-                month = 1;
-                year = year + 1;
-            }
-            else {
-                month = month + 1;
-            }
+            var m = moment(year + '-' + month, 'YYYY-MM').add(1, 'month');
 
             nextMonthView.setProperties({
-                year: year,
-                month: month
+                year: m.year(),
+                month: m.month() + 1
             });
         }
 
@@ -215,21 +205,11 @@ define(
             var multiCalendar = this;
             var nextMonthView = e.target;
             var prevMonthView = multiCalendar.getChild('prevMonthView');
-
-            var year = nextMonthView.year;
-            var month = nextMonthView.month + 1;
-
-            if (month - 1 === 0) {
-                month = 12;
-                year = year - 1;
-            }
-            else {
-                month = month - 1;
-            }
+            var m = moment(nextMonthView.year + '-' + nextMonthView.month, 'YYYY-MM');
 
             prevMonthView.setProperties({
-                year: year,
-                month: month
+                year: m.year(),
+                month: m.month() + 1
             });
         }
 
@@ -377,7 +357,7 @@ define(
                     var beginAndEnd = range.split(',');
                     var begin = this.parseValue(beginAndEnd[0]);
                     var end = this.parseValue(beginAndEnd[1]);
-                    properties.range = { begin: begin, end: end };
+                    properties.range = {begin: begin, end: end};
 
                 }
                 this.setProperties(properties);
@@ -438,7 +418,6 @@ define(
                     name: ['rawValue', 'range'],
                     paint: function (multiCalendar, rawValue, range) {
 
-                        multiCalendar.rawValue = rawValue;
                         multiCalendar.range = range;
 
                         if (rawValue) {
@@ -465,7 +444,7 @@ define(
              * 将字符串类型的值转换成原始格式，复杂类型的输入控件需要重写此接口
              *
              * @param {string} value 字符串值
-             * @return {Date}
+             * @return {Date} 日期原始格式
              * @protected
              * @override
              */
@@ -478,7 +457,7 @@ define(
              * 将值从原始格式转换成字符串，复杂类型的输入控件需要重写此接口
              *
              * @param {Date} rawValue 原始值
-             * @return {string}
+             * @return {string} 日期字符串
              * @protected
              * @override
              */
