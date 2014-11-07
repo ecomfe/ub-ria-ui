@@ -83,7 +83,13 @@
         require(
             ['esui', 'MultiCalendar'], 
             function (esui, multiCalendar) {
-                esui.init();
+                var controls = esui.init();
+
+                var multiCalendar1 = controls[1];
+                multiCalendar1.setProperties({
+                    range: '2012-02-02,2013-02-01',
+                    value: '2010-2-1'
+                });
             }
         );
     </script>

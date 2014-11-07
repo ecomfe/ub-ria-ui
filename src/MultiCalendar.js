@@ -44,12 +44,10 @@ define(
 
             var multiCalendar = this.control;
             var tpl = ''
-                + '<div data-ui="type: MonthView; childName: ${prevId}" class="${prevClass}"></div>'
-                + '<div data-ui="type: MonthView; childName: ${nextId}" class="${nextClass}"></div>';
+                + '<div data-ui="type: MonthView; childName: prevMonthView" class="${prevClass}"></div>'
+                + '<div data-ui="type: MonthView; childName: nextMonthView" class="${nextClass}"></div>';
 
             element.innerHTML = lib.format(tpl, {
-                prevId: 'prevMonthView',
-                nextId: 'nextMonthView',
                 prevClass: multiCalendar.helper.getPartClassName('prev-month'),
                 nextClass: multiCalendar.helper.getPartClassName('next-month')
             });
@@ -98,17 +96,38 @@ define(
             var nextMonth = nextMonthRawValue.month() + 1;
             var nextYear = nextMonthRawValue.year();
 
-            // 当前日期和日历范围
-            prevMonthView && prevMonthView.setProperties({
-                rawValue: rawValue,
-                range: monthViewRanges.prevRange
-            });
+            // 当前值是否在日历范围最后一个月
+            var inLastMonth = moment(rawValue).format('YYYY-MM')
+                              === moment(monthViewRanges.nextRange.end).format('YYYY-MM');
 
-            nextMonthView && nextMonthView.setProperties({
-                range: monthViewRanges.nextRange,
-                month: nextMonth,
-                year: nextYear
-            });
+            if (!inLastMonth) {
+                // 如果不在，那么左边日历赋当前值，右边日历需要加一个月
+                
+                nextMonthView && nextMonthView.setProperties({
+                    range: monthViewRanges.nextRange,
+                    month: nextMonth,
+                    year: nextYear
+                });
+
+                prevMonthView && prevMonthView.setProperties({
+                    rawValue: rawValue,
+                    range: monthViewRanges.prevRange
+                });
+            }
+            else {
+                // 如果在，那么左边日历保持不变，右边日历赋当前值
+
+                nextMonthView && nextMonthView.setProperties({
+                    range: monthViewRanges.nextRange,
+                    rawValue: rawValue
+                });
+
+                prevMonthView && prevMonthView.setProperties({
+                    rawValue: rawValue,
+                    year: moment(multiCalendar.rawValue).year(),
+                    month: moment(multiCalendar.rawValue).month()
+                });
+            }
 
             if (state === 'render') {
 
@@ -353,12 +372,8 @@ define(
 
                 // 类型如果是string
                 var range = properties.range;
-                if (typeof range === 'string') {
-                    var beginAndEnd = range.split(',');
-                    var begin = this.parseValue(beginAndEnd[0]);
-                    var end = this.parseValue(beginAndEnd[1]);
-                    properties.range = {begin: begin, end: end};
-
+                if (typeof range === 'string') {                    
+                    properties.range = this.convertToRaw(range);
                 }
                 this.setProperties(properties);
             },
@@ -418,14 +433,39 @@ define(
                     name: ['rawValue', 'range'],
                     paint: function (multiCalendar, rawValue, range) {
 
-                        multiCalendar.range = range;
+                        if (range) {
+                            if (typeof range === 'string') {
+                                range = multiCalendar.convertToRaw(range);
+                            }
 
+                            // 还要支持只设置begin或只设置end的情况
+                            if (!range.begin) {
+                                // 设置一个特别远古的年
+                                range.begin = new Date(1983, 8, 3);
+                            }
+                            else if (!range.end) {
+                                // 设置一个特别未来的年
+                                range.end = new Date(2046, 10, 4);
+                            }
+
+                            multiCalendar.range = range;
+                        }
+                        
                         if (rawValue) {
+                            if (rawValue < range.begin) {
+                                rawValue = range.begin;
+                            }
+
+                            if (rawValue > range.end) {
+                                rawValue = range.end;
+                            }
+
+                            multiCalendar.rawValue = rawValue;
                             updateDisplayText(multiCalendar);
                         }
 
                         if (multiCalendar.layer) {
-                            paintLayer(multiCalendar, rawValue, 'repaint');
+                            paintLayer(multiCalendar, multiCalendar.rawValue, 'repaint');
                         }
                     }
                 },
@@ -463,6 +503,34 @@ define(
              */
             stringifyValue: function (rawValue) {
                 return moment(rawValue).format(this.dateFormat) || '';
+            },
+
+            /**
+             * 将字符串转换成对象型rawValue
+             * 可重写
+             *
+             * @inner
+             * @param {string} value 目标日期字符串 ‘YYYY-MM-DD,YYYY-MM-DD’
+             * @return {{begin:Date,end:Date}=}
+             */
+            convertToRaw: function (value) {
+                var strDates = value.split(',');
+                // 可能会只输入一个，默认当做begin，再塞一个默认的end
+                if (strDates.length === 1) {
+                    strDates.push('2046-11-04');
+                }
+                // 第一个是空的
+                else if (strDates[0] === ''){
+                    strDates[0] = '1983-09-03';
+                }
+                // 第二个是空的
+                else if (strDates[1] === ''){
+                    strDates[1] = '2046-11-04';
+                }
+                return {
+                    begin: moment(strDates[0], 'YYYY-MM-DD').toDate(),
+                    end: moment(strDates[1], 'YYYY-MM-DD').toDate()
+                };
             },
 
             /**
