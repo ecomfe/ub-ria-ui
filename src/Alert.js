@@ -4,7 +4,7 @@
  *
  * @ignore
  * @file 警告框（Alert）
- * @author coorazer(zhnagyujie@baidu.com)
+ * @author zhangyujie(zhangyujie@baidu.com)
  */
 define(
     function (require) {
