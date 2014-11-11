@@ -4,7 +4,7 @@
  *
  * @ignore
  * @file 警告框（Alert）
- * @author zhangyujie(zhnagyujie@baidu.com)
+ * @author coorazer(zhnagyujie@baidu.com)
  */
 define(
     function (require) {
@@ -23,6 +23,17 @@ define(
             Control.apply(this, arguments);
         }
 
+        // 快捷方式注册
+        var allType = ['success', 'prompt', 'warning', 'error'];
+        u.each(allType, function (type) {
+            Alert[type] = function (options) {
+                options.msgType = options.msgType || type;
+                var alert = new Alert(options);
+                alert.show();
+                return alert;
+            };
+        });
+
         /**
          * @cfg defaultProperties
          *
@@ -33,12 +44,12 @@ define(
          *      `prompt` ：通知：蓝
          *      `warning`：警告：黄
          *      `error`  ：错误：红
-         * @cfg {String | Array} [defaultProperties.message] 数据源数组，可兼容单条string
+         * @cfg {string | Array} [defaultProperties.message] 数据源数组，可兼容单条string
          * @cfg {number} [defaultProperties.autoClose=false] 自动关闭延迟
-         * @cfg {Boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
+         * @cfg {boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
          * @cfg {number} [defaultProperties.autoSlide=4000] 多条消息自动滚动时间，Null表不自动滚动
-         * @cfg {Boolean} [defaultProperties.icon=true] 是否使用系统默认图标
-         * @cfg {Number} [defaultProperties.stepAnimationDuration=400] 切换的渐进效果时间间隔
+         * @cfg {boolean} [defaultProperties.icon=true] 是否使用系统默认图标
+         * @cfg {number} [defaultProperties.stepAnimationDuration=400] 切换的渐进效果时间间隔
          * @static
          */
         Alert.defaultProperties = {
@@ -60,8 +71,7 @@ define(
          */
         Alert.prototype.type = 'Alert';
 
-        /**
-         * 初始化参数
+        /** 初始化参数
          *
          * @param {Object=} options 构造函数传入的参数
          * @protected
@@ -96,12 +106,13 @@ define(
         /**
          * 带有注入innerHTML的部件HTML模板
          *
-         * @param {String} part 部件名称
-         * @param {String} nodeName HTML节点标签
-         * @param {String} innerHTML 注入的innerHTML
-         * @return {String} 部件HTML内容
+         * @param {string} part 部件名称
+         * @param {string} nodeName HTML节点标签
+         * @param {string} innerHTML 注入的innerHTML
+         * @protected
+         * @return {string} 部件HTML内容
          */
-        Alert.prototype.getInjectedPartHTML = function(part, nodeName, innerHTML) {
+        Alert.prototype.getInjectedPartHTML = function (part, nodeName, innerHTML) {
             return this.helper.getPartBeginTag(part, nodeName) +
                 innerHTML +
                 this.helper.getPartEndTag(part, nodeName);
@@ -116,7 +127,7 @@ define(
         Alert.prototype.initStructure = function () {
             var innerHTML = '';
             var parts = ['icon', 'text', 'close', 'pager'];
-            u.each(parts, function(item, index) {
+            u.each(parts, function (item, index) {
                 innerHTML += this.helper.getPartHTML(item, 'div');
             }, this);
 
@@ -153,53 +164,47 @@ define(
 
         /**
          * 为Page绑定事件
+         *
+         * @protected
          */
-        Alert.prototype.bindPagerEvent = function() {
-            var self = this;
+        Alert.prototype.bindPagerEvent = function () {
 
             // 翻页至上一页
-            self.helper.addDOMEvent('prev', 'click', function() {
-                if (self.pageIndex > 1) {
-                    self.setProperties({ pageIndex: self.pageIndex - 1 });
+            this.helper.addDOMEvent('prev', 'click', function () {
+                if (this.pageIndex > 1) {
+                    this.setProperties({pageIndex: this.pageIndex - 1});
                 }
             });
 
             // 翻页至下一页
-            self.helper.addDOMEvent('next', 'click', function() {
-                if (self.pageIndex < self.message.length) {
-                    self.setProperties({ pageIndex: self.pageIndex + 1 });
+            this.helper.addDOMEvent('next', 'click', function () {
+                if (this.pageIndex < this.message.length) {
+                    this.setProperties({pageIndex: this.pageIndex + 1});
                 }
             });
-        };
-
-        /**
-         * 移除Page的事件
-         */
-        Alert.prototype.removePagerEvent = function(prev, next) {
-            this.helper.removeDOMEvent('prev', 'click');
-            this.helper.removeDOMEvent('next', 'click');
         };
 
         /**
          * 为控件注入Icon
          *
-         * @param {String} html 注入的HTML
+         * @param {string} html 注入的HTML
+         * @protected
          */
-        Alert.prototype.injectIcon = function(html) {
+        Alert.prototype.injectIcon = function (html) {
             this.helper.getPart('icon').innerHTML = html;
         };
 
         /**
          * 重绘
          *
-         * @override
          * @protected
+         * @override
          */
         Alert.prototype.repaint = require('esui/painters').createRepaint(
             Control.prototype.repaint,
             {
                 /**
-                 * @property {Boolean} icon
+                 * @property {boolean} icon
                  *
                  * 是否带提示图标
                  */
@@ -222,14 +227,14 @@ define(
                  */
                 name: 'message',
                 paint: function (self, message) {
-                    u.each(message, function(item) {
+                    u.each(message, function (item) {
                         self.helper.getPart('text').innerHTML +=
                             self.getInjectedPartHTML('item', 'span', item);
                     });
                     if (message.length !== 1) {
                         buildPager(self);
                         var messages = lib.getChildren(self.helper.getPart('text'));
-                        u.each(messages, function(item) {
+                        u.each(messages, function (item) {
                             self.helper.addPartClasses('item-hidden', item);
                         });
                     }
@@ -245,7 +250,7 @@ define(
                 paint: function (self, msgType) {
 
                     // 清理掉老的type
-                    u.each(allType, function(type) {
+                    u.each(allType, function (type) {
                         self.helper.removePartClasses(type);
                     });
                     self.helper.addPartClasses(self.msgType);
@@ -253,51 +258,76 @@ define(
             },
             {
                 /**
-                 * @property {Number} pageIndex
+                 * @property {number} pageIndex
                  *
                  * 转到的页码
                  */
                 name: 'pageIndex',
-                paint: function(self, pageIndex) {
+                paint: function (self, pageIndex) {
 
                     // 只在多条下响应pageIndex
                     if (self.message.length === 1) {
                         return;
                     }
 
-                    // 实现fade渐进效果
+                    // 实现渐进效果
+                    // 如果浏览器支持animation，则用animationend事件驱动新老message的交替显示
+                    var animationEndEventName = getAnimationEndEventName();
+
                     var messages = lib.getChildren(self.helper.getPart('text'));
+
+                    // 清空挂在消息上的animation事件handler
+                    if (animationEndEventName) {
+                        u.each(messages, function (item) {
+                            this.helper.removeDOMEvent(item, animationEndEventName);
+                        }, self);
+                    }
+
                     var hiddenClassName = self.helper.getPartClasses('item-hidden')[0];
 
                     var newMessage = messages[pageIndex - 1];
-                    var oldMessage = null;
+                    var oldMessage = u.filter(messages, function (item) {
+                        return !lib.hasClass(item, hiddenClassName);
+                    })[0];
 
-                    u.each(messages, function(item) {
-                        if (!lib.hasClass(item, hiddenClassName)) {
-                            oldMessage = item;
-                        }
-                    });
-
+                    // 如果是初始的第一条，则不用切换任何渐进效果相关的class
                     if (!oldMessage) {
                         self.helper.removePartClasses('item-hidden', newMessage);
                     }
                     else {
-                        self.helper.removePartClasses('item-stepin', oldMessage);
-                        self.helper.addPartClasses('item-stepout', oldMessage);
 
-                        // 先disable pager，在动画执行完后绑回来
-                        self.removePagerEvent();
+                        // 老message加`逐步消失`的动画类
+                        self.helper.addPartClasses('item-step-out', oldMessage);
 
-                        clearTimeout(self.animationTimer);
-                        self.animationTimer = setTimeout(function() {
+                        // 如果支持animation事件，则挂handler驱动新老交替
+                        if (animationEndEventName) {
+
+                            // 对于oldMessage，动画效果如果是`逐步消失`，需要在动画执行完毕后：
+                            // 1. 清掉自己`逐步消失`的动画类，并隐藏自己
+                            // 2. `逐步显示`下一条
+                            self.helper.addDOMEvent(oldMessage, animationEndEventName, function (e) {
+                                if (e.animationName.indexOf('step-out') !== -1) {
+                                    this.helper.removePartClasses('item-step-out', oldMessage);
+                                    this.helper.addPartClasses('item-hidden', oldMessage);
+
+                                    this.helper.removePartClasses('item-hidden', newMessage);
+                                    this.helper.addPartClasses('item-step-in', newMessage);
+                                }
+                            });
+
+                            // 对于newMessage，动画效果如果是`逐步显示`，需要在动画执行完毕后清掉自己的动画类
+                            self.helper.addDOMEvent(newMessage, animationEndEventName, function (e) {
+                                if (e.animationName.indexOf('step-in') !== -1) {
+                                    this.helper.removePartClasses('item-step-in', newMessage);
+                                }
+                            });
+                        }
+
+                        // 不支持animation的环境下，直接toggle新老message
+                        else {
                             self.helper.addPartClasses('item-hidden', oldMessage);
                             self.helper.removePartClasses('item-hidden', newMessage);
-                            self.helper.removePartClasses('item-stepout', newMessage);
-                            self.helper.addPartClasses('item-stepin', newMessage);
-
-                            self.bindPagerEvent();
-
-                        }, self.stepAnimationDuration);
+                        }
                     }
 
                     self.helper.getPart('page').innerHTML = pageIndex;
@@ -319,12 +349,12 @@ define(
             },
             {
                 /**
-                 * @property {Number} closeBtn
+                 * @property {number} closeBtn
                  *
                  * 是否带有关闭按钮
                  */
                 name: 'closeBtn',
-                paint: function(self, closeBtn) {
+                paint: function (self, closeBtn) {
 
                     // 默认为true的属性兼容从html构造传入false覆盖的情况
                     if (!lib.trim(closeBtn) || closeBtn === 'false') {
@@ -335,19 +365,19 @@ define(
                     self.helper.getPart('close').innerHTML = '' +
                         self.getInjectedPartHTML('button', 'div', self.helper.getPartHTML('icon-content', 'span'));
 
-                    self.helper.addDOMEvent('button', 'click', function(e) {
-                        self.hide();
+                    self.helper.addDOMEvent('button', 'click', function (e) {
+                        this.hide();
                     });
                 }
             },
             {
                 /**
-                 * @property {Number} autoSlide
+                 * @property {number} autoSlide
                  *
                  * 自动轮播时间间隔
                  */
                 name: 'autoSlide',
-                paint: function(self, autoSlide) {
+                paint: function (self, autoSlide) {
                     if (autoSlide === true) {
                         autoSlide = 4000;
                     }
@@ -355,7 +385,6 @@ define(
                         autoSlide = parseInt(autoSlide, 10);
                     }
 
-                    // clearTimeout(self.animationTimer);
                     clearInterval(self.autoSlideTimer);
                     if (self.message.length === 1 || !lib.trim(autoSlide) || autoSlide === 'false') {
                         return;
@@ -365,12 +394,12 @@ define(
             },
             {
                 /**
-                 * @property {Number} autoClose
+                 * @property {number} autoClose
                  *
                  * 控件自动关闭时间间隔
                  */
                 name: 'autoClose',
-                paint: function(self, autoClose) {
+                paint: function (self, autoClose) {
                     if (autoClose === true) {
                         autoClose = 4000;
                     }
@@ -391,6 +420,7 @@ define(
         /**
          * 显示提示信息
          *
+         * @protected
          * @override
          */
         Alert.prototype.show = function () {
@@ -398,6 +428,7 @@ define(
                 return;
             }
 
+            // 插入节点，引起渲染
             this.insertBefore(lib.g(this.container).firstChild);
 
             // toggle效果实现
@@ -407,16 +438,17 @@ define(
             this.fire('show');
 
             // 自动轮换功能暂停重启逻辑
-            this.helper.addDOMEvent(this.main, 'mouseover', lib.bind(function() {
-                this.setProperties({ autoSlide: false });
+            this.helper.addDOMEvent(this.main, 'mouseover', lib.bind(function () {
+                this.setProperties({autoSlide: false});
             }, this));
-            this.helper.addDOMEvent(this.main, 'mouseout', lib.bind(function() {
-                this.setProperties({ autoSlide: this.oriAutoSlide });
+            this.helper.addDOMEvent(this.main, 'mouseout', lib.bind(function () {
+                this.setProperties({autoSlide: this.oriAutoSlide});
             }, this));
         };
 
         /**
          * 多条信息时，轮换到下一页，通过设置pageIndex引起重绘来实现
+         *
          */
         function slide() {
             var pageIndex = this.pageIndex;
@@ -426,12 +458,35 @@ define(
             else {
                 pageIndex++;
             }
-            this.setProperties({ pageIndex: pageIndex });
+            this.setProperties({pageIndex: pageIndex});
         }
+
+        /**
+         * 获取当前浏览器环境下支持的animationend的事件名
+         *
+         * @return {string} 事件名称
+         */
+        function getAnimationEndEventName() {
+
+            // Chrome、Safari、Opera
+            if (window.WebKitAnimationEvent) {
+                return 'webkitAnimationEnd';
+            }
+
+            // IE10、FireFox
+            if (window.AnimationEvent) {
+                return 'animationend';
+            }
+
+            // lt IE10
+            return '';
+        }
+
 
         /**
          * 隐藏提示信息
          *
+         * @protected
          * @override
          */
         Alert.prototype.hide = function () {
@@ -457,19 +512,6 @@ define(
             lib.removeNode(this.main);
             Control.prototype.dispose.apply(this, arguments);
         };
-
-        /**
-         * 快捷方式注册
-         */
-        var allType = ['success', 'prompt', 'warning', 'error'];
-        u.each(allType, function(type) {
-            Alert[type] = function(options) {
-                options.msgType = options.msgType || type;
-                var alert = new Alert(options);
-                alert.show();
-                return alert;
-            };
-        });
 
         lib.inherits(Alert, Control);
         require('esui').register(Alert);

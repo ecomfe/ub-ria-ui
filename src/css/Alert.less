@@ -68,9 +68,9 @@
     font-size: 14px;
 }
 
-@alert-stepin-keyframes-name: ~"@{ui-class-prefix}-alert-stepin";
+@alert-step-in-keyframes-name: ~"@{ui-class-prefix}-alert-step-in";
 
-@keyframes @alert-stepin-keyframes-name {
+@keyframes @alert-step-in-keyframes-name {
     from {
         opacity: 0;
     }
@@ -79,7 +79,7 @@
     }
 }
 
-@-webkit-keyframes @alert-stepin-keyframes-name {
+@-webkit-keyframes @alert-step-in-keyframes-name {
     from {
         opacity: 0;
     }
@@ -88,9 +88,9 @@
     }
 }
 
-@alert-stepout-keyframes-name: ~"@{ui-class-prefix}-alert-stepout";
+@alert-step-out-keyframes-name: ~"@{ui-class-prefix}-alert-step-out";
 
-@keyframes @alert-stepout-keyframes-name {
+@keyframes @alert-step-out-keyframes-name {
     from {
         opacity: 1;
     }
@@ -99,7 +99,7 @@
     }
 }
 
-@-webkit-keyframes @alert-stepout-keyframes-name {
+@-webkit-keyframes @alert-step-out-keyframes-name {
     from {
         opacity: 1;
     }
@@ -108,17 +108,17 @@
     }
 }
 
-@alert-stepin-keyframes-duration: .4s;
-@alert-stepout-keyframes-duration: .4s;
+@alert-step-in-keyframes-duration: .4s;
+@alert-step-out-keyframes-duration: .4s;
 
-.@{ui-class-prefix}-alert-item-stepin {
-    animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
-    -webkit-animation: @alert-stepin-keyframes-name @alert-stepin-keyframes-duration;
+.@{ui-class-prefix}-alert-item-step-in {
+    animation: @alert-step-in-keyframes-name @alert-step-in-keyframes-duration;
+    -webkit-animation: @alert-step-in-keyframes-name @alert-step-in-keyframes-duration;
 }
 
-.@{ui-class-prefix}-alert-item-stepout {
-    animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
-    -webkit-animation: @alert-stepout-keyframes-name @alert-stepout-keyframes-duration;
+.@{ui-class-prefix}-alert-item-step-out {
+    animation: @alert-step-out-keyframes-name @alert-step-out-keyframes-duration;
+    -webkit-animation: @alert-step-out-keyframes-name @alert-step-out-keyframes-duration;
 }
 
 .@{ui-class-prefix}-alert-item-hidden {
