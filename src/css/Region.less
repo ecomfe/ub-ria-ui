@@ -1,0 +1,220 @@
+/**
+ * ESUI (Enterprise Simple UI)
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ *
+ * @file 地域选择样式
+ * @author jiangyuan01
+ */
+@import "mixin.less";
+@import "varaibles.less";
+.@{ui-class-prefix}-region {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    width: 580px;
+    font-size: @ui-region-font-size;
+    font-family: '宋体', sans-serif;
+    color: #555555;
+    line-height: 13px;
+    border: none;
+    .user-select();
+
+    input {
+        float: left;
+        margin: 0px;
+        padding: 0px;
+        width: 13px;
+        height: 13px;
+    }
+
+    label {
+        cursor: default;
+        padding-left: 4px;
+        display: inline;
+    }
+
+    .@{ui-class-prefix}-region-country-box {
+        overflow: hidden;
+        zoom: 1;
+        border: none;
+    }
+
+    .@{ui-class-prefix}-region-country-check {
+        width: 570px;
+        height: 14px;
+        padding: 10px 0 10px 10px;
+        background-color: #EAEAEA;
+        border-top: none;
+    }
+    .@{ui-class-prefix}-region-region-box0 {
+        width: 580px;
+        border: none;
+        background: #FCFCFC;
+        clear: both;
+        .clear-float();
+    }
+
+    .@{ui-class-prefix}-region-region-box1 {
+        width: 580px;
+        clear: both;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: none;
+        .clear-float();
+    }
+
+    .@{ui-class-prefix}-region-region-check {
+        width: 70px;
+        padding: 10px 0 10px 10px;
+        float: left;
+    }
+
+    .@{ui-class-prefix}-region-province-box {
+        width: 500px;
+        float: left;
+    }
+    .@{ui-class-prefix}-region-province-item {
+        width: 100px;
+        display: inline-block;
+        *display: inline;
+        zoom: 1;
+
+        .@{ui-class-prefix}-region-locator {
+            float: right;
+            width: 22px;
+            height: 14px;
+        }
+
+        .@{ui-class-prefix}-region-city-box {
+            border: none;
+            position: absolute;
+            padding: 3px 0;
+            margin: 0;
+            background-color: #FFFAED;
+            z-index: 1000;
+            _height: 26px;
+            .box-shadow(6px, 6px, rgba(0, 0, 0, 0.1));
+
+            .@{ui-class-prefix}-region-city {
+                height:18px;
+                float: left;
+                padding: 3px 8px;
+            }
+        }
+
+        .@{ui-class-prefix}-region-city-box-over {
+            border: none;
+            background-color: #FFFAED;
+            margin: 0;
+            z-index: 999;
+        }
+
+        b {
+            width: 33px;
+            color: #FFF;
+            display: block;
+            text-align: center;
+            font-weight: normal;
+            font-family: Arial, Helvetica, sans-serif;
+            background: @ui-region-primary-color;
+            margin-top: 8px;
+            .border-radius(3px);
+        }
+
+        .@{ui-class-prefix}-region-text {
+            position: relative;
+            zoom: 1;
+            width: 58px;
+            height: 14px;
+            padding: 10px 0 10px 10px;
+            float: right;
+        }
+
+        .@{ui-class-prefix}-region-text-over {
+            border: none;
+            background-color:#FFFAED;
+            .box-shadow(6px, 6px, rgba(0, 0, 0, 0.1));
+            margin: 0;
+            z-index: 998;
+        }
+    }
+}
+
+.@{ui-class-prefix}-region-single {
+    margin:0;
+    padding:0;
+    width: auto;
+    font-size: @ui-region-font-size;
+    border: none;
+}
+
+.@{ui-class-prefix}-region-disabled,
+.@{ui-class-prefix}-region-read-only {
+    color: #999;
+    border-color: #D8D8D8;
+}
+
+/** 验证 */
+.@{ui-class-prefix}-region-validity-invalid {
+    border: 1px solid red;
+}
+.@{ui-class-prefix}-region-validity-label {
+    display:block;
+    margin-top: 5px;
+}
+.@{ui-class-prefix}-region-validity-label-invalid {
+//    .background(url(../img/esui-icon-alert.png), no-repeat, 15px, center, #FEDBDC);
+    font-family: FontAwesome;
+    &:before {
+        content: @fa-var-warning;
+    }
+//    border: 1px solid #F0CCCC;
+    color: #dd6767;
+    background-color: #FEDBDC;
+    padding-left: 50px;
+}
+
+
+.@{ui-class-prefix}-region .@{ui-class-prefix}-region-checkbox-custom {
+    .ui-checkbox;
+    position: relative;
+    min-height: @ui-region-checkbox-font-size;
+    label, .box {
+        &:hover:before {
+            .box-shadow(0 0 0 1px @ui-table-primary-color);
+        }
+        &:before, &:after {
+            font-size: @ui-region-checkbox-font-size;
+        }
+        position: relative;
+    }
+    input:checked ~ label:before {
+        background: none repeat scroll 0 0 @ui-table-primary-color;
+        .box-shadow(0 0 0 1px @ui-table-primary-color);
+    }
+    input:focus ~ label:before {
+        .box-shadow(0 0 0 1px @ui-table-primary-color);
+    }
+
+    input:indeterminate ~ .box,
+    input:indeterminate ~ label {
+        &:after {
+            background: @ui-region-primary-color;
+        }
+    }
+}
+
+.@{ui-class-prefix}-region .@{ui-class-prefix}-region-multi-custom {
+    .box,
+    label {
+        &:after {
+            .opacity(100);
+            .transform(none);
+            border: 0;
+            width: 0.7em;
+            height: 0.7em;
+            top: 0.15em;
+            left: 0.15em;
+            background: @ui-region-primary-color;
+        }
+    }
+}

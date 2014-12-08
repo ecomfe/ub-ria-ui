@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="assets/esl.js"></script>
+<link rel="stylesheet" type="text/css" href="assets/demon.css">
+<link rel="stylesheet" type="text/css" href="../src/css/main.css"/>
+<style>
+    h1 {
+        font-family: 'Microsoft Yahei', Arial, sans-serif;
+        margin: 10px 0;
+        font-size: 24px;
+        font-weight: 400;
+    }
+</style>
+<script>
+    require.config({
+        'baseUrl': '../src',
+        'paths': {},
+        'packages': [
+            {
+                'name': 'mini-event',
+                'location': '../dep/mini-event/1.0.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'underscore',
+                'location': '../dep/underscore/1.5.2/src',
+                'main': 'underscore'
+            },
+            {
+                'name': 'moment',
+                'location': '../dep/moment/2.7.0/src',
+                'main': 'moment'
+            },
+            {
+                'name': 'etpl',
+                'location': '../dep/etpl/3.0.0/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esui',
+                'location': '../dep/esui/3.1.0-beta.3/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esf',
+                'location': '../dep/esf/1.0.0/src'
+            }
+        ]
+    });
+</script>
+<div style="margin: 20px 20%">
+    <h1>地域选择</h1>
+    <div data-ui-type="Region" data-ui-id="myRegion" style="padding-bottom: 20px"></div>
+</div>
+<script>
+
+    require(['esui', 'Region'], function (ui) {
+        var lib = require('esui/lib');
+        ui.init();
+
+        var region = ui.get('myRegion');
+
+
+    });
+</script>
+</body>
+</html>
