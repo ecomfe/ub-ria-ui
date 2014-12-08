@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="assets/esl.js"></script>
+<link rel="stylesheet" type="text/css" href="assets/demon.css">
+<link rel="stylesheet" type="text/css" href="../src/css/main.css"/>
+<style>
+    h1 {
+        font-family: 'Microsoft Yahei', Arial, sans-serif;
+        margin: 10px 0;
+        font-size: 24px;
+        font-weight: 400;
+    }
+</style>
+<script>
+    require.config({
+        'baseUrl': '../src',
+        'paths': {},
+        'packages': [
+            {
+                'name': 'mini-event',
+                'location': '../dep/mini-event/1.0.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'underscore',
+                'location': '../dep/underscore/1.5.2/src',
+                'main': 'underscore'
+            },
+            {
+                'name': 'moment',
+                'location': '../dep/moment/2.7.0/src',
+                'main': 'moment'
+            },
+            {
+                'name': 'etpl',
+                'location': '../dep/etpl/3.0.0/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esui',
+                'location': '../dep/esui/3.1.0-beta.3/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esf',
+                'location': '../dep/esf/1.0.0/src'
+            }
+        ]
+    });
+</script>
+<div style="margin: 20px 20%">
+    <h1>多选列表</h1>
+    <div data-ui-type="Table" data-ui-id="table" style="padding-bottom: 20px"></div>
+    <h1>单选列表</h1>
+    <div data-ui-type="Table" data-ui-id="multiTable" data-ui-extension-tablesubrow-type="TableSubrow"></div>
+</div>
+<script>
+    var data = [
+        {id:1, name: 'aaa', sex: 1, url: '<a href="#">heheheh</a>'},
+        {id:2, name: 'bbb', sex: 0, url: '<a href="#">heheheh</a>'},
+        {id:3, name: 'ccc', sex: 1, url: '<a href="#">heheheh</a>'},
+        {id:4, name: 'ddd', sex: 1, url: '<a href="#">heheheh</a>'},
+        {id:5, name: 'eee', sex: 1, url: '<a href="#">heheheh</a>'},
+        {id:6, name: '0', sex: 1, url: '<a href="#">heheheh</a>'}
+    ];
+    data = data.concat(data);
+    data = data.concat(data);
+    var myTable = null;
+    require(['esui',
+            'esui/Dialog',
+            'esui/Panel',
+//            'TableEdit',
+//            'TableSubrow',
+            'Table',
+            'esui/Tip',
+            'esui/Button',
+            'esui/TextBox',
+            'esui/Select'
+    ], function (ui) {
+        var lib = require('esui/lib');
+        ui.init(document.body, {
+            properties: {
+                table: {
+                    datasource: data,
+                    sortable: true,
+                    columnResizable: true,
+                    followHead: true,
+                    subrow: true,
+                    select: 'multi',
+                    editable: 1,
+                    subrowMutex: 0,
+                    contentEncode: 1,
+                    zIndex: 100,
+                    noFollowHeadCache: true,
+                    fields: [
+                        {
+                            title: '编号',
+                            field: 'id',
+                            sortable: true,
+                            tip: '编号',
+                            resizable: true,
+                            editable: true,
+                            width: 100,
+                            content: function (item) {
+                                return item.id;
+                            }
+                        },
+                        {
+                            title: '姓名',
+                            field: 'name',
+                            tip: '姓名',
+                            align: 'right',
+                            sortable: false,
+                            resizable: true,
+                            width: 100,
+                            content: function (item) {
+                                return item.name;
+                            }
+                        },
+                        {
+                            title: '性别',
+                            field: 'sex',
+                            tip: '性别',
+                            compare: function (a, b) {
+                                return a.sex - b.sex;
+                            },
+                            sortable: true,
+                            resizable: true,
+                            width: 200,
+                            content: function (item) {
+                                return item.sex ? '男' : '女';
+                            }
+                        },{
+                            title: '链接标题',
+                            field: 'url',
+                            tip: '链接',
+                            width: 200,
+                            sortable: true,
+                            resizable: true,
+                            content: function (item) {
+                                return item.url;
+                            }
+                        }
+                    ]
+                },
+                multiTable: {
+                    datasource: data,
+                    sortable: true,
+                    columnResizable: true,
+                    followHead: true,
+                    subrow: true,
+                    select: 'single',
+                    editable: 1,
+                    subrowMutex: 1,
+                    contentEncode: 1,
+                    zIndex: 1,
+                    noFollowHeadCache: true,
+                    fields: [
+                        {
+                            title: '编号',
+                            field: 'id',
+                            sortable: true,
+                            tip: '编号',
+                            resizable: true,
+                            width: 100,
+                            content: function (item) {
+                                return item.id;
+                            }
+                        },
+                        {
+                            title: '姓名',
+                            field: 'name',
+                            tip: '姓名',
+                            align: 'right',
+                            sortable: true,
+                            resizable: true,
+                            width: 100,
+                            content: function (item) {
+                                return item.name;
+                            }
+                        },
+                        {
+                            title: '性别',
+                            field: 'sex',
+                            tip: '性别',
+                            compare: function (a, b) {
+                                return a.sex - b.sex;
+                            },
+                            sortable: true,
+                            resizable: true,
+                            width: 200,
+                            content: function (item) {
+                                return item.sex ? '男' : '女';
+                            }
+                        },{
+                            title: '链接标题',
+                            field: 'url',
+                            tip: '链接',
+                            width: 200,
+                            sortable: true,
+                            resizable: true,
+                            content: function (item) {
+                                return item.url;
+                            }
+                        }
+                    ]
+                }
+            }
+        })
+
+        var viewContext = ui.getViewContext();
+        var table = viewContext.controls['table'];
+        table.on('sort', sortData, table);
+
+        function sortData(e) {
+            var orderBy = e.field.field;
+            var order = e.order;
+            var orderFn = sortBy(order, orderBy);
+            var datasource = this.datasource.sort(orderFn);
+            this.setDatasource(datasource);
+        }
+
+        function sortBy(order, orderBy) {
+            return function(x, y) {
+                if (order === 'asc') {
+                    return x[orderBy] - y[orderBy];
+                } else {
+                    return y[orderBy] - x[orderBy];
+                }
+            }
+        }
+
+    });
+</script>
+</body>
+</html>

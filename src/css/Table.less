@@ -1,0 +1,396 @@
+/**
+ * UB-RIA UI Library
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file Table样式
+ * @author jiangyuan(jiangyuan01@baidu.com)
+ */
+
+@import "mixin.less";
+@import "varaibles.less";
+
+
+.@{ui-class-prefix}-table {
+  font-size: @ui-table-base-font-size;
+  border: none;
+  th,td {
+    border: none;
+  }
+}
+.@{ui-class-prefix}-table table {
+  table-layout:fixed;
+  border-collapse:collapse;
+  font-family: @default-base-font-family;
+  .table-size(
+  @ui-table-caption-padding,
+  @ui-table-caption-font-size,
+  @ui-table-no-padding,
+  @ui-table-cell-font-size
+  );
+}
+.@{ui-class-prefix}-table-head {
+  background:#f4f4f4;
+  z-index: 1;
+}
+.@{ui-class-prefix}-table-foot {
+  background:#f4f4f4;
+}
+
+.@{ui-class-prefix}-table-head table {
+  border-width: 0 0 2px 0;
+  border-color:#e8e8e8;
+  border-style:solid;
+}
+.@{ui-class-prefix}-table-body table,
+.@{ui-class-prefix}-table-foot table {
+//  border-width:0 0 0 0;
+  border: none;
+//  border-color:#e8e8e8;
+//  border-style:solid;
+}
+.@{ui-class-prefix}-table-foot table {
+  border: none
+}
+
+/* 表头单元格 */
+.@{ui-class-prefix}-table-hcell {
+  font-weight:700;
+  color:#777777;
+  border: none;
+  padding: @ui-table-no-padding;
+}
+
+/* 表头单元格DIV容器 */
+.@{ui-class-prefix}-table-hcell-text {
+  height:40px;
+  line-height:40px;
+  overflow:hidden;
+  padding: @ui-table-hcell-padding;
+  text-align:left;
+  font-size: 14px;
+  font-family: @default-heading-font-family;
+  position: relative;
+}
+
+/* 表尾单元格 */
+.@{ui-class-prefix}-table-fcell {
+  font-weight:700;
+  color:#000;
+  border-left:1px solid #e8e8e8;
+  padding: @ui-table-no-padding;
+}
+
+/* 表尾单元格DIV容器 */
+.@{ui-class-prefix}-table-fcell-text {
+  height:40px;
+  line-height:40px;
+  overflow:hidden;
+  padding: @ui-table-cell-padding;
+  text-align:left;
+}
+
+/* 表格内容单元格 */
+.@{ui-class-prefix}-table-cell {
+  border: none;
+  padding: @ui-table-no-padding;
+}
+
+/* 表格内容单元格容器 */
+.@{ui-class-prefix}-table-cell-text,
+.@{ui-class-prefix}-table-body-nodata {
+  line-height: 32px;
+  height: 32px;
+  overflow: hidden;
+  padding: @ui-table-cell-padding;
+  text-align: left;
+  position: relative;
+  a {
+    color: @ui-table-primary-color;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.@{ui-class-prefix}-table-cell-text-first,.@{ui-class-prefix}-table-hcell-text-first {
+  padding-left: 12px;
+}
+.@{ui-class-prefix}-table-cell-text-last,.@{ui-class-prefix}-table-hcell-text-last {
+  padding-right: 12px;
+}
+
+.@{ui-class-prefix}-table-cell-sel,
+.@{ui-class-prefix}-table-hcell-sel {
+  padding:4px 8px;
+  *padding:0 4px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.@{ui-class-prefix}-table-scroll-x {
+  height: 20px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+/* 表头单元格提示 */
+.@{ui-class-prefix}-table-htip{
+  margin:0 4px 0 0;
+}
+
+/* 表头单元格排序标识 */
+.@{ui-class-prefix}-table-hsort {
+  font-family: FontAwesome;
+  margin:2px 0 0 5px;
+  height:10px;
+  width:7px;
+  font-size:14px;
+  color: #e1e1e1;
+  overflow:hidden;
+  display:inline;
+  &:after {
+    content: @fa-var-sort;
+  }
+}
+
+.@{ui-class-prefix}-table-hcell-asc .@{ui-class-prefix}-table-hsort {
+  &:after {
+    content: @fa-var-sort-asc;
+  }
+}
+
+.@{ui-class-prefix}-table-hcell-desc .@{ui-class-prefix}-table-hsort {
+  &:after {
+    content: @fa-var-sort-desc;
+  }
+}
+
+.@{ui-class-prefix}-table-cell-align-left .@{ui-class-prefix}-table-cell-text,
+.@{ui-class-prefix}-table-cell-align-left .@{ui-class-prefix}-table-hcell-text {
+  text-align:left;
+}
+.@{ui-class-prefix}-table-cell-align-right .@{ui-class-prefix}-table-cell-text,
+.@{ui-class-prefix}-table-cell-align-right .@{ui-class-prefix}-table-hcell-text,
+.@{ui-class-prefix}-table-cell-align-right .@{ui-class-prefix}-table-fcell-text {
+  text-align:right;
+}
+.@{ui-class-prefix}-table-cell-align-center .@{ui-class-prefix}-table-cell-text,
+.@{ui-class-prefix}-table-cell-align-center .@{ui-class-prefix}-table-hcell-text {
+  text-align:center;
+}
+
+.@{ui-class-prefix}-table-cell-break .@{ui-class-prefix}-table-cell-text,
+.@{ui-class-prefix}-table-cell-break .@{ui-class-prefix}-table-hcell-text{
+  word-wrap:break-word;
+  word-break:break-all;
+  height:auto;
+}
+
+/* 可排序列的表头样式Hover */
+.@{ui-class-prefix}-table-hcell-sort-hover{
+  cursor:pointer;
+  background:#FDE8C4;
+}
+
+.@{ui-class-prefix}-table-body {
+  background:#FFF;
+  border-bottom:1px solid #ddd;
+  *position: relative;
+}
+
+.@{ui-class-prefix}-table-body-nodata{
+  border:1px solid #ddd;
+  border-width: 0 1px;
+  text-align: center;
+}
+
+.@{ui-class-prefix}-table-row {
+  background:#FFF;
+  border-bottom:1px solid #ddd;
+  zoom:1;
+}
+
+.@{ui-class-prefix}-table-row-last {
+  border-bottom: 0;
+}
+
+/* 行表格移上 */
+.@{ui-class-prefix}-table-row-hover {
+  background:#FFF9EE;
+}
+
+.@{ui-class-prefix}-table-row-hover .@{ui-class-prefix}-table-cell-editable {
+  border:1px solid #a8adb6;
+  margin:2px;
+  padding:1px 5px;
+  background:#fcfcfc;
+  position:relative;
+}
+
+.@{ui-class-prefix}-table-editor {
+  background: #FFF6BD;
+  border: 1px solid #D5CA81;
+  padding: 5px 0 0 5px;
+  width: 268px;
+}
+.@{ui-class-prefix}-table-editor-opt {
+  margin-bottom: 5px;
+  overflow: hidden;
+  zoom: 1;
+}
+.@{ui-class-prefix}-table-editor-error {
+  clear:left;
+  margin-bottom: 5px;
+}
+.@{ui-class-prefix}-table-editor .@{ui-class-prefix}-button{
+  float:left;
+  margin-left:5px;
+}
+.@{ui-class-prefix}-table-editor .@{ui-class-prefix}-textbox{
+  float:left;
+}
+
+
+/* 行表格选中 */
+.@{ui-class-prefix}-table-row-selected table {
+  background:#efefef;
+}
+
+/* 行表格展开 */
+.@{ui-class-prefix}-table-row-unfolded {
+  background:#FDE8C4;
+}
+
+/* 定义拖拽鼠标指针 */
+.@{ui-class-prefix}-table .@{ui-class-prefix}-table-startdrag,
+.@{ui-class-prefix}-table .@{ui-class-prefix}-table-startdrag .@{ui-class-prefix}-table-thcntr {
+  cursor:col-resize;
+}
+
+/* 拖拽显示的竖线 */
+.@{ui-class-prefix}-table-mark {
+  height:400px;
+  width:1px;
+  overflow:hidden;
+  background:#000;
+  position:absolute;
+}
+
+.@{ui-class-prefix}-table-cell-editentry {
+  font-family: FontAwesome;
+  width:12px;
+  height:11px;
+  display:none;
+  top:4px;
+  right:2px;
+  cursor:pointer;
+  position:absolute;
+}
+
+.@{ui-class-prefix}-table-cell-align-right .@{ui-class-prefix}-table-cell-editentry {
+  left:2px;
+  right:auto;
+}
+
+.@{ui-class-prefix}-table-row-hover .@{ui-class-prefix}-table-cell-editentry{
+  display:block;
+  &:after {
+    content: @fa-var-pencil-square-o;
+  }
+}
+
+
+/* 子表格收起展开按钮 */
+.@{ui-class-prefix}-table-subentry,
+.@{ui-class-prefix}-table-subentry-opened,
+.@{ui-class-prefix}-table-subentry-opened-hover {
+  overflow:hidden;
+  width:12px;
+  height:12px;
+  margin: 0 auto;
+  color: #a8adb6;
+  cursor:pointer;
+  font-family: FontAwesome;
+}
+
+.@{ui-class-prefix}-table-subentryfield table { border:0; }
+
+.@{ui-class-prefix}-table-subentry {
+  &:after {
+    content: @fa-var-plus-square-o;
+  }
+}
+
+.@{ui-class-prefix}-table-subentry-opened {
+  &:after {
+    content: @fa-var-minus-square-o;
+  }
+}
+
+.@{ui-class-prefix}-table-subentry-hover,
+.@{ui-class-prefix}-table-subentry-opened-hover {
+//  border-color:#7a859a;
+}
+
+.@{ui-class-prefix}-table-subrow {
+  background:#FFF9EE;
+  border-color:#ddd;
+  border-style:solid;
+  border-width:0 1px 1px;
+  padding:1px 0 0 36px;
+  zoom:1;
+}
+.@{ui-class-prefix}-table-subrow-last {
+  border-width:1px 1px 0;
+}
+
+.@{ui-class-prefix}-table-editor .@{ui-class-prefix}-button {
+  height: 20px;
+  line-height: 20px;
+  padding: @ui-table-button-padding;
+  font-size: @ui-table-base-font-size;
+  margin-top: 3px;
+  background-color: @ui-table-primary-color;
+  border: none;
+  &:hover {
+    background-color: @ui-table-button-color-hover;
+  }
+}
+
+.@{ui-class-prefix}-table-checkbox-custom {
+  .ui-checkbox;
+}
+
+.@{ui-class-prefix}-table-radio-custom {
+  .ui-radio;
+}
+
+.@{ui-class-prefix}-table-checkbox-custom,
+.@{ui-class-prefix}-table-radio-custom {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
+  label, .box {
+    &:hover:before {
+      .box-shadow(0 0 0 1px @ui-table-primary-color);
+    }
+    &:before, &:after {
+      font-size: @ui-table-radio-font-size;
+    }
+    display: block;
+    font-size: 0;
+    height: 0;
+    width: 0;
+  }
+  input:checked ~ label:before {
+    background: none repeat scroll 0 0 @ui-table-primary-color;
+    .box-shadow(0 0 0 1px @ui-table-primary-color);
+  }
+  input:focus ~ label:before {
+    .box-shadow(0 0 0 1px @ui-table-primary-color);
+  }
+}
+
+
