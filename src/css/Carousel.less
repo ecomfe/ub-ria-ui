@@ -1,0 +1,126 @@
+@ub-ria-ui-carousel-toolbar-pageColor: #ddd;
+@ub-ria-ui-carousel-toolbar-currentPageColor: @primary-color;
+
+@ub-ria-ui-carousel-selected-color: @primary-color;
+@ub-ria-ui-carousel-selected-text-color: @white;
+@ub-ria-ui-carousel-listItem-border: 4px solid #fff;
+@ub-ria-ui-carousel-listItem-selected-border: 4px solid @ub-ria-ui-carousel-selected-color;
+@ui-ria-ui-carousel-pointer-color: @primary-color;
+@ui-ria-ui-carousel-pointer-hover-color: lighten(@primary-color, 5%);
+@ui-ria-ui-carousel-pointer-active-color: darken(@primary-color, 10%);
+
+.@{ui-class-prefix}-carousel-main {
+    max-width: 1000px;
+    max-height: 500px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.@{ui-class-prefix}-carousel-content {
+    position: relative;
+}
+
+.@{ui-class-prefix}-carousel-pointer {
+    cursor: pointer;
+    position:absolute;
+    top: 50%;
+    margin-top: -.5em;
+    color: @ui-ria-ui-carousel-pointer-color;
+    &:hover {
+        color: @ui-ria-ui-carousel-pointer-hover-color;
+    }
+    &:active {
+        color: @ui-ria-ui-carousel-pointer-hover-color;
+    }
+}
+
+.@{ui-class-prefix}-carousel-pointer-active-l {
+    left: 0;
+}
+
+.@{ui-class-prefix}-carousel-pointer-disable {
+    .esf-disabled();
+}
+
+.@{ui-class-prefix}-carousel-pointer-active-r {
+    right: 0;
+}
+
+.@{ui-class-prefix}-carouse-list-wrap {
+    position: relative;
+    overflow: hidden;
+    margin: 0 30px;
+}
+
+.@{ui-class-prefix}-carousel-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    .transition(.4s all ease);
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item {
+    margin: 0 2px;
+    border: @ub-ria-ui-carousel-listItem-border;
+    float: left;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    position: relative;
+    cursor: pointer;
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item img {
+    width: 100%;
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-disabled {
+    opacity: 0.5;
+    cursor: auto;
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-selected-item {
+    border: @ub-ria-ui-carousel-listItem-selected-border;
+    cursor: auto;
+    opacity: 1;
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item .@{ui-class-prefix}-carousel-check {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom:0;
+    background: @ub-ria-ui-carousel-selected-color;
+    color: @ub-ria-ui-carousel-selected-text-color;
+}
+
+.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-selected-item .@{ui-class-prefix}-carousel-check{
+    display: inline-block;
+}
+
+.@{ui-class-prefix}-carousel-toolbar {
+    margin: 10px 0;
+    position: relative;
+    height: 8px;
+}
+
+.@{ui-class-prefix}-carousel-toolbar ul {
+    text-align: center;
+}
+
+.@{ui-class-prefix}-carousel-toolbar .@{ui-class-prefix}-carousel-page {
+    margin: 0 5px;
+    width: 8px;
+    height: 8px;
+    background: @ub-ria-ui-carousel-toolbar-pageColor;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    cursor: pointer;
+    .border-radius(50%);
+}
+
+.@{ui-class-prefix}-carousel-toolbar .@{ui-class-prefix}-carousel-current-page {
+    background: @ub-ria-ui-carousel-toolbar-currentPageColor;
+    cursor: auto;
+}
