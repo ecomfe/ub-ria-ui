@@ -16,7 +16,7 @@ define(
 
 
         var u = require('underscore');
-        var util = require('ub-ria/util');
+        var util = require('./util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
 
