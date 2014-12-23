@@ -59,6 +59,11 @@ require.config({
             'name': 'er',
             'location': '../dep/er/3.1.0-beta.6/src',
             'main': 'main'
+        },
+        {
+            'name': 'ub-ria',
+            'location': '../dep/ub-ria/1.0.0-alpha.7/src',
+            'main': 'main'
         }
     ]
 });
@@ -83,8 +88,8 @@ $(function () {
     $('.view').on('click', '.viewer li', viewSource);
     $('.source, .viewer li').on('mousedown', false);
     //$('html').on('mousedown', hideSource);
-    
-    var navItems = 
+
+    var navItems =
         '<li><a href="Carousel.html">Carousel</a></li>' +
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
         '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
