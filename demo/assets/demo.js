@@ -64,6 +64,10 @@ require.config({
             'name': 'ub-ria',
             'location': '../dep/ub-ria/1.0.0-alpha.7/src',
             'main': 'main'
+        },
+        {
+            'name': 'esui-flat-theme',
+            'location': '../dep/esui-flat-theme/1.0.0-alpha.3/src'
         }
     ]
 });
@@ -91,6 +95,7 @@ $(function () {
 
     var navItems =
         '<li><a href="Carousel.html">Carousel</a></li>' +
+        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>' +
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
         '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Carousel - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+    <script src="assets/third-party/prism.js"></script>
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+
+    <script src="assets/demo.js"></script>
+</head>
+<body>
+    <h1>Carousel</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <h2>下拉选择控件</h2>
+            <section class="intro">
+                <p>下拉选择</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <label class="label">单选第一层级：</label>
+                    <div
+                        data-ui-type="ToggleLayerSelector"
+                        data-ui-id="slot-channel"
+                        data-ui-name="slotChannel"
+                        data-ui-target-control="slot-channel-selector"
+                        data-ui-text-field="name"
+                        data-ui-value-field="id">
+                        <span>
+                            <h3>请选择</h3>
+                        </span>
+                        <section>
+                            <div
+                                data-ui-type="TableRichSelector"
+                                data-ui-id="slot-channel-selector"
+                                data-ui-item-name="应用"
+                                data-ui-multi="false"
+                                data-ui-has-foot="true"
+                                data-ui-has-head="false"
+                                data-ui-has-row-head="false"
+                                class="no-move-richselector">
+                            </div>
+                        </section>
+                    </div>
+                    <label class="label">单选二层级：</label>
+                    <div
+                        data-ui-type="ToggleLayerSelector"
+                        data-ui-id="slot-tree"
+                        data-ui-name="slotTree"
+                        data-ui-target-control="all-slots"
+                        data-ui-text-field="name"
+                        data-ui-value-field="id">
+                        <span>
+                            <h3>请选择</h3>
+                        </span>
+                        <section>
+                            <div class="no-move-richselector"
+                                data-ui-type="TreeRichSelector"
+                                data-ui-id="all-slots"
+                                data-ui-multi="false"
+                                data-ui-has-foot="false"
+                                data-ui-has-head="false"
+                                data-ui-only-leaf-select="true">
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        require(
+                [
+                    'esui',
+                    'TreeRichSelector',
+                    'TableRichSelector',
+                    'ToggleLayerSelector'
+                ],
+                function (ui) {
+                    var tables = ui.init(document.body);
+                    var table1 = ui.get('slot-channel-selector');
+
+                    var arrayDatasource = [];
+                    for (var i = 0; i < 20; i++) {
+                        var isSelected = false;
+                        if (i == 20) {
+                            isSelected = true;
+                        }
+                        arrayDatasource.push({
+                            text: '广告位' + (i + 1),
+                            name: '广告位' + (i + 1),
+                            id: i + 1,
+                            isSelected: isSelected
+                        })
+                    }
+
+                    table1.setProperties({datasource: arrayDatasource});
+
+                    table2 = ui.get('all-slots');
+
+
+                    var datasource = {
+                        id: 'root',
+                        text: '所有广告位',
+                        children: []
+                    };
+                    var children = datasource.children;
+                    for (var i = 0; i < 20; i++) {
+                        var isSelected = false;
+                        if (i == 20) {
+                            isSelected = true;
+                        }
+                        children.push({
+                            text: '广告位' + (i + 1),
+                            name: '广告位' + (i + 1),
+                            id: i + 1,
+                            isSelected: isSelected
+                        })
+                    }
+
+                    for (i = 0; i < children.length; i += 2) {
+                        var node = children[i];
+                        node.children = [
+                            {
+                                text: '子节点' + i,
+                                name: '子节点' + (i),
+                                id: 'child' + i
+                            }
+                        ]
+                    }
+
+                    table2.setProperties({datasource: datasource});
+                }
+        );
+    </script>
+</body>
+</html>

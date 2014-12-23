@@ -38,6 +38,8 @@ define(
                 width: 200,
                 // 是否需要标题栏
                 hasHead: true,
+                // 标题栏是否需要统计数
+                needHeadCount: true,
                 // 这个名字出现在标题栏
                 title: '标题名',
                 // 是否需要批量操作
@@ -90,9 +92,9 @@ define(
         RichSelector.prototype.getHeadHTML = function () {
             var helper = this.helper;
             var actionLink = '';
+            var headCount = '';
             if (this.needBatchAction) {
-                var linkClassName =
-                    helper.getPartClassName('batch-action-link');
+                var linkClassName = helper.getPartClassName('batch-action-link');
                 var linkId = this.helper.getId('batch-action');
                 actionLink = ''
                     + '<span class="' + linkClassName
@@ -101,11 +103,18 @@ define(
                     + '</span>';
             }
 
+            if (this.hasHead && this.needHeadCount) {
+                var countClass = helper.getPartClassName('head-count');
+                headCount = '<span class="'
+                    + countClass
+                    + '" data-ui="type:Label;childName:headTotalCount"></span>';
+            }
+
             var head = [
                 '<div data-ui="type:Panel;childName:head;"',
                 ' class="${headClass}">',
                 '<h3 data-ui="type:Label;childName:title;">',
-                '${title}</h3>',
+                '${title}</h3>${totalCount}',
                 '${actionLink}',
                 '</div>'
             ].join('\n');
@@ -115,7 +124,8 @@ define(
                 {
                     headClass: helper.getPartClassName('head'),
                     title: this.title,
-                    actionLink: actionLink
+                    actionLink: actionLink,
+                    totalCount: headCount
                 }
             );
 
@@ -180,20 +190,19 @@ define(
                     ' class="${generalQueryResultClass}"',
                     ' id="${queryResultId}">',
                     '<span class="${linkClass}" id="${linkId}">清空</span>',
-                    '共找到<span id="${queryResultCountId}"></span>个',
+                    '共找到<span class="${countClass}" id="${queryResultCountId}"></span>个',
                     '</div>'
                 ].join('\n');
 
                 searchInput = lib.format(
                     searchInput,
                     {
-                        searchWrapperClass:
-                            helper.getPartClassName('search-wrapper'),
-                        generalQueryResultClass:
-                            helper.getPartClassName('query-result-general'),
+                        searchWrapperClass: helper.getPartClassName('search-wrapper'),
+                        generalQueryResultClass: helper.getPartClassName('query-result-general'),
                         queryResultCountId: helper.getId('result-count'),
                         linkClass: helper.getPartClassName('clear-query-link'),
-                        linkId: helper.getId('clear-query')
+                        linkId: helper.getId('clear-query'),
+                        countClass: helper.getPartClassName('search-count')
                     }
                 );
             }
@@ -314,6 +323,8 @@ define(
                 this.refreshResult();
                 // 更新腿部总结果
                 this.refreshFoot();
+                // 更新头部总结果
+                this.refreshHead();
 
                 // 更新状态
                 this.addState('queried');
@@ -365,6 +376,9 @@ define(
 
             // 更新腿部总结果
             this.refreshFoot();
+
+            // 更新头部总结果
+            this.refreshHead();
 
             // 调整高度
             this.adjustHeight();
@@ -437,6 +451,14 @@ define(
             return foot.getChild('totalCount');
         };
 
+        RichSelector.prototype.getHeadTotalCountPanel = function () {
+            var head = this.getChild('head');
+            if (!head) {
+                return null;
+            }
+            return head.getChild('headTotalCount');
+        }
+
         /**
          * 判断是否处于query状态
          * @return {boolean}
@@ -454,6 +476,7 @@ define(
             if (this.mode === 'delete') {
                 this.deleteAll();
                 this.refreshFoot();
+                this.refreshHead();
             }
             else if (this.mode === 'add') {
                 this.selectAll();
@@ -537,6 +560,8 @@ define(
                 this.processDataAfterRefresh(adaptedData);
                 // 更新底部信息
                 this.refreshFoot();
+                // 更新头部总结果
+                this.refreshHead();
                 // 更新高度
                 this.adjustHeight();
             }
@@ -552,7 +577,6 @@ define(
         /**
          * 更新腿部信息
          *
-         * @param {ui.RichSelector} richSelector 类实例
          * @ignore
          */
         RichSelector.prototype.refreshFoot = function () {
@@ -566,6 +590,24 @@ define(
             if (totalCountPanel) {
                 var itemName = u.escape(this.itemName);
                 totalCountPanel.setText('共 ' + count + ' 个' + itemName);
+            }
+        };
+
+        /**
+         * 更新头部信息
+         *
+         * @ignore
+         */
+        RichSelector.prototype.refreshHead = function () {
+            if (!this.hasHead || !this.needHeadCount) {
+                return;
+            }
+            var count = this.getCurrentStateItemsCount();
+
+            // 更新头部总结果
+            var totalCountPanel = this.getHeadTotalCountPanel();
+            if (totalCountPanel) {
+                totalCountPanel.setText('(' + count + ')');
             }
         };
 
