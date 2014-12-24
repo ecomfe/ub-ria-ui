@@ -4,7 +4,6 @@
  */
 
 define(function (require) {
-    
     var u = require('underscore');
     var lib = require('esui/lib');
     var paint = require('esui/painters');
@@ -39,7 +38,6 @@ define(function (require) {
     }
 
     Carousel.prototype = (function () {
-        
         /**
          * 拼接main的dom结构
          * @return {string} html片段
@@ -70,23 +68,23 @@ define(function (require) {
          * @inner 
          */
         function getItemHtml(data, itemWidth, itemHeight) {
+            var me = this;
             var html = [];
-            for (var i = 0; i < data.length; i++) {
-                var item = data[i];
+            u.each(data, function (item, index) {
                 var str = lib.format(
                     ITEM_TPL,
                     {
                         'imgSrc': item.url,
                         'width': itemWidth,
                         'height': itemHeight,
-                        'index': i,
-                        'type-selector': this.helper.getPrimaryClassName(),
-                        'item-selector': this.disabled ? this.helper.getPartClassName('disabled') : '',
-                        'icon-check': this.helper.getIconClass('check')
+                        'index': index,
+                        'type-selector': me.helper.getPrimaryClassName(),
+                        'item-selector': me.disabled ? me.helper.getPartClassName('disabled') : '',
+                        'icon-check': me.helper.getIconClass('check')
                     }
                 );
                 html.push(str);
-            }
+            });
             return html.join('');
         };
 
@@ -100,15 +98,12 @@ define(function (require) {
             var html = [];
             var len = data.length;
             var divided = Math.ceil(len / this.pageSize);
-            var realLen = divided;
-    
-            this.pageLength = realLen;
-            
-            for (var i = 0; i < realLen; i++) {
+            this.pageLength = divided;
+            for (var i = 0; i < divided; i++) {
                 var str = lib.format(
                     PAGE_TPL,
                     {
-                        index: i,
+                        'index': i,
                         'type-selector': this.helper.getPrimaryClassName()
                     }
                 );
@@ -153,7 +148,6 @@ define(function (require) {
                     lib.removeClass(this.helper.getId('right-handler'), disableClass);
                 }
             }
-            
         };
 
         /**
