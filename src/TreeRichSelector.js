@@ -470,10 +470,12 @@ define(
 
             if (parentItem) {
                 var brothers = parentItem.node.children || [];
-                var allSelected = true;
-                u.each(brothers, function (brother) {
-                    control.setItemState(brother.id, 'isSelected', false);
-                });
+                var allSelected = !u.find(
+                    brothers,
+                    function (brother) {
+                        return !control.getItemState(brother.id, 'isSelected');
+                    }
+                );
                 selectItem(control, parentId, allSelected);
             }
         }
