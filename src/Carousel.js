@@ -8,6 +8,7 @@ define(function (require) {
     var lib = require('esui/lib');
     var paint = require('esui/painters');
     var Control = require('esui/Control');
+    var eoo = require('eoo');
 
     var MAIN_TPL = [
         '<div class="${type-selector}-main" id="${contentId}">',
@@ -33,11 +34,7 @@ define(function (require) {
     
     var PAGE_TPL = '<li index="${index}" class="${type-selector}-page"></li>';
 
-    function Carousel(options) {
-        Control.call(this, options);
-    }
-
-    Carousel.prototype = (function () {
+    var exports = (function () {
         /**
          * 拼接main的dom结构
          * @return {string} html片段
@@ -453,7 +450,8 @@ define(function (require) {
             }
         };
     })();
-    lib.inherits(Carousel, Control);
+    
+    var Carousel = eoo.create(Control, exports);
     require('esui/main').register(Carousel);
     return Carousel;
 });
