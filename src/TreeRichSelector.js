@@ -671,7 +671,7 @@ define(
                 function (node) {
                     return this.getItemState(node.id, 'isSelected');
                 },
-                this
+                control
             );
 
         }

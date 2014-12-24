@@ -104,3 +104,74 @@ esui-tree-rich-selector {
         }
     }
 }
+
+
+
+// 图标
+.ui-tree-node-indicator {
+    margin: @tree-node-indicator-margin;
+    height: @tree-node-indicator-height;
+    width: @tree-node-indicator-width;
+    background: none;
+    .pseudo-icon(
+        @tree-node-indicator-icon-collapsed, @tree-node-indicator-icon-width-collapsed, @tree-node-indicator-icon-height-collapsed, center
+    );
+}
+
+// 展开
+.ui-tree-node-indicator-expanded {
+    .pseudo-icon(
+        @tree-node-indicator-icon-expanded, @tree-node-indicator-icon-width-expanded, @tree-node-indicator-icon-height-expanded, center
+    );
+}
+
+// 无子节点或占位
+.ui-tree-node-indicator-empty {
+    background: none;
+    .pseudo-icon(
+        @tree-node-indicator-empty-background, 0, 0
+    );
+}
+.ui-tree-node-indicator-previous {
+    background: none;
+    .pseudo-icon(
+        @tree-node-indicator-previous-background, 0, 0
+    );
+}
+.ui-tree-node-indicator-far-previous {
+    background: none;
+    .pseudo-icon(
+        @tree-node-indicator-far-previous-background, 0, 0
+    );
+}
+
+.ui-tree-node {
+    line-height: @tree-node-line-height;
+}
+
+.ui-tree-content-wrapper {
+    border-left: none;
+    padding: 0 10px;
+    &:hover {
+        background: @tree-node-wrapper-background-hover;
+
+        .ui-tree-item-content {
+            color: @tree-node-item-font-color-hover;
+            background: @tree-node-item-icon-hover;
+        }
+    }
+}
+
+.ui-tree-content-wrapper-selected,
+.ui-tree-content-wrapper-selected:hover {
+    background: @tree-node-wrapper-background-selected;
+    border-left: none;
+    .ui-tree-item-content {
+        color: @tree-node-item-font-color-selected;
+        background: @tree-node-item-icon-selected;
+    }
+}
+
+.ui-tree-item-content {
+    color: @tree-node-item-font-color;
+}
