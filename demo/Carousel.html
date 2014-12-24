@@ -30,7 +30,7 @@
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example" id="container">
-                    <div data-ui="type:Carousel;id:car;" style="margin-bottom: 30px;"></div>
+                    <div data-ui="type:Carousel;id:car;" style="margin-bottom:30px;"></div>
                 </div>
             </section>
         </div>
@@ -38,16 +38,15 @@
     <script>
         var item = {
             //模板id
-            "templateId": 1,
+            "id": 1,
             //模板缩略图
-            "thumbnail": {
-                "url": "http://ubmcmm.baidustatic.com/media/v1/0f000nYraew1DhbMjPksls.jpg"
-            }
+            "url": "http://ubmcmm.baidustatic.com/media/v1/0f000nYraew1DhbMjPksls.jpg"
+
         };
         var datasource = [];
         for (var i = 1; i < 21; i++) {
             newItem = $.extend(true, {}, item);
-            newItem.templateId = i;
+            newItem.id = i;
             datasource.push(newItem);
         }
         var model = {
@@ -69,14 +68,17 @@
                 var car1 = controls[0];
                 car1.setProperties({
                     'datasource': datasource,
-                    'value': 5
+                    'value': 5,
+                    'disabled': true
                 });
                 
                 var car2 = new Carousel(model);
-                car2.on('change', function (e) { console.log(e.value, e.item, e.index); });
+                car2.on('change', function (e) {
+                    console.log(e.target.value, e.target.selectedItem, e.target.selectedIndex); 
+                });
                 car2.appendTo(document.getElementById('container'));
-                console.log(car2.getItem());
-                /**/
+                car2.setValue('10');
+                console.log(car2.value, car2.selectedItem, car2.selectedIndex)
             }
         );
     </script>
