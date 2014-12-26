@@ -107,13 +107,13 @@ define(
                 var countClass = helper.getPartClassName('head-count');
                 headCount = '<span class="'
                     + countClass
-                    + '" data-ui="type:Label;childName:headTotalCount"></span>';
+                    + '" data-ui="type:Label;childName:headTotalCount;title:;"></span>';
             }
 
             var head = [
                 '<div data-ui="type:Panel;childName:head;"',
                 ' class="${headClass}">',
-                '<h3 data-ui="type:Label;childName:title;">',
+                '<h3 data-ui="type:Label;childName:title;title:;">',
                 '${title}</h3>${totalCount}',
                 '${actionLink}',
                 '</div>'
