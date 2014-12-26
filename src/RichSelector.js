@@ -451,13 +451,19 @@ define(
             return foot.getChild('totalCount');
         };
 
+        /**
+         * 获取头部总个数容器
+         * @param {ui.RichSelector} richSelector 类实例
+         * @return {ui.Panel}
+         * @ignore
+         */
         RichSelector.prototype.getHeadTotalCountPanel = function () {
             var head = this.getChild('head');
             if (!head) {
                 return null;
             }
             return head.getChild('headTotalCount');
-        }
+        };
 
         /**
          * 判断是否处于query状态
@@ -497,7 +503,7 @@ define(
          * 出现搜索信息时，结果区域的高度要变小，才能使整个控件高度不变
          *
          */
-        RichSelector.prototype.adjustHeight = function() {
+        RichSelector.prototype.adjustHeight = function () {
             // 用户设置总高度
             var settingHeight = this.height;
 

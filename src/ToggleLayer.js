@@ -94,7 +94,7 @@ define(
             );
         };
 
-        function close (e) {
+        function close(e) {
             var target = e.target;
             var layer = this.main;
 

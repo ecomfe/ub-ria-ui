@@ -345,7 +345,7 @@ define(
             else {
                 trySyncParentAndChildrenStates(this, item, true);
             }
-            this.fire('add', { item: item.node });
+            this.fire('add', {item: item.node});
             this.fire('change');
         };
 
@@ -488,7 +488,7 @@ define(
          */
         TreeRichSelector.prototype.actionForDelete = function (item) {
             // 外部需要知道什么数据被删除了
-            var event = this.fire('delete', { items: [item.node] });
+            var event = this.fire('delete', {items: [item.node]});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
                 deleteItem(this, item.node.id);
@@ -542,7 +542,7 @@ define(
          * @override
          */
         TreeRichSelector.prototype.deleteAll = function () {
-            var event = this.fire('delete', { items: this.allData.children });
+            var event = this.fire('delete', {items: this.allData.children});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
                 this.set('datasource', null);
@@ -575,7 +575,7 @@ define(
             // 赋予新值
             this.currentActiveId = item.node.id;
 
-            this.fire('load', { item: item.node });
+            this.fire('load', {item: item.node});
             this.fire('change');
         };
 
@@ -696,7 +696,7 @@ define(
          * 清空搜索的结果
          *
          */
-        TreeRichSelector.prototype.clearData = function() {
+        TreeRichSelector.prototype.clearData = function () {
             // 清空数据
             this.queriedData = {};
         };

@@ -43,7 +43,7 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
+                    {field: 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
                 ],
                 allowUnselectNode: false
             };
@@ -129,7 +129,7 @@ define(
                 // 如果不是数组，这个值就是id
                 if (!u.isArray(selectedData)) {
                     this.currentSelectedId = selectedData;
-                    selectedData = [{ id: selectedData }];
+                    selectedData = [{id: selectedData}];
                 }
                 // 如果是数组，保存第一个值为当前选值
                 else if (selectedData.length) {
@@ -395,7 +395,7 @@ define(
 
             if (fire) {
                 // 需要增加上一个参数，因为有的时候需要了解当前操作的对象是什么
-                control.fire('add', { item: item });
+                control.fire('add', {item: item});
                 control.fire('change');
             }
         }
@@ -510,7 +510,7 @@ define(
         function actionForDelete(control, row, item) {
             deleteItem(control, item.id);
             // 外部需要知道什么数据被删除了
-            control.fire('delete', { items: [item] });
+            control.fire('delete', {items: [item]});
             control.fire('change');
         }
 
@@ -542,7 +542,7 @@ define(
         TableRichSelector.prototype.deleteAll = function () {
             var items = u.clone(this.datasource);
             this.set('datasource', []);
-            this.fire('delete', { items: items });
+            this.fire('delete', {items: items});
             this.fire('change');
         };
 
