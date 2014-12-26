@@ -1,5 +1,5 @@
 /**
- * SSP for WEB
+ * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 可将一个单选RichSelector展开收起的控件

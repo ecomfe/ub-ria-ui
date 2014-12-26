@@ -174,7 +174,7 @@ define(
 
             var searchInput = '';
             if (this.hasSearchBox) {
-                var searchBoxWidth = this.width - 45;
+                var searchBoxWidth = this.width - 24;
                 searchInput = [
                     // 搜索区
                     '<div data-ui="type:Panel;childName:searchBoxArea"',

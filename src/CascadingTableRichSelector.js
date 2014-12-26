@@ -1,5 +1,5 @@
 /**
- * SSP for WEB
+ * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 串联多选List to List组合控件

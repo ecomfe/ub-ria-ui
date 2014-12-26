@@ -1,5 +1,5 @@
 /**
- * UB RIA Base
+ * UB-RIA-UI 1.0
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @ignore
