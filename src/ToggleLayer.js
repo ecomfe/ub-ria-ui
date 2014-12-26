@@ -69,14 +69,54 @@ define(
                 attachedDOM: lib.getChildren(this.main)[0],
                 attachedLayout: 'bottom,left',
                 viewContext: this.viewContext,
-                renderOptions: this.renderOptions
+                renderOptions: this.renderOptions,
+                autoClose: false,
+                toggleLayer: this
             };
             var contentLayer = ui.create('Overlay', options);
 
             this.helper.addPartClasses('content', contentLayer.main);
             this.addChild(contentLayer, 'content');
             contentLayer.render();
+
+            contentLayer.on(
+                'show',
+                function () {
+                    this.helper.addDOMEvent(document, 'mousedown', close);
+                }
+            );
+
+            contentLayer.on(
+                'hide',
+                function () {
+                    this.helper.removeDOMEvent(document, 'mousedown', close);
+                }
+            );
         };
+
+        function close (e) {
+            var target = e.target;
+            var layer = this.main;
+
+            if (!layer) {
+                return;
+            }
+
+            var isChild = lib.dom.contains(layer, target);
+
+            if (!isChild) {
+                this.hide();
+
+                // 如果是点击attachedTarget的话，需要保持expended状态.
+                // 如果是点击其他空白区域的话，直接去掉expended就行。
+                var attachedTarget = this.attachedTarget;
+                var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
+
+                if (!isAttachedTarget) {
+                    this.toggleLayer.removeState('expended');
+                }
+            }
+        }
 
         /**
          * 初始化DOM结构
@@ -96,14 +136,13 @@ define(
             var contentLayer = this.getChild('content');
 
             if (this.isExpanded()) {
-                this.removeState('expanded');
+                this.removeState('expended');
                 contentLayer.hide();
             }
             else {
-                this.toggleState('expanded');
+                this.addState('expended');
                 contentLayer.show();
             }
-
 
             this.fire('change');
         };
@@ -117,7 +156,7 @@ define(
          */
         exports.repaint = painters.createRepaint(
             Control.prototype.repaint,
-            painters.state('expanded'),
+            painters.state('expended'),
             {
                 name: 'title',
                 paint: function (panel, title) {
@@ -133,7 +172,7 @@ define(
         );
 
         exports.isExpanded = function () {
-            return this.hasState('expanded');
+            return this.hasState('expended');
         };
 
         var ToggleLayer = require('eoo').create(Control, exports);

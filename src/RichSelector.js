@@ -607,7 +607,7 @@ define(
             // 更新头部总结果
             var totalCountPanel = this.getHeadTotalCountPanel();
             if (totalCountPanel) {
-                totalCountPanel.setText('(' + count + ')');
+                totalCountPanel.setText('（' + count + '）');
             }
         };
 

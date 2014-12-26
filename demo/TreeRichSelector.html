@@ -18,6 +18,16 @@
     <style>
         .ui-richselector {
             display: inline-block;
+            margin: 5px;
+        }
+
+        .view {
+            background-color: #fff;
+            border: 1px solid #eee;
+        }
+
+        h3 {
+            padding: 20px 10px 10px 0;
         }
     </style>
 </head>
@@ -37,7 +47,7 @@
                 </ul>
 
                 <div class="form-field">
-                    <esui-label class="form-field-label">左右多选（单一层级）</esui-label>
+                    <h3>左右多选（单一层级）</h3>
                     <div
                         data-ui-type="CascadingTableRichSelector"
                         data-ui-id="cas-slots"
@@ -58,7 +68,7 @@
                 </div>
 
                 <div class="form-field">
-                    <esui-label class="form-field-label">一级两列列表选择</esui-label>
+                    <h3>一级两列列表选择</h3>
                     <div class="form-field-value">
                         <esui-table-rich-selector
                             data-ui-id="all-table-slots"
@@ -84,13 +94,8 @@
                     </div>
                 </div>
 
-
-
-
-
-
                 <div class="form-field">
-                    <esui-label class="form-field-label">树多选</esui-label>
+                    <h3>树多选</h3>
                     <div data-ui-type="TreeRichSelector"
                         data-ui-id="tree-all-slots"
                         data-ui-title="全部有效代码位"
