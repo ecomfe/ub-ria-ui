@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Carousel - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.less" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+    <script src="assets/third-party/prism.js"></script>
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+
+    <script src="assets/demo.js"></script>
+</head>
+<body>
+    <h1>Carousel</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <textarea data-ui-type="TextBox"
+                   data-ui-mode="text"
+                   data-ui-id="test"
+                   data-ui-extension-autocomplete-type="AutoComplete"
+                   data-ui-extension-autocomplete-firechar="{"
+                   data-ui-extension-autocomplete-splitchar=","
+                   data-ui-extension-autocomplete-ismultiple="true"
+                   data-ui-extension-autocomplete-main-class="ui-autocomplete"
+                   data-ui-extension-autocomplete-item-class="ui-autocomplete-item"
+                   data-ui-extension-autocomplete-item-hover-class="ui-autocomplete-item-hover"
+            ></textarea>
+        </div>
+    </div>
+    <script>
+        
+        require(
+            [
+                'esui',
+                'AutoComplete'
+            ],
+            function (ui, AutoComplete) {
+                window.ui = ui;
+                var controls = ui.init();
+                var ac1 = controls[0];
+                ac1.setProperties({
+                    /*'datasource': ['abc','abcccc','abcdef','adee','adddd','adeee','bfffff','bfeeee'],*/
+                    'datasource': function (req, res) {
+                        //setTimeout(function(){
+                            var a = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
+                            res(a);
+                        //}, 800);
+                    }
+                });
+            }
+        );
+    </script>
+</body>
+</html>
