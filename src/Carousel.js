@@ -24,14 +24,14 @@ define(function (require) {
             '</div>',
         '</div>'
     ].join('');
-    
+
     var ITEM_TPL = [
         '<li class="${type-selector}-item ${item-selector}" index="${index}" style="width:${width}px;height:${height}px;">',
             '<img class="${type-selector}-item-img" src="${imgSrc}"/>',
             '<span class="${type-selector}-check ${icon-check}"></span>',
         '</li>'
     ].join('');
-    
+
     var PAGE_TPL = '<li index="${index}" class="${type-selector}-page"></li>';
 
     var exports = (function () {
@@ -120,7 +120,7 @@ define(function (require) {
             }
             return Math.floor(this.selectedIndex / this.pageSize);
         };
-        
+
         /**
          * 设置左右箭头的样式
          * @inner 
@@ -205,7 +205,7 @@ define(function (require) {
              */
             this.fire('change');
         };
-        
+
         /**
          * 翻页按钮点击处理函数
          * @param {number} nextPage 目标页的序号
@@ -258,7 +258,7 @@ define(function (require) {
              * @override
              */
             type: 'Carousel',
-    
+
             /**
              * 初始化参数
              *
@@ -298,7 +298,7 @@ define(function (require) {
                 properties.pageSize = parseFloat(properties.pageSize, 10);
                 this.setProperties(properties);
             },
-    
+
             /**
              * 创建控件主元素，默认使用`div`元素
              *
@@ -312,7 +312,7 @@ define(function (require) {
             createMain: function () {
                 return document.createElement('div');
             },
-    
+
             /**
              * 初始化DOM结构
              *
@@ -321,7 +321,7 @@ define(function (require) {
             initStructure: function () {
                 this.main.innerHTML = getMainHtml.call(this);
             },
-    
+
             /**
              * 初始化事件交互
              *
@@ -341,7 +341,7 @@ define(function (require) {
                 var toolbar = this.helper.getPart('toolbar');
                 this.helper.addDOMEvent(toolbar, 'click', u.bind(toolbarHandler, this));
             },
-    
+
             /**
              * 重新渲染视图
              * 仅当生命周期处于RENDER时，该方法才重新渲染
@@ -411,7 +411,7 @@ define(function (require) {
                 var page = getPageByIndex.call(this);
                 this.setPage(page);
             },
-    
+
             /**
              * 设置page
              * @param {number} page 获取page的序号 
@@ -450,7 +450,7 @@ define(function (require) {
             }
         };
     })();
-    
+
     var Carousel = eoo.create(Control, exports);
     require('esui/main').register(Carousel);
     return Carousel;
