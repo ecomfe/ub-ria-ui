@@ -75,7 +75,7 @@ define(
          * @param {Object} titleElem Title的DOM对象
          */
         function initTitle(titleElem) {
-            var titlePanel = ui.create('Panel', { main: titleElem });
+            var titlePanel = ui.create('Panel', {main: titleElem});
             this.helper.addPartClasses('title', titlePanel.main);
             this.addChild(titlePanel, 'title');
             titlePanel.render();
