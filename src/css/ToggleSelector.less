@@ -20,9 +20,9 @@
 @toggle-select-layer-state-indicator-width: 9px;
 @toggle-select-layer-state-indicator-height: 5px;
 @toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-hover.png);
+@toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
 @toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
-@toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-normal.png);
+@toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
 
 @toggle-select-font-color: #666;
 @toggle-select-border: none;
@@ -44,6 +44,7 @@
 @toggle-select-padding: 0 @toggle-select-padding-right 0 @toggle-select-padding-left;
 
 .ui-toggle-select {
+    cursor: pointer;
     background: @toggle-select-background-color;
     border: @toggle-select-border;
     border-radius: 0;
@@ -58,17 +59,10 @@
     .pseudo-icon(@toggle-select-layer-state-indicator, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
 }
 
-.ui-toggle-select:focus,
-.ui-toggle-select:hover {
-    background: @toggle-select-background-color-hover;
-    .pseudo-icon(@toggle-select-layer-state-indicator-hover, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
-}
-
-.ui-toggle-select-active,
-.ui-toggle-select-active:hover,
-.ui-toggle-select-active:focus {
-    background: @toggle-select-background-color-active;
-    .pseudo-icon(@toggle-select-layer-state-indicator-active, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+.ui-togglepanel-expended {
+    .ui-togglepanel-title {
+        .pseudo-icon(@toggle-select-layer-state-indicator-active, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+    }
 }
 
 .ui-toggle-select-disabled,

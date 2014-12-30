@@ -1,10 +1,9 @@
 /**
- * UB-RIA-UI 1.0
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * UB-RIA
  *
  * @ignore
- * @file 浮层控件
- * @author liyidong(srhb18@gmail.com)
+ * @file 折叠控件
+ * @author wangyaqiong, liyidong(srhb18@gmail.com)
  */
 
 define(
@@ -16,26 +15,29 @@ define(
         require('esui/Panel');
         require('esui/Overlay');
 
-        var exports = {};
         /**
-         * 控件类型
-         *
-         * @override
+         * 折叠控件
          */
-        exports.type = 'ToggleLayer';
+        function TogglePanel() {
+            Control.apply(this, arguments);
+        }
+
+        TogglePanel.prototype.type = 'TogglePanel';
 
         /**
          * 初始化参数
          *
+         * @param {Object} options 构造函数传入的参数
          * @override
          * @protected
          */
-        exports.initOptions = function (options) {
-            var defaultProperties = {
-                expanded: false
+        TogglePanel.prototype.initOptions = function (options) {
+            var defaults = {
+                expanded: false,
+                position: 'layer'
             };
 
-            var properties = lib.extend(defaultProperties, options);
+            var properties = lib.extend(defaults, options);
 
             this.setProperties(properties);
         };
@@ -46,20 +48,68 @@ define(
          * @override
          * @protected
          */
-        exports.initStructure = function () {
+        TogglePanel.prototype.initStructure = function () {
             var children = lib.getChildren(this.main);
             var titleElem = children[0];
             var contentElem = children[1];
 
             // 初始化Title部分的DOM结构
-            var titlePanel = ui.create('Panel', {main: titleElem});
+            initTitle.call(this, titleElem);
+
+            // 初始化content部分的DOM结构
+            var position = this.position;
+            if (position === 'fixed') {
+                // 占位
+                initContentPanel.call(this, contentElem);
+            }
+            else {
+                // 不占位
+                initContentOverlay.call(this, contentElem);
+            }
+        };
+
+        /**
+         * 初始化Title部分的DOM结构
+         *
+         * @inner
+         * @param {Object} titleElem Title的DOM对象
+         */
+        function initTitle(titleElem) {
+            var titlePanel = ui.create('Panel', { main: titleElem });
             this.helper.addPartClasses('title', titlePanel.main);
             this.addChild(titlePanel, 'title');
             titlePanel.render();
             this.set('title', titleElem && titleElem.innerHTML);
             titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, this));
+        }
 
-            // 初始化content部分的DOM结构
+        /**
+         * 按Panel模式初始化Content部分的DOM结构
+         *
+         * @inner
+         * @param {Object} contentElem content的DOM对象
+         */
+        function initContentPanel(contentElem) {
+            var options = {
+                main: contentElem,
+                childName: 'content',
+                viewContext: this.viewContext,
+                renderOptions: this.renderOptions
+            };
+
+            var contentPanel = ui.create('Panel', options);
+            this.helper.addPartClasses('content', contentPanel.main);
+            this.addChild(contentPanel, 'content');
+            contentPanel.render();
+        }
+
+        /**
+         * 按Overlay模式初始化Content部分的DOM结构
+         *
+         * @inner
+         * @param {Object} contentElem content的DOM对象
+         */
+        function initContentOverlay(contentElem) {
             var overlayMain = this.helper.createPart('layer', 'div');
             lib.addClass(overlayMain, this.helper.getPartClassName('layer'));
 
@@ -68,10 +118,10 @@ define(
                 childName: 'content',
                 attachedDOM: lib.getChildren(this.main)[0],
                 attachedLayout: 'bottom,left',
+                autoClose: false,
                 viewContext: this.viewContext,
                 renderOptions: this.renderOptions,
-                autoClose: false,
-                toggleLayer: this
+                togglePanel: this
             };
             var contentLayer = ui.create('Overlay', options);
 
@@ -92,8 +142,13 @@ define(
                     this.helper.removeDOMEvent(document, 'mousedown', close);
                 }
             );
-        };
+        }
 
+        /**
+         * 关闭layer层的时间处理句柄
+         *
+         * @inner
+         */
         function close(e) {
             var target = e.target;
             var layer = this.main;
@@ -113,15 +168,15 @@ define(
                 var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
 
                 if (!isAttachedTarget) {
-                    this.toggleLayer.removeState('expended');
+                    this.togglePanel.removeState('expended');
                 }
             }
         }
 
         /**
-         * 初始化DOM结构
+         * 点击Title区域的句柄
          *
-         * @ignore
+         * @inner
          */
         function onToggle() {
             this.toggleContent();
@@ -130,18 +185,27 @@ define(
         /**
          * 切换展开/收起状态
          *
-         * @public
+         * @inner
          */
-        exports.toggleContent = function () {
-            var contentLayer = this.getChild('content');
+        TogglePanel.prototype.toggleContent = function () {
+            var position = this.position;
 
-            if (this.isExpanded()) {
-                this.removeState('expended');
-                contentLayer.hide();
+            if (position === 'fixed') {
+                // 占位模式
+                this.toggleState('expended');
             }
             else {
-                this.addState('expended');
-                contentLayer.show();
+                // 浮层模式
+                var contentLayer = this.getChild('content');
+
+                if (this.isExpended()) {
+                    this.removeState('expended');
+                    contentLayer.hide();
+                }
+                else {
+                    this.toggleState('expended');
+                    contentLayer.show();
+                }
             }
 
             this.fire('change');
@@ -154,7 +218,7 @@ define(
          * @override
          * @protected
          */
-        exports.repaint = painters.createRepaint(
+        TogglePanel.prototype.repaint = painters.createRepaint(
             Control.prototype.repaint,
             painters.state('expended'),
             {
@@ -171,13 +235,12 @@ define(
             }
         );
 
-        exports.isExpanded = function () {
+        TogglePanel.prototype.isExpended = function () {
             return this.hasState('expended');
         };
 
-        var ToggleLayer = require('eoo').create(Control, exports);
-
-        require('esui').register(ToggleLayer);
-        return ToggleLayer;
+        lib.inherits(TogglePanel, Control);
+        ui.register(TogglePanel);
+        return TogglePanel;
     }
 );

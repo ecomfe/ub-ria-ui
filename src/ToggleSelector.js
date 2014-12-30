@@ -1,11 +1,11 @@
 /**
- * UB-RIA-UI 1.0
+ * SSP for WEB
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 可将一个单选RichSelector展开收起的控件
- * @class ToggleLayerSelector
- * @extends ub-ria.ui.ToggleLayer
- * @author liyidong(srhb18@gmail.com)
+ * @class ToggleSelector
+ * @extends ub-ria.ui.TogglePanel
+ * @author lixiang(lixiang05@baidu.com)
  */
 define(
     function (require) {
@@ -14,7 +14,7 @@ define(
 
         var exports = {};
 
-        exports.type = 'ToggleLayerSelector';
+        exports.type = 'ToggleSelector';
         exports.styleType = 'TogglePanel';
 
         exports.getCategory = function () {
@@ -49,9 +49,9 @@ define(
         /**
          * @override
          */
-        // exports.toggleContent = function () {
-        //     this.toggleState('expanded');
-        // };
+        exports.toggleContent = function () {
+            this.$super(arguments);
+        };
 
         /**
          * 数据变化时如果没有阻止，则更新显示文字
@@ -117,10 +117,10 @@ define(
             }
         };
 
-        var ToggleLayer = require('ToggleLayer');
-        var ToggleLayerSelector = require('eoo').create(ToggleLayer, exports);
-        require('esui').register(ToggleLayerSelector);
+        var TogglePanel = require('./TogglePanel');
+        var ToggleSelector = require('eoo').create(TogglePanel, exports);
+        require('esui').register(ToggleSelector);
 
-        return ToggleLayerSelector;
+        return ToggleSelector;
     }
 );

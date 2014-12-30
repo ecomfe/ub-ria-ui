@@ -38,7 +38,7 @@
                 <div class="example" id="container">
                     <label class="label">单选第一层级：</label>
                     <div
-                        data-ui-type="ToggleLayerSelector"
+                        data-ui-type="ToggleSelector"
                         data-ui-id="slot-channel"
                         data-ui-name="slotChannel"
                         data-ui-target-control="slot-channel-selector"
@@ -62,7 +62,7 @@
                     </div>
                     <label class="label">单选二层级：</label>
                     <div
-                        data-ui-type="ToggleLayerSelector"
+                        data-ui-type="ToggleSelector"
                         data-ui-id="slot-tree"
                         data-ui-name="slotTree"
                         data-ui-target-control="all-slots"
@@ -82,6 +82,30 @@
                             </div>
                         </section>
                     </div>
+
+                    <label class="label">占位：</label>
+                    <div
+                        data-ui-type="ToggleSelector"
+                        data-ui-id="slot-tree-oppucied"
+                        data-ui-name="slotTree"
+                        data-ui-target-control="all-slots-oppucied"
+                        data-ui-text-field="name"
+                        data-ui-value-field="id"
+                        data-ui-position="fixed">
+                        <span>
+                            <h3>请选择</h3>
+                        </span>
+                        <section>
+                            <div class="no-move-richselector"
+                                data-ui-type="TreeRichSelector"
+                                data-ui-id="all-slots-oppucied"
+                                data-ui-multi="false"
+                                data-ui-has-foot="false"
+                                data-ui-has-head="false"
+                                data-ui-only-leaf-select="true">
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </section>
         </div>
@@ -92,7 +116,7 @@
                     'esui',
                     'TreeRichSelector',
                     'TableRichSelector',
-                    'ToggleLayerSelector'
+                    'ToggleSelector'
                 ],
                 function (ui) {
                     var tables = ui.init(document.body);
@@ -115,7 +139,6 @@
                     table1.setProperties({datasource: arrayDatasource});
 
                     table2 = ui.get('all-slots');
-
 
                     var datasource = {
                         id: 'root',
@@ -148,6 +171,9 @@
                     }
 
                     table2.setProperties({datasource: datasource});
+
+                    table3 = ui.get('all-slots-oppucied');
+                    table3.setProperties({datasource: datasource});
                 }
         );
     </script>
