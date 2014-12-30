@@ -1,87 +1,48 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Carousel - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+    <script src="assets/third-party/prism.js"></script>
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+
+    <script src="assets/demo.js"></script>
 </head>
 <body>
-<link rel="stylesheet" href="assets/main.css"/>
-<script src="assets/esl.js"></script>
-<script>
-    require.config({
-        'baseUrl': '../src',
-        'paths': {},
-        'packages': [
-            {
-                'name': 'ef',
-                'location': '../dep/ef/3.1.0-beta.2/src',
-                'main': 'main'
-            },
-            {
-                'name': 'esui',
-                'location': '../dep/esui/3.1.0-beta.3/src',
-                'main': 'main'
-            },
-            {
-                'name': 'etpl',
-                'location': '../dep/etpl/3.0.0/src',
-                'main': 'main'
-            },
-            {
-                'name': 'mini-event',
-                'location': '../dep/mini-event/1.0.2/src',
-                'main': 'main'
-            },
-            {
-                'name': 'moment',
-                'location': '../dep/moment/2.7.0/src',
-                'main': 'moment'
-            },
-            {
-                'name': 'underscore',
-                'location': '../dep/underscore/1.5.2/src',
-                'main': 'underscore'
-            },
-            {
-                'name': 'eoo',
-                'location': '../dep/eoo/0.1.1/src',
-                'main': 'main'
-            },
-            {
-                'name': 'esl',
-                'location': '../dep/esl/1.2.0/src'
-            },
-            {
-                'name': 'est',
-                'location': '../dep/est/1.3.0/src'
-            },
-            {
-                'name': 'er',
-                'location': '../dep/er/3.1.0-beta.5/src',
-                'main': 'main'
-            },
-            {
-                'name': 'ub-ria',
-                'location': '../dep/ub-ria/1.0.0-alpha.7/src',
-                'main': 'main'
-            },
-            {
-                'name': 'esui-flat-theme',
-                'location': '../dep/esui-flat-theme/1.0.0-alpha.3/src'
-            }
-        ]
-    });
-</script>
-<button id="btn">展开抽屉</button>
-<div data-ui-type="DrawerActionPanel" data-ui-id="panel" style="background: #007DB7"></div>
-
-<script>
+    <h1>Carousel</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <h2>抽屉</h2>
+            <section class="intro">
+                <p>一个抽屉</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <button id="btn" class="ui-button">展开抽屉</button>
+                    <div data-ui-type="DrawerActionPanel" data-ui-id="panel" style="background: #007DB7"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
     require(['esui', 'DrawerActionPanel'], function (ui) {
         ui.init();
         document.getElementById('btn').onclick = function () {
             ui.get('panel').show();
         }
     });
-</script>
+    </script>
 </body>
 </html>
