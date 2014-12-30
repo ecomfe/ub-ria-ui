@@ -24,9 +24,7 @@
             "eicons": "~1.0.0-alpha",
             "ef": "~3.1.0-beta.2",
             "eoo": "~0.1.1",
-            "er": "~3.1.0-beta.6",
-            "ub-ria": "~1.0.0-alpha.7",
-            "esui-flat-theme": "~1.0.0-alpha.3"
+            "er": "~3.1.0-beta.6"
         }
     }
 }

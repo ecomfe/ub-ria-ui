@@ -59,15 +59,6 @@ require.config({
             'name': 'er',
             'location': '../dep/er/3.1.0-beta.6/src',
             'main': 'main'
-        },
-        {
-            'name': 'ub-ria',
-            'location': '../dep/ub-ria/1.0.0-alpha.7/src',
-            'main': 'main'
-        },
-        {
-            'name': 'esui-flat-theme',
-            'location': '../dep/esui-flat-theme/1.0.0-alpha.3/src'
         }
     ]
 });
