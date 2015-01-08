@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Slider</title>
+    <link rel="stylesheet" href="assets/themes/standard.css"/>
+    <style>
+        body{
+            padding: 50px;
+        }
+        h2{
+            font-size: 20px;
+            margin: 20px 0 10px 0;
+        }
+        h3 {
+            font-size: 16px;
+            margin: 20px 0 10px 0;
+        }
+        .mt20 {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="assets/loader/esl.js"></script>
+</head>
+<body>
+    <div>
+        <h2>1. 光秃秃的只有一个滑杆</h2>
+        <div data-ui="id:slider1;type:Slider;start:0;end:10;">
+        </div>
+
+        <h2>2. 头部有标题和label</h2>
+        <h3>2.1 0-10 默认值是5</h3>
+        <div data-ui="id:slider2-1;type:Slider;start:0;end:10;
+            isHasHead:true;headType:label;value:5;">
+        </div>
+
+        <h3>2.2 0-10 最小值3 最大值7</h3>
+        <div data-ui="id:slider2-2;type:Slider;start:0;end:10;
+            isHasHead:true;headType:label;value:4;min:3;max:7;">
+        </div>
+
+        <h3>2.3 1-100</h3>
+        <div data-ui="id:slider2-3;type:Slider;start:1;end:100;
+            isHasHead:true;headType:label;"></div>
+
+        <div class="mt20">
+            <button id="btn-set-2-3">设置值为30</button>
+            <button id="btn-get-2-3">获取值</button>
+        </div>
+
+        <h3>2.4 10-100 步长为10</h3>
+        <div data-ui="id:slider2-4;type:Slider;
+            start:10;end:100;step:10;
+            isHasHead:true;headType:label;"></div>
+
+        <h2>3. 头部有一个文本框 0-10</h2>
+        <div data-ui="id:slider3;type:Slider;start:0;end:10;
+            isHasHead:true;headType:textbox;min:0;max:10;">
+        </div>
+
+        <h2>4. 头部有一个下拉框 0-10</h2>
+        <div id="container4">
+        </div>
+
+        <h2>5. 头部有label 还有脚标 0-10</h2>
+        <div data-ui="id:slider5;type:Slider;start:0;end:10;
+            isHasHead:true;headType:label;isHasFoot:true;disabled:disabled;"></div>
+
+        <h2>6. 头部有label 还有角标 角标显示步长是20 角标还有单位 0-100</h2>
+        <div data-ui="id:slider6;type:Slider;start:0;end:100;
+            isHasHead:true;headType:label;
+            isHasFoot:true;footStep:20;unitText:%;">
+        </div>
+
+        <h2>
+            7. 头部有label, 选择的值是个区间 滑动杆范围[0, 10], 
+            可选值的范围[2, 8], 默认值[3, 7], 还有角标 角标还有单位%
+        </h2>
+        <div id="container7">
+        </div>
+        <div class="mt20">
+            <button id="btn-set-7">设置值为[4,6]</button>
+            <button id="btn-get-7">获取值</button>
+        </div>
+        <h2>8.1 竖直的滑动杆 1-100</h2>
+        <div data-ui="id:slider8-1;type:Slider;start:1;end:100;
+            isHasHead:true;headType:label;orientation:vertical;"></div>
+
+        <h2>
+            8.2 竖直的滑动杆 选择的值是个区间 滑动杆范围[0, 10],
+            可选范围[2,8], 默认值是[3, 7]
+        </h2>
+        <div id="container8"></div>
+    </div>
+<script>
+    require.config({
+        'baseUrl': '../src',
+        'paths': {
+            'tpl': '../demo/assets/loader/tpl',
+            'css': '../demo/assets/loader/css',
+            'js': '../demo/assets/loader/js'
+        },
+        'packages': [
+            {
+                'name': 'underscore',
+                'location': '../dep/underscore/1.5.2/src',
+                'main': 'underscore'
+            },
+            {
+                'name': 'esui',
+                'location': '../dep/esui/3.1.0-beta.5/src',
+                'main': 'main'
+            },
+            {
+                'name': 'mini-event',
+                'location': '../dep/mini-event/1.0.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'est',
+                'location': '../dep/est/1.3.0/src'
+            },
+            {
+                'name': 'eoo',
+                'location': '../dep/eoo/0.1.1/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esui-flat-theme',
+                'location': '../dep/esui-flat-theme/1.0.0-alpha.3/src'
+            },
+            {
+                'name': 'uioc',
+                'location': '../dep/uioc/0.1.1-alpha.5/src',
+                'main': 'main'
+            },
+            {
+                'name': 'moment',
+                'location': '../dep/moment/2.7.0/src',
+                'main': 'moment'
+            },
+            {
+                'name': 'etpl',
+                'location': '../dep/etpl/3.0.0/src',
+                'main': 'main'
+            }
+        ]
+    });
+    require(
+        [
+            'esui',
+            'esui/lib',
+            'Slider'
+        ],
+        function (ui, lib) {
+            var childrens  = ui.init(document.body);
+
+            var options = {
+                id: 'slider4',
+                type: 'Slider',
+                start: 0,
+                end: 10,
+                isHasHead: true,
+                headType: 'select',
+                datasource: [
+                    {
+                        text: '0',
+                        value: 0
+                    },
+                    {
+                        text: '1',
+                        value: 1
+                    },
+                    {
+                        text: '2',
+                        value: 2                      
+                    },
+                    {
+                        text: '3',
+                        value: 3                       
+                    },
+                    {
+                        text: '4',
+                        value: 4
+                    },
+                    {
+                        text: '5',
+                        value: 5
+                    },
+                    {
+                        text: '6',
+                        value: 6
+                    },
+                    {
+                        text: '7',
+                        value: 7
+                    },
+                    {
+                        text: '8',
+                        value: 8
+                    },
+                    {
+                        text: '9',
+                        value: 9
+                    },
+                    {
+                        text: '10',
+                        value: 10
+                    }
+                ],
+                value: 0
+            };
+
+            var select2 = ui.create('Slider', options);
+
+            select2.appendTo(document.getElementById('container4'));
+
+            var options7 = {
+                id: 'slider7',
+                type: 'Slider',
+                isHasHead: true,
+                start: 0,
+                end: 10,
+                min: 2,
+                max: 8,
+                range: true,
+                value: [3, 7],
+                isHasFoot: true,
+                isHasUnit: true,
+                unitText: '%',
+                footStep: 1
+            };
+
+            var slider7 = ui.create('Slider', options7);
+
+            slider7.appendTo(document.getElementById('container7'));
+
+            var options8 = {
+                id: 'slider8-2',
+                range: true,
+                type: 'Slider',
+                isHasHead: true,
+                start: 0,
+                end: 10,
+                min: 2,
+                max: 8,
+                value: [3, 7],
+                orientation: 'vertical'
+            };
+
+            var slider8 = ui.create('Slider', options8);
+
+            slider8.appendTo(document.getElementById('container8'));
+
+            lib.on(lib.g('btn-set-2-3'), 'click', function () {
+                ui.get('slider2-3').setValue(30);
+            });
+
+            lib.on(lib.g('btn-get-2-3'), 'click', function () {
+                alert(ui.get('slider2-3').getValue());
+            });
+
+            lib.on(lib.g('btn-set-7'), 'click', function () {
+                ui.get('slider7').setValue([4,6]);
+            });
+
+            lib.on(lib.g('btn-get-7'), 'click', function () {
+                alert(ui.get('slider7').getValue());
+            });
+        }
+    );
+
+</script>
+</body>
+</html>
