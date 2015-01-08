@@ -3261,6 +3261,115 @@ esui-tree-rich-selector {
   background: #6ccdc0;
   cursor: auto;
 }
+.ui-slider {
+  width: 640px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 12px
+}
+
+.ui-slider-body {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  width: 600px;
+  height: 20px;
+  margin: 10px 20px;
+  border: 1px solid #ccc
+}
+
+.ui-slider-vertical .ui-slider-body {
+  width: 20px;
+  height: 400px;
+  margin: 20px 10px
+}
+
+.ui-slider-body-cursor,
+.ui-slider-body-cursortwo {
+  position: absolute;
+  top: -10px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #093ac9;
+  z-index: 2
+}
+
+.ui-slider-vertical .ui-slider-body-cursor,
+.ui-slider-vertical .ui-slider-body-cursortwo {
+  top: -20px;
+  left: -10px
+}
+
+.ui-slider-body-cursortwo {
+  z-index: 3
+}
+
+.ui-slider-body-selected {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  height: 20px;
+  background-color: #ccc;
+  z-index: 1
+}
+
+.ui-slider-vertical .ui-slider-body-selected {
+  width: 20px
+}
+
+.ui-slider-head {
+  height: 38px;
+  margin-bottom: 10px
+}
+
+.ui-slider-head-label {
+  display: inline-block;
+  line-height: 38px
+}
+
+.ui-slider-head-value,.ui-slider-head-unit {
+  display: inline-block
+}
+
+.ui-slider-head-select {
+  margin-top: 13px
+}
+
+.ui-slider-head-textbox {
+  margin-top: 5px
+}
+
+.ui-slider-head-span,.ui-slider-head-unit {
+  line-height: 38px
+}
+
+.ui-slider-head-unit {
+  margin-left: 5px
+}
+
+.ui-slider-foot {
+  position: relative;
+  width: 600px;
+  margin: 20px 20px 0 20px;
+  padding-bottom: 10px
+}
+
+.ui-slider-foot li {
+  position: absolute;
+  display: inline-block;
+  width: 40px;
+  text-align: center
+}
 html {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-text-size-adjust: 100%;

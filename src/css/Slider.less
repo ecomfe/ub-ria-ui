@@ -1,0 +1,111 @@
+@import "./mixin.less";
+@import "./variables.less";
+
+.ui-slider {
+    width: @slider-width;
+    .box-sizing(border-box);
+    font-size: 12px;
+}
+
+.ui-slider-vertical {
+
+}
+
+.ui-slider-body {
+    .box-sizing(border-box);
+    position: relative;
+    width: @slider-body-width;
+    height: @slider-body-height;
+    margin: @slider-body-margin;
+    border: @slider-body-border;
+}
+
+.ui-slider-vertical .ui-slider-body {
+    width: @slider-vertical-body-width;
+    height: @slider-vertical-body-heigth;
+    margin: @slider-vertical-body-margin;
+}
+
+.ui-slider-body-cursor,
+.ui-slider-body-cursortwo {
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    width: @slider-body-cursor-width;
+    height: @slider-body-cursor-height;
+    .border-radius(@slider-body-cursor-border-radius);
+    background-color: @slider-body-cursor-background-color;
+    z-index: 2;
+}
+
+.ui-slider-vertical .ui-slider-body-cursor,
+.ui-slider-vertical .ui-slider-body-cursortwo {
+    top: -20px;
+    left: -10px;
+}
+
+.ui-slider-body-cursortwo {
+    z-index: 3;
+}
+
+.ui-slider-body-cursor-active {
+    
+}
+
+.ui-slider-body-selected {
+    .box-sizing(border-box);
+    position: absolute;
+    height: @slider-body-selected-height;
+    background-color: @slider-body-selected-background-color;
+    z-index: 1;
+}
+
+.ui-slider-vertical .ui-slider-body-selected {
+    width: @slider-vertical-body-selected-width;
+}
+
+.ui-slider-head {
+    height: @slider-head-line-height;
+    margin-bottom: @slider-head-margin-bottom;
+}
+
+.ui-slider-head-label {
+    display: inline-block;
+    line-height: @slider-head-line-height;
+}
+
+.ui-slider-head-value,
+.ui-slider-head-unit{
+    display: inline-block;
+}
+
+.ui-slider-head-select {
+    margin-top: @slider-head-select-margin-top;
+}
+
+.ui-slider-head-textbox {
+    margin-top: @slider-head-textbox-margin-top;
+}
+
+.ui-slider-head-span,
+.ui-slider-head-unit {
+    line-height: @slider-head-line-height;
+}
+
+.ui-slider-head-unit {
+    margin-left: @slider-head-unit-margin-left;
+}
+
+.ui-slider-foot {
+    position: relative;
+    width: 600px;
+    margin: 20px 20px 0 20px;
+    padding-bottom: @slider-foot-margin-bottom;
+}
+
+.ui-slider-foot li{
+    position: absolute;
+    display: inline-block;
+    width: @slider-foot-li-width;
+    text-align: center;
+}
