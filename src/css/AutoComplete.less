@@ -1,0 +1,31 @@
+.cantselect() {
+	-moz-user-select: none;  
+	-webkit-user-select: none;  
+    -ms-user-select: none;
+}
+
+.@{ui-class-prefix}-autocomplete {
+	border: solid 1px #ddd;
+	background: #fff;
+	max-height: 200px;
+	overflow: auto;
+}
+
+.@{ui-class-prefix}-autocomplete-item {
+	height: 20px;
+	line-height: 20px;
+	padding:0 10px;
+	.cantselect();
+
+	/*&:hover {
+		background: #ddd;
+	}*/
+
+	&-hover {
+		background: #ddd;
+	}
+}
+
+.@{ui-class-prefix}-layer-hidden {
+	display: none;
+}

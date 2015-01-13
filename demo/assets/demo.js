@@ -86,6 +86,7 @@ $(function () {
     
     var navItems = 
         '<li><a href="Carousel.html">Carousel</a></li>' +
+        '<li><a href="AutoComplete.html">AutoComplete</a></li>' +
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
         '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
 
