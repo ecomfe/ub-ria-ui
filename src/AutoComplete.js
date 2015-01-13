@@ -9,65 +9,12 @@
 
     var TextBox = require('esui/TextBox');
     var lib = require('esui/lib');
+    var Layer = require('esui/Layer');
+    var helper = new (require('esui/Helper'));
     var Extension = require('esui/Extension');
+    var eoo = require('eoo');
 
     var cursorHelper = require('./cursorPositionHelper');
-
-    /**
-     * 输入控件自动提示扩展
-     *
-     * 当输入控件加上此扩展后，其自动提示功能将由扩展自动提供
-     *
-     * @class extension.AutoComplete
-     * @extends Extension
-     * @constructor
-     */
-    function AutoComplete() {
-        this.main = null;
-        this.mainClass = 'ui-autocomplete';
-        this.itemClass = 'ui-autocomplete-item';
-        this.itemHoverClass = 'ui-autocomplete-item-hover';
-
-        // 只作为分隔符, 不作为匹配word的成分参与匹配
-        this.splitchar = ',';
-        // 触发新的匹配动作, 并作为匹配word的一部分参与匹配
-        this.firechar = '{';
-
-        //this.endfirechar = '}';
-        // 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
-        this.ismultiple = false;
-
-        Extension.apply(this, arguments);
-
-        if (this.ismultiple === 'false' || this.ismultiple === '0') {
-            this.ismultiple = false;
-        } else {
-            this.ismultiple = !!this.ismultiple;
-        }
-
-        this.escapedSplitchar = escapeRegex(this.splitchar);
-        this.escapedFirechar = escapeRegex(this.firechar);
-
-        this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' 
-                            + this.escapedSplitchar 
-                            + '\\s'
-                            + ']+)$');
-
-        this.fireCharRE = new RegExp('(' + this.escapedFirechar + '[^' 
-                           + this.escapedSplitchar 
-                           + this.escapedFirechar
-                           + '\\s'
-                           + ']*)$');
-    }
-
-    /**
-     * 指定扩展类型，始终为`"AutoComplete"`
-     *
-     * @type {string}
-     */
-    AutoComplete.prototype.type = 'AutoComplete';
-
-    
 
     function filter(value, datasource) {
         var ret = [];
@@ -84,87 +31,111 @@
         return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
     }
 
-
     /**
-     * 显示自动提示下拉列表
+     * 重绘自动提示下拉列表
      *
      */
-    function showSuggest(data) {
-        var ret = '';
-        if (data.length) {
-            for (var i = 0, len = data.length; i < len; i++) {
-                ret += '<div class="' + this.itemClass + '">' + data[i] + '</div>';
-            }
+    function repaintSuggest(value) {
+        if (!value) {
+            renderSuggest.call(this);
+            return;
         }
-        this._updateSuggest(ret);
-        ret ? this._showSuggest() : this._hideSuggest();
+        var me = this;
+        if (typeof this.target.datasource === 'function') {
+            this.target.datasource.call(this, value, function(data) {
+                renderSuggest.call(me ,filter(value, data));
+            });
+        } else if (this.target.datasource && this.target.datasource.length) {
+            renderSuggest.call(me, filter(value, this.target.datasource));
+        }
     }
 
-    
+    /**
+     * 构造并渲染自动提示下拉列表
+     *
+     */
+    function renderSuggest(data) {
+        var ret = '';
+        if (data && data.length) {
+            for (var i = 0, len = data.length; i < len; i++) {
+                ret += '<div class="' + this.layer.itemClass + '">' + data[i] + '</div>';
+            }
+        }
+        this.layer.repaint(ret);
+        ret ? lib.bind(showSuggest,this)() : lib.bind(hideSuggest,this)();
+    }
+
+    var obj = {};
 
     /**
      * 初始化自动提示dom容器
      *
      */
-    AutoComplete.prototype._initMain = function () {
-        this.input = lib.g(this.target.inputId);
+    function initMain () {
+        var input = lib.g(this.control.inputId);
+        var element = this.getElement();
+        //this.create();
+        
+        this.addCustomClasses([this.mainClass]);
+        element.style.position = input.nodeName.toLowerCase() === 'textarea' ? 'absolute' : 'relative';
+        element.style.width = this.control.width + 'px';
+        this.control.main.appendChild(element);
+    };
+
+    function initEvents () {
         var me = this;
-        this.main = document.createElement('div');
-        this.main.className = this.mainClass;
-        this.main.style.position = this.input.nodeName.toLowerCase() === 'textarea' ? 'absolute' : 'relative';
-        this.main.style.width = this.target.main.width + 'px';
-        this.main.style.display = 'none';
-        this.target.main.appendChild(this.main);
-        lib.on(this.main, 'click', this._selectItem = function (e) {
-            me._setTargetValue(e.target.textContent);
-            me._hideSuggest();
+        var element = this.layer.getElement(false);
+        var input = lib.g(this.target.inputId);
+        lib.on(element, 'click', obj.selectItem = function (e) {
+            lib.bind(setTargetValue, me)(e.target.textContent);
+            lib.bind(hideSuggest, me)();
         });
 
-        lib.on(this.main, 'mouseover', this._mouseOverItem = function (e) {
+        lib.on(element, 'mouseover', obj.mouseOverItem = function (e) {
             if (e.target === this) {
                 return;
             }
 
-            var items = me.main.children;
+            var items = element.children;
             for (var i = 0, len = items.length; i < len; i++) {
-                lib.removeClass(items[i], me.itemHoverClass);
+                lib.removeClass(items[i], me.layer.itemHoverClass);
             }
 
-            lib.addClass(e.target, me.itemHoverClass);
+            lib.addClass(e.target, me.layer.itemHoverClass);
         });
 
-        lib.on(document, 'keydown', this._keyboard = function(e) {
-            if (me.main.style.display === 'none') {
+        lib.on(input, 'keydown', obj.keyboard = function(e) {
+            if (me.layer.isHidden()) {
                 return;
             }
 
             switch(e.keyCode) {
                 // up
-                case 38: lib.event.preventDefault(e);me._moveToPrevItem();break;
+                case 38: lib.event.preventDefault(e);lib.bind(moveToPrevItem, me)();break;
                 // down
-                case 40: lib.event.preventDefault(e);me._moveToNextItem();break;
+                case 40: lib.event.preventDefault(e);lib.bind(moveToNextItem, me)();break;
                 // esc
-                case 27: me._hideSuggest();break;
+                case 27: lib.bind(hideSuggest, me)();break;
                 // enter
                 case 13: {
                     lib.event.preventDefault(e);
-                    var selectedItem = me._getSelectedItem();
+                    var selectedItem = lib.bind(getSelectedItem, me)();
                     if (!selectedItem) {
                         return;
                     }
-                    me._setTargetValue(selectedItem.textContent);
-                    me._hideSuggest();
+                    lib.bind(setTargetValue, me)(selectedItem.textContent);
+                    lib.bind(hideSuggest, me)();
                     break;
                 }
             }
         });
-    };
+    }
 
     /**
      * 为TextBox赋值
      *
      */
-    AutoComplete.prototype._setTargetValue = function (value) {
+    function setTargetValue (value) {
         var targetValue = this.target.getValue();
         targetValue = lib.trim(targetValue);
 
@@ -185,7 +156,7 @@
      * 抽取需要匹配的单词
      *
      */
-    AutoComplete.prototype._extractMatchingWord = function (value) {
+    function extractMatchingWord (value) {
         if (this.ismultiple && this.splitCharRE.test(value)) {
             var arr = this.splitCharRE.exec(value);
             value = arr && arr[1];
@@ -202,35 +173,29 @@
      * 移除自动提示dom容器
      *
      */
-    AutoComplete.prototype._removemain = function () {
-        this.target.main.removeChild(this.main);
-    };
-
-    /**
-     * 更新自动提示下拉列表
-     *
-     */
-    AutoComplete.prototype._updateSuggest = function (htmlText) {
-        this.main.innerHTML = htmlText;
+    function removemain () {
+        this.target.main.removeChild(this.layer.getElement(false));
     };
 
     /**
      * 显示自动提示下拉列表
      *
      */
-    AutoComplete.prototype._showSuggest = function () {
-        if (this.main.style.display === 'none') {
-            this.main.style.display = '';
-        }
-
-        if (this.input.nodeName.toLowerCase() === 'textarea') {
+    function showSuggest () {
+        this.layer.show();
+        var input = lib.g(this.target.inputId);
+        var element = this.layer.getElement(false);
+        if (input.nodeName.toLowerCase() === 'textarea') {
             // TODO: 这里计算光标的像素坐标还是没有非常精确
-            var pos = cursorHelper.getInputPositon(this.input);
-            var offset = lib.getOffset(this.input);
-            var scrollTop = this.input.scrollTop;
-            var scrollLeft = this.input.scrollLeft;
-            this.main.style.left = pos.left - offset.left - scrollLeft + 5 + 'px';
-            this.main.style.top = pos.top - scrollTop - 42  + 'px';
+            var pos = cursorHelper.getInputPositon(input);
+            var offset = lib.getOffset(input);
+            var scrollTop = input.scrollTop;
+            var scrollLeft = input.scrollLeft;
+            element.style.left = pos.left - offset.left - scrollLeft + 5 + 'px';
+            element.style.top = pos.top - scrollTop - 42  + 'px';
+        } else {
+            element.style.left = 0;
+            element.style.top = 0;
         }
     };
 
@@ -238,23 +203,22 @@
      * 隐藏自动提示下拉列表
      *
      */
-    AutoComplete.prototype._hideSuggest = function () {
-        if (this.main.style.display !== 'none') {
-            this.main.style.display = 'none';
-        }
+    function hideSuggest () {
+        this.layer.hide();
     };
 
     /**
      * 键盘向下移动
      *
      */
-    AutoComplete.prototype._moveToNextItem = function() {
-        var items = this.main.children;
-        var selectedItemIndex = this._getSelectedItemIndex();
+    function moveToNextItem () {
+        var element = this.layer.getElement(false);
+        var items = element.children;
+        var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
 
         if (selectedItemIndex !== -1) {
             var selectedItem = items[selectedItemIndex];
-            selectedItem && lib.removeClass(selectedItem, this.itemHoverClass);
+            selectedItem && lib.removeClass(selectedItem, this.layer.itemHoverClass);
         }
 
         if (selectedItemIndex === -1 || selectedItemIndex === items.length - 1) {
@@ -263,20 +227,21 @@
             selectedItemIndex++;
         }
         selectedItem = items[selectedItemIndex];
-        selectedItem && lib.addClass(selectedItem, this.itemHoverClass);
+        selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
     };
 
     /**
      * 键盘向上移动
      *
      */
-    AutoComplete.prototype._moveToPrevItem = function() {
-        var items = this.main.children;
-        var selectedItemIndex = this._getSelectedItemIndex();
+    function moveToPrevItem () {
+        var element = this.layer.getElement(false);
+        var items = element.children;
+        var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
 
         if (selectedItemIndex !== -1) {
             var selectedItem = items[selectedItemIndex];
-            selectedItem && lib.removeClass(selectedItem, this.itemHoverClass);
+            selectedItem && lib.removeClass(selectedItem, this.layer.itemHoverClass);
         }
 
         if (selectedItemIndex === -1 || selectedItemIndex === 0) {
@@ -285,18 +250,19 @@
             selectedItemIndex--;
         }
         selectedItem = items[selectedItemIndex];
-        selectedItem && lib.addClass(selectedItem, this.itemHoverClass);
+        selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
     };
 
     /**
      * 查找选中项的索引值
      *
      */
-    AutoComplete.prototype._getSelectedItemIndex = function() {
-        var items = this.main.children;
+    function getSelectedItemIndex () {
+        var element = this.layer.getElement(false);
+        var items = element.children;
         var selectedItemIndex = -1;
         for (var i = 0, len = items.length; i < len; i++) {
-            if (lib.hasClass(items[i], this.itemHoverClass)) {
+            if (lib.hasClass(items[i], this.layer.itemHoverClass)) {
                 selectedItemIndex = i;
                 break;
             }
@@ -308,21 +274,128 @@
      * 查找选中项
      *
      */
-    AutoComplete.prototype._getSelectedItem = function() {
+    function getSelectedItem() {
+        var element = this.layer.getElement(false);
         var selectedItem;
-        var selectedItemIndex = this._getSelectedItemIndex();
+        var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
         if (selectedItemIndex !== -1) {
-            selectedItem = this.main.children[selectedItemIndex];
+            selectedItem = element.children[selectedItemIndex];
         }
         return selectedItem;
     };
 
-    AutoComplete.prototype.attachTo = function () {
-        Extension.prototype.attachTo.apply(this, arguments);
 
+
+
+    var layerExports = {};
+    /**
+     * 自动提示层构造器
+     *
+     */
+    layerExports.constructor = function(control) {
+        this.$super(arguments);
+        this.mainClass = helper.getPrefixClass('autocomplete');
+        this.itemClass = helper.getPrefixClass('autocomplete-item');
+        this.itemHoverClass = helper.getPrefixClass('autocomplete-item-hover');
+
+        this.initStructure();
+    };
+
+
+    layerExports.type = 'AutoCompleteLayer';
+
+    layerExports.dock = {
+        strictWidth: true
+    };
+
+    layerExports.initStructure = function() {
+        lib.bind(initMain, this)();
+    };
+
+    layerExports.repaint = function(value) {
+        var element = this.getElement(false);
+        if (element) {
+            this.render(element, value);
+        }
+    };
+
+    layerExports.render = function (element, value) {
+        if (value != null) {
+            element.innerHTML = value;
+        }
+    };
+
+    layerExports.isHidden = function() {
+        var element = this.getElement();
+        if (!element
+            || this.control.helper.isPart(element, 'layer-hidden')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    var AutoCompleteLayer = eoo.create(Layer, layerExports);
+
+    var exports = {};
+
+    /**
+     * 输入控件自动提示扩展
+     *
+     * 当输入控件加上此扩展后，其自动提示功能将由扩展自动提供
+     *
+     * @class extension.AutoComplete
+     * @extends Extension
+     * @constructor
+     */
+    exports.constructor = function() {
+        // 只作为分隔符, 不作为匹配word的成分参与匹配
+        this.splitchar = ',';
+        // 触发新的匹配动作, 并作为匹配word的一部分参与匹配
+        this.firechar = '{';
+
+        //this.endfirechar = '}';
+        // 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
+        this.ismultiple = false;
+
+        this.$super(arguments);
+
+        if (this.ismultiple === 'false' || this.ismultiple === '0') {
+            this.ismultiple = false;
+        } else {
+            this.ismultiple = !!this.ismultiple;
+        }
+
+        this.escapedSplitchar = escapeRegex(this.splitchar);
+        this.escapedFirechar = escapeRegex(this.firechar);
+
+        this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' 
+                            + this.escapedSplitchar 
+                            + '\\s'
+                            + ']+)$');
+
+        this.fireCharRE = new RegExp('(' + this.escapedFirechar + '[^' 
+                           + this.escapedSplitchar 
+                           + this.escapedFirechar
+                           + '\\s'
+                           + ']*)$');
+    };
+
+    /**
+     * 指定扩展类型，始终为`"AutoComplete"`
+     *
+     * @type {string}
+     */
+    exports.type = 'AutoComplete';
+
+    exports.attachTo = function () {
+        this.$super(arguments);
+        
         var me = this;
         setTimeout(function() {
-            me._initMain();
+            me.layer = new AutoCompleteLayer(me.target);
+            lib.bind(initEvents, me)();
         }, 0);
     };
 
@@ -331,48 +404,42 @@
      *
      * @override
      */
-    AutoComplete.prototype.activate = function () {
+    exports.activate = function () {
         // 只对`TextBox`控件生效
         if (!(this.target instanceof TextBox)) {
             return;
         }
 
         var me = this;
-        this.target.on('input', this._oninput = function oninput(e) {
+        this.target.on('input', obj.oninput = function oninput(e) {
             var value = this.getValue();
             value = lib.trim(value);
 
             if (!value) {
-                me._updateSuggest('');
-                me._hideSuggest();
+                lib.bind(repaintSuggest, me)('');
+                lib.bind(hideSuggest, me)();
                 return;
             }
 
-            value = me._extractMatchingWord(value);
+            value = lib.bind(extractMatchingWord, me)(value);
 
             if (!value) {
                 return;
             }
 
-            if (typeof this.datasource === 'function') {
-                this.datasource.call(this, value, function(data) {
-                    showSuggest.call(me ,filter(value, data));
-                });
-            } else if (this.datasource && this.datasource.length) {
-                showSuggest.call(me, filter(value, this.datasource));
-            }
+            repaintSuggest.call(me, value);
         });
 
-        this.target.on('blur', this._blurinput = function(e) {
-            if (me.blurInputTimer) {
-                clearTimeout(me.blurInputTimer);
-                me.blurInputTimer = null;
+        this.target.on('blur', obj.blurinput = function(e) {
+            if (obj.blurInputTimer) {
+                clearTimeout(obj.blurInputTimer);
+                obj.blurInputTimer = null;
             }
-            me.blurInputTimer = setTimeout(function() {
-                me._hideSuggest();
+            obj.blurInputTimer = setTimeout(function() {
+                lib.bind(hideSuggest, me)();
             },250);
         });
-        Extension.prototype.activate.apply(this, arguments);
+        this.$super(arguments);
     };
 
     /**
@@ -380,24 +447,26 @@
      *
      * @override
      */
-    AutoComplete.prototype.inactivate = function () {
+    exports.inactivate = function () {
         // 只对`TextBox`控件生效
         if (!(this.target instanceof TextBox)) {
             return;
         }
 
-        this.target.un('input', this._oninput);
-        this.target.un('blur', this._blurinput);
+        this.target.un('input', obj.oninput);
+        this.target.un('blur', obj.blurinput);
 
-        lib.un(document, 'keydown', this._keyboard);
-        lib.un(this.main, 'click', this._selectItem);
-        lib.un(this.main, 'mouseover', this._mouseOverItem);
-        this._removemain();
+        var layerMain = this.layer.getElement(false);
+        lib.un(lib.g(this.target.inputId), 'keydown', obj.keyboard);
+        lib.un(layerMain, 'click', obj.selectItem);
+        lib.un(layerMain, 'mouseover', obj.mouseOverItem);
+        lib.bind(removemain, this)();
 
-        Extension.prototype.inactivate.apply(this, arguments);
+        this.$super(arguments);
     };
 
-    require('esui/lib').inherits(AutoComplete, Extension);
+    var AutoComplete = eoo.create(Extension, exports);
+    //require('esui/lib').inherits(AutoComplete, Extension);
     require('esui/main').registerExtension(AutoComplete);
     return AutoComplete;
  });
