@@ -42,9 +42,9 @@ define(function(require) {
 					div.appendChild(focus);
 					document.body.appendChild(div);
 					focus.innerHTML = '|';
-					focus.style.cssText = 'display:inline-block;width:0px;overflow:hidden;z-index:-100;word-wrap:break-word;word-break:break-all;';
+					focus.style.cssText = 'display:inline-block;width:0px;overflow:hidden;z-index:-100;';
 					div.className = this._cloneStyle(elem);
-					div.style.cssText = 'visibility:hidden;display:inline-block;position:absolute;z-index:-100;word-wrap:break-word;word-break:break-all;overflow:hidden;';
+					div.style.cssText = 'visibility:hidden;display:inline-block;position:absolute;z-index:-100;overflow:hidden;';
 				};
 				div.style.left = this._offset(elem).left + "px";
 				div.style.top = this._offset(elem).top + "px";

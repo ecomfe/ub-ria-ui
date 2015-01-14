@@ -72,13 +72,11 @@
      *
      */
     function initMain () {
-        var input = lib.g(this.control.inputId);
         var element = this.getElement();
         //this.create();
         
         this.addCustomClasses([this.mainClass]);
-        element.style.position = input.nodeName.toLowerCase() === 'textarea' ? 'absolute' : 'relative';
-        element.style.width = this.control.width + 'px';
+        //element.style.position = 'absolute';
         this.control.main.appendChild(element);
     };
 
@@ -185,17 +183,18 @@
         this.layer.show();
         var input = lib.g(this.target.inputId);
         var element = this.layer.getElement(false);
+        var offset = lib.getOffset(this.target.main);
         if (input.nodeName.toLowerCase() === 'textarea') {
             // TODO: 这里计算光标的像素坐标还是没有非常精确
             var pos = cursorHelper.getInputPositon(input);
-            var offset = lib.getOffset(input);
             var scrollTop = input.scrollTop;
+            var scrollHeight = input.scrollHeight;
             var scrollLeft = input.scrollLeft;
-            element.style.left = pos.left - offset.left - scrollLeft + 5 + 'px';
-            element.style.top = pos.top - scrollTop - 42  + 'px';
+            element.style.left = pos.left - offset.left - scrollLeft + 'px';
+            element.style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize')) + 'px';
         } else {
             element.style.left = 0;
-            element.style.top = 0;
+            element.style.top = offset.height + 'px';
         }
     };
 
@@ -413,7 +412,13 @@
         var me = this;
         this.target.on('input', obj.oninput = function oninput(e) {
             var value = this.getValue();
-            value = lib.trim(value);
+            if (me.splitchar !== ' ') {
+                if (/\s$/.test(value)) {
+                    return;
+                }
+            }
+
+            //value = lib.trim(value);
 
             if (!value) {
                 lib.bind(repaintSuggest, me)('');

@@ -21,17 +21,78 @@
         <ul id="navigator">
         </ul>
         <div id="main">
-            <textarea data-ui-type="TextBox"
-                   data-ui-mode="text"
-                   data-ui-id="test"
-                   data-ui-extension-autocomplete-type="AutoComplete"
-                   data-ui-extension-autocomplete-firechar="{"
-                   data-ui-extension-autocomplete-splitchar=","
-                   data-ui-extension-autocomplete-ismultiple="true"
-                   data-ui-extension-autocomplete-main-class="ui-autocomplete"
-                   data-ui-extension-autocomplete-item-class="ui-autocomplete-item"
-                   data-ui-extension-autocomplete-item-hover-class="ui-autocomplete-item-hover"
-            ></textarea>
+            <h2>AutoComplete</h2>
+            <section class="intro">
+                <p>Input AutoComplete。</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <input data-ui-type="TextBox"
+                           data-ui-mode="text"
+                           data-ui-id="test"
+                           data-ui-extension-autocomplete-type="AutoComplete"
+                    />
+                </div>
+            </section>
+
+            <section class="intro">
+                <p>Input AutoComplete (Multiple)。</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <input data-ui-type="TextBox"
+                           data-ui-mode="text"
+                           data-ui-id="test1"
+                           data-ui-extension-autocomplete-type="AutoComplete"
+                           data-ui-extension-autocomplete-ismultiple="true"
+                    />
+                </div>
+            </section>
+
+            <section class="intro">
+                <p>TextArea AutoComplete。</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <textarea data-ui-type="TextBox"
+                           data-ui-mode="text"
+                           data-ui-id="test2"
+                           data-ui-extension-autocomplete-type="AutoComplete"
+                           data-ui-extension-autocomplete-firechar="{"
+                           data-ui-extension-autocomplete-ismultiple="true"
+                           style="height:200px"
+                    ></textarea>
+                </div>
+            </section>
+
+            <section class="intro">
+                <p>TextArea AutoComplete(split by custom char)。</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <textarea data-ui-type="TextBox"
+                           data-ui-mode="text"
+                           data-ui-id="test3"
+                           data-ui-extension-autocomplete-type="AutoComplete"
+                           data-ui-extension-autocomplete-firechar="{"
+                           data-ui-extension-autocomplete-splitchar=" "
+                           data-ui-extension-autocomplete-ismultiple="true"
+                           style="height:200px"
+                    ></textarea>
+                </div>
+            </section>
         </div>
     </div>
     <script>
@@ -44,16 +105,17 @@
             function (ui, AutoComplete) {
                 window.ui = ui;
                 var controls = ui.init();
-                var ac1 = controls[0];
-                ac1.setProperties({
-                    /*'datasource': ['abc','abcccc','abcdef','adee','adddd','adeee','bfffff','bfeeee'],*/
-                    'datasource': function (req, res) {
-                        //setTimeout(function(){
-                            var a = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
-                            res(a);
-                        //}, 800);
-                    }
-                });
+                for (var i = 0; i < controls.length; i++) {
+                    controls[i].setProperties({
+                        /*'datasource': ['abc','abcccc','abcdef','adee','adddd','adeee','bfffff','bfeeee'],*/
+                        'datasource': function (req, res) {
+                            //setTimeout(function(){
+                                var a = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
+                                res(a);
+                            //}, 800);
+                        }
+                    });
+                }
             }
         );
     </script>
