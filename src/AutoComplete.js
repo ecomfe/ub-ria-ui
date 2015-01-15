@@ -1,11 +1,11 @@
 /**
  * 输入控件自动提示扩展
- *
+ * @file: AutoComplete.js
  * @author: liwei
  *
  */
 
- define(function (require) {
+define(function (require) {
 
     var TextBox = require('esui/TextBox');
     var lib = require('esui/lib');
@@ -28,13 +28,9 @@
     }
 
     function escapeRegex(value) {
-        return value.replace( /[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&" );
+        return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
     }
 
-    /**
-     * 重绘自动提示下拉列表
-     *
-     */
     function repaintSuggest(value) {
         if (!value) {
             renderSuggest.call(this);
@@ -42,18 +38,15 @@
         }
         var me = this;
         if (typeof this.target.datasource === 'function') {
-            this.target.datasource.call(this, value, function(data) {
-                renderSuggest.call(me ,filter(value, data));
+            this.target.datasource.call(this, value, function (data) {
+                renderSuggest.call(me, filter(value, data));
             });
-        } else if (this.target.datasource && this.target.datasource.length) {
+        }
+        else if (this.target.datasource && this.target.datasource.length) {
             renderSuggest.call(me, filter(value, this.target.datasource));
         }
     }
 
-    /**
-     * 构造并渲染自动提示下拉列表
-     *
-     */
     function renderSuggest(data) {
         var ret = '';
         if (data && data.length) {
@@ -62,25 +55,21 @@
             }
         }
         this.layer.repaint(ret);
-        ret ? lib.bind(showSuggest,this)() : lib.bind(hideSuggest,this)();
+        ret ? lib.bind(showSuggest, this)() : lib.bind(hideSuggest, this)();
     }
 
     var obj = {};
 
-    /**
-     * 初始化自动提示dom容器
-     *
-     */
-    function initMain () {
+    function initMain() {
         var element = this.getElement();
-        //this.create();
-        
-        this.addCustomClasses([this.mainClass]);
-        //element.style.position = 'absolute';
-        this.control.main.appendChild(element);
-    };
+        // this.create();
 
-    function initEvents () {
+        this.addCustomClasses([this.mainClass]);
+        // element.style.position = 'absolute';
+        this.control.main.appendChild(element);
+    }
+
+    function initEvents() {
         var me = this;
         var element = this.layer.getElement(false);
         var input = lib.g(this.target.inputId);
@@ -102,59 +91,62 @@
             lib.addClass(e.target, me.layer.itemHoverClass);
         });
 
-        lib.on(input, 'keydown', obj.keyboard = function(e) {
+        lib.on(input, 'keydown', obj.keyboard = function (e) {
             if (me.layer.isHidden()) {
                 return;
             }
 
-            switch(e.keyCode) {
+            switch (e.keyCode) {
                 // up
-                case 38: lib.event.preventDefault(e);lib.bind(moveToPrevItem, me)();break;
-                // down
-                case 40: lib.event.preventDefault(e);lib.bind(moveToNextItem, me)();break;
-                // esc
-                case 27: lib.bind(hideSuggest, me)();break;
-                // enter
-                case 13: {
+                case 38:
                     lib.event.preventDefault(e);
-                    var selectedItem = lib.bind(getSelectedItem, me)();
-                    if (!selectedItem) {
-                        return;
-                    }
-                    lib.bind(setTargetValue, me)(selectedItem.textContent);
+                    lib.bind(moveToPrevItem, me)();
+                    break;
+                    // down
+                case 40:
+                    lib.event.preventDefault(e);
+                    lib.bind(moveToNextItem, me)();
+                    break;
+                    // esc
+                case 27:
                     lib.bind(hideSuggest, me)();
                     break;
-                }
+                    // enter
+                case 13:
+                    {
+                        lib.event.preventDefault(e);
+                        var selectedItem = lib.bind(getSelectedItem, me)();
+                        if (!selectedItem) {
+                            return;
+                        }
+                        lib.bind(setTargetValue, me)(selectedItem.textContent);
+                        lib.bind(hideSuggest, me)();
+                        break;
+                    }
             }
         });
     }
 
-    /**
-     * 为TextBox赋值
-     *
-     */
-    function setTargetValue (value) {
+    function setTargetValue(value) {
         var targetValue = this.target.getValue();
         targetValue = lib.trim(targetValue);
 
         if (this.ismultiple) {
             if (this.fireCharRE.test(targetValue)) {
                 value = targetValue.replace(this.fireCharRE, value);
-            } else if(this.splitCharRE.test(targetValue)) {
+            }
+            else if (this.splitCharRE.test(targetValue)) {
                 value = targetValue.replace(this.splitCharRE, this.splitchar + value);
             }
-        } else if (this.fireCharRE.test(targetValue)) {
+        }
+        else if (this.fireCharRE.test(targetValue)) {
             value = targetValue.replace(this.fireCharRE, value);
         }
 
         this.target.setValue(value);
-    };
+    }
 
-    /**
-     * 抽取需要匹配的单词
-     *
-     */
-    function extractMatchingWord (value) {
+    function extractMatchingWord(value) {
         if (this.ismultiple && this.splitCharRE.test(value)) {
             var arr = this.splitCharRE.exec(value);
             value = arr && arr[1];
@@ -165,21 +157,13 @@
             value = arr && arr[1];
         }
         return value;
-    };
+    }
 
-    /**
-     * 移除自动提示dom容器
-     *
-     */
-    function removemain () {
+    function removemain() {
         this.target.main.removeChild(this.layer.getElement(false));
-    };
+    }
 
-    /**
-     * 显示自动提示下拉列表
-     *
-     */
-    function showSuggest () {
+    function showSuggest() {
         this.layer.show();
         var input = lib.g(this.target.inputId);
         var element = this.layer.getElement(false);
@@ -188,29 +172,21 @@
             // TODO: 这里计算光标的像素坐标还是没有非常精确
             var pos = cursorHelper.getInputPositon(input);
             var scrollTop = input.scrollTop;
-            var scrollHeight = input.scrollHeight;
             var scrollLeft = input.scrollLeft;
             element.style.left = pos.left - offset.left - scrollLeft + 'px';
-            element.style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize')) + 'px';
-        } else {
+            element.style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize'), 10) + 'px';
+        }
+        else {
             element.style.left = 0;
             element.style.top = offset.height + 'px';
         }
-    };
+    }
 
-    /**
-     * 隐藏自动提示下拉列表
-     *
-     */
-    function hideSuggest () {
+    function hideSuggest() {
         this.layer.hide();
-    };
+    }
 
-    /**
-     * 键盘向下移动
-     *
-     */
-    function moveToNextItem () {
+    function moveToNextItem() {
         var element = this.layer.getElement(false);
         var items = element.children;
         var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
@@ -222,18 +198,15 @@
 
         if (selectedItemIndex === -1 || selectedItemIndex === items.length - 1) {
             selectedItemIndex = 0;
-        } else {
+        }
+        else {
             selectedItemIndex++;
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
-    };
+    }
 
-    /**
-     * 键盘向上移动
-     *
-     */
-    function moveToPrevItem () {
+    function moveToPrevItem() {
         var element = this.layer.getElement(false);
         var items = element.children;
         var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
@@ -245,18 +218,15 @@
 
         if (selectedItemIndex === -1 || selectedItemIndex === 0) {
             selectedItemIndex = items.length - 1;
-        } else {
+        }
+        else {
             selectedItemIndex--;
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
-    };
+    }
 
-    /**
-     * 查找选中项的索引值
-     *
-     */
-    function getSelectedItemIndex () {
+    function getSelectedItemIndex() {
         var element = this.layer.getElement(false);
         var items = element.children;
         var selectedItemIndex = -1;
@@ -267,12 +237,8 @@
             }
         }
         return selectedItemIndex;
-    };
+    }
 
-    /**
-     * 查找选中项
-     *
-     */
     function getSelectedItem() {
         var element = this.layer.getElement(false);
         var selectedItem;
@@ -281,17 +247,16 @@
             selectedItem = element.children[selectedItemIndex];
         }
         return selectedItem;
-    };
-
+    }
 
 
 
     var layerExports = {};
     /**
      * 自动提示层构造器
-     *
+     * @param {Object} control TextBox控件
      */
-    layerExports.constructor = function(control) {
+    layerExports.constructor = function (control) {
         this.$super(arguments);
         this.mainClass = helper.getPrefixClass('autocomplete');
         this.itemClass = helper.getPrefixClass('autocomplete-item');
@@ -307,11 +272,11 @@
         strictWidth: true
     };
 
-    layerExports.initStructure = function() {
+    layerExports.initStructure = function () {
         lib.bind(initMain, this)();
     };
 
-    layerExports.repaint = function(value) {
+    layerExports.repaint = function (value) {
         var element = this.getElement(false);
         if (element) {
             this.render(element, value);
@@ -324,15 +289,16 @@
         }
     };
 
-    layerExports.isHidden = function() {
+    layerExports.isHidden = function () {
         var element = this.getElement();
-        if (!element
-            || this.control.helper.isPart(element, 'layer-hidden')
-        ) {
-            return true;
-        } else {
-            return false;
+        var ret;
+        if (!element || this.control.helper.isPart(element, 'layer-hidden')) {
+            ret = true;
         }
+        else {
+            ret = false;
+        }
+        return ret;
     };
 
     var AutoCompleteLayer = eoo.create(Layer, layerExports);
@@ -348,13 +314,12 @@
      * @extends Extension
      * @constructor
      */
-    exports.constructor = function() {
+    exports.constructor = function () {
         // 只作为分隔符, 不作为匹配word的成分参与匹配
         this.splitchar = ',';
         // 触发新的匹配动作, 并作为匹配word的一部分参与匹配
         this.firechar = '{';
 
-        //this.endfirechar = '}';
         // 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
         this.ismultiple = false;
 
@@ -362,23 +327,21 @@
 
         if (this.ismultiple === 'false' || this.ismultiple === '0') {
             this.ismultiple = false;
-        } else {
+        }
+        else {
             this.ismultiple = !!this.ismultiple;
         }
 
         this.escapedSplitchar = escapeRegex(this.splitchar);
         this.escapedFirechar = escapeRegex(this.firechar);
 
-        this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' 
-                            + this.escapedSplitchar 
-                            + '\\s'
-                            + ']+)$');
+        this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' + this.escapedSplitchar + '\\s' + ']+)$');
 
-        this.fireCharRE = new RegExp('(' + this.escapedFirechar + '[^' 
-                           + this.escapedSplitchar 
-                           + this.escapedFirechar
-                           + '\\s'
-                           + ']*)$');
+        this.fireCharRE = new RegExp('('
+            + this.escapedFirechar
+            + '[^' + this.escapedSplitchar
+            + this.escapedFirechar + '\\s'
+            + ']*)$');
     };
 
     /**
@@ -390,9 +353,9 @@
 
     exports.attachTo = function () {
         this.$super(arguments);
-        
+
         var me = this;
-        setTimeout(function() {
+        setTimeout(function () {
             me.layer = new AutoCompleteLayer(me.target);
             lib.bind(initEvents, me)();
         }, 0);
@@ -418,8 +381,6 @@
                 }
             }
 
-            //value = lib.trim(value);
-
             if (!value) {
                 lib.bind(repaintSuggest, me)('');
                 lib.bind(hideSuggest, me)();
@@ -435,14 +396,14 @@
             repaintSuggest.call(me, value);
         });
 
-        this.target.on('blur', obj.blurinput = function(e) {
+        this.target.on('blur', obj.blurinput = function (e) {
             if (obj.blurInputTimer) {
                 clearTimeout(obj.blurInputTimer);
                 obj.blurInputTimer = null;
             }
-            obj.blurInputTimer = setTimeout(function() {
+            obj.blurInputTimer = setTimeout(function () {
                 lib.bind(hideSuggest, me)();
-            },250);
+            }, 250);
         });
         this.$super(arguments);
     };
@@ -471,7 +432,6 @@
     };
 
     var AutoComplete = eoo.create(Extension, exports);
-    //require('esui/lib').inherits(AutoComplete, Extension);
     require('esui/main').registerExtension(AutoComplete);
     return AutoComplete;
- });
+});
