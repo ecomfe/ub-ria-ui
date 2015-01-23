@@ -9,7 +9,7 @@ require.config({
         },
         {
             'name': 'underscore',
-            'location': '../dep/underscore/1.5.2/src',
+            'location': '../dep/underscore/1.6.0/src',
             'main': 'underscore'
         },
         {
@@ -19,7 +19,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.0.0/src',
+            'location': '../dep/etpl/2.1.2/src',
             'main': 'main'
         },
         {
@@ -48,7 +48,7 @@ require.config({
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-alpha.4/src'
+            'location': '../dep/esf/1.0.0-alpha.7/src'
         },
         {
             'name': 'eicons',

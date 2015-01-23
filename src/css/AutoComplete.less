@@ -1,31 +1,23 @@
-.cantselect() {
-	-moz-user-select: none;  
-	-webkit-user-select: none;  
-    -ms-user-select: none;
-}
+@ub-ria-ui-autocomplete-backgroud: @primary-bg-color;
+@ub-ria-ui-autocomplete-border: 1px solid rgba(0, 0, 0, 0.1);
+@ub-ria-ui-autocomplete-item-text-color: #666;
+@ub-ria-ui-autocomplete-item-text-hover-color: #666;
+@ub-ria-ui-autocomplete-item-hightlight-background: @black-10;
+
 
 .@{ui-class-prefix}-autocomplete {
-	border: solid 1px #ddd;
-	background: #fff;
-	max-height: 200px;
-	overflow: auto;
+    max-height: 200px;
+    overflow: auto;
+    .esf-dropdown-variant(
+        @ub-ria-ui-autocomplete-backgroud,
+        @ub-ria-ui-autocomplete-border,
+        @ub-ria-ui-autocomplete-item-text-color,
+        @ub-ria-ui-autocomplete-item-text-hover-color,
+        @ub-ria-ui-autocomplete-item-hightlight-background
+    );
 }
 
-.@{ui-class-prefix}-autocomplete-item {
-	height: 20px;
-	line-height: 20px;
-	padding:0 10px;
-	.cantselect();
-
-	/*&:hover {
-		background: #ddd;
-	}*/
-
-	&-hover {
-		background: #ddd;
-	}
-}
-
-.@{ui-class-prefix}-layer-hidden {
-	display: none;
+.@{ui-class-prefix}-autocomplete-item-hover {
+    background: @ub-ria-ui-autocomplete-item-hightlight-background;
+    color: @ub-ria-ui-autocomplete-item-text-hover-color
 }

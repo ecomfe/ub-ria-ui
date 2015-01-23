@@ -13,8 +13,11 @@ define(function (require) {
     var helper = new (require('esui/Helper'));
     var Extension = require('esui/Extension');
     var eoo = require('eoo');
+    var cursorHelper = require('helper/CursorPositionHelper');
 
-    var cursorHelper = require('./cursorPositionHelper');
+    var MAIN_CLASS = helper.getPrefixClass('autocomplete');
+    var ITEM_CLASS = helper.getPrefixClass('autocomplete-item');
+    var ITEM_HOVER_CLASS = helper.getPrefixClass('autocomplete-item-hover');
 
     function filter(value, datasource) {
         var ret = [];
@@ -51,7 +54,7 @@ define(function (require) {
         var ret = '';
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
-                ret += '<div class="' + this.layer.itemClass + '">' + data[i] + '</div>';
+                ret += '<li class="' + ITEM_CLASS + '"><span>' + data[i] + '</span></li>';
             }
         }
         this.layer.repaint(ret);
@@ -62,10 +65,9 @@ define(function (require) {
 
     function initMain() {
         var element = this.getElement();
-        // this.create();
+        lib.addClass(element, helper.getPrefixClass('dropdown'));
 
-        this.addCustomClasses([this.mainClass]);
-        // element.style.position = 'absolute';
+        this.addCustomClasses([MAIN_CLASS]);
         this.control.main.appendChild(element);
     }
 
@@ -76,19 +78,6 @@ define(function (require) {
         lib.on(element, 'click', obj.selectItem = function (e) {
             lib.bind(setTargetValue, me)(e.target.textContent);
             lib.bind(hideSuggest, me)();
-        });
-
-        lib.on(element, 'mouseover', obj.mouseOverItem = function (e) {
-            if (e.target === this) {
-                return;
-            }
-
-            var items = element.children;
-            for (var i = 0, len = items.length; i < len; i++) {
-                lib.removeClass(items[i], me.layer.itemHoverClass);
-            }
-
-            lib.addClass(e.target, me.layer.itemHoverClass);
         });
 
         lib.on(input, 'keydown', obj.keyboard = function (e) {
@@ -166,19 +155,19 @@ define(function (require) {
     function showSuggest() {
         this.layer.show();
         var input = lib.g(this.target.inputId);
-        var element = this.layer.getElement(false);
+        var style = this.layer.getElement(false).style;
         var offset = lib.getOffset(this.target.main);
         if (input.nodeName.toLowerCase() === 'textarea') {
             // TODO: 这里计算光标的像素坐标还是没有非常精确
             var pos = cursorHelper.getInputPositon(input);
             var scrollTop = input.scrollTop;
             var scrollLeft = input.scrollLeft;
-            element.style.left = pos.left - offset.left - scrollLeft + 'px';
-            element.style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize'), 10) + 'px';
+            style.left = pos.left - offset.left - scrollLeft + 'px';
+            style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize'), 10) + 'px';
         }
         else {
-            element.style.left = 0;
-            element.style.top = offset.height + 'px';
+            style.left = 0;
+            style.top = offset.height + 'px';
         }
     }
 
@@ -193,7 +182,7 @@ define(function (require) {
 
         if (selectedItemIndex !== -1) {
             var selectedItem = items[selectedItemIndex];
-            selectedItem && lib.removeClass(selectedItem, this.layer.itemHoverClass);
+            selectedItem && lib.removeClass(selectedItem, ITEM_HOVER_CLASS);
         }
 
         if (selectedItemIndex === -1 || selectedItemIndex === items.length - 1) {
@@ -203,7 +192,7 @@ define(function (require) {
             selectedItemIndex++;
         }
         selectedItem = items[selectedItemIndex];
-        selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
+        selectedItem && lib.addClass(selectedItem, ITEM_HOVER_CLASS);
     }
 
     function moveToPrevItem() {
@@ -213,7 +202,7 @@ define(function (require) {
 
         if (selectedItemIndex !== -1) {
             var selectedItem = items[selectedItemIndex];
-            selectedItem && lib.removeClass(selectedItem, this.layer.itemHoverClass);
+            selectedItem && lib.removeClass(selectedItem, ITEM_HOVER_CLASS);
         }
 
         if (selectedItemIndex === -1 || selectedItemIndex === 0) {
@@ -223,7 +212,7 @@ define(function (require) {
             selectedItemIndex--;
         }
         selectedItem = items[selectedItemIndex];
-        selectedItem && lib.addClass(selectedItem, this.layer.itemHoverClass);
+        selectedItem && lib.addClass(selectedItem, ITEM_HOVER_CLASS);
     }
 
     function getSelectedItemIndex() {
@@ -231,7 +220,7 @@ define(function (require) {
         var items = element.children;
         var selectedItemIndex = -1;
         for (var i = 0, len = items.length; i < len; i++) {
-            if (lib.hasClass(items[i], this.layer.itemHoverClass)) {
+            if (lib.hasClass(items[i], ITEM_HOVER_CLASS)) {
                 selectedItemIndex = i;
                 break;
             }
@@ -249,8 +238,6 @@ define(function (require) {
         return selectedItem;
     }
 
-
-
     var layerExports = {};
     /**
      * 自动提示层构造器
@@ -258,13 +245,9 @@ define(function (require) {
      */
     layerExports.constructor = function (control) {
         this.$super(arguments);
-        this.mainClass = helper.getPrefixClass('autocomplete');
-        this.itemClass = helper.getPrefixClass('autocomplete-item');
-        this.itemHoverClass = helper.getPrefixClass('autocomplete-item-hover');
 
         this.initStructure();
     };
-
 
     layerExports.type = 'AutoCompleteLayer';
 
@@ -300,6 +283,8 @@ define(function (require) {
         }
         return ret;
     };
+    
+    layerExports.nodeName = 'ol';
 
     var AutoCompleteLayer = eoo.create(Layer, layerExports);
 
@@ -415,15 +400,16 @@ define(function (require) {
      */
     exports.inactivate = function () {
         // 只对`TextBox`控件生效
+        var t = this.target;
         if (!(this.target instanceof TextBox)) {
             return;
         }
 
-        this.target.un('input', obj.oninput);
-        this.target.un('blur', obj.blurinput);
+        t.un('input', obj.oninput);
+        t.un('blur', obj.blurinput);
 
         var layerMain = this.layer.getElement(false);
-        lib.un(lib.g(this.target.inputId), 'keydown', obj.keyboard);
+        lib.un(lib.g(t.inputId), 'keydown', obj.keyboard);
         lib.un(layerMain, 'click', obj.selectItem);
         lib.un(layerMain, 'mouseover', obj.mouseOverItem);
         lib.bind(removemain, this)();
