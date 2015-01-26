@@ -1,5 +1,5 @@
 require.config({
-    'baseUrl': '../src',
+    'baseUrl': '../../src',
     'paths': {},
     'packages': [
         {
@@ -19,7 +19,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/2.1.2/src',
+            'location': '../dep/etpl/3.0.0/src',
             'main': 'main'
         },
         {
@@ -34,7 +34,7 @@ require.config({
         },
         {
             'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.2/src',
+            'location': '../dep/ef/3.1.0-beta.3/src',
             'main': 'main'
         },
         {
