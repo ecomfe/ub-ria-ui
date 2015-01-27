@@ -1,2 +1,18 @@
-@import "../../dep/est/1.3.0/src/all.less";
-@import "../../dep/esf/1.0.0/src/icons/main.less";
+@import "spriteIconMixin.less";
+
+// 复杂控件的错误提示
+.complex-component-validity-invalid() {
+    border: 1px solid red;
+}
+
+.complex-component-validity-label() {
+    display:block;
+    margin-top: 5px;
+}
+
+.complex-component-validity-label-invalid() {
+    background: #FEDBDC;
+    border: 1px solid #F0CCCC;
+    color: #dd6767;
+    padding: 0 5px;
+}
