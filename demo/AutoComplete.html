@@ -39,19 +39,19 @@
             </section>
 
             <section class="intro">
-                <p>Input AutoComplete (Multiple)。</p>
+                <p>TextLine AutoComplete。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example" id="container">
-                    <input data-ui-type="TextBox"
-                           data-ui-mode="text"
+                    <textarea data-ui-type="TextLine"
                            data-ui-id="test1"
+                           data-ui-name="test1"
                            data-ui-extension-autocomplete-type="AutoComplete"
                            data-ui-extension-autocomplete-ismultiple="true"
-                    />
+                    /></textarea>
                 </div>
             </section>
 
@@ -68,7 +68,7 @@
                            data-ui-id="test2"
                            data-ui-extension-autocomplete-type="AutoComplete"
                            data-ui-extension-autocomplete-firechar="{"
-                           data-ui-extension-autocomplete-ismultiple="true"
+                           data-ui-extension-autocomplete-ismultiple="false"
                            style="height:200px"
                     ></textarea>
                 </div>
@@ -93,27 +93,55 @@
                     ></textarea>
                 </div>
             </section>
+
+            <section class="intro">
+                <p>TextArea AutoComplete with mock ajax。</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <textarea data-ui-type="TextBox"
+                           data-ui-mode="text"
+                           data-ui-id="test4"
+                           data-ui-extension-autocomplete-type="AutoComplete"
+                           data-ui-extension-autocomplete-firechar="{"
+                           data-ui-extension-autocomplete-ismultiple="true"
+                           style="height:200px"
+                    ></textarea>
+                </div>
+            </section>
         </div>
     </div>
     <script>
-        
+
         require(
             [
                 'esui',
-                'AutoComplete'
+                'AutoComplete',
+                'esui/TextLine'
             ],
             function (ui, AutoComplete) {
                 window.ui = ui;
                 var controls = ui.init();
+                var data = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
+                var control;
+                var datasource;
                 for (var i = 0; i < controls.length; i++) {
+                    control = controls[i];
+                    if (control.id === 'test4') {
+                        datasource = function (req, res) {
+                            setTimeout(function(){
+                                res(data);
+                            }, 800);
+                        };
+                    } else {
+                        datasource = data;
+                    }
                     controls[i].setProperties({
                         /*'datasource': ['abc','abcccc','abcdef','adee','adddd','adeee','bfffff','bfeeee'],*/
-                        'datasource': function (req, res) {
-                            //setTimeout(function(){
-                                var a = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
-                                res(a);
-                            //}, 800);
-                        }
+                        'datasource': datasource
                     });
                 }
             }

@@ -8,6 +8,7 @@
 define(function (require) {
 
     var TextBox = require('esui/TextBox');
+    var TextLine = require('esui/TextLine');
     var lib = require('esui/lib');
     var Layer = require('esui/Layer');
     var helper = new (require('esui/Helper'));
@@ -18,6 +19,7 @@ define(function (require) {
     var MAIN_CLASS = helper.getPrefixClass('autocomplete');
     var ITEM_CLASS = helper.getPrefixClass('autocomplete-item');
     var ITEM_HOVER_CLASS = helper.getPrefixClass('autocomplete-item-hover');
+    var CHAR_SELECTED_CLASS = helper.getPrefixClass('autocomplete-item-char-selected');
 
     function filter(value, datasource) {
         var ret = [];
@@ -42,19 +44,21 @@ define(function (require) {
         var me = this;
         if (typeof this.target.datasource === 'function') {
             this.target.datasource.call(this, value, function (data) {
-                renderSuggest.call(me, filter(value, data));
+                renderSuggest.call(me, filter(value, data), value);
             });
         }
         else if (this.target.datasource && this.target.datasource.length) {
-            renderSuggest.call(me, filter(value, this.target.datasource));
+            renderSuggest.call(me, filter(value, this.target.datasource), value);
         }
     }
 
-    function renderSuggest(data) {
+    function renderSuggest(data, value) {
         var ret = '';
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
-                ret += '<li class="' + ITEM_CLASS + '"><span>' + data[i] + '</span></li>';
+                ret += '<li class="' + ITEM_CLASS + '"><span>'
+                    + data[i].replace(new RegExp('^' + value), '<i class="'
+                    + CHAR_SELECTED_CLASS + '">' + value + '</i>') + '</span></li>';
             }
         }
         this.layer.repaint(ret);
@@ -73,14 +77,23 @@ define(function (require) {
 
     function initEvents() {
         var me = this;
-        var element = this.layer.getElement(false);
-        var input = lib.g(this.target.inputId);
-        lib.on(element, 'click', obj.selectItem = function (e) {
+        var layerElement = this.layer.getElement(false);
+        if (this.targetType === 'TextBox') {
+            this.inputElement = lib.g(this.target.inputId);
+        }
+        else if (this.targetType === 'TextLine') {
+            this.inputElement = findTextLineTextArea(this.target.main);
+        }
+        else {
+            return;
+        }
+
+        lib.on(layerElement, 'click', obj.selectItem = function (e) {
             lib.bind(setTargetValue, me)(e.target.textContent);
             lib.bind(hideSuggest, me)();
         });
 
-        lib.on(input, 'keydown', obj.keyboard = function (e) {
+        lib.on(this.inputElement, 'keydown', obj.keyboard = function (e) {
             if (me.layer.isHidden()) {
                 return;
             }
@@ -89,12 +102,12 @@ define(function (require) {
                 // up
                 case 38:
                     lib.event.preventDefault(e);
-                    lib.bind(moveToPrevItem, me)();
+                    lib.bind(moveTo, me)(-1);
                     break;
                     // down
                 case 40:
                     lib.event.preventDefault(e);
-                    lib.bind(moveToNextItem, me)();
+                    lib.bind(moveTo, me)(1);
                     break;
                     // esc
                 case 27:
@@ -113,6 +126,39 @@ define(function (require) {
                         break;
                     }
             }
+        });
+
+        lib.on(this.inputElement, 'input', obj.oninput = function oninput(e) {
+            var value = me.target.getValue();
+            if (me.splitchar !== ' ') {
+                if (/\s$/.test(value)) {
+                    return;
+                }
+            }
+
+            if (!value) {
+                lib.bind(repaintSuggest, me)('');
+                lib.bind(hideSuggest, me)();
+                return;
+            }
+
+            value = lib.bind(extractMatchingWord, me)(value);
+
+            if (!value) {
+                return;
+            }
+
+            repaintSuggest.call(me, value);
+        });
+
+        lib.on(this.inputElement, 'blur', obj.blurinput = function (e) {
+            if (obj.blurInputTimer) {
+                clearTimeout(obj.blurInputTimer);
+                obj.blurInputTimer = null;
+            }
+            obj.blurInputTimer = setTimeout(function () {
+                lib.bind(hideSuggest, me)();
+            }, 250);
         });
     }
 
@@ -154,7 +200,7 @@ define(function (require) {
 
     function showSuggest() {
         this.layer.show();
-        var input = lib.g(this.target.inputId);
+        var input = this.inputElement;
         var style = this.layer.getElement(false).style;
         var offset = lib.getOffset(this.target.main);
         if (input.nodeName.toLowerCase() === 'textarea') {
@@ -175,7 +221,8 @@ define(function (require) {
         this.layer.hide();
     }
 
-    function moveToNextItem() {
+    // 1: down  -1: up
+    function moveTo(updown) {
         var element = this.layer.getElement(false);
         var items = element.children;
         var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
@@ -185,31 +232,22 @@ define(function (require) {
             selectedItem && lib.removeClass(selectedItem, ITEM_HOVER_CLASS);
         }
 
-        if (selectedItemIndex === -1 || selectedItemIndex === items.length - 1) {
-            selectedItemIndex = 0;
-        }
-        else {
-            selectedItemIndex++;
-        }
-        selectedItem = items[selectedItemIndex];
-        selectedItem && lib.addClass(selectedItem, ITEM_HOVER_CLASS);
-    }
 
-    function moveToPrevItem() {
-        var element = this.layer.getElement(false);
-        var items = element.children;
-        var selectedItemIndex = lib.bind(getSelectedItemIndex, this)();
-
-        if (selectedItemIndex !== -1) {
-            var selectedItem = items[selectedItemIndex];
-            selectedItem && lib.removeClass(selectedItem, ITEM_HOVER_CLASS);
+        if (updown === -1) {
+            if (selectedItemIndex === -1 || selectedItemIndex === 0) {
+                selectedItemIndex = items.length - 1;
+            }
+            else {
+                selectedItemIndex--;
+            }
         }
-
-        if (selectedItemIndex === -1 || selectedItemIndex === 0) {
-            selectedItemIndex = items.length - 1;
-        }
-        else {
-            selectedItemIndex--;
+        else if (updown === 1) {
+            if (selectedItemIndex === -1 || selectedItemIndex === items.length - 1) {
+                selectedItemIndex = 0;
+            }
+            else {
+                selectedItemIndex++;
+            }
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, ITEM_HOVER_CLASS);
@@ -238,10 +276,32 @@ define(function (require) {
         return selectedItem;
     }
 
+    function findTextLineTextArea(target) {
+        var children = lib.getChildren(target);
+        if (!children || !children.length) {
+            return;
+        }
+        var ret;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child.nodeName.toLowerCase() === 'textarea') {
+                ret = child;
+                break;
+            }
+            else {
+                ret = findTextLineTextArea(child);
+                if (ret) {
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
     var layerExports = {};
     /**
      * 自动提示层构造器
-     * @param {Object} control TextBox控件
+     * @param {Object} [control] TextBox控件
      */
     layerExports.constructor = function (control) {
         this.$super(arguments);
@@ -283,7 +343,7 @@ define(function (require) {
         }
         return ret;
     };
-    
+
     layerExports.nodeName = 'ol';
 
     var AutoCompleteLayer = eoo.create(Layer, layerExports);
@@ -300,12 +360,17 @@ define(function (require) {
      * @constructor
      */
     exports.constructor = function () {
-        // 只作为分隔符, 不作为匹配word的成分参与匹配
+        /**
+         * @property 只作为分隔符, 不作为匹配word的成分参与匹配
+         */
         this.splitchar = ',';
-        // 触发新的匹配动作, 并作为匹配word的一部分参与匹配
+        /**
+         * @property 触发新的匹配动作, 并作为匹配word的一部分参与匹配
+         */
         this.firechar = '{';
-
-        // 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
+        /**
+         * @property 标识是否可触发多次提示; 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
+         */
         this.ismultiple = false;
 
         this.$super(arguments);
@@ -352,44 +417,17 @@ define(function (require) {
      * @override
      */
     exports.activate = function () {
-        // 只对`TextBox`控件生效
-        if (!(this.target instanceof TextBox)) {
+        // 只对`TextBox` 和 `TextLine`控件生效
+        if (this.target instanceof TextLine) {
+            this.targetType = 'TextLine';
+        }
+        else if (this.target instanceof TextBox) {
+            this.targetType = 'TextBox';
+        }
+        else {
             return;
         }
 
-        var me = this;
-        this.target.on('input', obj.oninput = function oninput(e) {
-            var value = this.getValue();
-            if (me.splitchar !== ' ') {
-                if (/\s$/.test(value)) {
-                    return;
-                }
-            }
-
-            if (!value) {
-                lib.bind(repaintSuggest, me)('');
-                lib.bind(hideSuggest, me)();
-                return;
-            }
-
-            value = lib.bind(extractMatchingWord, me)(value);
-
-            if (!value) {
-                return;
-            }
-
-            repaintSuggest.call(me, value);
-        });
-
-        this.target.on('blur', obj.blurinput = function (e) {
-            if (obj.blurInputTimer) {
-                clearTimeout(obj.blurInputTimer);
-                obj.blurInputTimer = null;
-            }
-            obj.blurInputTimer = setTimeout(function () {
-                lib.bind(hideSuggest, me)();
-            }, 250);
-        });
         this.$super(arguments);
     };
 
@@ -399,17 +437,11 @@ define(function (require) {
      * @override
      */
     exports.inactivate = function () {
-        // 只对`TextBox`控件生效
-        var t = this.target;
-        if (!(this.target instanceof TextBox)) {
-            return;
-        }
-
-        t.un('input', obj.oninput);
-        t.un('blur', obj.blurinput);
+        lib.un(this.inputElement, 'input', obj.oninput);
+        lib.un(this.inputElement, 'blur', obj.blurinput);
 
         var layerMain = this.layer.getElement(false);
-        lib.un(lib.g(t.inputId), 'keydown', obj.keyboard);
+        lib.un(this.inputElement, 'keydown', obj.keyboard);
         lib.un(layerMain, 'click', obj.selectItem);
         lib.un(layerMain, 'mouseover', obj.mouseOverItem);
         lib.bind(removemain, this)();
