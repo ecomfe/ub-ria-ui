@@ -7,8 +7,6 @@
 
 define(function (require) {
 
-    var TextBox = require('esui/TextBox');
-    var TextLine = require('esui/TextLine');
     var lib = require('esui/lib');
     var Layer = require('esui/Layer');
     var helper = new (require('esui/Helper'));
@@ -20,6 +18,10 @@ define(function (require) {
     var ITEM_CLASS = helper.getPrefixClass('autocomplete-item');
     var ITEM_HOVER_CLASS = helper.getPrefixClass('autocomplete-item-hover');
     var CHAR_SELECTED_CLASS = helper.getPrefixClass('autocomplete-item-char-selected');
+    var TEXT_LINE = 'TextLine';
+    var TEXT_BOX = 'TextBox';
+    var INPUT = 'input';
+    var TEXT = 'text';
 
     function filter(value, datasource) {
         var ret = [];
@@ -57,7 +59,10 @@ define(function (require) {
         var ret = '';
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
-                ret += '<li class="' + ITEM_CLASS + '"><span>'
+                ret += '<li class="'
+                    + ITEM_CLASS
+                    + (i === 0 ? ' ' + ITEM_HOVER_CLASS : '')
+                    + ' "><span>'
                     + data[i].replace(new RegExp('^' + value), '<i class="'
                     + CHAR_SELECTED_CLASS + '">' + value + '</i>') + '</span></li>';
             }
@@ -78,23 +83,21 @@ define(function (require) {
 
     function initEvents() {
         var me = this;
-        var layerElement = this.layer.getElement(false);
-        if (this.target.type === 'TextBox') {
-            this.inputElement = lib.g(this.target.inputId);
-        }
-        else if (this.target.type === 'TextLine') {
-            this.inputElement = findTextLineTextArea(this.target.main);
-        }
-        else {
-            return;
-        }
+        var layerElement = me.layer.getElement(false);
+        var target = me.target;
+        var helper = target.helper;
+        var inputElement;
 
-        this.target.helper.addDOMEvent(layerElement, 'click', obj.selectItem = function (e) {
+        this.inputElement =
+            helper.getPart(target.type === TEXT_LINE ? TEXT : INPUT);
+        inputElement = this.inputElement;
+
+        helper.addDOMEvent(layerElement, 'click', obj.selectItem = function (e) {
             lib.bind(setTargetValue, me)(e.target.textContent);
             lib.bind(hideSuggest, me)();
         });
 
-        this.target.helper.addDOMEvent(this.inputElement, 'keydown', obj.keyboard = function (e) {
+        helper.addDOMEvent(inputElement, 'keydown', obj.keyboard = function (e) {
             if (me.layer.isHidden()) {
                 return;
             }
@@ -129,36 +132,35 @@ define(function (require) {
             }
         });
 
-        this.target.helper.addDOMEvent(this.inputElement, 'input', obj.oninput = function oninput(e) {
-            // var value = me.target.getValue();
-            var value = me.target.helper.getPart(me.target.type === 'TextLine' ? 'text' : 'input').value;
+        helper.addDOMEvent(inputElement, INPUT, obj.oninput = function oninput(e) {
+            var elementValue = inputElement.value;
 
-            if (!value || me.endWithClosefireCharRE.test(value)) {
+            if (!elementValue || me.endWithClosefireCharRE.test(elementValue)) {
                 lib.bind(repaintSuggest, me)('');
                 lib.bind(hideSuggest, me)();
                 return;
             }
 
             if (me.splitchar !== ' ') {
-                if (/\s$/.test(value)) {
+                if (/\s$/.test(elementValue)) {
                     return;
                 }
             }
 
-            if (me.endWithSplitCharRE.test(value)) {
+            if (me.endWithSplitCharRE.test(elementValue)) {
                 return;
             }
 
-            value = lib.bind(extractMatchingWord, me)(value);
+            elementValue = lib.bind(extractMatchingWord, me)(elementValue);
 
-            if (!value) {
+            if (!elementValue) {
                 return;
             }
 
-            repaintSuggest.call(me, value);
+            repaintSuggest.call(me, elementValue);
         });
 
-        this.target.helper.addDOMEvent(this.inputElement, 'blur', obj.blurinput = function (e) {
+        helper.addDOMEvent(inputElement, 'blur', obj.blurinput = function (e) {
             if (obj.blurInputTimer) {
                 clearTimeout(obj.blurInputTimer);
                 obj.blurInputTimer = null;
@@ -298,28 +300,6 @@ define(function (require) {
         return selectedItem;
     }
 
-    function findTextLineTextArea(target) {
-        var children = lib.getChildren(target);
-        if (!children || !children.length) {
-            return;
-        }
-        var ret;
-        for (var i = 0; i < children.length; i++) {
-            var child = children[i];
-            if (child.nodeName.toLowerCase() === 'textarea') {
-                ret = child;
-                break;
-            }
-            else {
-                ret = findTextLineTextArea(child);
-                if (ret) {
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
-
     var layerExports = {};
     /**
      * 自动提示层构造器
@@ -327,15 +307,18 @@ define(function (require) {
      */
     layerExports.constructor = function (control) {
         this.$super(arguments);
-
+        var helper = control.helper;
+        var controlType = control.type === TEXT_LINE ? TEXT : INPUT;
+        var ele = helper.getPart(controlType);
+        if (ele.tagName.toLowerCase() === INPUT) {
+            this.dock = {
+                strictWidth: true
+            };
+        }
         this.initStructure();
     };
 
     layerExports.type = 'AutoCompleteLayer';
-
-    layerExports.dock = {
-        strictWidth: true
-    };
 
     layerExports.initStructure = function () {
         lib.bind(initMain, this)();
@@ -438,10 +421,12 @@ define(function (require) {
      */
     exports.activate = function () {
         // 只对`TextBox` 和 `TextLine`控件生效
-        if (!this.target instanceof TextLine && !this.target instanceof TextBox) {
+        var type = this.target.type;
+
+        if (!(type === TEXT_LINE
+            || type  === TEXT_BOX)) {
             return;
         }
-
         this.$super(arguments);
     };
 
@@ -451,13 +436,16 @@ define(function (require) {
      * @override
      */
     exports.inactivate = function () {
-        this.target.helper.removeDOMEvent(this.inputElement, 'input', obj.oninput);
-        this.target.helper.removeDOMEvent(this.inputElement, 'blur', obj.blurinput);
+        var helper = this.target.helper;
+        var inputEle = this.inputElement;
+
+        helper.removeDOMEvent(inputEle, INPUT, obj.oninput);
+        helper.removeDOMEvent(inputEle, 'blur', obj.blurinput);
 
         var layerMain = this.layer.getElement(false);
-        this.target.helper.removeDOMEvent(this.inputElement, 'keydown', obj.keyboard);
-        this.target.helper.removeDOMEvent(layerMain, 'click', obj.selectItem);
-        this.target.helper.removeDOMEvent(layerMain, 'mouseover', obj.mouseOverItem);
+        helper.removeDOMEvent(inputEle, 'keydown', obj.keyboard);
+        helper.removeDOMEvent(layerMain, 'click', obj.selectItem);
+        helper.removeDOMEvent(layerMain, 'mouseover', obj.mouseOverItem);
         lib.bind(removemain, this)();
 
         this.$super(arguments);
