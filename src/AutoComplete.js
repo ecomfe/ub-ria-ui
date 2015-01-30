@@ -44,7 +44,8 @@ define(function (require) {
         var me = this;
         if (typeof this.target.datasource === 'function') {
             this.target.datasource.call(this, value, function (data) {
-                renderSuggest.call(me, filter(value, data), value);
+                // renderSuggest.call(me, filter(value, data), value);
+                renderSuggest.call(me, data, value);
             });
         }
         else if (this.target.datasource && this.target.datasource.length) {
@@ -78,22 +79,22 @@ define(function (require) {
     function initEvents() {
         var me = this;
         var layerElement = this.layer.getElement(false);
-        if (this.targetType === 'TextBox') {
+        if (this.target.type === 'TextBox') {
             this.inputElement = lib.g(this.target.inputId);
         }
-        else if (this.targetType === 'TextLine') {
+        else if (this.target.type === 'TextLine') {
             this.inputElement = findTextLineTextArea(this.target.main);
         }
         else {
             return;
         }
 
-        lib.on(layerElement, 'click', obj.selectItem = function (e) {
+        this.target.helper.addDOMEvent(layerElement, 'click', obj.selectItem = function (e) {
             lib.bind(setTargetValue, me)(e.target.textContent);
             lib.bind(hideSuggest, me)();
         });
 
-        lib.on(this.inputElement, 'keydown', obj.keyboard = function (e) {
+        this.target.helper.addDOMEvent(this.inputElement, 'keydown', obj.keyboard = function (e) {
             if (me.layer.isHidden()) {
                 return;
             }
@@ -101,12 +102,12 @@ define(function (require) {
             switch (e.keyCode) {
                 // up
                 case 38:
-                    lib.event.preventDefault(e);
+                    e.preventDefault();
                     lib.bind(moveTo, me)(-1);
                     break;
                     // down
                 case 40:
-                    lib.event.preventDefault(e);
+                    e.preventDefault();
                     lib.bind(moveTo, me)(1);
                     break;
                     // esc
@@ -116,7 +117,7 @@ define(function (require) {
                     // enter
                 case 13:
                     {
-                        lib.event.preventDefault(e);
+                        e.preventDefault();
                         var selectedItem = lib.bind(getSelectedItem, me)();
                         if (!selectedItem) {
                             return;
@@ -128,17 +129,23 @@ define(function (require) {
             }
         });
 
-        lib.on(this.inputElement, 'input', obj.oninput = function oninput(e) {
-            var value = me.target.getValue();
+        this.target.helper.addDOMEvent(this.inputElement, 'input', obj.oninput = function oninput(e) {
+            // var value = me.target.getValue();
+            var value = me.target.helper.getPart(me.target.type === 'TextLine' ? 'text' : 'input').value;
+
+            if (!value || me.endWithClosefireCharRE.test(value)) {
+                lib.bind(repaintSuggest, me)('');
+                lib.bind(hideSuggest, me)();
+                return;
+            }
+
             if (me.splitchar !== ' ') {
                 if (/\s$/.test(value)) {
                     return;
                 }
             }
 
-            if (!value) {
-                lib.bind(repaintSuggest, me)('');
-                lib.bind(hideSuggest, me)();
+            if (me.endWithSplitCharRE.test(value)) {
                 return;
             }
 
@@ -151,7 +158,7 @@ define(function (require) {
             repaintSuggest.call(me, value);
         });
 
-        lib.on(this.inputElement, 'blur', obj.blurinput = function (e) {
+        this.target.helper.addDOMEvent(this.inputElement, 'blur', obj.blurinput = function (e) {
             if (obj.blurInputTimer) {
                 clearTimeout(obj.blurInputTimer);
                 obj.blurInputTimer = null;
@@ -166,7 +173,12 @@ define(function (require) {
         var targetValue = this.target.getValue();
         targetValue = lib.trim(targetValue);
 
-        if (this.ismultiple) {
+        if (/\n/.test(targetValue)) {
+            var arr = targetValue.split(/\n/);
+            targetValue = arr && arr.pop();
+        }
+
+        if (this.splitCharRE) {
             if (this.fireCharRE.test(targetValue)) {
                 value = targetValue.replace(this.fireCharRE, value);
             }
@@ -178,18 +190,28 @@ define(function (require) {
             value = targetValue.replace(this.fireCharRE, value);
         }
 
+        if (arr && arr.length) {
+            arr.push(value);
+            value = arr.join('\n');
+        }
         this.target.setValue(value);
     }
 
     function extractMatchingWord(value) {
-        if (this.ismultiple && this.splitCharRE.test(value)) {
+        if (this.splitCharRE && this.splitCharRE.test(value)) {
             var arr = this.splitCharRE.exec(value);
             value = arr && arr[1];
         }
 
-        if (value && this.fireCharRE.test(value)) {
-            arr = this.fireCharRE.exec(value);
-            value = arr && arr[1];
+        if (value) {
+            if (this.fireCharRE.test(value)) {
+                arr = this.fireCharRE.exec(value);
+                value = arr && arr[1];
+            }
+            else if (/\n/.test(value)) {
+                arr = value.split(/\n/);
+                value = arr && arr[arr.length - 1];
+            }
         }
         return value;
     }
@@ -361,35 +383,33 @@ define(function (require) {
      */
     exports.constructor = function () {
         /**
-         * @property 只作为分隔符, 不作为匹配word的成分参与匹配
+         * @property 只作为分隔符, 不作为匹配word的成分参与匹配, 建议使用逗号或空格作为分隔符
          */
-        this.splitchar = ',';
+        this.splitchar;
         /**
          * @property 触发新的匹配动作, 并作为匹配word的一部分参与匹配
          */
         this.firechar = '{';
         /**
-         * @property 标识是否可触发多次提示; 启用firechar时, 不考虑ismultiple的影响, 遇到firechar一律触发
+         * @property 结束匹配动作
          */
-        this.ismultiple = false;
+        this.closefirechar = '}';
 
         this.$super(arguments);
 
-        if (this.ismultiple === 'false' || this.ismultiple === '0') {
-            this.ismultiple = false;
+        if (this.splitchar) {
+            this.escapedSplitchar = escapeRegex(this.splitchar);
+            this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' + this.escapedSplitchar + '\\s' + ']+)$');
         }
-        else {
-            this.ismultiple = !!this.ismultiple;
-        }
-
-        this.escapedSplitchar = escapeRegex(this.splitchar);
         this.escapedFirechar = escapeRegex(this.firechar);
-
-        this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' + this.escapedSplitchar + '\\s' + ']+)$');
+        this.escapedClosefirechar = escapeRegex(this.closefirechar);
+        this.endWithSplitCharRE = new RegExp(this.escapedSplitchar + '$');
+        this.endWithClosefireCharRE = new RegExp(this.escapedClosefirechar + '$');
 
         this.fireCharRE = new RegExp('('
             + this.escapedFirechar
             + '[^' + this.escapedSplitchar
+            + this.escapedClosefirechar
             + this.escapedFirechar + '\\s'
             + ']*)$');
     };
@@ -418,13 +438,7 @@ define(function (require) {
      */
     exports.activate = function () {
         // 只对`TextBox` 和 `TextLine`控件生效
-        if (this.target instanceof TextLine) {
-            this.targetType = 'TextLine';
-        }
-        else if (this.target instanceof TextBox) {
-            this.targetType = 'TextBox';
-        }
-        else {
+        if (!this.target instanceof TextLine && !this.target instanceof TextBox) {
             return;
         }
 
@@ -437,13 +451,13 @@ define(function (require) {
      * @override
      */
     exports.inactivate = function () {
-        lib.un(this.inputElement, 'input', obj.oninput);
-        lib.un(this.inputElement, 'blur', obj.blurinput);
+        this.target.helper.removeDOMEvent(this.inputElement, 'input', obj.oninput);
+        this.target.helper.removeDOMEvent(this.inputElement, 'blur', obj.blurinput);
 
         var layerMain = this.layer.getElement(false);
-        lib.un(this.inputElement, 'keydown', obj.keyboard);
-        lib.un(layerMain, 'click', obj.selectItem);
-        lib.un(layerMain, 'mouseover', obj.mouseOverItem);
+        this.target.helper.removeDOMEvent(this.inputElement, 'keydown', obj.keyboard);
+        this.target.helper.removeDOMEvent(layerMain, 'click', obj.selectItem);
+        this.target.helper.removeDOMEvent(layerMain, 'mouseover', obj.mouseOverItem);
         lib.bind(removemain, this)();
 
         this.$super(arguments);
