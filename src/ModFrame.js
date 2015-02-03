@@ -20,69 +20,61 @@ define(function (require) {
     var count = 0;
 
     var titleTpl = [
-        '<div class="${0}" id="${1}">',
-        '<span data-ui="type:Label;id:${5};childName:${5};skin:display;',
+        '<div class="${titleClass}" id="${titleId}">',
+        '<span data-ui="type:Label;id:${txtLabelId};childName:${txtLabelId};skin:display;',
         'maxWidth:@labelMaxWidth" class="no-break"></span>',
-        '<a href="javascript:;" class="trigger ${4}" data-ui="type:Link;',
-        'id:${6};childName:${6};skin:change">修改</a>',
-        '${3}',
-        '${2}',
+        '<a href="javascript:;" class="trigger ${linkHide}" data-ui="type:Link;',
+        'id:${modifyLinkId};childName:${modifyLinkId};skin:change">${modifyBtnContent}</a>',
+        '${tip}',
+        '${hint}',
         '</div>'
     ].join('');
 
     var btnTpl = [
-        '<div class="${0}">',
-        '<div data-ui="type:Button;id:${1};childName:${1};skin:flat;">保存</div>',
-        '<div data-ui="type:Button;id:${2};childName:${2};skin:link;">取消</div>',
+        '<div class="${toolbarClass}">',
+        '<div data-ui="type:Button;id:${saveBtnId};childName:${saveBtnId};skin:flat;">保存</div>',
+        '<div data-ui="type:Button;id:${cancelBtnId};childName:${cancelBtnId};skin:link;">取消</div>',
         '</div>'
     ].join('');
 
 
     var overlayTpl = [
-        '<div data-ui="type:Overlay;autoClose:false;fixed:true;id:${3};childName:${3};',
-        'width:${1};height:${2};" style="position:absolute">',
-        '${0}</div>'
+        '<div data-ui="type:Overlay;autoClose:false;fixed:true;id:${overlayId};childName:${overlayId};',
+        'width:${width};height:${height};" style="position:absolute">',
+        '${content}</div>'
     ].join('');
 
     function getOverlayHtml(html) {
         return lib.format(overlayTpl, {
-            0: html,
-            1: this.width || 200,
-            2: this.height || 100,
-            3: this.overlayId
+            content: html,
+            width: this.width || 'auto',
+            height: this.height || 'auto',
+            overlayId: this.overlayId
         });
     }
 
     function getTitleHtml() {
         return lib.format(titleTpl, {
-            0: this.helper.getPartClassName('title'),
-            1: this.helper.getId('title'),
-            2: this.hint ? '<span class="hint validate-info">' + this.hint + '</span>' : '',
-            3: this.tip ? '<span class="cred">' + this.tip + '</span>' : '',
-            4: +this.hideLink === 1 || this.hideLink === true ? 'hide' : '',
-            5: this.txtLabelId,
-            6: this.modifyLinkId
+            titleClass: this.helper.getPartClassName('title'),
+            titleId: this.helper.getId('title'),
+            hint: this.hint ? '<span class="hint validate-info">' + this.hint + '</span>' : '',
+            tip: this.tip ? '<span class="cred">' + this.tip + '</span>' : '',
+            linkHide: +this.hideLink === 1 || this.hideLink === true ? 'hide' : '',
+            txtLabelId: this.txtLabelId,
+            modifyLinkId: this.modifyLinkId,
+            modifyBtnContent: this.modifyBtnIcon ? '<span class="' + this.modifyBtnIcon + '"></span>' : (this.modifyBtnText || '修改')
         });
     }
 
     function getBtnHtml() {
         return lib.format(btnTpl, {
-            0: this.helper.getPartClassName('toolbar'),
-            1: this.saveBtnId,
-            2: this.cancelBtnId
+            toolbarClass: this.helper.getPartClassName('toolbar'),
+            saveBtnId: this.saveBtnId,
+            cancelBtnId: this.cancelBtnId
         });
     }
 
-    function updateTxtLabel(inputControl) {
-        var text;
-        switch (inputControl.type) {
-            // case 'Calendar': break;
-            // case 'RangeCalendar': break;
-            case 'Select': text = inputControl.getDisplayHTML(inputControl.getSelectedItem()); break;
-            default: text = inputControl.getValue(); break;
-        }
-        this.setLabelText(text);
-    }
+    function noop() {}
 
     var exports = {};
 
@@ -139,7 +131,7 @@ define(function (require) {
         this.appendContent(lib.bind(getOverlayHtml, this)(lib.bind(getBtnHtml, this)()));
         this.prependContent(lib.bind(getTitleHtml, this)());
 
-        var wrapperOverlay = this.getChild(this.overlayId);
+        /*var wrapperOverlay = this.getChild(this.overlayId);
         var txtLabel = this.getChild(this.txtLabelId);
         var modifyLink = this.getChild(this.modifyLinkId);
 
@@ -164,7 +156,7 @@ define(function (require) {
         var wrapperOverlayFirstChild = wrapperOverlayMain.firstChild;
         u.forEach(childrenElements, function (child) {
             wrapperOverlayMain.insertBefore(child, wrapperOverlayFirstChild);
-        });
+        });*/
     };
 
 
@@ -190,16 +182,17 @@ define(function (require) {
             wrapperOverlay.attachLayout(txtLabel.main, me.position);
         };
 
-        cancelBtn.onclick = function () {
-            wrapperOverlay.hide();
-        };
+        cancelBtn.onclick = me.onSave || noop;
 
-        saveBtn.onclick = function () {
-            if (wrapperOverlay.inputControl.validate()) {
-                lib.bind(updateTxtLabel, me)(wrapperOverlay.inputControl);
-                wrapperOverlay.hide();
-            }
-        };
+        saveBtn.onclick = me.onCancel || noop;
+    };
+
+    /**
+     * 隐藏弹出层
+     */
+    exports.hideOverlay = function () {
+        var wrapperOverlay = this.getChild(this.overlayId);
+        wrapperOverlay.hide();
     };
 
     /**
