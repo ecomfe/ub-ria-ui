@@ -4,9 +4,13 @@
 @ub-ria-ui-autocomplete-item-text-hover-color: #666;
 @ub-ria-ui-autocomplete-item-hightlight-background: @black-10;
 
+@ub-ria-ui-autocomplete-layer-min-height: 200px;
+@ub-ria-ui-autocomplete-layer-min-width: 8em;
+
 
 .@{ui-class-prefix}-autocomplete {
-    max-height: 200px;
+    max-height: @ub-ria-ui-autocomplete-layer-min-height;
+    min-width: @ub-ria-ui-autocomplete-layer-min-width;
     overflow: auto;
     .esf-dropdown-variant(
         @ub-ria-ui-autocomplete-backgroud,
