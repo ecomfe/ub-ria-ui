@@ -28,32 +28,9 @@ require.config({
             'main': 'main'
         },
         {
-            'name': 'ub-ria-ui',
-            'location': '../src',
-            'main': 'main'
-        },
-        {
-            'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.3/src',
-            'main': 'main'
-        },
-        {
             'name': 'eoo',
             'location': '../dep/eoo/0.1.1/src',
             'main': 'main'
-        },
-        {
-            'name': 'est',
-            'location': '../dep/est/1.3.0/src'
-        },
-        {
-            'name': 'esf',
-            'location': '../dep/esf/1.0.0-alpha.7/src'
-        },
-        {
-            'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-alpha.1/src',
-            'main': 'main.less'
         },
         {
             'name': 'er',
@@ -85,10 +62,11 @@ $(function () {
     //$('html').on('mousedown', hideSource);
     
     var navItems = 
-        '<li><a href="Carousel.html">Carousel</a></li>' +
         '<li><a href="AutoComplete.html">AutoComplete</a></li>' +
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
-        '<li><a href="Drawer.html">Drawer</a></li>';
+        '<li><a href="Carousel.html">Carousel</a></li>' +
+        '<li><a href="Drawer.html">Drawer</a></li>' +
+        '<li><a href="TokenField.html">TokenField</a></li>' +
+        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>';
 
     $('#navigator').html(navItems);
 
