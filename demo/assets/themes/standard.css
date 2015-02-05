@@ -1254,8 +1254,19 @@ esui-box-group {
 .ui-textarea-validity-label-invalid {
   color: #d9534f;
 }
+/**
+ * ESUI (Enterprise Simple UI)
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ * 
+ * @file 通用浮层样式
+ * @author lixiang
+ */
 .ui-overlay {
   position: absolute;
+}
+.ui-overlay.state-hidden {
+  display: block !important;
+  left: -10000px;
 }
 .ui-overlay-mask {
   position: fixed;
@@ -1269,9 +1280,6 @@ esui-box-group {
   background: #333;
   opacity: 0.2;
   filter: alpha(opacity=20);
-}
-.ui-overlay.state-hidden {
-  display: block !important;
 }
 /**
   * ESUI (Enterprise Simple UI)
@@ -2989,6 +2997,8 @@ esui-box-group {
   font-weight: normal;
   font-style: normal;
 }
+/** Tree Begin **/
+/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3395,8 +3405,6 @@ esui-toggle-panel {
   width: 9px;
   height: 5px;
 }
-/** Tree Begin **/
-/** Tree End **/
 esui-tree-rich-selector {
   display: block;
 }
