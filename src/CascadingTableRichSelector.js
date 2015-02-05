@@ -116,6 +116,8 @@ define(
          * 根据外部设定来刷新
          *
          * @param {ui.CascadingTableRichSelector} control 类实例
+         * @param {Array} datasource 数据源
+         * @param {Array} rawValue 初始值
          * @ignore
          */
         function refresh(control, datasource, rawValue) {

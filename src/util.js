@@ -242,9 +242,7 @@ define(
                 var left = new Array(padLength + 1).join(padding);
                 return left + s;
             }
-            else {
-                return s;
-            }
+            return s;
         };
 
         /**
@@ -262,9 +260,7 @@ define(
                 var right = new Array(padLength + 1).join(padding);
                 return s + right;
             }
-            else {
-                return s;
-            }
+            return s;
         };
 
         /**

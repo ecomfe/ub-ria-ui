@@ -1,10 +1,9 @@
 /**
- * SSP for WEB
+ * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 可将一个单选RichSelector展开收起的控件
- * @class ToggleSelector
- * @extends ub-ria.ui.TogglePanel
+ * @exports ToggleSelector
  * @author lixiang(lixiang05@baidu.com)
  */
 define(
@@ -12,8 +11,15 @@ define(
         var lib = require('esui/lib');
         var u = require('underscore');
 
+        /**
+         * @class ToggleSelector
+         * @extends ub-ria-ui.TogglePanel
+         */
         var exports = {};
 
+        /**
+         * @override
+         */
         exports.type = 'ToggleSelector';
         exports.styleType = 'TogglePanel';
 
@@ -21,6 +27,9 @@ define(
             return 'input';
         };
 
+        /**
+         * @override
+         */
         exports.initOptions = function (options) {
             var properties = {
                 textField: null,
@@ -30,6 +39,9 @@ define(
             this.$super(arguments);
         };
 
+        /**
+         * @override
+         */
         exports.initStructure = function () {
             this.$super(arguments);
             lib.addClass(
@@ -38,6 +50,9 @@ define(
             );
         };
 
+        /**
+         * @override
+         */
         exports.initEvents = function () {
             this.$super(arguments);
             var target = this.viewContext.getSafely(this.targetControl);
@@ -50,11 +65,34 @@ define(
          * @override
          */
         exports.toggleContent = function () {
-            this.$super(arguments);
+            if (!this.isDisabled()) {
+                var position = this.position;
+
+                if (position === 'fixed') {
+                    // 占位模式
+                    this.toggleState('expanded');
+                }
+                else {
+                    // 浮层模式
+                    var contentLayer = this.getChild('content');
+
+                    if (this.isExpanded()) {
+                        this.removeState('expanded');
+                        contentLayer.hide();
+                    }
+                    else {
+                        this.toggleState('expanded');
+                        contentLayer.show();
+                    }
+                }
+            }
         };
 
         /**
          * 数据变化时如果没有阻止，则更新显示文字
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
          */
         function changeHandler(e) {
             var event = this.fire('change');
@@ -65,6 +103,9 @@ define(
 
         /**
          * 添加数据时才控制展开收起
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
          */
         function addHandler(e) {
             if (this.collapseAfterChange) {
@@ -96,8 +137,19 @@ define(
             }
         };
 
+        exports.setRawValue = function (value) {
+            var target = this.viewContext.getSafely(this.targetControl);
+            target.setRawValue(value);
+        };
+
         exports.getValue = function () {
             return this.getRawValue();
+        };
+
+        exports.setValue = function (value) {
+            var rawValue = [{id: value}];
+
+            this.setRawValue(rawValue);
         };
 
         /**

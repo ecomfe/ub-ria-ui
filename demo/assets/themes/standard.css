@@ -1254,19 +1254,8 @@ esui-box-group {
 .ui-textarea-validity-label-invalid {
   color: #d9534f;
 }
-/**
- * ESUI (Enterprise Simple UI)
- * Copyright 2013 Baidu Inc. All rights reserved.
- * 
- * @file 通用浮层样式
- * @author lixiang
- */
 .ui-overlay {
   position: absolute;
-}
-.ui-overlay.state-hidden {
-  display: block !important;
-  left: -10000px;
 }
 .ui-overlay-mask {
   position: fixed;
@@ -1280,6 +1269,9 @@ esui-box-group {
   background: #333;
   opacity: 0.2;
   filter: alpha(opacity=20);
+}
+.ui-overlay.state-hidden {
+  display: block !important;
 }
 /**
   * ESUI (Enterprise Simple UI)
@@ -2997,8 +2989,6 @@ esui-box-group {
   font-weight: normal;
   font-style: normal;
 }
-/** Tree Begin **/
-/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3167,6 +3157,8 @@ esui-rich-selector {
   color: #dd6767;
   padding: 0 5px;
 }
+/** Tree Begin **/
+/** Tree End **/
 esui-table-rich-selector {
   display: block;
 }
@@ -3292,7 +3284,7 @@ esui-toggle-panel {
 .ui-togglepanel .ui-togglepanel-content {
   display: none;
 }
-.ui-togglepanel-expended .ui-togglepanel-content {
+.ui-togglepanel-expanded .ui-togglepanel-content {
   display: block;
 }
 /**
@@ -3365,10 +3357,10 @@ esui-toggle-panel {
   width: 9px;
   height: 5px;
 }
-.ui-togglepanel-expended .ui-togglepanel-title {
+.ui-togglepanel-expanded .ui-togglepanel-title {
   position: relative;
 }
-.ui-togglepanel-expended .ui-togglepanel-title:after {
+.ui-togglepanel-expanded .ui-togglepanel-title:after {
   content: '~"url(../img/esui-combo-arrow-active.png)"';
   text-indent: -9999px;
   overflow: hidden;
