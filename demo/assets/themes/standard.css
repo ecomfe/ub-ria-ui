@@ -1367,7 +1367,7 @@ esui-box-group {
 /**
   * ESUI (Enterprise Simple UI)
   * Copyright 2013 Baidu Inc. All rights reserved.
-  * 
+  *
   * @file 搜索框控件
   * @author otakustay
   */
@@ -3765,6 +3765,188 @@ esui-tree-rich-selector {
 .ui-carousel-toolbar .ui-carousel-current-page {
   background: #6ccdc0;
   cursor: auto;
+}
+/**
+ * UB-RIA UI Library
+ * Copyright 2015 Baidu Inc. All rights reserved.
+ *
+ * @file Alert样式
+ * @author zhangyujie(zhangyujie@baidu.com)
+ */
+@keyframes ui-alert-show {
+  from {
+    height: 0px;
+  }
+  to {
+    height: 50px;
+  }
+}
+@-webkit-keyframes ui-alert-show {
+  from {
+    height: 0px;
+  }
+  to {
+    height: 50px;
+  }
+}
+.ui-alert-toggle {
+  animation: ui-alert-show 0.5s;
+  -webkit-animation: ui-alert-show 0.5s;
+}
+.ui-alert-container {
+  height: 50px;
+  line-height: 50px;
+  padding-left: 30px;
+  overflow: hidden;
+}
+.ui-alert-container div {
+  display: inline-block;
+  *display: inline;
+}
+.ui-alert-icon span {
+  font-size: 22px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.ui-alert-icon-content {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.ui-alert-text {
+  font-size: 14px;
+}
+@keyframes ui-alert-step-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes ui-alert-step-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ui-alert-step-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes ui-alert-step-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.ui-alert-item-step-in {
+  animation: ui-alert-step-in 0.4s;
+  -webkit-animation: ui-alert-step-in 0.4s;
+}
+.ui-alert-item-step-out {
+  animation: ui-alert-step-out 0.4s;
+  -webkit-animation: ui-alert-step-out 0.4s;
+}
+.ui-alert-item-hidden {
+  display: none;
+}
+.ui-alert-success {
+  color: #67bd47;
+}
+.ui-alert-success .ui-alert-container {
+  background-color: #d5f1c8;
+}
+.ui-alert-success .ui-alert-icon-content:before {
+  content: "\f00c";
+}
+.ui-alert-prompt {
+  color: #4acfe4;
+}
+.ui-alert-prompt .ui-alert-container {
+  background-color: #c3f4fb;
+}
+.ui-alert-prompt .ui-alert-icon-content:before {
+  content: "\f05a";
+}
+.ui-alert-warning {
+  color: #ff900d;
+}
+.ui-alert-warning .ui-alert-container {
+  background-color: #ffe8c3;
+}
+.ui-alert-warning .ui-alert-icon-content:before {
+  content: "\f071";
+}
+.ui-alert-error {
+  color: #ff8555;
+}
+.ui-alert-error .ui-alert-container {
+  background-color: #fee8df;
+}
+.ui-alert-error .ui-alert-icon-content:before {
+  content: "\f06a";
+}
+.ui-alert-pager {
+  font-size: 12px;
+  font-family: Arial;
+  color: #666666;
+  float: right;
+  margin-right: 30px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+}
+.ui-alert-pager div {
+  display: inline-block;
+  *display: inline;
+}
+.ui-alert-pager div strong {
+  font-weight: bold;
+}
+.ui-alert-index {
+  margin: 0 10px;
+}
+.ui-alert-prev span,
+.ui-alert-next span {
+  cursor: pointer;
+  font-size: 14px;
+  color: #666666;
+}
+.ui-alert-prev .ui-alert-icon-content:before {
+  content: "\f0d9";
+}
+.ui-alert-next .ui-alert-icon-content:before {
+  content: "\f0da";
+}
+.ui-alert-prev-disabled span,
+.ui-alert-next-disabled span {
+  cursor: default;
+  color: #B7B7B7;
+}
+.ui-alert-close {
+  float: right;
+  font-size: 16px;
+  color: #BDBDBD;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.ui-alert-close .ui-alert-icon-content:before {
+  content: "\f00d";
 }
 html {
   font-family: Arial, Helvetica, sans-serif;
