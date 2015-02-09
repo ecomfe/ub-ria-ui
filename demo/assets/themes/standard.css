@@ -3319,15 +3319,14 @@ esui-toggle-panel {
 }
 .ui-toggle-selector .ui-togglepanel-title:after {
   position: absolute;
-  width: 9px;
-  height: 5px;
-  content: '~"url(../img/esui-combo-arrow-normal.png)"';
-  white-space: nowrap;
-  text-indent: -9999px;
-  overflow: hidden;
-  background: url(../img/esui-combo-arrow-normal.png) scroll 0 0 no-repeat transparent;
-  top: 50%;
-  margin-top: -2.5px;
+  font-family: FontAwesome;
+  font-size: 12px;
+  color: #7d7d7d;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f107";
+  text-indent: 0;
+  top: 0;
   right: 18px;
 }
 .ui-toggle-select {
@@ -3346,15 +3345,14 @@ esui-toggle-panel {
 }
 .ui-toggle-select:after {
   position: absolute;
-  width: 9px;
-  height: 5px;
-  content: '~"url(../img/esui-combo-arrow-normal.png)"';
-  white-space: nowrap;
-  text-indent: -9999px;
-  overflow: hidden;
-  background: url(../img/esui-combo-arrow-normal.png) scroll 0 0 no-repeat transparent;
-  top: 50%;
-  margin-top: -2.5px;
+  font-family: FontAwesome;
+  font-size: 12px;
+  color: #7d7d7d;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f107";
+  text-indent: 0;
+  top: 0;
   right: 18px;
 }
 .ui-togglepanel-expanded .ui-togglepanel-title {
@@ -3362,15 +3360,14 @@ esui-toggle-panel {
 }
 .ui-togglepanel-expanded .ui-togglepanel-title:after {
   position: absolute;
-  width: 9px;
-  height: 5px;
-  content: '~"url(../img/esui-combo-arrow-active.png)"';
-  white-space: nowrap;
-  text-indent: -9999px;
-  overflow: hidden;
-  background: url(../img/esui-combo-arrow-active.png) scroll 0 0 no-repeat transparent;
-  top: 50%;
-  margin-top: -2.5px;
+  font-family: FontAwesome;
+  font-size: 12px;
+  color: #7d7d7d;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f106";
+  text-indent: 0;
+  top: 0;
   right: 18px;
 }
 .ui-toggle-select-disabled,
@@ -3386,15 +3383,14 @@ esui-toggle-panel {
 .ui-toggle-select-disabled:hover:after,
 .ui-toggle-select-read-only:hover:after {
   position: absolute;
-  width: 9px;
-  height: 5px;
-  content: '~"url(../img/esui-combo-arrow-disabled.png)"';
-  white-space: nowrap;
-  text-indent: -9999px;
-  overflow: hidden;
-  background: url(../img/esui-combo-arrow-disabled.png) scroll 0 0 no-repeat transparent;
-  top: 50%;
-  margin-top: -2.5px;
+  font-family: FontAwesome;
+  font-size: 12px;
+  color: #b7b7b7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f107";
+  text-indent: 0;
+  top: 0;
   right: 18px;
 }
 esui-tree-rich-selector {
