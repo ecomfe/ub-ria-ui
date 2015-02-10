@@ -85,13 +85,25 @@ esui-table-rich-selector {
     // 添加型
     &.ui-richselector-add {
         .ui-richselector-row-action-icon {
-            .pseudo-icon(@eicon-var-arrow-right, @table-rich-selector-operate-color, 12px, center, 0, top);
+            .ecions-font-style();
+            position: relative;
+            &:before {
+                color: @table-rich-selector-operate-color;
+                .eicons-icon-content(arrow-right);
+                .font-icon-position(center, 0, center, 0);
+            }
         }
 
         .ui-richselector-row-selected,
         .ui-richselector-row-selected:hover {
             .ui-richselector-row-action-icon {
-                .pseudo-icon(@eicon-var-check, @table-rich-selector-operate-color, 12px, center, 0, top);
+                .ecions-font-style();
+                position: relative;
+                &:before {
+                    color: @table-rich-selector-operate-color;
+                    .eicons-icon-content(check);
+                    .font-icon-position(center, 0, center, 0);
+                }
             }
         }
     }
@@ -99,7 +111,13 @@ esui-table-rich-selector {
     // 删除型
     &.ui-richselector-del {
         .ui-richselector-row-action-icon {
-            .pseudo-icon(@eicon-var-times, @table-rich-selector-operate-delete-color, 12px, center, 0, top);
+            .ecions-font-style();
+            position: relative;
+            &:before {
+                color: @table-rich-selector-operate-delete-color;
+                .eicons-icon-content(times);
+                .font-icon-position(center, 0, center, 0);
+            }
         }
     }
 }

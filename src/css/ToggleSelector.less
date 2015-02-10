@@ -58,12 +58,24 @@
     color: @toggle-select-font-color;
     font-weight: bold;
     text-align: center;
-    .pseudo-icon(@eicon-var-angle-down, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
+    position: relative;
+    &:before {
+        color: @toggle-select-arror-color;
+        .ecions-font-style();
+        .eicons-icon-content(angle-down);
+        .font-icon-position(right, @toggle-select-padding-left, center, 0);
+    }
 }
 
 .ui-togglepanel-expanded {
     .ui-togglepanel-title {
-        .pseudo-icon(@eicon-var-angle-up, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
+        position: relative;
+        &:before {
+            color: @toggle-select-arror-color;
+            .ecions-font-style();
+            .eicons-icon-content(angle-up);
+            .font-icon-position(right, @toggle-select-padding-left, center, 0);
+        }
     }
 }
 
@@ -71,7 +83,12 @@
 .ui-toggle-select-read-only,
 .ui-toggle-select-disabled:hover,
 .ui-toggle-select-read-only:hover {
-    color: #999;
     background: @toggle-select-background-color-disabled;
-    .pseudo-icon(@eicon-var-angle-down, @toggle-select-disabled-arror-color, 12px, right, @toggle-select-padding-left, top);
+    position: relative;
+    &:before {
+        color: @toggle-select-disabled-arror-color;
+        .ecions-font-style();
+        .eicons-icon-content(angle-down);
+        .font-icon-position(right, @toggle-select-padding-left, center, 0);
+    }
 }
