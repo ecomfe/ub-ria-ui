@@ -43,6 +43,9 @@
 @toggle-select-padding-right: 2 * @toggle-select-padding-left + @toggle-select-layer-state-indicator-width;
 @toggle-select-padding: 0 @toggle-select-padding-right 0 @toggle-select-padding-left;
 
+@toggle-select-arror-color: #7d7d7d;
+@toggle-select-disabled-arror-color: #b7b7b7;
+
 .ui-toggle-select {
     cursor: pointer;
     background: @toggle-select-background-color;
@@ -55,13 +58,12 @@
     color: @toggle-select-font-color;
     font-weight: bold;
     text-align: center;
-    // TODO: 这里的left和10px是否需要开放配置？
-    .pseudo-icon(@toggle-select-layer-state-indicator, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+    .pseudo-icon(@eicon-var-angle-down, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
 }
 
 .ui-togglepanel-expanded {
     .ui-togglepanel-title {
-        .pseudo-icon(@toggle-select-layer-state-indicator-active, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+        .pseudo-icon(@eicon-var-angle-up, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
     }
 }
 
@@ -71,5 +73,5 @@
 .ui-toggle-select-read-only:hover {
     color: #999;
     background: @toggle-select-background-color-disabled;
-    .pseudo-icon(@toggle-select-layer-state-indicator-disabled, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+    .pseudo-icon(@eicon-var-angle-down, @toggle-select-disabled-arror-color, 12px, right, @toggle-select-padding-left, top);
 }

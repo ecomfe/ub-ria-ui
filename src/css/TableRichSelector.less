@@ -6,11 +6,14 @@ esui-table-rich-selector {
 }
 
 // 表格
-@table-rich-selector-th-bg: transparent; 
+@table-rich-selector-th-bg: transparent;
 @table-rich-selector-tr-bg: transparent;
 @table-rich-selector-tr-active-bg: transparent;
 
 @table-rich-selector-th-height: 35px;
+
+@table-rich-selector-operate-color: #67c1a5;
+@table-rich-selector-operate-delete-color: #f00;
 
 .ui-table-richselector {
     .ui-richselector-query-list {
@@ -29,10 +32,11 @@ esui-table-rich-selector {
 
             td {
                 height: @rich-selector-line-height;
+                line-height: @rich-selector-line-height;
                 vertical-align: middle;
                 padding-left: 10px;
                 .ellipsis();
-            }   
+            }
         }
         .ui-richselector-content-table {
             .ui-richselector-row {
@@ -49,14 +53,13 @@ esui-table-rich-selector {
             .ui-richselector-row-selected:hover {
                 cursor: default;
                 color: #666666;
-                background: @rich-selector-item-background-color-selected;
                 .ui-richselector-row-action-icon {
                     display: block;
                 }
 
                 td {
                     font-weight: bold;
-                }   
+                }
             }
 
             .ui-richselector-row-disabled,
@@ -82,23 +85,13 @@ esui-table-rich-selector {
     // 添加型
     &.ui-richselector-add {
         .ui-richselector-row-action-icon {
-            .pseudo-icon(
-                @rich-selector-add-item-background-icon-hover,
-                @rich-selector-add-item-background-icon-width-hover,
-                @rich-selector-add-item-background-icon-height-hover,
-                center
-            );
+            .pseudo-icon(@eicon-var-arrow-right, @table-rich-selector-operate-color, 12px, center, 0, top);
         }
 
         .ui-richselector-row-selected,
         .ui-richselector-row-selected:hover {
             .ui-richselector-row-action-icon {
-                .pseudo-icon(
-                    @rich-selector-item-background-icon-selected,
-                    @rich-selector-item-background-icon-width-selected,
-                    @rich-selector-item-background-icon-height-selected,
-                    center
-                );
+                .pseudo-icon(@eicon-var-check, @table-rich-selector-operate-color, 12px, center, 0, top);
             }
         }
     }
@@ -106,12 +99,7 @@ esui-table-rich-selector {
     // 删除型
     &.ui-richselector-del {
         .ui-richselector-row-action-icon {
-            .pseudo-icon(
-                @rich-selector-delete-item-background-icon-hover,
-                @rich-selector-delete-item-background-icon-width-hover,
-                @rich-selector-delete-item-background-icon-height-hover,
-                center
-            );
+            .pseudo-icon(@eicon-var-times, @table-rich-selector-operate-delete-color, 12px, center, 0, top);
         }
     }
 }
