@@ -250,6 +250,7 @@ define(
             + '<div data-role="content">'
                 + '${content}'
             + '</div>';
+
         /*
          * 点击时的切换逻辑
          *
