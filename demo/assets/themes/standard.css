@@ -3022,8 +3022,6 @@ esui-box-group {
     transform: rotate(359deg);
   }
 }
-/** Tree Begin **/
-/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3085,6 +3083,8 @@ esui-drawer-action-panel {
   * @file 富选择器
   * @author lixiang
   */
+/** Tree Begin **/
+/** Tree End **/
 esui-rich-selector {
   display: block;
 }
@@ -3255,6 +3255,10 @@ esui-table-rich-selector {
   display: none;
 }
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon {
+  position: relative;
+}
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
+  color: #67c1a5;
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3262,10 +3266,6 @@ esui-table-rich-selector {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  position: relative;
-}
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
-  color: #67c1a5;
   content: "\f061";
   position: absolute;
   top: 50%;
@@ -3275,6 +3275,11 @@ esui-table-rich-selector {
 }
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon,
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon {
+  position: relative;
+}
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon:before,
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon:before {
+  color: #67c1a5;
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3282,11 +3287,6 @@ esui-table-rich-selector {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  position: relative;
-}
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon:before,
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon:before {
-  color: #67c1a5;
   content: "\f00c";
   position: absolute;
   top: 50%;
@@ -3295,6 +3295,10 @@ esui-table-rich-selector {
   margin-left: -0.5em;
 }
 .ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon {
+  position: relative;
+}
+.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
+  color: #ff0000;
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3302,10 +3306,6 @@ esui-table-rich-selector {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  position: relative;
-}
-.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
-  color: #ff0000;
   content: "\f00d";
   position: absolute;
   top: 50%;
