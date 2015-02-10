@@ -44,9 +44,7 @@
                         data-ui-target-control="slot-channel-selector"
                         data-ui-text-field="name"
                         data-ui-value-field="id">
-                        <span>
-                            <h3>请选择</h3>
-                        </span>
+                        <h3>请选择</h3>
                         <section>
                             <div
                                 data-ui-type="TableRichSelector"
@@ -68,9 +66,7 @@
                         data-ui-target-control="all-slots"
                         data-ui-text-field="name"
                         data-ui-value-field="id">
-                        <span>
-                            <h3>请选择</h3>
-                        </span>
+                        <h3>请选择</h3>
                         <section>
                             <div class="no-move-richselector"
                                 data-ui-type="TreeRichSelector"
@@ -93,7 +89,7 @@
                         data-ui-value-field="id"
                         data-ui-position="fixed">
                         <span>
-                            <h3>请选择</h3>
+                            请选择
                         </span>
                         <section>
                             <div class="no-move-richselector"
@@ -129,8 +125,8 @@
                             isSelected = true;
                         }
                         arrayDatasource.push({
-                            text: '广告位广告位广告位广告位广告位广告位广告位' + (i + 1),
-                            name: '广告位广告位广告位广告位广告位广告位广告位' + (i + 1),
+                            text: '<input />广告位' + (i + 1),
+                            name: '<input />广告位' + (i + 1),
                             id: i + 1,
                             isSelected: isSelected
                         })
@@ -142,7 +138,7 @@
 
                     var datasource = {
                         id: 'root',
-                        text: '所有广告位',
+                        text: '所有广告位<input/>',
                         children: []
                     };
                     var children = datasource.children;
@@ -152,8 +148,8 @@
                             isSelected = true;
                         }
                         children.push({
-                            text: '广告位' + (i + 1),
-                            name: '广告位' + (i + 1),
+                            text: '广告位<input/>' + (i + 1),
+                            name: '广告位<input/>' + (i + 1),
                             id: i + 1,
                             isSelected: isSelected
                         })
@@ -163,8 +159,8 @@
                         var node = children[i];
                         node.children = [
                             {
-                                text: '子节点' + i,
-                                name: '子节点' + (i),
+                                text: '子节点<input/>' + i,
+                                name: '子节点<input/>' + (i),
                                 id: 'child' + i
                             }
                         ]
