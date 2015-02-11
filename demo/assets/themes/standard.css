@@ -3022,6 +3022,8 @@ esui-box-group {
     transform: rotate(359deg);
   }
 }
+/** Tree Begin **/
+/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3083,8 +3085,6 @@ esui-drawer-action-panel {
   * @file 富选择器
   * @author lixiang
   */
-/** Tree Begin **/
-/** Tree End **/
 esui-rich-selector {
   display: block;
 }
@@ -3195,6 +3195,16 @@ esui-rich-selector {
 esui-table-rich-selector {
   display: block;
 }
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before,
+.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .ui-table-richselector .ui-richselector-query-list table {
   border-collapse: collapse;
   width: 100%;
@@ -3259,13 +3269,6 @@ esui-table-rich-selector {
 }
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
   color: #67c1a5;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   content: "\f061";
   position: absolute;
   top: 50%;
@@ -3280,13 +3283,6 @@ esui-table-rich-selector {
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon:before,
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon:before {
   color: #67c1a5;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   content: "\f00c";
   position: absolute;
   top: 50%;
@@ -3299,13 +3295,6 @@ esui-table-rich-selector {
 }
 .ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
   color: #ff0000;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   content: "\f00d";
   position: absolute;
   top: 50%;
@@ -3313,9 +3302,8 @@ esui-table-rich-selector {
   left: 50%;
   margin-left: -0.5em;
 }
-.no-move-richselector.ui-richselector-add .ui-richselector-row-action-icon:after {
-  background: none;
-  background: none scroll 0 0 no-repeat transparent;
+.no-move-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
+  content: '';
 }
 esui-toggle-panel {
   display: block;
@@ -3357,7 +3345,6 @@ esui-toggle-panel {
   display: block;
 }
 .ui-toggle-selector .ui-togglepanel-title:before {
-  color: #7d7d7d;
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3365,11 +3352,24 @@ esui-toggle-panel {
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.ui-toggle-selector .ui-togglepanel-title:before {
+  color: #7d7d7d;
   content: "\f107";
   position: absolute;
   top: 50%;
   margin-top: -0.5em;
   right: 18px;
+}
+.ui-toggle-select:before,
+.ui-togglepanel-expanded .ui-togglepanel-title:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .ui-toggle-select {
   cursor: pointer;
@@ -3387,13 +3387,6 @@ esui-toggle-panel {
 }
 .ui-toggle-select:before {
   color: #7d7d7d;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   content: "\f107";
   position: absolute;
   top: 50%;
@@ -3405,13 +3398,6 @@ esui-toggle-panel {
 }
 .ui-togglepanel-expanded .ui-togglepanel-title:before {
   color: #7d7d7d;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   content: "\f106";
   position: absolute;
   top: 50%;
@@ -3423,25 +3409,12 @@ esui-toggle-panel {
 .ui-toggle-select-disabled:hover,
 .ui-toggle-select-read-only:hover {
   background: #ebebeb;
-  position: relative;
 }
-.ui-toggle-select-disabled:before,
-.ui-toggle-select-read-only:before,
-.ui-toggle-select-disabled:hover:before,
-.ui-toggle-select-read-only:hover:before {
+.ui-toggle-select-disabled .ui-togglepanel-title:before,
+.ui-toggle-select-read-only .ui-togglepanel-title:before,
+.ui-toggle-select-disabled:hover .ui-togglepanel-title:before,
+.ui-toggle-select-read-only:hover .ui-togglepanel-title:before {
   color: #b7b7b7;
-  font-family: FontAwesome;
-  display: inline-block;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  content: "\f107";
-  position: absolute;
-  top: 50%;
-  margin-top: -0.5em;
-  right: 18px;
 }
 esui-tree-rich-selector {
   display: block;
@@ -3679,6 +3652,9 @@ esui-tree-rich-selector {
   top: 50%;
   margin-top: -0.5em;
   right: 0.5em;
+}
+.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content:before {
+  content: "";
 }
 .ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content,
 .ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content {

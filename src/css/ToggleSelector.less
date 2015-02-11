@@ -19,10 +19,6 @@
 
 @toggle-select-layer-state-indicator-width: 9px;
 @toggle-select-layer-state-indicator-height: 5px;
-@toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
-@toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
 
 @toggle-select-font-color: #666;
 @toggle-select-border: none;
@@ -46,6 +42,12 @@
 @toggle-select-arror-color: #7d7d7d;
 @toggle-select-disabled-arror-color: #b7b7b7;
 
+.ui-toggle-select, .ui-togglepanel-expanded .ui-togglepanel-title {
+    &:before {
+        .ecions-font-style();
+    }
+}
+
 .ui-toggle-select {
     cursor: pointer;
     background: @toggle-select-background-color;
@@ -61,7 +63,6 @@
     position: relative;
     &:before {
         color: @toggle-select-arror-color;
-        .ecions-font-style();
         .eicons-icon-content(angle-down);
         .font-icon-position(right, @toggle-select-padding-left, center, 0);
     }
@@ -72,7 +73,6 @@
         position: relative;
         &:before {
             color: @toggle-select-arror-color;
-            .ecions-font-style();
             .eicons-icon-content(angle-up);
             .font-icon-position(right, @toggle-select-padding-left, center, 0);
         }
@@ -84,11 +84,9 @@
 .ui-toggle-select-disabled:hover,
 .ui-toggle-select-read-only:hover {
     background: @toggle-select-background-color-disabled;
-    position: relative;
-    &:before {
-        color: @toggle-select-disabled-arror-color;
-        .ecions-font-style();
-        .eicons-icon-content(angle-down);
-        .font-icon-position(right, @toggle-select-padding-left, center, 0);
+    .ui-togglepanel-title {
+        &:before {
+            color: @toggle-select-disabled-arror-color;
+        }
     }
 }

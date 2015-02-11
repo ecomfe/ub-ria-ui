@@ -16,6 +16,16 @@ esui-table-rich-selector {
 @table-rich-selector-operate-delete-color: #f00;
 
 .ui-table-richselector {
+    &.ui-richselector-add, &.ui-richselector-del {
+        .ui-richselector-row-action-icon {
+            &:before {
+                .ecions-font-style();
+            }
+        }
+    }
+}
+
+.ui-table-richselector {
     .ui-richselector-query-list {
         table {
             border-collapse: collapse;
@@ -78,7 +88,6 @@ esui-table-rich-selector {
                 width: 100%;
                 display: none;
             }
-
         }
     }
 
@@ -88,7 +97,6 @@ esui-table-rich-selector {
             position: relative;
             &:before {
                 color: @table-rich-selector-operate-color;
-                .ecions-font-style();
                 .eicons-icon-content(arrow-right);
                 .font-icon-position(center, 0, center, 0);
             }
@@ -100,7 +108,6 @@ esui-table-rich-selector {
                 position: relative;
                 &:before {
                     color: @table-rich-selector-operate-color;
-                    .ecions-font-style();
                     .eicons-icon-content(check);
                     .font-icon-position(center, 0, center, 0);
                 }
@@ -114,7 +121,6 @@ esui-table-rich-selector {
             position: relative;
             &:before {
                 color: @table-rich-selector-operate-delete-color;
-                .ecions-font-style();
                 .eicons-icon-content(times);
                 .font-icon-position(center, 0, center, 0);
             }
@@ -127,7 +133,9 @@ esui-table-rich-selector {
     // 添加型
     &.ui-richselector-add {
         .ui-richselector-row-action-icon {
-            .pseudo-icon();
+            &:before {
+                content: '';
+            }
         }
     }
 }

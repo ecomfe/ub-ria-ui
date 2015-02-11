@@ -225,6 +225,13 @@ esui-tree-rich-selector {
 // 单独存在，没有右侧备选栏的情况
 .ui-tree-richselector.no-move-richselector {
     &.ui-richselector-add {
+        .ui-tree-content-wrapper:hover {
+            .ui-tree-item-content {
+                &:before {
+                    content: "";
+                }
+            }
+        }
         // 已选择状态不变
         .ui-tree-content-wrapper-selected,
         .ui-tree-content-wrapper-selected:hover {
