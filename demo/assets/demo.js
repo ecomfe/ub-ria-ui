@@ -84,13 +84,15 @@ $(function () {
     $('.source, .viewer li').on('mousedown', false);
     //$('html').on('mousedown', hideSource);
 
-    var navItems =
-        '<li><a href="Carousel.html">Carousel</a></li>' +
-        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>' +
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
-        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
+    var navItems = [
+        '<li><a href="Carousel.html">Carousel</a></li>',
+        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
+        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
+        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>',
+        '<li><a href="ColorPicker.html">ColorPicker</a></li>'
+    ];
 
-    $('#navigator').html(navItems);
+    $('#navigator').html(navItems.join());
 
     $('.example').each(function (index, item) {
         var $sample = $('<pre class="source source-markup"><code class="language-markup"></code></pre>');
