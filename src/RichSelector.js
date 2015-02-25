@@ -14,30 +14,36 @@ define(
         require('esui/SearchBox');
 
         var lib = require('esui/lib');
-        var painter = require('esui/painters');
         var InputControl = require('esui/InputControl');
         var u = require('underscore');
 
         /**
          * 控件类
          *
-         * @constructor
-         * @param {Object} options 初始化参数
+         * @class ui.RichSelector
+         * @extends esui.InputControl
          */
-        function RichSelector(options) {
-            InputControl.apply(this, arguments);
-        }
+        var exports = {};
 
-        lib.inherits(RichSelector, InputControl);
+        /**
+         * 控件类型，始终为`"RichSelector"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'RichSelector';
 
-        RichSelector.prototype.type = 'RichSelector';
-
-        RichSelector.prototype.initOptions = function (options) {
+        /**
+         * @override
+         */
+        exports.initOptions = function (options) {
             var properties = {
                 height: 340,
                 width: 200,
                 // 是否需要标题栏
                 hasHead: true,
+                // 标题栏是否需要统计数
+                needHeadCount: true,
                 // 这个名字出现在标题栏
                 title: '标题名',
                 // 是否需要批量操作
@@ -62,37 +68,38 @@ define(
                 multi: true
             };
 
-            if (options.hasHead === 'false') {
-                options.hasHead = false;
-            }
-
-            if (options.hasSearchBox === 'false') {
-                options.hasSearchBox = false;
-            }
-
-            if (options.hasFoot === 'false') {
-                options.hasFoot = false;
-            }
-
-            if (options.holdState === 'false') {
-                options.holdState = false;
-            }
-
-            if (options.multi === 'false') {
-                options.multi = false;
-            }
-
             lib.extend(properties, options);
+
+            if (properties.hasHead === 'false') {
+                properties.hasHead = false;
+            }
+
+            if (properties.hasSearchBox === 'false') {
+                properties.hasSearchBox = false;
+            }
+
+            if (properties.hasFoot === 'false') {
+                properties.hasFoot = false;
+            }
+
+            if (properties.holdState === 'false') {
+                properties.holdState = false;
+            }
+
+            if (properties.multi === 'false') {
+                properties.multi = false;
+            }
+
             properties.width = Math.max(200, properties.width);
             this.setProperties(properties);
         };
 
-        RichSelector.prototype.getHeadHTML = function () {
+        exports.getHeadHTML = function () {
             var helper = this.helper;
             var actionLink = '';
+            var headCount = '';
             if (this.needBatchAction) {
-                var linkClassName =
-                    helper.getPartClassName('batch-action-link');
+                var linkClassName = helper.getPartClassName('batch-action-link');
                 var linkId = this.helper.getId('batch-action');
                 actionLink = ''
                     + '<span class="' + linkClassName
@@ -101,11 +108,18 @@ define(
                     + '</span>';
             }
 
+            if (this.hasHead && this.needHeadCount) {
+                var countClass = helper.getPartClassName('head-count');
+                headCount = '<span class="'
+                    + countClass
+                    + '" data-ui="type:Label;childName:headTotalCount;title:;"></span>';
+            }
+
             var head = [
                 '<div data-ui="type:Panel;childName:head;"',
                 ' class="${headClass}">',
-                '<h3 data-ui="type:Label;childName:title;">',
-                '${title}</h3>',
+                '<h3 data-ui="type:Label;childName:title;title:;">',
+                '${title}</h3>${totalCount}',
                 '${actionLink}',
                 '</div>'
             ].join('\n');
@@ -115,14 +129,15 @@ define(
                 {
                     headClass: helper.getPartClassName('head'),
                     title: this.title,
-                    actionLink: actionLink
+                    actionLink: actionLink,
+                    totalCount: headCount
                 }
             );
 
             return head;
         };
 
-        RichSelector.prototype.getFootHTML = function () {
+        exports.getFootHTML = function () {
             return [
                 '<div data-ui="type:Panel;childName:foot;"',
                 ' class="' + this.helper.getPartClassName('foot') + '">',
@@ -132,25 +147,25 @@ define(
             ].join('\n');
         };
 
-        RichSelector.prototype.initStructure = function () {
+        exports.initStructure = function () {
             var tpl = [
                 // 表头
                 '${head}',
                 // 内容
                 '<div data-ui="type:Panel;childName:body;"',
                 ' class="${bodyClass}">',
-                    '${searchInput}',
-                    // 搜索结果列表区
-                    '<div data-ui="type:Panel;childName:content"',
-                    ' class="${contentClass}">',
-                        // 结果为空提示
-                        '<div data-ui="type:Label;childName:emptyText"',
-                        ' class="${emptyTextClass}">${emptyText}</div>',
-                        // 结果列表
-                        '<div data-ui="type:Panel;childName:queryList"',
-                        ' class="${queryListClass}">',
-                        '</div>',
-                    '</div>',
+                '    ${searchInput}',
+                // 搜索结果列表区
+                '    <div data-ui="type:Panel;childName:content"',
+                '     class="${contentClass}">',
+                // 结果为空提示
+                '        <div data-ui="type:Label;childName:emptyText"',
+                '         class="${emptyTextClass}">${emptyText}</div>',
+                // 结果列表
+                '        <div data-ui="type:Panel;childName:queryList"',
+                '         class="${queryListClass}">',
+                '        </div>',
+                '    </div>',
                 '</div>',
                 // 腿部概要信息
                 '${footInfo}'
@@ -164,7 +179,7 @@ define(
 
             var searchInput = '';
             if (this.hasSearchBox) {
-                var searchBoxWidth = this.width - 45;
+                var searchBoxWidth = this.width - 24;
                 searchInput = [
                     // 搜索区
                     '<div data-ui="type:Panel;childName:searchBoxArea"',
@@ -180,20 +195,19 @@ define(
                     ' class="${generalQueryResultClass}"',
                     ' id="${queryResultId}">',
                     '<span class="${linkClass}" id="${linkId}">清空</span>',
-                    '共找到<span id="${queryResultCountId}"></span>个',
+                    '共找到<span class="${countClass}" id="${queryResultCountId}"></span>个',
                     '</div>'
                 ].join('\n');
 
                 searchInput = lib.format(
                     searchInput,
                     {
-                        searchWrapperClass:
-                            helper.getPartClassName('search-wrapper'),
-                        generalQueryResultClass:
-                            helper.getPartClassName('query-result-general'),
+                        searchWrapperClass: helper.getPartClassName('search-wrapper'),
+                        generalQueryResultClass: helper.getPartClassName('query-result-general'),
                         queryResultCountId: helper.getId('result-count'),
                         linkClass: helper.getPartClassName('clear-query-link'),
-                        linkId: helper.getId('clear-query')
+                        linkId: helper.getId('clear-query'),
+                        countClass: helper.getPartClassName('search-count')
                     }
                 );
             }
@@ -267,9 +281,10 @@ define(
         /**
          * 点击行为分发器
          * @param {Event} e 事件对象
+         * @return {boolean}
          * @ignore
          */
-        RichSelector.prototype.eventDispatcher = function (e) {
+        exports.eventDispatcher = function (e) {
             return false;
         };
 
@@ -287,7 +302,7 @@ define(
          * 按条件搜索
          * @param {string | Object} args 搜索参数
          */
-        RichSelector.prototype.search = function (args) {
+        exports.search = function (args) {
             // filterData中的元素要满足一个标准结构: { keys: [], value: '' }
             // 其中数组型的keys代表一种“并集”关系，也可以不提供
             // filterData的各个元素代表“交集”关系。
@@ -314,6 +329,8 @@ define(
                 this.refreshResult();
                 // 更新腿部总结果
                 this.refreshFoot();
+                // 更新头部总结果
+                this.refreshHead();
 
                 // 更新状态
                 this.addState('queried');
@@ -326,7 +343,7 @@ define(
             }
         };
 
-        RichSelector.prototype.refreshResult = function () {
+        exports.refreshResult = function () {
             var count = this.getCurrentStateItemsCount();
             var resultCount = this.helper.getPart('result-count');
             if (resultCount) {
@@ -347,10 +364,12 @@ define(
 
         /**
          * 清除搜索结果
+         *
          * @param {ui.RichSelector} richSelector 类实例
+         * @return {boolean}
          * @ignore
          */
-        RichSelector.prototype.clearQuery = function () {
+        exports.clearQuery = function () {
             // 重置搜索
             resetSearchState(this);
 
@@ -366,6 +385,9 @@ define(
             // 更新腿部总结果
             this.refreshFoot();
 
+            // 更新头部总结果
+            this.refreshHead();
+
             // 调整高度
             this.adjustHeight();
 
@@ -380,7 +402,7 @@ define(
          * @return {ui.Panel}
          * @ignore
          */
-        RichSelector.prototype.getContent = function () {
+        exports.getContent = function () {
             var body = this.getChild('body');
             if (body) {
                 return body.getChild('content');
@@ -388,7 +410,7 @@ define(
             return null;
         };
 
-        RichSelector.prototype.getKeyword = function () {
+        exports.getKeyword = function () {
             var searchBox = this.getSearchBox();
             var isQuery = this.isQuery();
             if (searchBox && isQuery) {
@@ -402,7 +424,7 @@ define(
          * @return {ui.TreeForSelector | ui.ListForSelector}
          * @ignore
          */
-        RichSelector.prototype.getQueryList = function () {
+        exports.getQueryList = function () {
             var content = this.getContent();
             if (content) {
                 return content.getChild('queryList');
@@ -415,7 +437,7 @@ define(
          * @return {ui.Panel}
          * @ignore
          */
-        RichSelector.prototype.getSearchBox = function () {
+        exports.getSearchBox = function () {
             var searchBoxArea =
                 this.getChild('body').getChild('searchBoxArea');
             if (searchBoxArea) {
@@ -429,7 +451,7 @@ define(
          * @return {ui.Panel}
          * @ignore
          */
-        RichSelector.prototype.getTotalCountPanel = function () {
+        exports.getTotalCountPanel = function () {
             var foot = this.getChild('foot');
             if (!foot) {
                 return null;
@@ -438,10 +460,24 @@ define(
         };
 
         /**
+         * 获取头部总个数容器
+         * @param {ui.RichSelector} richSelector 类实例
+         * @return {ui.Panel}
+         * @ignore
+         */
+        exports.getHeadTotalCountPanel = function () {
+            var head = this.getChild('head');
+            if (!head) {
+                return null;
+            }
+            return head.getChild('headTotalCount');
+        };
+
+        /**
          * 判断是否处于query状态
          * @return {boolean}
          */
-        RichSelector.prototype.isQuery = function () {
+        exports.isQuery = function () {
             return this.hasState('queried');
         };
 
@@ -449,11 +485,13 @@ define(
          * 批量操作事件处理
          * 可重写
          *
+         * @return {boolean}
          */
-        RichSelector.prototype.batchAction = function () {
+        exports.batchAction = function () {
             if (this.mode === 'delete') {
                 this.deleteAll();
                 this.refreshFoot();
+                this.refreshHead();
             }
             else if (this.mode === 'add') {
                 this.selectAll();
@@ -461,11 +499,11 @@ define(
             return false;
         };
 
-        RichSelector.prototype.deleteAll = function () {
+        exports.deleteAll = function () {
             return false;
         };
 
-        RichSelector.prototype.addAll = function () {
+        exports.addAll = function () {
             return false;
         };
 
@@ -474,7 +512,7 @@ define(
          * 出现搜索信息时，结果区域的高度要变小，才能使整个控件高度不变
          *
          */
-        RichSelector.prototype.adjustHeight = function() {
+        exports.adjustHeight = function () {
             // 用户设置总高度
             var settingHeight = this.height;
 
@@ -500,7 +538,7 @@ define(
             content.style.height = contentHeight + 'px';
         };
 
-        RichSelector.prototype.adaptData = function () {};
+        exports.adaptData = function () {};
 
         /**
          * 手动刷新
@@ -508,7 +546,7 @@ define(
          * @param {ui.RichSelector} richSelector 类实例
          * @ignore
          */
-        RichSelector.prototype.refresh = function () {
+        exports.refresh = function () {
             // 重建数据，包括索引数据的创建
             var adaptedData = this.adaptData();
 
@@ -537,6 +575,8 @@ define(
                 this.processDataAfterRefresh(adaptedData);
                 // 更新底部信息
                 this.refreshFoot();
+                // 更新头部总结果
+                this.refreshHead();
                 // 更新高度
                 this.adjustHeight();
             }
@@ -547,7 +587,7 @@ define(
          *
          * @param {Object} adaptedData 适配后的数据
          */
-        RichSelector.prototype.processDataAfterRefresh = function (adaptedData) {};
+        exports.processDataAfterRefresh = function (adaptedData) {};
 
         /**
          * 更新腿部信息
@@ -555,7 +595,7 @@ define(
          * @param {ui.RichSelector} richSelector 类实例
          * @ignore
          */
-        RichSelector.prototype.refreshFoot = function () {
+        exports.refreshFoot = function () {
             if (!this.hasFoot) {
                 return;
             }
@@ -569,7 +609,25 @@ define(
             }
         };
 
-        RichSelector.prototype.getCurrentStateItemsCount = function () {
+        /**
+         * 更新头部信息
+         *
+         * @ignore
+         */
+        exports.refreshHead = function () {
+            if (!this.hasHead || !this.needHeadCount) {
+                return;
+            }
+            var count = this.getCurrentStateItemsCount();
+
+            // 更新头部总结果
+            var totalCountPanel = this.getHeadTotalCountPanel();
+            if (totalCountPanel) {
+                totalCountPanel.setText('（' + count + '）');
+            }
+        };
+
+        exports.getCurrentStateItemsCount = function () {
             return 0;
         };
 
@@ -581,7 +639,7 @@ define(
          * @param {Array=} 变更过的属性的集合
          * @override
          */
-        RichSelector.prototype.repaint = painter.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             InputControl.prototype.repaint,
             {
                 name: 'title',
@@ -599,7 +657,7 @@ define(
          * @return {Array}
          * @public
          */
-        RichSelector.prototype.getSelectedItems = function () {
+        exports.getSelectedItems = function () {
             return [];
         };
 
@@ -617,14 +675,14 @@ define(
          * @param {boolean} toBeSelected 要选择还是取消选择
          * @public
          */
-        RichSelector.prototype.selectItems = function (items, toBeSelected) {};
+        exports.selectItems = function (items, toBeSelected) {};
 
         /**
          * 设置元数据
          *
          * @param {Array} selectedItems 置为选择的项.
          */
-        RichSelector.prototype.setRawValue = function (selectedItems) {
+        exports.setRawValue = function (selectedItems) {
             this.rawValue = selectedItems;
             this.selectItems(selectedItems, true);
         };
@@ -634,7 +692,7 @@ define(
          *
          * @return {Array}
          */
-        RichSelector.prototype.getRawValue = function () {
+        exports.getRawValue = function () {
             return this.getSelectedItems();
         };
 
@@ -645,13 +703,15 @@ define(
          * @param {*} rawValue 原始值
          * @return {string}
          */
-        RichSelector.prototype.stringifyValue = function (rawValue) {
+        exports.stringifyValue = function (rawValue) {
             var selectedIds = [];
             u.each(rawValue, function (item) {
                 selectedIds.push(item.id);
             });
             return selectedIds.join(',');
         };
+
+        var RichSelector = require('eoo').create(InputControl, exports);
 
         require('esui').register(RichSelector);
 

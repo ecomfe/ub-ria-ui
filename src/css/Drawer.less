@@ -1,0 +1,171 @@
+@ub-ria-ui-drawer-mask-background: rgba(0, 0, 0, 0.4);
+@ub-ria-ui-drawer-background: @primary-bg-color;
+@ub-ria-ui-drawer-header-height: 4em;
+@ub-ria-ui-drawer-header-background: #F7F7F7;
+
+@ub-ria-ui-drawer-title-font-weight: bold;
+@ub-ria-ui-drawer-title-color: @primary-color;
+@ub-ria-ui-drawer-title-padding: 0 0 0 2em;
+
+@ub-ria-ui-drawer-close-color: #BDBDBD;
+@ub-ria-ui-drawer-close-hover-color: darken(@ub-ria-ui-drawer-close-color, 10%);
+
+@ub-ria-ui-drawer-content-padding: 5em 1em 1em 1em;
+
+@ub-ria-ui-drawer-footer-padding: 1em;
+@ub-ria-ui-drawer-footer-backround: @primary-bg-color;
+
+@ub-ria-ui-drawer-bottom-width: 95%;
+@ub-ria-ui-drawer-width: 50%;
+
+esui-drawer {
+    display: block;
+}
+
+// 在元素上添加 ui-drawer避免初始内容可见
+.@{ui-class-prefix}-drawer {
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    .transition(visibility 0s 0.6s);
+}
+
+.@{ui-class-prefix}-drawer-visible {
+    visibility: visible;
+    .transition(visibility 0s 0s);
+}
+
+// 一体化的mask
+.@{ui-class-prefix}-drawer:after {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    .esf-transition(background 0.3s 0.3s);
+}
+
+.@{ui-class-prefix}-drawer-visible:after {
+    background: @ub-ria-ui-drawer-mask-background;
+    .esf-transition(background 0.3s 0s);
+}
+
+.@{ui-class-prefix}-drawer-header {
+    position: fixed;
+    height: @ub-ria-ui-drawer-header-height;
+    line-height: @ub-ria-ui-drawer-header-height;
+    background: @ub-ria-ui-drawer-header-background;
+    z-index: 2;
+    .esf-transition(top 0.3s 0s);
+    right: 0;
+    top: -@ub-ria-ui-drawer-header-height;
+    width: 90%;
+    .opacity(90);
+}
+
+.@{ui-class-prefix}-drawer-footer {
+    position: fixed;
+    z-index: 2;
+    right: 0;
+    visibility: hidden;
+    width: 90%;
+    bottom: 0;
+    padding: @ub-ria-ui-drawer-footer-padding;
+    .box-sizing(border-box);
+    background: @ub-ria-ui-drawer-footer-backround;
+    .opacity(90);
+}
+
+.@{ui-class-prefix}-drawer-title {
+    font-weight: @ub-ria-ui-drawer-title-font-weight;
+    color: @ub-ria-ui-drawer-title-color;
+    padding: @ub-ria-ui-drawer-title-padding;
+}
+
+.@{ui-class-prefix}-drawer-visible .@{ui-class-prefix}-drawer-header {
+    top: 0;
+    .esf-transition(top 0.3s 0.3s);
+}
+
+.@{ui-class-prefix}-drawer-visible .@{ui-class-prefix}-drawer-footer {
+    visibility: visible;
+    .esf-transition(visibility 0.3s 0.3s);
+}
+
+.@{ui-class-prefix}-drawer-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 1.5em;
+    width: 2em;
+    text-align: center;
+    color: @ub-ria-ui-drawer-close-color;
+    &:hover {
+        color: @ub-ria-ui-drawer-close-hover-color;
+    }
+}
+
+.@{ui-class-prefix}-drawer-content {
+    position: fixed;
+    height: 100%;
+    width: 90%;
+    top: 0;
+    background: @ub-ria-ui-drawer-background;
+    z-index: 1;
+    .transition-property(transform);
+    .transition-duration(0.3s);
+    .transition-delay(0.2s);
+    right: 0;
+    transform: translate3d(100%, 0, 0);
+    padding: @ub-ria-ui-drawer-content-padding;
+    .box-sizing(border-box);
+    overflow: auto;
+}
+
+// 其他方向的配置
+.@{ui-class-prefix}-drawer-from-left .@{ui-class-prefix}-drawer-header,
+.@{ui-class-prefix}-drawer-from-left .@{ui-class-prefix}-drawer-content,
+.@{ui-class-prefix}-drawer-from-left .@{ui-class-prefix}-drawer-footer {
+    left: 0;
+    right: auto;
+}
+
+.@{ui-class-prefix}-drawer-from-left .@{ui-class-prefix}-drawer-content {
+    transform: translate3d(-100%, 0, 0);
+}
+
+.@{ui-class-prefix}-drawer-from-bottom .@{ui-class-prefix}-drawer-header,
+.@{ui-class-prefix}-drawer-from-bottom .@{ui-class-prefix}-drawer-content,
+.@{ui-class-prefix}-drawer-from-bottom .@{ui-class-prefix}-drawer-footer {
+    left: (100% - @ub-ria-ui-drawer-bottom-width) / 2;
+    width: @ub-ria-ui-drawer-bottom-width !important;
+    right: auto;
+}
+
+.@{ui-class-prefix}-drawer-from-bottom .@{ui-class-prefix}-drawer-content {
+    transform: translate3d(0, 100%, 0);
+}
+
+.@{ui-class-prefix}-drawer-visible .@{ui-class-prefix}-drawer-content {
+    .transform(translate3d(0, 0, 0));
+    .transition-delay(0s);
+}
+
+.ub-ria-ui-drawer-width(@ub-ria-ui-drawer-width);
+
+.ub-ria-ui-drawer-width(@width) {
+    .@{ui-class-prefix}-drawer-header,
+    .@{ui-class-prefix}-drawer-content,
+    .@{ui-class-prefix}-drawer-footer {
+        width: @width;
+    }
+}
