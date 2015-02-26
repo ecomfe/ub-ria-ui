@@ -1,4 +1,18 @@
 
+.@{ui-class-prefix}-tokenfield {
+    border: solid 1px #000;
+    padding: 10px;
+
+    input[type="text"], textarea {
+        border: none;
+        background: transparent;
+    }
+}
+
+.@{ui-class-prefix}-tokenfield-flash {
+    .opacity(0);
+}
+
 
 .@{ui-class-prefix}-tokenfield-token {
     .box-sizing(border-box);
@@ -10,6 +24,7 @@
     margin: -1px 5px 5px 0;
     height: 22px;
     vertical-align: top;
+    .transition(opacity .3s ease-in-out);
 }
 
 .@{ui-class-prefix}-tokenfield-close {

@@ -16,7 +16,7 @@ define(
         require('esui/TextBox');
 
         // 存储token列表
-        var data = {};
+        // var data = {};
 
         /**
          * TokenField
@@ -25,6 +25,11 @@ define(
          * @constructor
          */
         exports = {
+            constructor: function() {
+                this.$super(arguments);
+                this.data = {};
+            },
+
             /**
              * 控件类型，始终为`"TokenField"`
              *
@@ -58,11 +63,16 @@ define(
                     minLength: 0, // token最小字符串长度，低于该长度不创建, 默认不限制
                     limit: 0, // token最大数量,默认不限制
                     delimiter: ',', // 分隔符
-                    tokens: ''
+                    tokens: '',
+                    repeat: false // token是否允许重复
                 };
                 u.extend(properties, options);
 
                 this.setProperties(properties);
+
+                if (this.repeat === 'false' || this.repeat === '') {
+                    this.repeat = false;
+                }
 
                 // delimiters, token分隔符，可一次生成多个token
                 this.delimiters = (typeof properties.delimiter === 'string') 
@@ -128,6 +138,13 @@ define(
                 this.initChildren(this.main);
                 // 创建初始token
                 this.setTokens(this.tokens, false);
+            },
+            /**
+             * 首次渲染完成后的操作
+             *
+             * @protected
+             */
+            onafterrender: function() {
                 // 计算输入框宽度
                 this.updateInput();
             },
@@ -182,7 +199,7 @@ define(
                 var main = this.main;
                 var width = lib.getOffset(main).left 
                     + parseInt(lib.getStyle(main, 'width'), 10) 
-                    + parseInt(lib.getStyle(main, 'padding-left'), 10) 
+                    // + parseInt(lib.getStyle(main, 'padding-left'), 10) 
                     - lib.getOffset(input.main).left;
                 input.setProperties({ width: width });
             },
@@ -220,7 +237,7 @@ define(
                 tokenElem.innerHTML = this.helper.getPartHTML('label', 'span') + this.helper.getPartHTML('close', 'a');
                 var guid = lib.getGUID();
                 lib.setAttribute(tokenElem, 'data-id', guid);
-                data[guid] = token;
+                this.data[guid] = token;
 
                 var input = this.getInput();
                 var inputElem = input.main;
@@ -397,6 +414,16 @@ define(
                     return;
                 }
 
+                if (!this.repeat) {
+                    var repeatToken = this.checkRepeatToken(inputValue);
+                    if (repeatToken.token) {
+                        this.flashToken(repeatToken.tokenElement);
+                        u.isFunction(this.repeatCallback) && this.repeatCallback(repeatToken);
+                        return;
+                    }
+                }
+                
+
                 var before = this.getRawValue();
                 this.setTokens(inputValue, true);
                 if (before == this.getRawValue() && inputValue.length) {
@@ -404,6 +431,46 @@ define(
                 }
                 // token创建成功，清空输入框
                 input.setRawValue('');
+            },
+
+            /**
+             * 检测重复Token
+             */
+            checkRepeatToken: function(tokenValue) {
+                var repeatToken = {};
+                u.each(this.data, function(token, dataId) {
+                    if (token.value === tokenValue) {
+                        repeatToken.dataId = dataId;
+                        repeatToken.token = token;
+                        return false;
+                    }
+                });
+
+                if (repeatToken.dataId) {
+                    repeatToken.tokenElement = document.querySelector('div[data-id=' + repeatToken.dataId + ']');
+                }
+                return repeatToken;
+            },
+            /**
+             * 闪一下重复的token元素以做提示
+             */
+            flashToken: function(tokenElem) {
+                if (this.addFlashClsTimer || this.removeFlashClsTimer) {
+                    this.helper.removePartClasses('flash', tokenElem);
+                    clearTimeout(this.addFlashClsTimer);
+                    this.addFlashClsTimer = null;
+                    clearTimeout(this.removeFlashClsTimer);
+                    this.removeFlashClsTimer = null;
+                }
+
+                var me = this;
+                this.addFlashClsTimer = setTimeout(function() {
+                    me.helper.addPartClasses('flash', tokenElem);
+                }, 0);
+
+                this.removeFlashClsTimer = setTimeout(function() {
+                    me.helper.removePartClasses('flash', tokenElem);
+                }, 300);
             },
 
             /**
@@ -415,13 +482,14 @@ define(
                 if (!tokens) return;
 
                 if (!isAdd) {
+                    var me = this;
                     u.each(
                         lib.getChildren(this.main),
                         function (tokenElem) {
                             if (lib.hasClass(tokenElem, 'token')) {
                                 // 先删除关联数据
                                 var dataId = lib.getAttribute(tokenElem, 'data-id');
-                                delete data[dataId];
+                                delete me.data[dataId];
                                 tokenElem.parentNode.removeChild(tokenElem);
                             }
                         }
@@ -454,12 +522,13 @@ define(
              */
             getTokens: function () {
                 var tokens = [];
+                var me = this;
                 u.each(
                     lib.getChildren(this.main),
                     function (tokenElem) {
                         if (lib.hasAttribute(tokenElem, 'data-id')) {
                             var dataId = lib.getAttribute(tokenElem, 'data-id');
-                            var token = data[dataId];
+                            var token = me.data[dataId];
                             if (token) {
                                 tokens.push(token);
                             }
