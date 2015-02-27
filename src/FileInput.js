@@ -60,28 +60,28 @@ define(
          * 一次选择一个文件，选择多次后一次上传
          * 因此，每次用户选择文件后要再创建一个file input,等待用户再次选择文件
          */
-		function addInput() {
+        function addInput() {
 
             var me = this;
-			var uid = lib.getGUID('fileinput');
+            var uid = lib.getGUID('fileinput');
 
             // 如果用户已经选择过文件，则将用过的input移走
             // 这里不能删除用过的input，上传的时候还要用
-			if (this.lastUid) {
-				var currForm = lib.g(this.lastUid + '_form');
-				if (currForm) {
-					u.extend(currForm.style, {top: '100%'});
-				}
-			}
+            if (this.lastUid) {
+                var currForm = lib.g(this.lastUid + '_form');
+                if (currForm) {
+                    u.extend(currForm.style, {top: '100%'});
+                }
+            }
 
-			var form = document.createElement('form');
-			form.setAttribute('id', uid + '_form');
-			form.setAttribute('method', 'post');
-			form.setAttribute('enctype', 'multipart/form-data');
-			form.setAttribute('encoding', 'multipart/form-data');
+            var form = document.createElement('form');
+            form.setAttribute('id', uid + '_form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('enctype', 'multipart/form-data');
+            form.setAttribute('encoding', 'multipart/form-data');
             lib.addClass(form, this.helper.getPartClassName('form'));
 
-			lib.extend(
+            lib.extend(
                 form.style,
                 {
                     overflow: 'hidden',
@@ -93,13 +93,13 @@ define(
                 }
             );
 
-			var input = document.createElement('input');
-			input.setAttribute('id', uid);
-			input.setAttribute('type', 'file');
-			input.setAttribute('name', this.name);
-			input.setAttribute('accept', this.accept);
+            var input = document.createElement('input');
+            input.setAttribute('id', uid);
+            input.setAttribute('type', 'file');
+            input.setAttribute('name', this.name);
+            input.setAttribute('accept', this.accept);
 
-			lib.extend(
+            lib.extend(
                 input.style,
                 {
                     fontSize: '999px',
@@ -112,48 +112,48 @@ define(
                 }
             );
 
-			if (lib.ie && lib.ie < 10) {
-				lib.extend(
+            if (lib.ie && lib.ie < 10) {
+                lib.extend(
                     input.style,
                     {
                         filter : "progid:DXImageTransform.Microsoft.Alpha(opacity=0)"
                     }
                 );
-			}
+            }
 
-			form.appendChild(input);
-			this.main.appendChild(form);
+            form.appendChild(input);
+            this.main.appendChild(form);
 
             /**
              * input选择完文件后则移走，重新创建一个新的input等待下次上传
              */
-			input.onchange = function() {
-				var file;
+            input.onchange = function() {
+                var file;
 
-				if (!this.value) {
-					return;
-				}
+                if (!this.value) {
+                    return;
+                }
 
-				if (this.files && this.files.length) {
+                if (this.files && this.files.length) {
                     file = new File(this.files[0]);
-				}
+                }
                 else {
-					file = new File();
+                    file = new File();
                     file.name = this.value;
-				}
+                }
                 u.extend(file, {id: uid});
-				me.files = [file];
+                me.files = [file];
 
                 // 一个input只用一次
-				this.onchange = function() {};
+                this.onchange = function() {};
                 // 一般外部通过监听change事件来添加文件
                 me.fire('change');
                 // 重新创建一个input来接收用户上传
-				addInput.call(me);
-			};
+                addInput.call(me);
+            };
 
-			this.lastUid = uid;
-		}
+            this.lastUid = uid;
+        }
 
         /**
          * @override
@@ -213,12 +213,12 @@ define(
          * @override
          */
         exports.initEvents = function () {
-			// IE不支持在用户事件中触发file input对话框
-			if (supportMultiple) {
+            // IE不支持在用户事件中触发file input对话框
+            if (supportMultiple) {
                 var me = this;
                 var input = lib.g(this.lastUid);
                 var browseButton = lib.g(this.browseButton);
-				lib.on(
+                lib.on(
                     browseButton,
                     'click',
                     function(e) {
@@ -241,7 +241,7 @@ define(
 
                     me.fire('change');
                 };
-			}
+            }
 
         };
 

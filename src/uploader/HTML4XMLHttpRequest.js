@@ -175,13 +175,13 @@ define(
          * 比如删除iframe，还有要清理临时生成的hidden input等
          * @param {Function} callback 清理完成后调用
          */
-		function cleanup(callback) {
+        function cleanup(callback) {
 
-			if (!iframe) {
-				return;
-			}
+            if (!iframe) {
+                return;
+            }
 
-			var uid = iframe.id.replace(/_iframe$/, '');
+            var uid = iframe.id.replace(/_iframe$/, '');
 
             // input放回原位
             var input = lib.g(uid);
@@ -191,9 +191,9 @@ define(
                 placeholder.parentNode.removeChild(placeholder);
             }
 
-			var form = lib.g(uid + '_form');
-			if (form) {
-				var inputs = form.getElementsByTagName('input');
+            var form = lib.g(uid + '_form');
+            if (form) {
+                var inputs = form.getElementsByTagName('input');
                 u.each(
                     inputs,
                     function (input) {
@@ -203,14 +203,14 @@ define(
                         }
                     }
                 );
-				inputs = [];
+                inputs = [];
 
                 form.parentNode.removeChild(form);
-				form = null;
-			}
+                form = null;
+            }
 
-			// 不用timeout，浏览器控制台看到的网络请求变成 已取消
-			setTimeout(
+            // 不用timeout，浏览器控制台看到的网络请求变成 已取消
+            setTimeout(
                 function () {
                     // lib.un(iframe, 'load');
                     if (iframe.parentNode) {
@@ -220,7 +220,7 @@ define(
                     callback();
                 },
             1);
-		}
+        }
 
         /**
          * override

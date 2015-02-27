@@ -587,25 +587,25 @@ define(
          * 提交文件上传
          */
         exports.start = function () {
-			if (this.state != UPLOADER_STARTED) {
+            if (this.state != UPLOADER_STARTED) {
                 this.showUploading();
-				this.state = UPLOADER_STARTED;
-				this.fire('statechanged');
-				uploadNext.call(this);
-			}
+                this.state = UPLOADER_STARTED;
+                this.fire('statechanged');
+                uploadNext.call(this);
+            }
         };
 
-		/**
-		 * 停止上传队列文件
-		 */
-		exports.stop = function() {
-			if (this.state != UPLOADER_STOPPED) {
-				this.state = UPLOADER_STOPPED;
-				this.fire('statechanged');
-				this.fire('cancelupload');
+        /**
+         * 停止上传队列文件
+         */
+        exports.stop = function() {
+            if (this.state != UPLOADER_STOPPED) {
+                this.state = UPLOADER_STOPPED;
+                this.fire('statechanged');
+                this.fire('cancelupload');
                 // TODO
-			}
-		},
+            }
+        },
 
 
         /**
@@ -683,42 +683,42 @@ define(
             }
         }
 
-		/**
-		 * 从队列中删除指定文件
-		 *
-		 * @param {ui.File|string} file 要删除的文件
-		 */
-		exports.removeFile = function(file) {
-			var id = typeof file === 'string' ? file : file.id;
+        /**
+         * 从队列中删除指定文件
+         *
+         * @param {ui.File|string} file 要删除的文件
+         */
+        exports.removeFile = function(file) {
+            var id = typeof file === 'string' ? file : file.id;
             var files = this.files;
-			for (var i = files.length - 1; i >= 0; i--) {
-				if (files[i].id === id) {
-					var file = files.splice(i, 1)[0];
+            for (var i = files.length - 1; i >= 0; i--) {
+                if (files[i].id === id) {
+                    var file = files.splice(i, 1)[0];
                     this.fire('filesremoved', {data: file});
                     return file;
-				}
-			}
-		};
+                }
+            }
+        };
 
-		/**
-		 * 添加文件到队列中,
+        /**
+         * 添加文件到队列中,
          * 一般用在`modify`的场景，文件来源不是`FileInput`控件
-		 *
-		 * @param {ui.File|Array<ui.File>} files 要添加的文件
-		 */
-		exports.addFile = function(files) {
+         *
+         * @param {ui.File|Array<ui.File>} files 要添加的文件
+         */
+        exports.addFile = function(files) {
             if (!u.isArray(files)) {
                 files = [files];
             }
             Array.prototype.push.apply(this.files, files);
             this.fire('filesadded', {data: files});
-		};
+        };
 
-		/**
-		 * 添加文件到队列中,并覆盖之前已经存在的文件
-		 *
-		 * @param {ui.File|Array<ui.File>} files
-		 */
+        /**
+         * 添加文件到队列中,并覆盖之前已经存在的文件
+         *
+         * @param {ui.File|Array<ui.File>} files
+         */
         exports.setFile = function(files) {
             // 先清空已存在文件
             for (var i = 0, len = this.files.length; i < len; i++) {
