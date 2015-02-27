@@ -19,7 +19,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.0.0/src',
+            'location': '../dep/etpl/2.1.2/src',
             'main': 'main'
         },
         {
@@ -28,23 +28,24 @@ require.config({
             'main': 'main'
         },
         {
-            'name': 'ub-ria-ui',
-            'location': '../src',
-            'main': 'main'
-        },
-        {
-            'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.3/src',
-            'main': 'main'
-        },
-        {
             'name': 'eoo',
             'location': '../dep/eoo/0.1.1/src',
             'main': 'main'
         },
         {
-            'name': 'est',
-            'location': '../dep/est/1.3.0/src'
+            'name': 'er',
+            'location': '../dep/er/3.1.0-beta.6/src',
+            'main': 'main'
+        },
+        {
+            'name': 'ef',
+            'location': '../dep/ef/3.1.0-beta.2/src',
+            'main': 'main'
+        },
+        {
+            'name': 'eicons',
+            'location': '../dep/eicons/1.0.0-alpha.3/src',
+            'main': 'main.less'
         },
         {
             'name': 'esf',
@@ -54,11 +55,11 @@ require.config({
             'name': 'eicons',
             'location': '../dep/eicons/1.0.0-alpha.4/src',
             'main': 'main.less'
+            'location': '../dep/esf/1.0.0-alpha.7/src'
         },
         {
-            'name': 'er',
-            'location': '../dep/er/3.1.0-beta.6/src',
-            'main': 'main'
+            'name': 'est',
+            'location': '../dep/est/1.3.0/src'
         }
     ]
 });
@@ -85,11 +86,12 @@ $(function () {
     //$('html').on('mousedown', hideSource);
 
     var navItems =
+        '<li><a href="AutoComplete.html">AutoComplete</a></li>' +
         '<li><a href="Carousel.html">Carousel</a></li>' +
+        '<li><a href="Drawer.html">Drawer</a></li>' +
         '<li><a href="ToggleSelector.html">ToggleSelector</a></li>' +
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
-        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
-
+        '<li><a href="TokenField.html">TokenField</a></li>';
     $('#navigator').html(navItems);
 
     $('.example').each(function (index, item) {

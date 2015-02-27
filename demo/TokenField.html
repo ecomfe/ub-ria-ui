@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Carousel - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <title>Token Field - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
 
@@ -13,7 +13,7 @@
     <script src="assets/third-party/prism.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
 
-    <script src="assets/demo.js"></script>
+    <script src="demo.js"></script>
 </head>
 <body>
     <h1>Carousel</h1>
@@ -21,28 +21,32 @@
         <ul id="navigator">
         </ul>
         <div id="main">
-            <h2>抽屉</h2>
+            <h2>输入多个</h2>
             <section class="intro">
-                <p>一个抽屉</p>
+                <p>可以切换的Carousel。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example" id="container">
-                    <button id="btn" class="ui-button">展开抽屉</button>
-                    <div data-ui-type="DrawerActionPanel" data-ui-id="panel" style="background: #007DB7"></div>
+                    <input data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan" data-ui-limit="10" data-ui-repeat="1"/>
+                    <input data-ui-type="TokenField" data-ui-tokens="yankun01+lisijin,maoquan" data-ui-delimiter=",+" />
                 </div>
             </section>
         </div>
     </div>
     <script>
-    require(['esui', 'DrawerActionPanel'], function (ui) {
-        ui.init();
-        document.getElementById('btn').onclick = function () {
-            ui.get('panel').show();
-        }
-    });
+        require(
+            [
+                'esui',
+                'TokenField'
+            ],
+            function (ui) {
+                ui.init();
+                //var tokenField = ui.init()[0];
+            }
+        );
     </script>
 </body>
 </html>
