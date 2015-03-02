@@ -62,8 +62,10 @@
                         data-ui-has-height="300"
                         data-ui-has-width="200"
                         data-ui-has-search-box="false"
-                        data-ui-datasource="@apps"
+                        data-ui-datasource="@apps">
+                        <!--
                         data-ui-disabled="disabled">
+                        -->
                     </div>
                 </div>
 
@@ -149,7 +151,7 @@
                             isSelected: isSelected
                         })
                     }
-                    table1.setProperties({datasource: arrayDatasource});
+                    table1.setProperties({datasource: arrayDatasource, rawValue:[5,7]});
 
                     var source = ui.get('all-table-slots');
                     var target = ui.get('selected-table-slots');
@@ -224,7 +226,8 @@
                         children.push({
                             text: '广告位' + (i + 1),
                             name: '广告位' + (i + 1),
-                            id: i + 1
+                            id: i + 1,
+                            isSelected: true
                         })
                     }
 
@@ -234,7 +237,8 @@
                             {
                                 text: '子节点' + i,
                                 name: '子节点' + (i),
-                                id: 100 + i
+                                id: 100 + i,
+                                isSelected: true
                             }
                         ]
                     }
