@@ -47,13 +47,13 @@ define(
              * @type {number} defaults.max 最大值 不能大于end,无值时与end相同
              * @type {string} defaults.unitText 滑动杆内数值后面的单位
              * @type {boolean} defaults.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
-             * @type {boolean} defaults.isHasHead 是否显示标题和头部 显示true 不显示false
+             * @type {boolean} defaults.hasHead 是否显示标题和头部 显示true 不显示false
              * @type {string} defaults.title 滑动杆的头部标题
              * @type {string} defaults.headType 默认label 还可以是textbox、select
              * @type {string} defaults.pattern 文本框时验证的正则表达式
              * @type {string} defaults.errorMessage 正则验证错误时的提示信息
              * @type {Array} defaults.datasource 下拉框时的数据源
-             * @type {boolean} defaults.isHasFoot 是否有脚 有true 无false 默认false
+             * @type {boolean} defaults.hasFoot 是否有脚 有true 无false 默认false
              * @type {number} defaults.footStep 显示角标的间隔 默认为2
              * @type {Number} defaults.footLiWidth 每个角标的宽度
              * @type {boolean} defaults.range 滑动杆控件是否是选择区间 默认false 是true
@@ -67,14 +67,14 @@ define(
                 unitText: '',
                 isShowSelectedBG: true,
 
-                isHasHead: false,
+                hasHead: false,
                 title: '标题',
                 headType: 'label',
                 pattern: '^-?[1-9]\d*|0$',
                 errorMessgae: '输入的值必须为数字',
                 datasource: [],
 
-                isHasFoot: false,
+                hasFoot: false,
                 footStep: 2,
                 footTextWidth: 40,
 
@@ -119,9 +119,28 @@ define(
             }
 
             // 适配value的数据
-            properties = adaptorValue.call(this, properties);
+            properties = adaptValue.call(this, properties);
 
             this.$super([properties]);
+        };
+
+        /**
+         * 将字符串类型的值转换成原始格式，复杂类型的输入控件需要重写此接口
+         *
+         * @param {string} value 要转换的string
+         * @param {Object} properties 参数对象
+         * @return {Mixed}
+         * @protected
+         */
+        exports.parseValue = function (value, properties) {
+            if ((properties && properties.range) || this.range) {
+                if (typeof value === 'string') {
+                    var arr = value.split(',');
+                    return [+arr[0], +arr[1]];
+                }
+            }
+
+            return value;
         };
 
         /**
@@ -129,13 +148,13 @@ define(
          * @param  {Object} properties 参数
          * @return {Object}            适配后的参数
          */
-        function adaptorValue (properties) {
+        function adaptValue (properties) {
 
             var value = properties.value;
             delete properties.value;
 
             if (value != null && properties.rawValue == null) {
-                properties.rawValue = this.parseValue(value);
+                properties.rawValue = this.parseValue(value, properties);
             }
 
             properties.min =
@@ -187,11 +206,11 @@ define(
 
             // 给控件设值的时候适配数据用
             if (properties.hasOwnProperty('rawValue')) {
-                properties = adaptorValue.call(this, properties);
+                properties = adaptValue.call(this, properties);
 
             }
 
-            return InputControl.prototype.setProperties.call(this, properties);
+            this.$super([properties]);
         };
 
         /**
@@ -202,7 +221,7 @@ define(
          * @protected
          */
         exports.createHead = function () {
-            if (this.isHasHead) {
+            if (this.hasHead) {
                 // 有头
                 var headTpl = '<label for="${headValueDomId}" class="${headLabelClasses}">'
                                 + '${title}：'
@@ -304,18 +323,31 @@ define(
                     );
                 }
 
-                // 存储头部的的控件或dom元素，同步数据用
-                if (this.headType === 'label') {
-                    // label
-                    this.headTarget = this.helper.getPart('head-value');
-                }
-                else {
-                    // textbox 或 select
-                    this.headTarget = panel.getChild('headValue');
-                }
-
                 return panel;
             }
+        };
+
+        /**
+         * 获取头部的元素
+         * @return {[type]} [description]
+         */
+        exports.getHeadTarget =  function () {
+            if (!this.hasHead) {
+                return null;
+            }
+
+            var headTarget;
+
+            if (this.headType === 'label') {
+                // label
+                headTarget = this.helper.getPart('head-value');
+            }
+            else {
+                // textbox 或 select
+                headTarget = this.getChild('head').getChild('headValue');
+            }
+
+            return headTarget;
         };
 
         /**
@@ -337,7 +369,7 @@ define(
             if (this.range) {
                 var cursorElementTwo
                     = this.cursorElementTwo
-                        = this.helper.createPart('body-cursortwo');
+                    = this.helper.createPart('body-cursortwo');
 
                 bodyElement.appendChild(cursorElementTwo);
             }
@@ -347,7 +379,7 @@ define(
                 // 已选择的区间元素
                 var bodySelectedElement
                     = this.bodySelectedElement
-                        = this.helper.createPart('body-selected');
+                    = this.helper.createPart('body-selected');
 
                 bodyElement.appendChild(bodySelectedElement);
             }
@@ -368,7 +400,7 @@ define(
          * @protected
          */
         exports.createFoot = function () {
-            if (!this.isHasFoot) {
+            if (!this.hasFoot) {
                 return;
             }
 
@@ -382,14 +414,18 @@ define(
             footElement = this.helper.createPart('foot', 'ul');
 
             var footHtml = '';
+            // 显示的角标个数为len+1
             var len = (this.end - this.start) / this.footStep;
+            // 每个角标的宽度
             var footStepWidth = this.width / len;
+            // 控件值后面显示的单位
             var unitText = '';
 
             if (this.unitText) {
                 unitText = this.unitText;
             }
 
+            // 创建角标的元素
             for (var i = 0; i <= len; i++) {
                 var data = {
                     left: i * footStepWidth - this.footTextWidth / 2,
@@ -547,15 +583,12 @@ define(
             // 已选择的部分加个背景色显示
             if (slider.isShowSelectedBG) {
                 if (slider.range) {
-                    slider.bodySelectedElement.style[leftTop]
-                        = cursorLeftTop + slider.cursorWH / 2 + 'px';
+                    slider.bodySelectedElement.style[leftTop] = cursorLeftTop + slider.cursorWH / 2 + 'px';
 
-                    slider.bodySelectedElement.style[widthHeight]
-                        = cursorLeftTopTwo - cursorLeftTop + 'px';
+                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTopTwo - cursorLeftTop + 'px';
                 }
                 else {
-                    slider.bodySelectedElement.style[widthHeight]
-                        = cursorLeftTop + slider.cursorWH / 2 + 'px';
+                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTop + slider.cursorWH / 2 + 'px';
                 }
             }
 
@@ -566,39 +599,72 @@ define(
         }
 
         /**
+         * 绑定头部的事件
+         * @param  {Slider} slider slider控件对象
+         */
+        function bindHeadEvents(slider) {
+            if (!slider.hasHead) {
+                return;
+            }
+
+            // 获取头元素
+            var headTarget = slider.getHeadTarget();
+
+            if (headTarget.type === 'TextBox') {
+                headTarget.on('blur', blurHandler, slider);
+            }
+            else if (headTarget.type === 'Select') {
+                headTarget.on('change', changeHandler, slider);
+            }
+        }
+
+        /**
+         * 解除头部事件的绑定
+         * @param  {Slider} slider slider控件对象
+         */
+        function unbindHeadEvents(slider) {
+            if (!slider.hasHead) {
+                return;
+            }
+
+            // 获取头部的元素
+            var headTarget = slider.getHeadTarget();
+
+            if (headTarget.type === 'TextBox') {
+                headTarget.un('blur');
+            }
+            else if (headTarget.type === 'Select') {
+                headTarget.un('change');
+            }
+        }
+
+        /**
          * 同步控件内数值的显示
          * @param {Slider} slider 滑杆对象
          * @param {number} value  滑杆的值
          */
         function syncValue(slider, value) {
             // 同步头部的值
-            if (slider.isHasHead) {
-                if (slider.headTarget instanceof InputControl) {
-                    // 先去掉绑定的事件 防止循环调用
-                    if (slider.headTarget.type === 'TextBox') {
-                        slider.headTarget.un('blur');
-                    }
-                    else if (slider.headTarget.type === 'Select') {
-                        slider.headTarget.un('change');
-                    }
+            if (slider.hasHead) {
+                // 获取头元素
+                var headTarget = slider.getHeadTarget();
 
-                    slider.headTarget.setProperties(
+                if (headTarget instanceof InputControl) {
+                    // 先去掉绑定的事件 防止循环调用
+                    unbindHeadEvents(slider);
+
+                    headTarget.setProperties(
                         {
                             value: value
                         }
                     );
 
                     // 再捆绑事件
-                    if (slider.headTarget.type === 'TextBox') {
-                        slider.headTarget.on('blur', blurHandler, slider);
-                    }
-                    else if (slider.headTarget.type === 'Select') {
-                        slider.headTarget.on('change', changeHandler, slider);
-                    }
+                    bindHeadEvents(slider);
                 }
                 else {
                     // label时
-                    slider.headTarget.innerHTML = value;
+                    headTarget.innerHTML = value;
                 }
             }
         }
@@ -626,7 +692,7 @@ define(
             if (this.range) {
                 // 拖动的是否是第一个滑块
                 var isFirst = false;
-                // 另外一个坏块的left
+                // 另外一个滑块的left
                 var otherLeftTop;
                 // 另一个滑块的值
                 var otherValue;
@@ -841,30 +907,6 @@ define(
         }
 
         /**
-         * 绑定头部的事件
-         * @private
-         */
-        function bindHeadEvents() {
-            if (!this.isHasHead) {
-                return;
-            }
-
-            var target = this.headTarget;
-
-            if (target instanceof InputControl) {
-                 // textbox时
-                if (target.type === 'TextBox') {
-                    // textbox时实时的监听blur做验证用
-                    target.on('blur', blurHandler, this);
-                }
-                else if (target.type === 'Select') {
-                    // select时的change监听事件
-                    target.on('change',  changeHandler, this);
-                }
-            }
-        }
-
-        /**
          * 头部文本框的blur处理事件
          * @param  {Event} e 事件对象
          * @private
@@ -905,7 +947,7 @@ define(
             bindCursorEvents.call(this);
 
             // 绑定头部的事件
-            bindHeadEvents.call(this);
+            bindHeadEvents(this);
         };
 
         /**
@@ -947,8 +989,6 @@ define(
          * @override
          */
         exports.dispose = function () {
-            this.headTarget &&  this.headTarget.dispose && this.headTarget.dispose();
-            this.headTarget = null;
             this.bodyElement = null;
             this.cursorElement = null;
             this.bodySelectedElement = null;

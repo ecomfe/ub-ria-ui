@@ -3263,6 +3263,7 @@ esui-tree-rich-selector {
 }
 .ui-slider {
   width: 640px;
+  padding: 10px 0;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -3342,7 +3343,8 @@ esui-tree-rich-selector {
 }
 
 .ui-slider-head-select {
-  margin-top: 13px
+  margin-top: 13px;
+  z-index: 3;
 }
 
 .ui-slider-head-textbox {

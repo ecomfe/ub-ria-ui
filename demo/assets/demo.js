@@ -1,5 +1,5 @@
 require.config({
-    'baseUrl': '../src',
+    'baseUrl': '../../src',
     'paths': {},
     'packages': [
         {
@@ -48,11 +48,11 @@ require.config({
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-alpha.4/src'
+            'location': '../dep/esf/1.0.0-alpha.8/src'
         },
         {
             'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-alpha.1/src',
+            'location': '../dep/eicons/1.0.0-alpha.4/src',
             'main': 'main.less'
         },
         {
@@ -87,7 +87,8 @@ $(function () {
     var navItems = 
         '<li><a href="Carousel.html">Carousel</a></li>' +
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
-        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
+        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>' +
+        '<li><a href="Slider.html">Slider</a></li>';
 
     $('#navigator').html(navItems);
 
