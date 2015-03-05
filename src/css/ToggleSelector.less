@@ -42,8 +42,8 @@
 @toggle-select-arror-color: #7d7d7d;
 @toggle-select-disabled-arror-color: #b7b7b7;
 
-.ui-toggle-select, .ui-togglepanel-expanded .ui-togglepanel-title {
-    &:before {
+.ui-toggle-select, .ui-togglepanel .ui-togglepanel-title {
+    &:after {
         .ecions-font-style();
     }
 }
@@ -61,20 +61,30 @@
     font-weight: bold;
     text-align: center;
     position: relative;
-    &:before {
+    &:after {
         color: @toggle-select-arror-color;
         .eicons-icon-content(angle-down);
         .font-icon-position(right, @toggle-select-padding-left, center, 0);
     }
 }
 
+.ui-togglepanel {
+    .ui-togglepanel-title {
+        cursor: pointer;
+        font-weight: bold;
+        position: relative;
+        &:after {
+            color: @toggle-select-arror-color;
+            .eicons-icon-content(angle-down);
+            .font-icon-position(right, @toggle-select-padding-left, center, 0);
+        }
+    }
+}
+
 .ui-togglepanel-expanded {
     .ui-togglepanel-title {
-        position: relative;
-        &:before {
-            color: @toggle-select-arror-color;
+        &:after {
             .eicons-icon-content(angle-up);
-            .font-icon-position(right, @toggle-select-padding-left, center, 0);
         }
     }
 }
@@ -82,10 +92,15 @@
 .ui-toggle-select-disabled,
 .ui-toggle-select-read-only,
 .ui-toggle-select-disabled:hover,
-.ui-toggle-select-read-only:hover {
+.ui-toggle-select-read-only:hover,
+.ui-togglepanel-disabled,
+.ui-togglepanel-read-only,
+.ui-togglepanel-disabled:hover,
+.ui-togglepanel-read-only:hover {
     background: @toggle-select-background-color-disabled;
     .ui-togglepanel-title {
-        &:before {
+        color: #999;
+        &:after {
             color: @toggle-select-disabled-arror-color;
         }
     }

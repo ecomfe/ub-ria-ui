@@ -18,7 +18,7 @@ esui-table-rich-selector {
 .ui-table-richselector {
     &.ui-richselector-add, &.ui-richselector-del {
         .ui-richselector-row-action-icon {
-            &:before {
+            &:after {
                 .ecions-font-style();
             }
         }
@@ -95,7 +95,7 @@ esui-table-rich-selector {
     &.ui-richselector-add {
         .ui-richselector-row-action-icon {
             position: relative;
-            &:before {
+            &:after {
                 color: @table-rich-selector-operate-color;
                 .eicons-icon-content(arrow-right);
                 .font-icon-position(center, 0, center, 0);
@@ -106,7 +106,7 @@ esui-table-rich-selector {
         .ui-richselector-row-selected:hover {
             .ui-richselector-row-action-icon {
                 position: relative;
-                &:before {
+                &:after {
                     color: @table-rich-selector-operate-color;
                     .eicons-icon-content(check);
                     .font-icon-position(center, 0, center, 0);
@@ -119,7 +119,7 @@ esui-table-rich-selector {
     &.ui-richselector-del {
         .ui-richselector-row-action-icon {
             position: relative;
-            &:before {
+            &:after {
                 color: @table-rich-selector-operate-delete-color;
                 .eicons-icon-content(times);
                 .font-icon-position(center, 0, center, 0);
@@ -133,7 +133,7 @@ esui-table-rich-selector {
     // 添加型
     &.ui-richselector-add {
         .ui-richselector-row-action-icon {
-            &:before {
+            &:after {
                 content: '';
             }
         }

@@ -3022,8 +3022,6 @@ esui-box-group {
     transform: rotate(359deg);
   }
 }
-/** Tree Begin **/
-/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3192,11 +3190,13 @@ esui-rich-selector {
   color: #dd6767;
   padding: 0 5px;
 }
+/** Tree Begin **/
+/** Tree End **/
 esui-table-rich-selector {
   display: block;
 }
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before,
-.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:after,
+.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:after {
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3267,7 +3267,7 @@ esui-table-rich-selector {
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon {
   position: relative;
 }
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-action-icon:after {
   color: #67c1a5;
   content: "\f061";
   position: absolute;
@@ -3280,8 +3280,8 @@ esui-table-rich-selector {
 .ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon {
   position: relative;
 }
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon:before,
-.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon:before {
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected .ui-richselector-row-action-icon:after,
+.ui-table-richselector.ui-richselector-add .ui-richselector-row-selected:hover .ui-richselector-row-action-icon:after {
   color: #67c1a5;
   content: "\f00c";
   position: absolute;
@@ -3293,7 +3293,7 @@ esui-table-rich-selector {
 .ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon {
   position: relative;
 }
-.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:before {
+.ui-table-richselector.ui-richselector-del .ui-richselector-row-action-icon:after {
   color: #ff0000;
   content: "\f00d";
   position: absolute;
@@ -3302,7 +3302,7 @@ esui-table-rich-selector {
   left: 50%;
   margin-left: -0.5em;
 }
-.no-move-richselector.ui-richselector-add .ui-richselector-row-action-icon:before {
+.no-move-richselector.ui-richselector-add .ui-richselector-row-action-icon:after {
   content: '';
 }
 esui-toggle-panel {
@@ -3344,7 +3344,7 @@ esui-toggle-panel {
   white-space: nowrap;
   display: block;
 }
-.ui-toggle-selector .ui-togglepanel-title:before {
+.ui-toggle-selector .ui-togglepanel-title:after {
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3353,7 +3353,7 @@ esui-toggle-panel {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.ui-toggle-selector .ui-togglepanel-title:before {
+.ui-toggle-selector .ui-togglepanel-title:after {
   color: #7d7d7d;
   content: "\f107";
   position: absolute;
@@ -3361,8 +3361,8 @@ esui-toggle-panel {
   margin-top: -0.5em;
   right: 18px;
 }
-.ui-toggle-select:before,
-.ui-togglepanel-expanded .ui-togglepanel-title:before {
+.ui-toggle-select:after,
+.ui-togglepanel .ui-togglepanel-title:after {
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3385,7 +3385,7 @@ esui-toggle-panel {
   text-align: center;
   position: relative;
 }
-.ui-toggle-select:before {
+.ui-toggle-select:after {
   color: #7d7d7d;
   content: "\f107";
   position: absolute;
@@ -3393,27 +3393,50 @@ esui-toggle-panel {
   margin-top: -0.5em;
   right: 18px;
 }
-.ui-togglepanel-expanded .ui-togglepanel-title {
+.ui-togglepanel .ui-togglepanel-title {
+  cursor: pointer;
+  font-weight: bold;
   position: relative;
 }
-.ui-togglepanel-expanded .ui-togglepanel-title:before {
+.ui-togglepanel .ui-togglepanel-title:after {
   color: #7d7d7d;
-  content: "\f106";
+  content: "\f107";
   position: absolute;
   top: 50%;
   margin-top: -0.5em;
   right: 18px;
 }
+.ui-togglepanel-expanded .ui-togglepanel-title:after {
+  content: "\f106";
+}
 .ui-toggle-select-disabled,
 .ui-toggle-select-read-only,
 .ui-toggle-select-disabled:hover,
-.ui-toggle-select-read-only:hover {
+.ui-toggle-select-read-only:hover,
+.ui-togglepanel-disabled,
+.ui-togglepanel-read-only,
+.ui-togglepanel-disabled:hover,
+.ui-togglepanel-read-only:hover {
   background: #ebebeb;
 }
-.ui-toggle-select-disabled .ui-togglepanel-title:before,
-.ui-toggle-select-read-only .ui-togglepanel-title:before,
-.ui-toggle-select-disabled:hover .ui-togglepanel-title:before,
-.ui-toggle-select-read-only:hover .ui-togglepanel-title:before {
+.ui-toggle-select-disabled .ui-togglepanel-title,
+.ui-toggle-select-read-only .ui-togglepanel-title,
+.ui-toggle-select-disabled:hover .ui-togglepanel-title,
+.ui-toggle-select-read-only:hover .ui-togglepanel-title,
+.ui-togglepanel-disabled .ui-togglepanel-title,
+.ui-togglepanel-read-only .ui-togglepanel-title,
+.ui-togglepanel-disabled:hover .ui-togglepanel-title,
+.ui-togglepanel-read-only:hover .ui-togglepanel-title {
+  color: #999;
+}
+.ui-toggle-select-disabled .ui-togglepanel-title:after,
+.ui-toggle-select-read-only .ui-togglepanel-title:after,
+.ui-toggle-select-disabled:hover .ui-togglepanel-title:after,
+.ui-toggle-select-read-only:hover .ui-togglepanel-title:after,
+.ui-togglepanel-disabled .ui-togglepanel-title:after,
+.ui-togglepanel-read-only .ui-togglepanel-title:after,
+.ui-togglepanel-disabled:hover .ui-togglepanel-title:after,
+.ui-togglepanel-read-only:hover .ui-togglepanel-title:after {
   color: #b7b7b7;
 }
 esui-tree-rich-selector {
@@ -3605,7 +3628,7 @@ esui-tree-rich-selector {
 .ui-tree-item-content {
   color: #666666;
 }
-.ui-tree-item-content:before {
+.ui-tree-item-content:after {
   font-family: FontAwesome;
   display: inline-block;
   font-weight: normal;
@@ -3618,8 +3641,8 @@ esui-tree-rich-selector {
 .ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content {
   position: relative;
 }
-.ui-tree-richselector.ui-richselector-load .ui-tree-content-wrapper:hover .ui-tree-item-content:before,
-.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content:before {
+.ui-tree-richselector.ui-richselector-load .ui-tree-content-wrapper:hover .ui-tree-item-content:after,
+.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content:after {
   color: #67c1a5;
   content: "\f061";
   position: absolute;
@@ -3633,8 +3656,8 @@ esui-tree-rich-selector {
   font-weight: bold;
   position: relative;
 }
-.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content:before,
-.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content:before {
+.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content:after,
+.ui-tree-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content:after {
   color: #67c1a5;
   content: "\f00c";
   position: absolute;
@@ -3645,7 +3668,7 @@ esui-tree-rich-selector {
 .ui-tree-richselector.ui-richselector-del .ui-tree-content-wrapper:hover .ui-tree-item-content {
   position: relative;
 }
-.ui-tree-richselector.ui-richselector-del .ui-tree-content-wrapper:hover .ui-tree-item-content:before {
+.ui-tree-richselector.ui-richselector-del .ui-tree-content-wrapper:hover .ui-tree-item-content:after {
   color: #ff0000;
   content: "\f00d";
   position: absolute;
@@ -3653,15 +3676,15 @@ esui-tree-rich-selector {
   margin-top: -0.5em;
   right: 0.5em;
 }
-.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content:before {
+.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper:hover .ui-tree-item-content:after {
   content: "";
 }
 .ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content,
 .ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content {
   position: relative;
 }
-.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content:before,
-.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content:before {
+.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected .ui-tree-item-content:after,
+.ui-tree-richselector.no-move-richselector.ui-richselector-add .ui-tree-content-wrapper-selected:hover .ui-tree-item-content:after {
   color: #67c1a5;
   content: "\f00c";
   position: absolute;

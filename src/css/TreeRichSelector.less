@@ -171,7 +171,7 @@ esui-tree-rich-selector {
 
 .ui-tree-item-content {
     color: @tree-node-item-font-color;
-    &:before {
+    &:after {
         .ecions-font-style();
     }
 }
@@ -183,7 +183,7 @@ esui-tree-rich-selector {
         .ui-tree-content-wrapper:hover {
             .ui-tree-item-content {
                 position: relative;
-                &:before {
+                &:after {
                     color: @table-rich-selector-operate-color;
                     .eicons-icon-content(arrow-right);
                     .font-icon-position(right, @font-icon-size / 2, center, 0);
@@ -199,7 +199,7 @@ esui-tree-rich-selector {
                 color: #666;
                 font-weight: bold;
                 position: relative;
-                &:before {
+                &:after {
                     color: @table-rich-selector-operate-color;
                     .eicons-icon-content(check);
                     .font-icon-position(right, @font-icon-size / 2, center, 0);
@@ -212,7 +212,7 @@ esui-tree-rich-selector {
         .ui-tree-content-wrapper:hover {
             .ui-tree-item-content {
                 position: relative;
-                &:before {
+                &:after {
                     color: @table-rich-selector-operate-delete-color;
                     .eicons-icon-content(times);
                     .font-icon-position(right, @font-icon-size / 2, center, 0);
@@ -227,7 +227,7 @@ esui-tree-rich-selector {
     &.ui-richselector-add {
         .ui-tree-content-wrapper:hover {
             .ui-tree-item-content {
-                &:before {
+                &:after {
                     content: "";
                 }
             }
@@ -237,7 +237,7 @@ esui-tree-rich-selector {
         .ui-tree-content-wrapper-selected:hover {
             .ui-tree-item-content {
                 position: relative;
-                &:before {
+                &:after {
                     color: @table-rich-selector-operate-color;
                     .eicons-icon-content(check);
                     .font-icon-position(right, @font-icon-size / 2, center, 0);
