@@ -1,5 +1,5 @@
 require.config({
-    'baseUrl': '../src',
+    'baseUrl': '../../src',
     'paths': {},
     'packages': [
         {
@@ -24,7 +24,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.1.0-beta.5/src',
+            'location': '../dep/esui/3.1.0-beta.3/src',
             'main': 'main'
         },
         {
@@ -49,6 +49,12 @@ require.config({
         },
         {
             'name': 'esf',
+            'location': '../dep/esf/1.0.0-alpha.8/src'
+        },
+        {
+            'name': 'eicons',
+            'location': '../dep/eicons/1.0.0-alpha.4/src',
+            'main': 'main.less'
             'location': '../dep/esf/1.0.0-alpha.7/src'
         },
         {
