@@ -3022,6 +3022,8 @@ esui-box-group {
     transform: rotate(359deg);
   }
 }
+/** Tree Begin **/
+/** Tree End **/
 .ui-draweractionpanel {
   position: fixed;
   left: 0;
@@ -3190,8 +3192,6 @@ esui-rich-selector {
   color: #dd6767;
   padding: 0 5px;
 }
-/** Tree Begin **/
-/** Tree End **/
 esui-table-rich-selector {
   display: block;
 }
