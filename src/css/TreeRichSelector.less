@@ -1,21 +1,49 @@
-@import "./mixin.less";
-@import "./variables.less";
+@esui-tree-node-line-height: 33px;
+
+@esui-tree-node-indicator-icon-height-collapsed: 7px;
+@esui-tree-node-indicator-icon-width-collapsed: 5px;
+@esui-tree-node-indicator-icon-collapsed: url(../img/esui-open-icon.png);
+
+@esui-tree-node-indicator-icon-height-expanded: 5px;
+@esui-tree-node-indicator-icon-width-expanded: 7px;
+@esui-tree-node-indicator-icon-expanded: url(../img/esui-close-icon.png);
+
+@esui-tree-node-indicator-height: @esui-tree-node-line-height;
+@esui-tree-node-indicator-width: 7px;
+@esui-tree-node-indicator-margin: 0px 9px 0px 4px;
+
+// TODO：这里应该也开放出来同形式的变量
+@esui-tree-node-indicator-empty-background: none;
+@esui-tree-node-indicator-previous-background: none;
+@esui-tree-node-indicator-far-previous-background: none;
+
+@esui-tree-node-item-font-color: #666;
+
+// 选中的节点
+@esui-tree-node-wrapper-background-selected: #fffaee;
+@esui-tree-node-item-font-color-selected: #333;
+@esui-tree-node-item-icon-selected: none;
+// 悬浮的节点
+@esui-tree-node-wrapper-background-hover: #fffaee;
+@esui-tree-node-item-font-color-hover: #333;
+@esui-tree-node-item-icon-hover: none;
+
 
 esui-tree-rich-selector {
     display: block;
 }
 
-.ui-tree-richselector {
-    .ui-richselector-query-list {
-        .ui-tree-node-indicator {
+.@{ui-class-prefix}-tree-richselector {
+    .@{ui-class-prefix}-richselector-query-list {
+        .@{ui-class-prefix}-tree-node-indicator {
             cursor: pointer;
         }
 
         // 第一个indicator不占位
-        .ui-tree-hide-root {
-            .ui-tree-root {
-                .ui-tree-content-wrapper {
-                    .ui-tree-node-indicator-level-0 {
+        .@{ui-class-prefix}-tree-hide-root {
+            .@{ui-class-prefix}-tree-root {
+                .@{ui-class-prefix}-tree-content-wrapper {
+                    .@{ui-class-prefix}-tree-node-indicator-level-0 {
                         margin: 0;
                         width: 0;
                     }
@@ -24,17 +52,17 @@ esui-tree-rich-selector {
         }
 
         // 二级文字颜色需要单独设置
-        .ui-tree-node-level-2 {
-            .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-node-level-2 {
+            .@{ui-class-prefix}-tree-item-content {
                 color: #999;
             }
         }
 
         // 正常状态
-        .ui-tree-content-wrapper {
+        .@{ui-class-prefix}-tree-content-wrapper {
             border-left: medium none;
             padding: 0 10px;
-            line-height: @rich-selector-line-height;
+            line-height: @esui-rich-selector-line-height;
             .clearfix();
             &:hover {
                 background: transparent;
@@ -42,31 +70,31 @@ esui-tree-rich-selector {
         }
 
         // 鼠标悬浮状态
-        .ui-tree-content-wrapper:hover {
-            background: @rich-selector-item-background-color-hover;
-            .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            background: @esui-rich-selector-item-background-color-hover;
+            .@{ui-class-prefix}-tree-item-content {
                 background: none;
             }
         }
 
         // 已选状态
-        .ui-tree-content-wrapper-selected,
-        .ui-tree-content-wrapper-selected:hover {
-            .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-content-wrapper-selected,
+        .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+            .@{ui-class-prefix}-tree-item-content {
                 background: none;
                 color: #333;
             }
         }
 
-        .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-item-content {
             color: #666;
             position: relative;
             display: block;
             padding-right: 50px;
-            .ellipse-overflow();
+            .ellipsis();
         }
 
-        .ui-tree-node-empty .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-node-empty .@{ui-class-prefix}-tree-item-content {
             color: #999;
         }
 
@@ -75,27 +103,27 @@ esui-tree-rich-selector {
 
 
 // 单独存在，没有右侧备选栏的情况
-.ui-tree-richselector.no-move-richselector {
-    &.ui-richselector-add {
+.@{ui-class-prefix}-tree-richselector.no-move-richselector {
+    &.@{ui-class-prefix}-richselector-add {
         // 所有节点的未选择下的hover状态都没有图标
-        .ui-tree-content-wrapper:hover {
-            .ui-tree-item-content {
-                .pseudo-icon ();
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            .@{ui-class-prefix}-tree-item-content {
+                //.pseudo-icon ();
             }
         }
     }
 }
 
 // 父节点不可选的情况
-.ui-tree-richselector.ui-richselector-only-leaf-selectable {
+.@{ui-class-prefix}-tree-richselector.@{ui-class-prefix}-richselector-only-leaf-selectable {
     // 一级节点没有hover状态
-    .ui-tree-node-level-1 {
-        >.ui-tree-content-wrapper {
+    .@{ui-class-prefix}-tree-node-level-1 {
+        >.@{ui-class-prefix}-tree-content-wrapper {
             cursor: default;
             &:hover {
                 background: none;
-                .ui-tree-item-content {
-                    .pseudo-icon ();
+                .@{ui-class-prefix}-tree-item-content {
+                    //.pseudo-icon ();
                 }
             }
         }
@@ -105,90 +133,80 @@ esui-tree-rich-selector {
 
 
 // 图标
-.ui-tree-node-indicator {
-    margin: @tree-node-indicator-margin;
-    height: @tree-node-indicator-height;
-    width: @tree-node-indicator-width;
+.@{ui-class-prefix}-tree-node-indicator {
+   // margin: @esui-tree-node-indicator-margin;
+//    height: @esui-tree-node-indicator-height;
+ //   width: @esui-tree-node-indicator-width;
     background: none;
-    .pseudo-icon(
-        @tree-node-indicator-icon-collapsed, @tree-node-indicator-icon-width-collapsed, @tree-node-indicator-icon-height-collapsed, center
-    );
+
 }
 
 // 展开
-.ui-tree-node-indicator-expanded {
-    .pseudo-icon(
-        @tree-node-indicator-icon-expanded, @tree-node-indicator-icon-width-expanded, @tree-node-indicator-icon-height-expanded, center
-    );
+.@{ui-class-prefix}-tree-node-indicator-expanded {
+
 }
 
 // 无子节点或占位
-.ui-tree-node-indicator-empty {
+.@{ui-class-prefix}-tree-node-indicator-empty {
     background: none;
-    .pseudo-icon(
-        @tree-node-indicator-empty-background, 0, 0
-    );
+    
 }
-.ui-tree-node-indicator-previous {
+.@{ui-class-prefix}-tree-node-indicator-previous {
     background: none;
-    .pseudo-icon(
-        @tree-node-indicator-previous-background, 0, 0
-    );
+
 }
-.ui-tree-node-indicator-far-previous {
+.@{ui-class-prefix}-tree-node-indicator-far-previous {
     background: none;
-    .pseudo-icon(
-        @tree-node-indicator-far-previous-background, 0, 0
-    );
+
 }
 
-.ui-tree-node {
-    line-height: @tree-node-line-height;
+.@{ui-class-prefix}-tree-node {
+    //line-height: @esui-tree-node-line-height;
 }
 
-.ui-tree-content-wrapper {
+.@{ui-class-prefix}-tree-content-wrapper {
     border-left: none;
     padding: 0 10px;
     &:hover {
-        background: @tree-node-wrapper-background-hover;
+//        background: @esui-tree-node-wrapper-background-hover;
 
-        .ui-tree-item-content {
-            color: @tree-node-item-font-color-hover;
-            background: @tree-node-item-icon-hover;
+        .@{ui-class-prefix}-tree-item-content {
+            color: @esui-tree-node-item-font-color-hover;
+            background: @esui-tree-node-item-icon-hover;
         }
     }
 }
 
-.ui-tree-content-wrapper-selected,
-.ui-tree-content-wrapper-selected:hover {
-    background: @tree-node-wrapper-background-selected;
+.@{ui-class-prefix}-tree-content-wrapper-selected,
+.@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+    background: @esui-tree-node-wrapper-background-selected;
     border-left: none;
-    .ui-tree-item-content {
-        color: @tree-node-item-font-color-selected;
-        background: @tree-node-item-icon-selected;
+    .@{ui-class-prefix}-tree-item-content {
+        //color: @esui-tree-node-item-font-color-selected;
+        //background: @esui-tree-node-item-icon-selected;
     }
 }
 
-.ui-tree-item-content {
-    color: @tree-node-item-font-color;
+.@{ui-class-prefix}-tree-item-content {
+    color: @esui-tree-node-item-font-color;
 }
 
 // 很多样式无法确定是否联盟产品线统一，所以这里自己写一份
-.ui-tree-richselector {
-    &.ui-richselector-load,
-    &.ui-richselector-add {
-        .ui-tree-content-wrapper:hover {
-            .ui-tree-item-content {
+.@{ui-class-prefix}-tree-richselector {
+    &.@{ui-class-prefix}-richselector-load,
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            .@{ui-class-prefix}-tree-item-content {
                 // 默认带一个向右箭头
                 // .pseudo-icon(@eicon-var-arrow-right, @table-rich-selector-operate-color, 12px, right, 0, top);
             }
         }
     }
 
-    &.ui-richselector-add {
-        .ui-tree-content-wrapper-selected,
-        .ui-tree-content-wrapper-selected:hover {
-            .ui-tree-item-content {
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-tree-content-wrapper-selected,
+        .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+            .@{ui-class-prefix}-tree-item-content {
                 color: #666;
                 font-weight: bold;
                 // 默认带一个小对勾
@@ -197,9 +215,9 @@ esui-tree-rich-selector {
         }
     }
 
-    &.ui-richselector-del {
-        .ui-tree-content-wrapper:hover {
-            .ui-tree-item-content {
+    &.@{ui-class-prefix}-richselector-del {
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            .@{ui-class-prefix}-tree-item-content {
                 // 默认带一个小对勾
                 // .pseudo-icon(@eicon-var-times, @table-rich-selector-operate-delete-color, 12px, right, 0, top);
             }
@@ -208,12 +226,12 @@ esui-tree-rich-selector {
 }
 
 // 单独存在，没有右侧备选栏的情况
-.ui-tree-richselector.no-move-richselector {
-    &.ui-richselector-add {
+.@{ui-class-prefix}-tree-richselector.no-move-richselector {
+    &.@{ui-class-prefix}-richselector-add {
         // 已选择状态不变
-        .ui-tree-content-wrapper-selected,
-        .ui-tree-content-wrapper-selected:hover {
-            .ui-tree-item-content {
+        .@{ui-class-prefix}-tree-content-wrapper-selected,
+        .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+            .@{ui-class-prefix}-tree-item-content {
                 // 默认带一个小对勾
                 // .pseudo-icon(@eicon-var-check, @table-rich-selector-operate-color, 12px, right, 0, top);
             }

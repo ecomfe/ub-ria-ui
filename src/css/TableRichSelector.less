@@ -1,5 +1,3 @@
-@import "./mixin.less";
-@import "./variables.less";
 
 esui-table-rich-selector {
     display: block;
@@ -15,8 +13,8 @@ esui-table-rich-selector {
 @table-rich-selector-operate-color: #67c1a5;
 @table-rich-selector-operate-delete-color: #f00;
 
-.ui-table-richselector {
-    .ui-richselector-query-list {
+.@{ui-class-prefix}-table-richselector {
+    .@{ui-class-prefix}-richselector-query-list {
         table {
             border-collapse: collapse;
             width: 100%;
@@ -31,29 +29,29 @@ esui-table-rich-selector {
 
 
             td {
-                height: @rich-selector-line-height;
-                line-height: @rich-selector-line-height;
+                height: @esui-rich-selector-line-height;
+                line-height: @esui-rich-selector-line-height;
                 vertical-align: middle;
                 padding-left: 10px;
                 .ellipsis();
             }
         }
-        .ui-richselector-content-table {
-            .ui-richselector-row {
+        .@{ui-class-prefix}-richselector-content-table {
+            .@{ui-class-prefix}-richselector-row {
                 cursor:pointer;
                 &:hover {
-                    background: @rich-selector-item-background-color-hover;
-                    .ui-richselector-row-action-icon {
+                    background: @esui-rich-selector-item-background-color-hover;
+                    .@{ui-class-prefix}-richselector-row-action-icon {
                         display: block;
                     }
                 }
             }
 
-            .ui-richselector-row-selected,
-            .ui-richselector-row-selected:hover {
+            .@{ui-class-prefix}-richselector-row-selected,
+            .@{ui-class-prefix}-richselector-row-selected:hover {
                 cursor: default;
                 color: #666666;
-                .ui-richselector-row-action-icon {
+                .@{ui-class-prefix}-richselector-row-action-icon {
                     display: block;
                 }
 
@@ -62,19 +60,19 @@ esui-table-rich-selector {
                 }
             }
 
-            .ui-richselector-row-disabled,
-            .ui-richselector-row-disabled:hover {
+            .@{ui-class-prefix}-richselector-row-disabled,
+            .@{ui-class-prefix}-richselector-row-disabled:hover {
                 cursor: default;
                 color: #666666;
-                background: @rich-selector-item-background-color-disabled;
-                .ui-richselector-row-action-icon {
+                background: @esui-rich-selector-item-background-color-disabled;
+                .@{ui-class-prefix}-richselector-row-action-icon {
                     display: none;
                 }
             }
 
-            .ui-richselector-row-action-icon {
+            .@{ui-class-prefix}-richselector-row-action-icon {
                 background: none;
-                height: @rich-selector-line-height;
+                height: @esui-rich-selector-line-height;
                 width: 100%;
                 display: none;
             }
@@ -83,22 +81,22 @@ esui-table-rich-selector {
     }
 
     // 添加型
-    &.ui-richselector-add {
-        .ui-richselector-row-action-icon {
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-richselector-row-action-icon {
             // .pseudo-icon(@eicon-var-arrow-right, @table-rich-selector-operate-color, 12px, center, 0, top);
         }
 
-        .ui-richselector-row-selected,
-        .ui-richselector-row-selected:hover {
-            .ui-richselector-row-action-icon {
+        .@{ui-class-prefix}-richselector-row-selected,
+        .@{ui-class-prefix}-richselector-row-selected:hover {
+            .@{ui-class-prefix}-richselector-row-action-icon {
                 // .pseudo-icon(@eicon-var-check, @table-rich-selector-operate-color, 12px, center, 0, top);
             }
         }
     }
 
     // 删除型
-    &.ui-richselector-del {
-        .ui-richselector-row-action-icon {
+    &.@{ui-class-prefix}-richselector-del {
+        .@{ui-class-prefix}-richselector-row-action-icon {
             // .pseudo-icon(@eicon-var-times, @table-rich-selector-operate-delete-color, 12px, center, 0, top);
         }
     }
@@ -107,8 +105,8 @@ esui-table-rich-selector {
 // 单独存在，没有右侧备选栏的情况
 .no-move-richselector {
     // 添加型
-    &.ui-richselector-add {
-        .ui-richselector-row-action-icon {
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-richselector-row-action-icon {
             // .pseudo-icon();
         }
     }

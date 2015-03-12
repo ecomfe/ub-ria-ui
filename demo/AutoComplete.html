@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Carousel - Demo</title>
+    <title>AutoComplete - ESUI Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
@@ -16,20 +16,20 @@
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1>Carousel</h1>
+    <h1 id="branding">ESUI AutoComplete Extension</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
-            <h2>AutoComplete</h2>
+            <h2>Input</h2>
             <section class="intro">
-                <p>Input AutoComplete。</p>
+                <p>AutoComplete绑定到一个Input。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
-                <div class="example" id="container">
+                <div class="example ui-demo-light-stage">
                     <input data-ui-type="TextBox"
                            data-ui-mode="text"
                            data-ui-id="test"
@@ -37,15 +37,15 @@
                     />
                 </div>
             </section>
-
+            <h2>TextLine</h2>
             <section class="intro">
-                <p>TextLine AutoComplete。</p>
+                <p>AutoComplete 绑定到TextLine。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
-                <div class="example" id="container">
+                <div class="example ui-demo-light-stage">
                     <textarea data-ui-type="TextLine"
                            data-ui-id="test1"
                            data-ui-name="test1"
@@ -53,7 +53,7 @@
                     /></textarea>
                 </div>
             </section>
-
+            <h2>TextArea</h2>
             <section class="intro">
                 <p>TextArea AutoComplete。</p>
             </section>
@@ -61,7 +61,7 @@
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
-                <div class="example" id="container">
+                <div class="example ui-demo-light-stage">
                     <textarea data-ui-type="TextBox"
                            data-ui-mode="text"
                            data-ui-id="test2"
@@ -71,7 +71,7 @@
                     ></textarea>
                 </div>
             </section>
-
+            <h2>分割字符</h2>
             <section class="intro">
                 <p>TextArea AutoComplete(split by ' ')。</p>
             </section>
@@ -90,7 +90,7 @@
                     ></textarea>
                 </div>
             </section>
-
+            <h2>触发器</h2>
             <section class="intro">
                 <p>TextArea AutoComplete with mock ajax(split by ',', fire by '{')。</p>
             </section>
@@ -112,7 +112,6 @@
         </div>
     </div>
     <script>
-
         require(
             [
                 'esui',
@@ -122,7 +121,31 @@
             function (ui, AutoComplete) {
                 window.ui = ui;
                 var controls = ui.init();
-                var data = ['abc','abcccc','{abcdef}','{adee}','{adddd}','{adeee}','bfaa','bfab','{bfffff}','{bfeeee}'];
+                var data = [
+                    "actionScript",
+                    "AppleScript",
+                    "Asp",
+                    "BASIC",
+                    "C",
+                    "C++",
+                    "Clojure",
+                    "COBOL",
+                    "ColdFusion",
+                    "Erlang",
+                    "Fortran",
+                    "Groovy",
+                    "Haskell",
+                    "Java",
+                    "JavaScript",
+                    "Lisp",
+                    "Perl",
+                    "PHP",
+                    "Python",
+                    "Ruby",
+                    "Scala",
+                    "Scheme"
+                ];
+
                 var control;
                 var datasource;
                 for (var i = 0; i < controls.length; i++) {
@@ -137,7 +160,6 @@
                         datasource = data;
                     }
                     controls[i].setProperties({
-                        /*'datasource': ['abc','abcccc','abcdef','adee','adddd','adeee','bfffff','bfeeee'],*/
                         'datasource': datasource
                     });
                 }
