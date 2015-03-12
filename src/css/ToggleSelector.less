@@ -19,10 +19,6 @@
 
 @toggle-select-layer-state-indicator-width: 9px;
 @toggle-select-layer-state-indicator-height: 5px;
-@toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
-@toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
 
 @toggle-select-font-color: #666;
 @toggle-select-border: none;
@@ -46,6 +42,12 @@
 @toggle-select-arror-color: #7d7d7d;
 @toggle-select-disabled-arror-color: #b7b7b7;
 
+.ui-toggle-select, .ui-togglepanel .ui-togglepanel-title {
+    &:after {
+        .eicons-font-style();
+    }
+}
+
 .ui-toggle-select {
     cursor: pointer;
     background: @toggle-select-background-color;
@@ -58,20 +60,48 @@
     color: @toggle-select-font-color;
     font-weight: bold;
     text-align: center;
-    .pseudo-icon(@eicon-var-angle-down, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
+    position: relative;
+    &:after {
+        color: @toggle-select-arror-color;
+        .eicons-icon-content(angle-down);
+        .font-icon-position(right, @toggle-select-padding-left, center, 0);
+    }
+}
+
+.ui-togglepanel {
+    .ui-togglepanel-title {
+        cursor: pointer;
+        font-weight: bold;
+        position: relative;
+        &:after {
+            color: @toggle-select-arror-color;
+            .eicons-icon-content(angle-down);
+            .font-icon-position(right, @toggle-select-padding-left, center, 0);
+        }
+    }
 }
 
 .ui-togglepanel-expanded {
     .ui-togglepanel-title {
-        .pseudo-icon(@eicon-var-angle-up, @toggle-select-arror-color, 12px, right, @toggle-select-padding-left, top);
+        &:after {
+            .eicons-icon-content(angle-up);
+        }
     }
 }
 
 .ui-toggle-select-disabled,
 .ui-toggle-select-read-only,
 .ui-toggle-select-disabled:hover,
-.ui-toggle-select-read-only:hover {
-    color: #999;
+.ui-toggle-select-read-only:hover,
+.ui-togglepanel-disabled,
+.ui-togglepanel-read-only,
+.ui-togglepanel-disabled:hover,
+.ui-togglepanel-read-only:hover {
     background: @toggle-select-background-color-disabled;
-    .pseudo-icon(@eicon-var-angle-down, @toggle-select-disabled-arror-color, 12px, right, @toggle-select-padding-left, top);
+    .ui-togglepanel-title {
+        color: #999;
+        &:after {
+            color: @toggle-select-disabled-arror-color;
+        }
+    }
 }

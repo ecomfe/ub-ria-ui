@@ -91,3 +91,32 @@
         .position-horizontal(@horizontal);
     }
 }
+
+.font-icon-position (@horizontal:left, @hDuration:0, @vertical:center, @vDuration:0, @width:1em, @height:1em) {
+    position: absolute;
+
+    .position-vertical(@vertical) when (@vertical = center) {
+        top: 50%;
+        margin-top: -(@height/2);
+    }
+    .position-vertical(@vertical) when not (@vertical = center) {
+        @{vertical}: @vDuration;
+    }
+
+    .position-horizontal(@horizontal) when (@horizontal = center) {
+        left: 50%;
+        margin-left: -(@height/2);
+    }
+
+    .position-horizontal(@horizontal) when (@horizontal = center) {
+        left: 50%;
+        margin-left: -(@width/2);
+    }
+
+    .position-horizontal(@horizontal) when not (@horizontal = center) {
+        @{horizontal}: @hDuration;
+    }
+
+    .position-vertical(@vertical);
+    .position-horizontal(@horizontal);
+}
