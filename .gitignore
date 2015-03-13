@@ -3,5 +3,7 @@ test/coverage
 doc/api
 .idea
 node_modules
-/*.project
-/egenConfig
+*.swp
+edp-webserver-config.js
+egenTpl
+egen-config.js
