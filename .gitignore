@@ -6,5 +6,3 @@ node_modules
 /*.project
 *.swp
 edp-webserver-config.js
-egenTpl
-egen-config.js
