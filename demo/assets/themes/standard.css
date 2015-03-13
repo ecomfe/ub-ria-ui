@@ -6181,6 +6181,17 @@ i.ui-autocomplete-item-char-selected {
   font-style: normal;
   font-weight: bold;
 }
+.ui-autocomplete-item-text {
+    display: block;
+}
+
+.ui-autocomplete-item-desc {
+    display: block;
+    font-size: 14px;
+    color: gray;
+    padding: 0em 1em;
+    font-style: italic;
+}
 .ui-demo-light-stage {
   background: #fefdfa;
   padding: 1em;

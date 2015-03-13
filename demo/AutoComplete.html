@@ -33,6 +33,7 @@
                     <input data-ui-type="TextBox"
                            data-ui-mode="text"
                            data-ui-id="test"
+                           data-ui-extension-autocomplete-casesensitive="false"
                            data-ui-extension-autocomplete-type="AutoComplete"
                     />
                 </div>
@@ -145,6 +146,32 @@
                     "Scala",
                     "Scheme"
                 ];
+                var data1 = [
+                    {
+                        text: 'actionScript',
+                        desc: 'It is actionScript'
+                    },
+                    {
+                        text: 'AppleScript',
+                        desc: 'It is AppleScript'
+                    },
+                    {
+                        text: 'Asp',
+                        desc: 'It is Asp'
+                    },
+                    {
+                        text: 'BASIC',
+                        desc: 'It is BASIC'
+                    },
+                    {
+                        text: 'Clojure',
+                        desc: 'It is Clojure'
+                    },
+                    {
+                        text: 'ColdFusion',
+                        desc: 'It is ColdFusion'
+                    }
+                ];
 
                 var control;
                 var datasource;
@@ -156,7 +183,11 @@
                                 res(data);
                             }, 800);
                         };
-                    } else {
+                    }
+                    else if (control.id === 'test1') {
+                        datasource = data1;
+                    } 
+                    else {
                         datasource = data;
                     }
                     controls[i].setProperties({
