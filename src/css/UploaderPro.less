@@ -1,0 +1,112 @@
+.fill-all () {
+    // 占满空间
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.@{ui-class-prefix}-uploaderpro {
+    position: relative;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    margin: 0; // 重置IE6-7
+    font-size: 12px;
+    overflow: hidden;
+    vertical-align: middle;
+
+    .@{ui-class-prefix}-uploaderpro-button {
+        .fill-all ();
+        background-image: -webkit-linear-gradient(top, #fff, #f6f6f6);
+        background-image: -moz-linear-gradient(top, #fff, #f6f6f6);
+        background-image: -ms-linear-gradient(top, #fff, #f6f6f6);
+        background-image: -o-linear-gradient(top, #fff, #f6f6f6);
+        background-image: linear-gradient(top, #fff, #f6f6f6);
+        background-color: #fff;
+        border: 1px solid #CCC;
+        border-radius: 3px;
+        vertical-align: top;
+        text-align: center;
+        display: block;
+        cursor: pointer;
+    }
+}
+
+.skin-uploader-dialog {
+
+    .@{ui-class-prefix}-dialog-head {
+        height: 30px;
+
+        .@{ui-class-prefix}-dialog-title {
+            line-height: 30px;
+        }
+
+        .@{ui-class-prefix}-dialog-close-icon {
+            top: 8px;
+        }
+    }
+
+    .@{ui-class-prefix}-dialog-info {
+        height: 30px;
+        line-height: 30px;
+        padding: 5px 10px;
+
+        span {
+            margin: auto 5px;
+        }
+
+        .@{ui-class-prefix}-dialog-info-already, .@{ui-class-prefix}-dialog-info-avaliable {
+            color: red;
+        }
+    }
+
+    .@{ui-class-prefix}-table {
+        height: 200px;
+        overflow-x: hidden;
+
+        td, th {
+            padding: 0em 1em;
+        }
+
+        .@{ui-class-prefix}-table-cell, .@{ui-class-prefix}-table-hcell {
+            box-sizing: border-box;
+        }
+
+        .@{ui-class-prefix}-icon-unlink, .@{ui-class-prefix}-icon-close {
+            cursor: pointer;
+        }
+    }
+
+    .@{ui-class-prefix}-dialog-foot-panel {
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        .@{ui-class-prefix}-dialog-foot {
+            height: 20px;
+            margin-top: 5px;
+
+            .@{ui-class-prefix}-progress {
+                width: 250px;
+                float: left;
+                margin-right: 35px;
+                display: inline-block;
+            }
+        }
+    }
+
+    .@{ui-class-prefix}-uploader {
+        width: 72px;
+        height: 29px;
+        vertical-align: middle;
+        margin-right: 10px;
+        border-radius: 5px;
+    }
+
+    .@{ui-class-prefix}-dialog-progress, .@{ui-class-prefix}-dialog-size {
+        height: 20px;
+        line-height: 20px;
+        margin-right: 10px;
+    }
+}

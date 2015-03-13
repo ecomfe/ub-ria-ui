@@ -6,9 +6,10 @@
   * @file 可展开收起的选择控件包装样式
   * @author lixiang
   */
-.ui-toggle-selector {
-    .ui-togglepanel-title {
-        .ui-toggle-select();
+
+.@{ui-class-prefix}-toggle-selector {
+    .@{ui-class-prefix}-togglepanel-title {
+        //.@{ui-class-prefix}-toggle-select();
         margin: 0;
         font-size: 13px;
         width: 137px;
@@ -17,59 +18,61 @@
     }
 }
 
-@toggle-select-layer-state-indicator-width: 9px;
-@toggle-select-layer-state-indicator-height: 5px;
-@toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
-@toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
-@toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
+@esui-toggle-select-layer-state-indicator-width: 9px;
+@esui-toggle-select-layer-state-indicator-height: 5px;
+@esui-toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
+@esui-toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
+@esui-toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
+@esui-toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
 
-@toggle-select-font-color: #666;
-@toggle-select-border: none;
-@toggle-select-width: auto;
-@toggle-select-height: 12px;
+@esui-toggle-select-font-color: #666;
+@esui-toggle-select-border: none;
+@esui-toggle-select-width: auto;
+@esui-toggle-select-height: 12px;
 
 // Select
-@toggle-select-background-color: #ebebeb;
-@toggle-select-background-color-hover: #ebebeb;
-@toggle-select-background-color-active: #ebebeb;
-@toggle-select-background-color-disabled: #ebebeb;
+@esui-toggle-select-background-color: #ebebeb;
+@esui-toggle-select-background-color-hover: #ebebeb;
+@esui-toggle-select-background-color-active: #ebebeb;
+@esui-toggle-select-background-color-disabled: #ebebeb;
 
-@toggle-select-height: 30px;
+@esui-toggle-select-height: 30px;
 
-@toggle-select-padding-left: 18px;
+@esui-toggle-select-padding-left: 18px;
 // select实际右侧内边距
 //     = 2倍左侧内边距（保证图标距离文字和右侧外边缘距离相同）+ 图标宽度
-@toggle-select-padding-right: 2 * @toggle-select-padding-left + @toggle-select-layer-state-indicator-width;
-@toggle-select-padding: 0 @toggle-select-padding-right 0 @toggle-select-padding-left;
+@esui-toggle-select-padding-right: 2 * @esui-toggle-select-padding-left + @esui-toggle-select-layer-state-indicator-width;
+@esui-toggle-select-padding: 0 @esui-toggle-select-padding-right 0 @esui-toggle-select-padding-left;
 
-.ui-toggle-select {
+@esui-toggle-select-arror-color: #7d7d7d;
+@esui-toggle-select-disabled-arror-color: #b7b7b7;
+
+.@{ui-class-prefix}-toggle-select {
     cursor: pointer;
-    background: @toggle-select-background-color;
-    border: @toggle-select-border;
+    background: @esui-toggle-select-background-color;
+    border: @esui-toggle-select-border;
     border-radius: 0;
-    height: @toggle-select-height;
-    line-height: @toggle-select-height;
-    padding: @toggle-select-padding;
-    width: @toggle-select-width;
-    color: @toggle-select-font-color;
+    height: @esui-toggle-select-height;
+    line-height: @esui-toggle-select-height;
+    padding: @esui-toggle-select-padding;
+    width: @esui-toggle-select-width;
+    color: @esui-toggle-select-font-color;
     font-weight: bold;
     text-align: center;
-    // TODO: 这里的left和10px是否需要开放配置？
-    .pseudo-icon(@toggle-select-layer-state-indicator, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+    // .pseudo-icon(@eicon-var-angle-down, @esui-toggle-select-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
 }
 
-.ui-togglepanel-expanded {
-    .ui-togglepanel-title {
-        .pseudo-icon(@toggle-select-layer-state-indicator-active, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+.@{ui-class-prefix}-togglepanel-expanded {
+    .@{ui-class-prefix}-togglepanel-title {
+        // .pseudo-icon(@eicon-var-angle-up, @esui-toggle-select-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
     }
 }
 
-.ui-toggle-select-disabled,
-.ui-toggle-select-read-only,
-.ui-toggle-select-disabled:hover,
-.ui-toggle-select-read-only:hover {
+.@{ui-class-prefix}-toggle-select-disabled,
+.@{ui-class-prefix}-toggle-select-read-only,
+.@{ui-class-prefix}-toggle-select-disabled:hover,
+.@{ui-class-prefix}-toggle-select-read-only:hover {
     color: #999;
-    background: @toggle-select-background-color-disabled;
-    .pseudo-icon(@toggle-select-layer-state-indicator-disabled, @toggle-select-layer-state-indicator-width, @toggle-select-layer-state-indicator-height, right, @toggle-select-padding-left);
+    background: @esui-toggle-select-background-color-disabled;
+    // .pseudo-icon(@eicon-var-angle-down, @esui-toggle-select-disabled-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
 }

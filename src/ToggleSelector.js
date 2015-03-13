@@ -126,7 +126,7 @@ define(
                     displayText = rawValue[this.textField];
                 }
             }
-            this.set('title', displayText);
+            this.set('title', u.escape(displayText));
         };
 
         exports.getRawValue = function () {
