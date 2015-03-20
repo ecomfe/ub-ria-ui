@@ -24,20 +24,20 @@ define(function (require) {
             '</div>',
         '</div>'
     ].join('');
-    
+
     var ITEM_TPL = [
         '<li class="${typeSelector}-item ${itemSelector}" index="${index}" style="width:${width}px;height:${height}px;">',
             '<img class="${typeSelector}-item-img" src="${imgSrc}"/>',
             '<span class="${typeSelector}-check ${iconCheck}"></span>',
         '</li>'
     ].join('');
-    
+
     var PAGE_TPL = '<li index="${index}" class="${typeSelector}-page"></li>';
 
     /**
      * 拼接main的dom结构
      * @return {string} html片段
-     * @inner 
+     * @inner
      */
     function getMainHtml() {
         return lib.format(
@@ -61,7 +61,7 @@ define(function (require) {
      * @param {number} itemWidth 单项的宽
      * @param {number} itemHeight 单项的高
      * @return {string} html片段
-     * @inner 
+     * @inner
      */
     function getItemHtml(data, itemWidth, itemHeight) {
         var html = [];
@@ -87,7 +87,7 @@ define(function (require) {
      * 拼接底部分页条的dom结构
      * @param {Array} data 渲染所需的数据
      * @return {string} html片段
-     * @inner 
+     * @inner
      */
     function getToolbarHtml(data) {
         var html = [];
@@ -110,7 +110,7 @@ define(function (require) {
     /**
      * 获取page的序号根据选中项的index
      * @return {number} page的序号
-     * @inner 
+     * @inner
      */
     function getPageByIndex() {
         if (this.selectedIndex === -1) {
@@ -118,10 +118,10 @@ define(function (require) {
         }
         return Math.floor(this.selectedIndex / this.pageSize);
     };
-    
+
     /**
      * 设置左右箭头的样式
-     * @inner 
+     * @inner
      */
     function setPointerStyle() {
         var disableClass = this.helper.getPartClasses('pointer-disable')[0];
@@ -147,7 +147,7 @@ define(function (require) {
 
     /**
      * 设置翻页的滚动位置
-     * @inner 
+     * @inner
      */
     function setCarouseListPosition() {
         var pageOffset = -this.wrapWidth;
@@ -158,7 +158,7 @@ define(function (require) {
     /**
      * 左右箭头点击后的处理函数
      * @param {number} n 区别方向  -1=left 1=right
-     * @inner 
+     * @inner
      */
     function pointerClick(n) {
         var nextPage = this.currentPage + n;
@@ -173,7 +173,7 @@ define(function (require) {
 
     /**
      * 单个选项处理handler
-     * @param {number} index 选项的序号 
+     * @param {number} index 选项的序号
      * @param {HTMLElement} el dom对象
      * @inner
      */
@@ -201,11 +201,11 @@ define(function (require) {
          */
         this.fire('change');
     };
-    
+
     /**
      * 翻页按钮点击处理函数
      * @param {number} nextPage 目标页的序号
-     * @inner 
+     * @inner
      */
     function pageClick(nextPage) {
         if (this.currentPage === nextPage) {
@@ -351,10 +351,10 @@ define(function (require) {
                     list.innerHTML = getItemHtml.call(carousel, datasource, itemWidth, itemHeight);
                     toolbar.innerHTML = getToolbarHtml.call(carousel, datasource);
                     //设置wrap的宽高
-                    //4为每项的border宽度 
                     //2为每项的margin宽度
-                    var wrapWidth = (itemWidth + 4 * 2 + 2 * 2) * carousel.pageSize;
-                    var wrapHeight = itemHeight + 4 * 2;
+                    // FIXME 这些margin值被写死了
+                    var wrapWidth = (itemWidth + 2 * 2) * carousel.pageSize;
+                    var wrapHeight = itemHeight;
                     carousel.wrapWidth = wrapWidth;
                     var wrap = list.parentNode;
                     wrap.style.width = wrapWidth + 'px';
@@ -374,7 +374,7 @@ define(function (require) {
         /**
          * 设置选中项
          * @param {number} value 选中项的值
-         * @public 
+         * @public
          */
         setValue: function (value) {
             if (!value && value !== 0) {
@@ -405,7 +405,7 @@ define(function (require) {
 
         /**
          * 设置page
-         * @param {number} page 获取page的序号 
+         * @param {number} page 获取page的序号
          * @public
          */
         setPage: function (page) {
@@ -429,17 +429,17 @@ define(function (require) {
             setPointerStyle.call(this);
             setCarouseListPosition.call(this);
         },
-        
+
         /**
          * 获取选择项的完整数据
          * @return {Object}
-         * @public 
+         * @public
          */
         getSelectedItem: function() {
             return this.datasource[this.selectedIndex];
         }
     };
-    
+
     var Carousel = eoo.create(Control, exports);
     require('esui/main').register(Carousel);
     return Carousel;
