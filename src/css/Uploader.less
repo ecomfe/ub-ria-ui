@@ -1,44 +1,11 @@
-esui-uploader {
-    display: block;
-}
-
-.fill-all () {
-    // 占满空间
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
 .@{ui-class-prefix}-uploader {
     position: relative;
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    margin: 0; // 重置IE6-7
-    font-size: 12px;
     overflow: hidden;
     vertical-align: middle;
+    .inline-block();
 
     &.state-validity-invalid {
         /*border: none !important;*/
-    }
-
-    .@{ui-class-prefix}-uploader-button {
-        .fill-all ();
-        background-image: -webkit-linear-gradient(top, #fff, #f6f6f6);
-        background-image: -moz-linear-gradient(top, #fff, #f6f6f6);
-        background-image: -ms-linear-gradient(top, #fff, #f6f6f6);
-        background-image: -o-linear-gradient(top, #fff, #f6f6f6);
-        background-image: linear-gradient(top, #fff, #f6f6f6);
-        background-color: #fff;
-        border: 1px solid #CCC;
-        border-radius: 3px;
-        vertical-align: top;
-        text-align: center;
-        display: block;
-        cursor: pointer;
     }
 
     iframe {
@@ -47,6 +14,6 @@ esui-uploader {
 }
 
 .@{ui-class-prefix}-uploader-label {
-    margin-left: 10px;
+    margin-left: 0.625em;
     vertical-align: middle;
 }

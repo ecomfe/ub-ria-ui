@@ -1,52 +1,89 @@
+@esui-tokenfield-color: inherit;
+@esui-tokenfield-background: #FEFDFA;
+
+@esui-tokenfield-border-width: 1px;
+@esui-tokenfield-border-color: #ddd;
+@esui-tokenfield-border: @esui-tokenfield-border-width solid @esui-tokenfield-border-color;
+
+@esui-tokenfield-item-border-width: 1px;
+@esui-tokenfield-item-border-color: #d9d9d9;
+@esui-tokenfield-item-border: @esui-tokenfield-item-border-width solid @esui-tokenfield-item-border-color;
+@esui-tokenfield-item-background: #ededed;
+@esui-tokenfield-item-hover-color: lighten(@esui-tokenfield-item-background, 5%);
+@esui-tokenfield-item-active-color: darken(@esui-tokenfield-item-background, 10%);
+
+@esui-tokenfield-item-height: 1.5em;
+@esui-tokenfield-item-margin: 0.125em 0.25em;
+@esui-tokenfield-item-radius: 5px;
+
+@esui-tokenfield-item-close-color: #222;
 
 .@{ui-class-prefix}-tokenfield {
-    border: solid 1px #000;
-    padding: 10px;
-
-    input[type="text"], textarea {
-        border: none;
-        background: transparent;
-    }
+    border: @esui-tokenfield-border;
+    padding: 0.625em;
+    color: @esui-tokenfield-color;
+    background: @esui-tokenfield-background;
 }
 
 .@{ui-class-prefix}-tokenfield-flash {
     .opacity(0);
 }
 
-
-.@{ui-class-prefix}-tokenfield-token {
+.@{ui-class-prefix}-tokenfield-item {
     .box-sizing(border-box);
-    .border-radius(3px);
+    .border-radius(@esui-tokenfield-item-radius);
     .inline-block;
-    border: 1px solid #d9d9d9;
-    background-color: #ededed;
+    border: @esui-tokenfield-item-border;
+    background-color: @esui-tokenfield-item-background;
     white-space: nowrap;
-    margin: -1px 5px 5px 0;
-    height: 22px;
+    margin: 0.125em 0.25em;
+    height: @esui-tokenfield-item-height;
     vertical-align: top;
     .transition(opacity .3s ease-in-out);
+
+    &:hover {
+        background: @esui-tokenfield-item-hover-color;
+    }
+
+    &:active {
+        background: @esui-tokenfield-item-active-color;
+    }
 }
 
 .@{ui-class-prefix}-tokenfield-close {
-    font-family: Arial;
     .inline-block;
-    line-height: 100%;
-    font-size: 1.1em;
-    line-height: 1.49em;
-    margin-left: 5px;
-    height: 100%;
+    margin-left: 0.25em;
+    padding-right: 0.25em;
     vertical-align: top;
-    padding-right: 4px;
     font-weight: bold;
     text-decoration: none;
-    color: #000;
+    color: @esui-tokenfield-item-close-color;
     cursor: pointer;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+/** 要保证input和item的定位一致 */
+.@{ui-class-prefix}-tokenfield-input {
+
+    margin: @esui-tokenfield-item-margin;
+
+    input[type="text"], textarea {
+        border: none;
+        background: transparent;
+        height: @esui-tokenfield-item-height;
+        /** override textbox */
+        padding-top: 0;
+        padding-bottom: 0;
+    }
 }
 
 .@{ui-class-prefix}-tokenfield-label {
     .inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 4px;
+    padding-left: 0.5em;
     vertical-align: top;
 }
