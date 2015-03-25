@@ -80,11 +80,10 @@ $(function () {
     //$('html').on('mousedown', hideSource);
 
     var navItems = [
-        '<li><a href="CascadingTreeRichSelector.html">CascadingTreeRichSelector</a></li>',
         '<li><a href="AutoComplete.html">AutoComplete</a></li>',
         '<li><a href="Carousel.html">Carousel</a></li>',
         '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
+        '<li><a href="RichSelector.html">RichSelector</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
         '<li><a href="Uploader.html">Uploader</a></li>'
     ];
