@@ -10,7 +10,7 @@
 define(
     function (require) {
         var InputControl = require('esui/InputControl');
-        var File = require('uploader/File');
+        var File = require('./File');
 
         var u = require('underscore');
         var lib = require('esui/lib');
