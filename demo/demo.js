@@ -86,7 +86,8 @@ $(function () {
         '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
-        '<li><a href="Uploader.html">Uploader</a></li>'
+        '<li><a href="Uploader.html">Uploader</a></li>',
+        '<li><a href="Filter.html">Filter</a></li>'
     ];
     $('#navigator').html(navItems.reverse().join(''));
 
