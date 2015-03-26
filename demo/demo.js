@@ -9,7 +9,7 @@ require.config({
         },
         {
             'name': 'underscore',
-            'location': '../dep/underscore/1.5.2/src',
+            'location': '../dep/underscore/1.6.0/src',
             'main': 'underscore'
         },
         {
@@ -24,7 +24,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.1.0-beta.6/src',
+            'location': '../dep/esui/3.1.0-beta.3/src',
             'main': 'main'
         },
         {
@@ -39,7 +39,7 @@ require.config({
         },
         {
             'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.2/src',
+            'location': '../dep/ef/3.1.0-beta.3/src',
             'main': 'main'
         },
         {
@@ -49,7 +49,7 @@ require.config({
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-alpha.10/src'
+            'location': '../dep/esf/1.0.0-alpha.11/src'
         },
         {
             'name': 'est',
@@ -80,13 +80,14 @@ $(function () {
     //$('html').on('mousedown', hideSource);
 
     var navItems = [
-        '<li><a href="CascadingTreeRichSelector.html">CascadingTreeRichSelector</a></li>',
+        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
         '<li><a href="AutoComplete.html">AutoComplete</a></li>',
         '<li><a href="Carousel.html">Carousel</a></li>',
-        '<li><a href="Drawer.html">Drawer</a></li>',
         '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
         '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
-        '<li><a href="TokenField.html">TokenField</a></li>'
+        '<li><a href="TokenField.html">TokenField</a></li>',
+        '<li><a href="Uploader.html">Uploader</a></li>',
+        '<li><a href="Filter.html">Filter</a></li>'
     ];
     $('#navigator').html(navItems.reverse().join(''));
 
@@ -106,7 +107,7 @@ $(function () {
         }
         $code.text(targetArr.join('\n'));
     });
-    Prism.highlightAll();
+    //Prism.highlightAll();
 });
 var ready = (function () {
     var list = [];

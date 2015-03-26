@@ -12,7 +12,7 @@ define(
         var InputControl = require('esui/InputControl');
         var Table = require('esui/Table');
         var Command = require('esui/extension/Command');
-        var File = require('uploader/File');
+        var File = require('./File');
         require('esui/Dialog');
         require('esui/Button');
 

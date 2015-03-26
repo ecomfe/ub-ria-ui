@@ -13,8 +13,8 @@ define(
         var ValidityState = require('esui/validator/ValidityState');
         var InputControl = require('esui/InputControl');
 
-        var File = require('uploader/File');
-        require('FileInput');
+        var File = require('./File');
+        require('./FileInput');
 
         var u = require('underscore');
         var lib = require('esui/lib');
@@ -123,13 +123,6 @@ define(
         };
 
         /**
-         * @type {ui.Button}
-         *
-         * 上传按钮
-         */
-        var button;
-
-        /**
          * 计算上传进度
          */
         function calc() {
@@ -200,10 +193,10 @@ define(
         function getXhr() {
             var XMLHttpRequest;
             if (isXhrLevel2) {
-                XMLHttpRequest = require('./uploader/HTML5XMLHttpRequest');
+                XMLHttpRequest = require('./HTML5XMLHttpRequest');
             }
             else {
-                XMLHttpRequest = require('./uploader/HTML4XMLHttpRequest');
+                XMLHttpRequest = require('./HTML4XMLHttpRequest');
             }
             return new XMLHttpRequest;
         }
@@ -257,37 +250,36 @@ define(
                 this.helper.replaceMain();
             }
 
-            var buttonClasses = this.helper.getPartClassName('button');
             var inputContainerId = this.helper.getId('input-container');
 
             var tpl = [
                 '<div id="${inputContainerId}">',
                 // 按钮
-                '<button data-id="button" data-ui="type:Button;variants:${variants}"></button>',
+                '<button data-ui-id="${buttonId}" data-ui="type:Button;variants:${variants}"></button>',
                 '</div>',
                 '<div class="ui-progress" class="hide">',
                 '<div id="${progressId}" class="ui-progress-bar"></div>',
                 '</div>'
             ].join('');
 
+            var buttonId = this.helper.getId('button');
             this.main.innerHTML = lib.format(
                 tpl,
                 {
-                    buttonClasses: buttonClasses,
+                    buttonId: buttonId,
                     inputContainerId: inputContainerId,
                     name: this.name ? 'name="' + this.name + '" ' : ' ',
                     progressId: this.helper.getId('progress'),
                     variants: this.buttonVariants || ''
                 }
             );
-            var controls = ui.init(this.main, {viewContext: this.viewContext});
-            button = controls[0];
+            ui.init(this.main, {viewContext: this.viewContext});
 
             var fileInput = ui.create(
                 'FileInput',
                 {
                     id: this.helper.getId('input'),
-                    browseButton: button,
+                    browseButton: this.viewContext.get(buttonId),
                     name: this.name
                 }
             );
@@ -358,6 +350,7 @@ define(
             {
                 name: ['text'],
                 paint: function (uploader, text) {
+                    var button = getButton.call(uploader);
                     button.setContent(text);
                 }
             },
@@ -392,6 +385,7 @@ define(
                     var inputContainer = lib.g(uploader.helper.getId('input-container'));
                     inputContainer.style.height = heightWithUnit;
 
+                    var button = getButton.call(uploader);
                     button.setProperties(
                         {
                             width: width,
@@ -426,6 +420,7 @@ define(
                             // 其实单文件上传，`setFile`会出发`complete`事件，从而改变按钮文本
                             // 不过`complete`改变按钮文本有一个setTimeout延时
                             // 所以这里直接置为`overrideText`
+                            var button = getButton.call(uploader);
                             button.setContent(uploader.overrideText);
                         }
                     }
@@ -629,6 +624,7 @@ define(
          */
         exports.showUploading = function () {
             // 正在上传提示
+            var button = getButton.call(this);
             button.setContent(this.busyText);
         };
 
@@ -782,6 +778,7 @@ define(
          * @protected
          */
         exports.notifyComplete = function () {
+            var button = getButton.call(this);
             button.setContent(this.completeText);
 
             // 恢复初始的文本
@@ -809,6 +806,15 @@ define(
         };
 
         /**
+         * 获取上传按钮
+         * @return {ui.Button}
+         */
+        function getButton() {
+            var buttonId = this.helper.getId('button');
+            return this.viewContext.get(buttonId);
+        }
+
+        /**
          * 销毁控件
          *
          * @override
@@ -832,6 +838,7 @@ define(
                 '.flv': true, '.swf': true
             }
         };
+
 
         /**
          * 默认属性
