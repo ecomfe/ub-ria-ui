@@ -1,0 +1,155 @@
+@import "./mixin.less";
+@import "./variables.less";
+
+/* 滑动杆控件开始 */
+@slider-width: 640px;
+@slider-padding: 10px 0;
+
+/* 滑动杆的头 */
+@slider-head-line-height: 38px;
+@slider-head-margin-bottom: 10px;
+@slider-head-textbox-margin-top: 5px;
+@slider-head-select-margin-top: 13px;
+@slider-head-unit-margin-left: 5px;
+
+/* 横向滑动杆体 */
+@slider-body-width: 600px;
+@slider-body-height: 20px;
+@slider-body-border: 1px solid #ccc;
+@slider-body-margin: 10px 20px;
+
+/* 纵向滑动杆体 */
+@slider-vertical-body-width: 20px;
+@slider-vertical-body-heigth: 400px;
+@slider-vertical-body-margin: 20px 10px;
+
+/* 滑杆的选择部分 */
+@slider-body-selected-height: 20px;
+@slider-body-selected-background-color: #ccc;
+@slider-vertical-body-selected-width: 20px;
+
+
+/* 滑块 */
+@slider-body-cursor-width: 40px;
+@slider-body-cursor-height: 40px;
+@slider-vertical-body-cursor-width: 40px;
+@slider-vertical-body-cursor-height: 40px;
+@slider-body-cursor-background-color: #093ac9;
+@slider-body-cursor-border-radius: 5px;
+
+/* 滑动杆的脚 */
+@slider-foot-margin-bottom: 10px;
+@slider-foot-li-width: 40px;
+
+.@{ui-class-prefix}-slider {
+    width: @slider-width;
+    padding: @slider-padding;
+    .box-sizing(border-box);
+    font-size: 12px;
+}
+
+.@{ui-class-prefix}-slider-vertical {
+
+}
+
+.@{ui-class-prefix}-slider-body {
+    .box-sizing(border-box);
+    position: relative;
+    width: @slider-body-width;
+    height: @slider-body-height;
+    margin: @slider-body-margin;
+    border: @slider-body-border;
+}
+
+.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body {
+    width: @slider-vertical-body-width;
+    height: @slider-vertical-body-heigth;
+    margin: @slider-vertical-body-margin;
+}
+
+.@{ui-class-prefix}-slider-body-cursor,
+.@{ui-class-prefix}-slider-body-cursortwo {
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    width: @slider-body-cursor-width;
+    height: @slider-body-cursor-height;
+    .border-radius(@slider-body-cursor-border-radius);
+    background-color: @slider-body-cursor-background-color;
+    z-index: 2;
+}
+
+.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-cursor,
+.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-cursortwo {
+    top: -20px;
+    left: -10px;
+}
+
+.@{ui-class-prefix}-slider-body-cursortwo {
+    z-index: 3;
+}
+
+.@{ui-class-prefix}-slider-body-cursor-active {
+    
+}
+
+.@{ui-class-prefix}-slider-body-selected {
+    .box-sizing(border-box);
+    position: absolute;
+    height: @slider-body-selected-height;
+    background-color: @slider-body-selected-background-color;
+    z-index: 1;
+}
+
+.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-selected {
+    width: @slider-vertical-body-selected-width;
+}
+
+.@{ui-class-prefix}-slider-head {
+    height: @slider-head-line-height;
+    margin-bottom: @slider-head-margin-bottom;
+}
+
+.@{ui-class-prefix}-slider-head-label {
+    display: inline-block;
+    line-height: @slider-head-line-height;
+}
+
+.@{ui-class-prefix}-slider-head-value,
+.@{ui-class-prefix}-slider-head-unit{
+    display: inline-block;
+}
+
+.@{ui-class-prefix}-slider-head-select {
+    margin-top: @slider-head-select-margin-top;
+    z-index: 3;
+}
+
+.@{ui-class-prefix}-slider-head-textbox {
+    margin-top: @slider-head-textbox-margin-top;
+}
+
+.@{ui-class-prefix}-slider-head-span,
+.@{ui-class-prefix}-slider-head-unit {
+    line-height: @slider-head-line-height;
+}
+
+.@{ui-class-prefix}-slider-head-unit {
+    margin-left: @slider-head-unit-margin-left;
+}
+
+.@{ui-class-prefix}-slider-foot {
+    position: relative;
+    width: 600px;
+    margin: 20px 20px 0 20px;
+    padding-bottom: @slider-foot-margin-bottom;
+}
+
+.@{ui-class-prefix}-slider-foot li{
+    position: absolute;
+    display: inline-block;
+    width: @slider-foot-li-width;
+    text-align: center;
+}
+
+/* 滑动杆控件结束 */
