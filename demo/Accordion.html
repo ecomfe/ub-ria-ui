@@ -34,7 +34,7 @@
                             <div data-role="header">1.一级条目</div>
                             <div data-role="content">
                                 <ul>
-                                    <li>1.1 子条目<esui-textbox></esui-textbox></li>
+                                    <li>1.1 子条目<esui-text-box data-ui-id="test"></esui-text-box></li>
                                     <li>1.2 子条目</li>
                                     <li>1.3 子条目</li>
                                 </ul>
@@ -85,7 +85,7 @@
                     <li class="view-markup">结构</li>
                 </ul>
                 <div id="container" class="example ui-demo-light-stage">
-                    
+                    <esui-text-box></esui-text-box>
                 </div>
             </section>
         </div>
@@ -94,8 +94,8 @@
         require(
             [
                 'esui',
-                'esui/TextBox',
-                'Accordion'
+                'Accordion',
+                'esui/TextBox'
             ],
             function (ui, Accordion) {
                 // 列表1中测试增加和删除panel
