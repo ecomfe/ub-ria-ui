@@ -9,7 +9,7 @@ require.config({
         },
         {
             'name': 'underscore',
-            'location': '../dep/underscore/1.6.0/src',
+            'location': '../dep/underscore/1.5.2/src',
             'main': 'underscore'
         },
         {
@@ -24,7 +24,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.1.0-beta.3/src',
+            'location': '../dep/esui/3.1.0-beta.6/src',
             'main': 'main'
         },
         {
@@ -80,16 +80,24 @@ $(function () {
     //$('html').on('mousedown', hideSource);
 
     var navItems = [
-        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
+        '<li><a href="Accordion.html">Accordion</a></li>',
+        '<li><a href="Alert.html">Alert</a></li>',
         '<li><a href="AutoComplete.html">AutoComplete</a></li>',
         '<li><a href="Carousel.html">Carousel</a></li>',
+        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
+        '<li><a href="ColorPicker.html">ColorPicker</a></li>',
+        '<li><a href="Filter.html">Filter</a></li>',
+        '<li><a href="LightBox.html">LightBox</a></li>',
+        '<li><a href="MultiCalendar.html">MultiCalendar</a></li>',
+        '<li><a href="Slider.html">Slider</a></li>',
+        '<li><a href="Spinner.html">Spinner</a></li>',
         '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
-        '<li><a href="Uploader.html">Uploader</a></li>',
-        '<li><a href="Filter.html">Filter</a></li>'
+        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
+        '<li><a href="Uploader.html">Uploader</a></li>'
+
     ];
-    $('#navigator').html(navItems.reverse().join(''));
+    $('#navigator').html(navItems.join(''));
 
     $('.example').each(function (index, item) {
         var $sample = $('<pre class="source source-markup"><code class="language-markup"></code></pre>');
