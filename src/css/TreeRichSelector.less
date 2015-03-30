@@ -1,3 +1,5 @@
+@esui-richselector-node-icon-color: #6CCDC0;
+
 esui-tree-rich-selector {
     display: block;
 }
@@ -58,6 +60,7 @@ esui-tree-rich-selector {
 .@{ui-class-prefix}-tree-content-wrapper {
     .eicons-font-style();
     line-height: 2;
+    cursor: pointer;
 }
 
 // 很多样式无法确定是否联盟产品线统一，所以这里自己写一份
@@ -66,7 +69,7 @@ esui-tree-rich-selector {
     &.@{ui-class-prefix}-richselector-add {
         .@{ui-class-prefix}-tree-content-wrapper:hover {
             // 默认带一个向右箭头
-            .eicons-icon-right(arrow-right);
+            .esui-richselector-icon(arrow-right);
         }
     }
 
@@ -74,14 +77,14 @@ esui-tree-rich-selector {
         .@{ui-class-prefix}-tree-content-wrapper-selected,
         .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
             font-weight: bold;
-            .eicons-icon-right(check);
+            .esui-richselector-icon(check);
         }
     }
 
     &.@{ui-class-prefix}-richselector-del {
         .@{ui-class-prefix}-tree-content-wrapper:hover {
             // 默认带一个小对勾
-            .eicons-icon-right(times);
+            .esui-richselector-icon(times);
         }
     }
 }
@@ -91,17 +94,18 @@ esui-tree-rich-selector {
     &.@{ui-class-prefix}-richselector-add {
         .@{ui-class-prefix}-tree-content-wrapper-selected,
         .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
-            .eicons-icon-right(check);
+            .esui-richselector-icon(check);
         }
     }
 }
 
 // 树节点右侧icon
-.eicons-icon-right(@icon) {
+.esui-richselector-icon(@icon) {
     .eicons-icon(@icon);
     position: relative;
     &:before {
         position: absolute;
-        right: 10px;
+        right: 2em;
+        color: @esui-richselector-node-icon-color;
     }
 }
