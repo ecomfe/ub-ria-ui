@@ -19,6 +19,7 @@
         border-color 0.2s ease;
     .esf-transition(@esf-tokenfield-transition);
     padding: @esui-tokenfield-padding;
+    position: relative;
 
     .esui-tokenfield-theme();
 }
@@ -30,6 +31,8 @@
 }
 
 .@{ui-class-prefix}-tokenfield-item {
+    max-width: 80%;
+    .ellipsis();
     .box-sizing(border-box);
     .border-radius(@esui-tokenfield-item-radius);
     display: inline-block;
@@ -64,8 +67,8 @@
     }
 }
 
-.@{ui-class-prefix}-tokenfield-label {
-    display: inline-block;
-    .ellipsis();
-    vertical-align: top;
+.@{ui-class-prefix}-tokenfield.@{ui-state-prefix}-disabled {
+    .@{ui-class-prefix}-tokenfield-item {
+        cursor: not-allowed;
+    }
 }
