@@ -9,8 +9,8 @@
 define(
     function (require) {
         var u = require('underscore');
-        var lib = require('./lib');
-        var Control = require('./Control');
+        var lib = require('esui/lib');
+        var Control = require('esui/Control');
 
         /**
          * 手风琴控件
@@ -131,7 +131,7 @@ define(
          * @protected
          * @override
          */
-        Accordion.prototype.repaint = require('./painters').createRepaint(
+        Accordion.prototype.repaint = require('esui/painters').createRepaint(
             Control.prototype.repaint,
             {
                 // panel项配置
@@ -457,7 +457,7 @@ define(
         };
 
         lib.inherits(Accordion, Control);
-        require('./main').register(Accordion);
+        require('esui/main').register(Accordion);
         return Accordion;
     }
 );
