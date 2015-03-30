@@ -7,64 +7,63 @@
   * @author lixiang
   */
 
-.@{ui-class-prefix}-toggle-selector {
-    .@{ui-class-prefix}-togglepanel-title {
-        //.@{ui-class-prefix}-toggle-select();
-        margin: 0;
-        font-size: 13px;
-        width: 137px;
-        .ellipsis();
-        display: block;
-    }
-}
-
-@esui-toggle-select-layer-state-indicator-width: 9px;
-@esui-toggle-select-layer-state-indicator-height: 5px;
-@esui-toggle-select-layer-state-indicator: url(../img/esui-combo-arrow-normal.png);
-@esui-toggle-select-layer-state-indicator-hover: url(../img/esui-combo-arrow-normal.png);
-@esui-toggle-select-layer-state-indicator-active: url(../img/esui-combo-arrow-active.png);
-@esui-toggle-select-layer-state-indicator-disabled: url(../img/esui-combo-arrow-disabled.png);
-
-@esui-toggle-select-font-color: #666;
-@esui-toggle-select-border: none;
-@esui-toggle-select-width: auto;
-@esui-toggle-select-height: 12px;
+@esui-toggle-select-color: #666;
+@esui-toggle-select-border-color: transparent;
+@esui-toggle-select-border: 1px solid @esui-toggle-select-border-color;
+@esui-toggle-select-width: 150px;
+@esui-toggle-select-height: 30px;
+@esui-toggle-select-padding: 2.5em;
+@esui-toggle-select-border-radius: 0.25em;
 
 // Select
-@esui-toggle-select-background-color: #ebebeb;
-@esui-toggle-select-background-color-hover: #ebebeb;
-@esui-toggle-select-background-color-active: #ebebeb;
-@esui-toggle-select-background-color-disabled: #ebebeb;
+@esui-toggle-select-background-color: #EBEBEB;
+@esui-toggle-select-background-color-hover: lighten(@esui-toggle-select-background-color, 5%);
+@esui-toggle-select-background-color-active: darken(@esui-toggle-select-background-color, 10%);
+@esui-toggle-select-background-color-disabled: #999;
 
-@esui-toggle-select-height: 30px;
+// icon color
+@esui-toggle-select-icon-color: #7d7d7d;
+@esui-toggle-select-icon-color-disabled: #b7b7b7;
 
-@esui-toggle-select-padding-left: 18px;
-// select实际右侧内边距
-//     = 2倍左侧内边距（保证图标距离文字和右侧外边缘距离相同）+ 图标宽度
-@esui-toggle-select-padding-right: 2 * @esui-toggle-select-padding-left + @esui-toggle-select-layer-state-indicator-width;
-@esui-toggle-select-padding: 0 @esui-toggle-select-padding-right 0 @esui-toggle-select-padding-left;
 
-@esui-toggle-select-arror-color: #7d7d7d;
-@esui-toggle-select-disabled-arror-color: #b7b7b7;
+.@{ui-class-prefix}-toggle-selector {
+}
 
-.@{ui-class-prefix}-toggle-select {
+.@{ui-class-prefix}-togglepanel-title {
+    .esui-toggle-select();
+    .ellipsis();
+    .box-sizing(border-box);
+    width: @esui-toggle-select-width;
+    margin: 0;
+    display: block;
+    font-size: 15px;
+}
+
+.esui-toggle-select {
+    .border-radius(@esui-toggle-select-border-radius);
+    .eicons-font-style();
+    .esui-toggle-select-icon(caret-down);
+    height: @esui-toggle-select-height;
+    line-height: @esui-toggle-select-height;
+    font-weight: bold;
     cursor: pointer;
     background: @esui-toggle-select-background-color;
     border: @esui-toggle-select-border;
-    border-radius: 0;
-    height: @esui-toggle-select-height;
-    line-height: @esui-toggle-select-height;
-    padding: @esui-toggle-select-padding;
-    width: @esui-toggle-select-width;
-    color: @esui-toggle-select-font-color;
-    font-weight: bold;
-    text-align: center;
-    // .pseudo-icon(@eicon-var-angle-down, @esui-toggle-select-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
+    color: @esui-toggle-select-color;
+    padding-left: @esui-toggle-select-padding;
+
+    &:hover {
+        background: @esui-toggle-select-background-color-hover;
+    }
+
+    &:active {
+        background: @esui-toggle-select-background-color-active;
+    }
 }
 
 .@{ui-class-prefix}-togglepanel-expanded {
     .@{ui-class-prefix}-togglepanel-title {
-        // .pseudo-icon(@eicon-var-angle-up, @esui-toggle-select-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
+        .esui-toggle-select-icon(caret-up);
     }
 }
 
@@ -72,7 +71,19 @@
 .@{ui-class-prefix}-toggle-select-read-only,
 .@{ui-class-prefix}-toggle-select-disabled:hover,
 .@{ui-class-prefix}-toggle-select-read-only:hover {
-    color: #999;
+    color: @esui-toggle-select-icon-color-disabled;
     background: @esui-toggle-select-background-color-disabled;
-    // .pseudo-icon(@eicon-var-angle-down, @esui-toggle-select-disabled-arror-color, 12px, right, @esui-toggle-select-padding-left, top);
+    &:before {
+        color: @esui-toggle-select-icon-color-disabled;
+    }
+}
+
+.esui-toggle-select-icon(@icon) {
+    .eicons-icon(@icon);
+    position: relative;
+    &:before {
+        position: absolute;
+        right: @esui-toggle-select-padding;
+        color: @esui-toggle-select-icon-color;
+    }
 }
