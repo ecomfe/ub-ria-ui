@@ -1,0 +1,104 @@
+/**
+ * UB-RIA UI Library
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file Table样式
+ * @author jiangyuan(jiangyuan01@baidu.com)
+ */
+
+@import "mixin.less";
+@import "variables.less";
+
+
+.@{ui-class-prefix}-textbox {
+  .ui-input;
+  .input-variant(
+  @input-text-color,
+  @input-background-color,
+  @input-border-color,
+  @ui-spinner-input-active-border-color,
+  @input-active-background-color,
+  @ui-spinner-input-active-border-color,
+  @input-focus-background-color,
+  @input-disabled-border-color,
+  @input-disabled-background-color,
+  @input-error-border-color,
+  @input-error-background-color,
+  @input-error-text-color,
+  @input-error-placeholder-color
+  );
+
+  >input {
+    &:hover {
+      border-color: @ui-spinner-input-active-border-color;
+    }
+    vertical-align: middle;
+  }
+
+  .@{ui-class-prefix}-textbox-spinner-wrapper {
+    position: absolute;
+    width: @ui-textbox-spinner-wrapper-width;
+    border-left: 1px solid @ui-spinner-divide-line-color;
+    background-color: @ui-spinner-btn-color;
+    height: e("calc(100% - 2px)");
+    top: 1px;
+    right: 1px;
+    .@{ui-class-prefix}-textbox-scroll-up,
+    .@{ui-class-prefix}-textbox-scroll-down {
+      font-family: FontAwesome;
+      font-size: 100%;
+      position: absolute;
+      width: 100%;
+      height: 1.2em;
+      line-height: 1.2em;
+      &:hover {
+        background-color: @ui-spinner-hover-btn-color;
+      }
+      &:active {
+        background-color: @ui-spinner-active-btn-color;
+      }
+      &:before {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+      }
+    }
+    .@{ui-class-prefix}-textbox-scroll-up {
+      top: 0;
+      &:before {
+        content: @fa-var-caret-up;
+      }
+    }
+    .@{ui-class-prefix}-textbox-scroll-down {
+      bottom: 0;
+      &:before {
+        content: @fa-var-caret-down;
+      }
+    }
+  }
+}
+
+.@{ui-class-prefix}-textbox-hint {
+  background-color: #f2f2f2;
+  border: 1px solid #a8adb6;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 2.4em;
+  line-height: 100%;
+  padding: 0.65em;
+  vertical-align: middle;
+}
+
+.@{ui-class-prefix}-textbox-hint-suffix {
+  .@{ui-class-prefix}-textbox-hint {
+    border-left: 0 none;
+  }
+}
+
+.@{ui-class-prefix}-textbox-hint-prefix {
+  .@{ui-class-prefix}-textbox-hint {
+    border-right: 0 none;
+  }
+}

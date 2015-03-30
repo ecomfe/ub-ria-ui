@@ -75,7 +75,7 @@ define(
                 }
 
                 // delimiters, token分隔符，可一次生成多个token
-                this.delimiters = (typeof properties.delimiter === 'string') 
+                this.delimiters = (typeof properties.delimiter === 'string')
                     ? properties.delimiter.split('') : properties.delimiter;
                 this.triggerKeys = u.map(this.delimiters, function (delimiter) {
                     return delimiter.charCodeAt(0);
@@ -123,6 +123,7 @@ define(
 
                 var html = [
                     '<input type="text" name="${inputName}" autocomplete="off"',
+                    ' class="${inputClasses}"',
                     ' data-ui-type="TextBox"',
                     ' data-ui-id="${inputId}" />',
                 ].join('');
@@ -131,7 +132,8 @@ define(
                     html,
                     {
                         inputName: this.name,
-                        inputId: this.helper.getId('input')
+                        inputId: this.helper.getId('input'),
+                        inputClasses: this.helper.getPartClasses('input')
                     }
                 );
                 // 创建控件树
@@ -156,7 +158,7 @@ define(
              * @override
              */
             initEvents: function () {
-                
+
                 this.helper.addDOMEvent(
                     this.main,
                     'mousedown',
@@ -165,7 +167,7 @@ define(
 
                 var input = this.getInput();
                 var inputElem = input.getFocusTarget();
-                
+
                 input.on('focus', u.bind(this.focus, this));
                 input.on('blur', u.bind(this.blur, this));
                 input.on('enter', u.bind(this.enter, this));
@@ -197,9 +199,9 @@ define(
             updateInput: function () {
                 var input = this.getInput();
                 var main = this.main;
-                var width = lib.getOffset(main).left 
-                    + parseInt(lib.getStyle(main, 'width'), 10) 
-                    // + parseInt(lib.getStyle(main, 'padding-left'), 10) 
+                var width = lib.getOffset(main).left
+                    + parseInt(lib.getStyle(main, 'width'), 10)
+                    // + parseInt(lib.getStyle(main, 'padding-left'), 10)
                     - lib.getOffset(input.main).left;
                 input.setProperties({ width: width });
             },
@@ -233,7 +235,7 @@ define(
                 this.fire('beforecreate', { token: token });
 
                 var tokenElem = document.createElement('div');
-                tokenElem.className = this.helper.getPartClasses('token');
+                tokenElem.className = this.helper.getPartClasses('item');
                 tokenElem.innerHTML = this.helper.getPartHTML('label', 'span') + this.helper.getPartHTML('close', 'a');
                 var guid = lib.getGUID();
                 lib.setAttribute(tokenElem, 'data-id', guid);
@@ -269,7 +271,7 @@ define(
                         - parseInt(lib.getStyle(tokenLabel, 'margin-right'), 10);
                 }
                 tokenLabel.style.maxWidth = this.maxTokenWidth + 'px';
-                
+
                 this.fire(
                     'aftercreate',
                     {
@@ -281,7 +283,7 @@ define(
                 this.updateInput();
             },
 
-            
+
             /**
              * 输入框focus
              * @param {Event} e 事件对象
@@ -300,7 +302,7 @@ define(
                 this.helper.addStateClasses('focus');
             },
 
-            
+
             /**
              * 响应blur
              * @param {Event} e 事件对象
@@ -386,7 +388,7 @@ define(
             remove: function (e) {
                 var target = e && e.target;
                 if (target) {
-                    var tokenClassName = this.helper.getPartClasses('token');
+                    var tokenClassName = this.helper.getPartClasses('item');
                     while(!lib.hasClass(target, tokenClassName)) {
                         target = target.parentNode;
                     }
@@ -406,7 +408,7 @@ define(
 
             /**
              * 根据input输入创建token
-             */ 
+             */
             createTokensFromInput: function () {
                 var input = this.getInput();
                 var inputValue = input.getRawValue();
@@ -422,7 +424,7 @@ define(
                         return;
                     }
                 }
-                
+
 
                 var before = this.getRawValue();
                 this.setTokens(inputValue, true);
@@ -486,7 +488,7 @@ define(
                     u.each(
                         lib.getChildren(this.main),
                         function (tokenElem) {
-                            if (lib.hasClass(tokenElem, 'token')) {
+                            if (lib.hasClass(tokenElem, 'item')) {
                                 // 先删除关联数据
                                 var dataId = lib.getAttribute(tokenElem, 'data-id');
                                 delete me.data[dataId];

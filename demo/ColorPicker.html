@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>ColorPicker - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+    <script src="assets/third-party/prism.js"></script>
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+
+    <script src="assets/demo.js"></script>
+</head>
+<body>
+    <h1>ColorPicker</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <h2>默认的ColorPicker</h2>
+            <section class="intro">
+                <p>默认的ColorPicker: 简单模式</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker"></div>
+                </div>
+            </section>
+            <section class="intro">
+                <p>ColorPicker简单模式，展示方式为浮层，可切换模式</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-switchable="true"></div>
+                </div>
+            </section>
+            <h2>ColorPicker高级模式</h2>
+            <section class="intro">
+                <p>ColorPicker高级模式，展示方式为浮层</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-feature-mode="advanced"></div>
+                </div>
+            </section>
+            <section class="intro">
+                <p>ColorPicker高级模式，展示方式为浮层，无透明度</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-feature-mode="advanced"
+                        data-ui-has-alpha="false"></div>
+                </div>
+            </section>
+            <section class="intro">
+                <p>ColorPicker高级模式，展示方式为浮层，可以切换模式，有透明度</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-feature-mode="advanced"
+                        data-ui-switchable="true"></div>
+                </div>
+            </section>
+            <section class="intro">
+                <p>ColorPicker高级模式，展示方式为浮层，可以切换模式，无透明度</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-feature-mode="advanced"
+                        data-ui-switchable="true" data-ui-has-alpha="false"></div>
+                </div>
+            </section>
+
+            <h2>展示方式为dialog的ColorPicker</h2>
+            <section class="intro">
+                <p>展示方式为dialog的ColorPicker, 模式为full</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-display-mode="dialog"
+                        data-ui-feature-mode="full"></div>
+                </div>
+            </section>
+            <section class="intro">
+                <p>展示方式为dialog的ColorPicker, 模式为高级</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example" id="container">
+                    <div data-ui-type="ColorPicker" data-ui-display-mode="dialog"
+                        data-ui-feature-mode="advanced" data-ui-switchable="true"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        require(
+            [
+                'esui',
+                'ColorPicker'
+            ],
+            function (ui, ColorPicker) {
+                window.ui = ui;
+                ui.init();
+            }
+        );
+    </script>
+</body>
+</html>

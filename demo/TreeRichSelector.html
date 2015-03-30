@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>TreeRichSelector - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
 
@@ -105,6 +105,9 @@
                         data-ui-hold-state="true"
                         data-ui-has-foot="false"
                         data-ui-only-leaf-select="false"
+                        data-ui-tree-variants="icon angle hoverable"
+                        data-ui-need-batch-action="true"
+                        data-ui-batch-action-label="选择全部"
                         data-ui-width="275">
                     </div>
                     <div data-ui-type="TreeRichSelector"
@@ -254,6 +257,7 @@
                             datasource: newdata
                         })
                     });
+                    leftTree.fire('add');
 
                     rightTree.on('delete', function (arg) {
                         var items = arg.items;

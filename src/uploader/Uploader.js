@@ -13,8 +13,8 @@ define(
         var ValidityState = require('esui/validator/ValidityState');
         var InputControl = require('esui/InputControl');
 
-        var File = require('uploader/File');
-        require('FileInput');
+        var File = require('./File');
+        require('./FileInput');
 
         var u = require('underscore');
         var lib = require('esui/lib');
@@ -193,10 +193,10 @@ define(
         function getXhr() {
             var XMLHttpRequest;
             if (isXhrLevel2) {
-                XMLHttpRequest = require('./uploader/HTML5XMLHttpRequest');
+                XMLHttpRequest = require('./HTML5XMLHttpRequest');
             }
             else {
-                XMLHttpRequest = require('./uploader/HTML4XMLHttpRequest');
+                XMLHttpRequest = require('./HTML4XMLHttpRequest');
             }
             return new XMLHttpRequest;
         }
@@ -250,36 +250,36 @@ define(
                 this.helper.replaceMain();
             }
 
-            var buttonClasses = this.helper.getPartClassName('button');
             var inputContainerId = this.helper.getId('input-container');
-            var buttonId = this.helper.getId('button');
 
             var tpl = [
                 '<div id="${inputContainerId}">',
                 // 按钮
-                '<label for="${inputId}" id="${buttonId}" class="${buttonClasses}"></label>',
+                '<button data-ui-id="${buttonId}" data-ui="type:Button;variants:${variants}"></button>',
                 '</div>',
                 '<div class="ui-progress" class="hide">',
                 '<div id="${progressId}" class="ui-progress-bar"></div>',
                 '</div>'
             ].join('');
 
+            var buttonId = this.helper.getId('button');
             this.main.innerHTML = lib.format(
                 tpl,
                 {
-                    buttonClasses: buttonClasses,
-                    inputContainerId: inputContainerId,
                     buttonId: buttonId,
+                    inputContainerId: inputContainerId,
                     name: this.name ? 'name="' + this.name + '" ' : ' ',
-                    progressId: this.helper.getId('progress')
+                    progressId: this.helper.getId('progress'),
+                    variants: this.buttonVariants || ''
                 }
             );
+            ui.init(this.main, {viewContext: this.viewContext});
 
             var fileInput = ui.create(
                 'FileInput',
                 {
                     id: this.helper.getId('input'),
-                    browseButton: buttonId,
+                    browseButton: this.viewContext.get(buttonId),
                     name: this.name
                 }
             );
@@ -350,8 +350,8 @@ define(
             {
                 name: ['text'],
                 paint: function (uploader, text) {
-                    var button = uploader.helper.getPart('button');
-                    button.innerHTML = u.escape(text);
+                    var button = getButton.call(uploader);
+                    button.setContent(text);
                 }
             },
             {
@@ -385,16 +385,13 @@ define(
                     var inputContainer = lib.g(uploader.helper.getId('input-container'));
                     inputContainer.style.height = heightWithUnit;
 
-                    var button = uploader.helper.getPart('button');
-                    // button的高度计算要考虑padding, border
-                    var padding = parseInt(lib.getStyle(button, 'paddingTop'), 10)
-                        + parseInt(lib.getStyle(button, 'paddingBottom'), 10);
-                    var border = parseInt(lib.getStyle(button, 'borderTopWidth'), 10)
-                        + parseInt(lib.getStyle(button, 'borderBottomWidth'), 10);
-                    height = height - padding - border;
-                    heightWithUnit = height + 'px'
-                    button.style.lineHeight = heightWithUnit;
-                    button.style.height = heightWithUnit;
+                    var button = getButton.call(uploader);
+                    button.setProperties(
+                        {
+                            width: width,
+                            height: height
+                        }
+                    );
                 }
             },
             {
@@ -423,8 +420,8 @@ define(
                             // 其实单文件上传，`setFile`会出发`complete`事件，从而改变按钮文本
                             // 不过`complete`改变按钮文本有一个setTimeout延时
                             // 所以这里直接置为`overrideText`
-                            var button = uploader.helper.getPart('button');
-                            button.innerHTML = uploader.overrideText;
+                            var button = getButton.call(uploader);
+                            button.setContent(uploader.overrideText);
                         }
                     }
                 }
@@ -627,8 +624,8 @@ define(
          */
         exports.showUploading = function () {
             // 正在上传提示
-            var button = this.helper.getPart('button');
-            button.innerHTML = u.escape(this.busyText);
+            var button = getButton.call(this);
+            button.setContent(this.busyText);
         };
 
         /**
@@ -781,12 +778,12 @@ define(
          * @protected
          */
         exports.notifyComplete = function () {
-            var button = this.helper.getPart('button');
-            button.innerHTML = u.escape(this.completeText);
+            var button = getButton.call(this);
+            button.setContent(this.completeText);
 
             // 恢复初始的文本
             var text = this.multiple === true ? this.text : this.overrideText;
-            setTimeout(function () { button.innerHTML = text; }, 1000);
+            setTimeout(function () { button.setContent(text); }, 1000);
         };
 
         exports.getRawValue = function () {
@@ -807,6 +804,15 @@ define(
             }
             return null;
         };
+
+        /**
+         * 获取上传按钮
+         * @return {ui.Button}
+         */
+        function getButton() {
+            var buttonId = this.helper.getId('button');
+            return this.viewContext.get(buttonId);
+        }
 
         /**
          * 销毁控件
@@ -832,6 +838,7 @@ define(
                 '.flv': true, '.swf': true
             }
         };
+
 
         /**
          * 默认属性
@@ -861,7 +868,8 @@ define(
             // 进度条高度
             progressHeight: 2,
             // 最大上传文件数量, >0有效
-            limit: 0
+            limit: 0,
+            buttonVariants: 'primary'
         };
 
         require('esui').register(Uploader);

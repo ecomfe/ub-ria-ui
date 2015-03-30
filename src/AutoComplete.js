@@ -19,9 +19,11 @@ define(function (require) {
     var INPUT = 'input';
     var TEXT = 'text';
 
-    function filter(value, datasource) {
+    function filter(value, datasource, caseSensitive) {
         return u.filter(datasource, function (data) {
-            return data.indexOf(value) === 0;
+            var text = u.isObject(data) ? data.text : data;
+            return (new RegExp('^' + escapeRegex(value), caseSensitive ? '' : 'i')).test(text);
+            // return caseSensitive ? text.indexOf(value) === 0;
         });
     }
 
@@ -37,26 +39,34 @@ define(function (require) {
         var me = this;
         if (typeof this.target.datasource === 'function') {
             this.target.datasource.call(this, value, function (data) {
-                // renderSuggest.call(me, filter(value, data), value);
+                // renderSuggest.call(me, filter(value, data, me.casesensitive), value);
                 renderSuggest.call(me, data, value);
             });
         }
         else if (this.target.datasource && this.target.datasource.length) {
-            renderSuggest.call(me, filter(value, this.target.datasource), value);
+            renderSuggest.call(me, filter(value, this.target.datasource, this.casesensitive), value);
         }
     }
 
-    function renderSuggest(data, value) {
+    function renderSuggest(data, inputValue) {
         var ret = '';
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
-                ret += '<li class="'
+                var item = data[i];
+                ret += '<li'
+                    + (u.isObject(item) && item.id ? ' data-id="' + item.id + '"' : '')
+                    + ' class="'
                     + this.target.helper.getPrefixClass('autocomplete-item')
                     + (i === 0 ? ' ' + this.target.helper.getPrefixClass('autocomplete-item-hover') : '')
-                    + ' "><span>'
-                    + data[i].replace(new RegExp('^' + value), '<i class="'
+                    + ' "><span class="'
+                    + this.target.helper.getPrefixClass('autocomplete-item-text')
+                    + '">'
+                    + (u.isObject(item) ? item.text : item).replace(new RegExp('^' + inputValue), '<i class="'
                     + this.target.helper.getPrefixClass('autocomplete-item-char-selected') + '">'
-                    + value + '</i>') + '</span></li>';
+                    + inputValue + '</i>') + '</span>'
+                    + (u.isObject(item) ? '<span class="' + this.target.helper.getPrefixClass('autocomplete-item-desc')
+                    + '">' + item.desc + '</span>' : '')
+                    + '</li>';
             }
         }
         this.layer.repaint(ret);
@@ -116,7 +126,7 @@ define(function (require) {
                     if (!selectedItem) {
                         return;
                     }
-                    setTargetValue.call(me, selectedItem.textContent);
+                    setTargetValue.call(me, selectedItem.firstChild.textContent);
                     hideSuggest.call(me);
                     break;
             }
@@ -351,6 +361,10 @@ define(function (require) {
 
     exports.initOptions = function () {
         /**
+         * @property 英文字母大小写敏感
+         */
+        this.casesensitive;
+        /**
          * @property 只作为分隔符, 不作为匹配word的成分参与匹配, 建议使用逗号或空格作为分隔符
          */
         this.splitchar;
@@ -362,6 +376,13 @@ define(function (require) {
          * @property 结束匹配动作
          */
         this.closefirechar = '}';
+
+        if (this.casesensitive === 'false' || this.casesensitive === '0' || this.casesensitive === '') {
+            this.casesensitive = false;
+        }
+        else {
+            this.casesensitive = true;
+        }
 
         if (this.splitchar) {
             this.escapedSplitchar = escapeRegex(this.splitchar);

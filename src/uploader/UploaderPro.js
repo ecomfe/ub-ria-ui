@@ -12,7 +12,7 @@ define(
         var InputControl = require('esui/InputControl');
         var Table = require('esui/Table');
         var Command = require('esui/extension/Command');
-        var File = require('uploader/File');
+        var File = require('./File');
         require('esui/Dialog');
         require('esui/Button');
 
@@ -67,18 +67,20 @@ define(
          */
         exports.initStructure = function () {
             var buttonClasses = this.helper.getPartClassName('button');
-            var buttonId = this.helper.getId('button');
 
-            var tpl = '<span id="${buttonId}" class="${buttonClasses}"></span>';
+            var tpl = '<button data-ui-id="button"'
+                + ' data-ui="type:Button;variants:${variants}"'
+                + ' class="${buttonClasses}"></button>';
 
             this.main.innerHTML = lib.format(
                 tpl,
                 {
                     buttonClasses: buttonClasses,
-                    buttonId: buttonId,
+                    variants: this.buttonVariants
                 }
             );
 
+            ui.init(this.main, {viewContext: this.viewContext});
         };
 
         /**
@@ -113,7 +115,7 @@ define(
             // 表格上方的提示信息
             var tpl = [
                 '<p class="${infoClass}">',
-                '当前已添加文件<span id="${alreadyId}" class="${alreadyClass}">0</span>个, ',
+                '当前已添加文件<span id="${doneId}" class="${doneClass}">0</span>个, ',
                 '还可以添加<span id="${avaliableId}" class="${avaliableClass}">0</span>个',
                 '</p>'
             ].join('');
@@ -121,8 +123,8 @@ define(
                 tpl,
                 {
                     infoClass: dialog.helper.getPartClassName('info'),
-                    alreadyId: dialog.helper.getId('info-already'),
-                    alreadyClass: dialog.helper.getPartClassName('info-already'),
+                    doneId: dialog.helper.getId('info-done'),
+                    doneClass: dialog.helper.getPartClassName('info-done'),
                     avaliableId: dialog.helper.getId('info-avaliable'),
                     avaliableClass: dialog.helper.getPartClassName('info-avaliable')
                 }
@@ -160,7 +162,8 @@ define(
             var startButton = ui.create(
                 'Button',
                 {
-                    content: '开始上传'
+                    content: '开始上传',
+                    variants: 'link'
                 }
             );
             var foot = dialog.getFoot();
@@ -199,7 +202,7 @@ define(
                             title: '文件名称',
                             field: 'id' ,
                             tip :'文件名称',
-                            width: 280,
+                            width: '82%',
                             content: function (file) {
                                 return file.name;
                             }
@@ -208,7 +211,7 @@ define(
                             title: '进度',
                             field: 'progress' ,
                             tip :'进度',
-                            width: 20,
+                            width: '4%',
                             align: 'center',
                             content: function (file) {
                                 return file.getProgress();
@@ -218,7 +221,7 @@ define(
                             title: '文件大小',
                             field: 'size' ,
                             tip :'文件大小',
-                            width: 20,
+                            width: '8%',
                             align: 'center',
                             content: function (file) {
                                 return File.formatSize(file.size);
@@ -228,7 +231,7 @@ define(
                             title: '操作',
                             field: 'op' ,
                             tip :'操作',
-                            width: 20,
+                            width: '6%',
                             align: 'center',
                             content: function (file) {
                                 var tpl = '<span data-command="remove"'
@@ -278,15 +281,16 @@ define(
                 {
                     id: dialog.helper.getId('uploader'),
                     skin: 'pro',
-                    width: 72,
-                    height: 29,
+                    width: 96,
+                    height: 40,
                     action: this.action,
                     name: this.name,
                     autoUpload: false,
                     accept: this.accept,
                     showProgress: false,
                     multiple: true,
-                    limit: Math.max(this.datasource.length, this.limit)
+                    limit: Math.max(this.datasource.length, this.limit),
+                    buttonVariants: this.buttonVariants
                 }
             );
 
@@ -397,10 +401,10 @@ define(
             progressInfoElem.innerHTML = percent;
             // 表格上方提示信息
             var table = this.getTable();
-            var already = table.datasource.length;
-            var alreadyElem = dialog.helper.getPart('info-already');
-            alreadyElem.innerHTML = already;
-            var avaliable = Math.max(this.limit - already, 0);
+            var done = table.datasource.length;
+            var doneElem = dialog.helper.getPart('info-done');
+            doneElem.innerHTML = done;
+            var avaliable = Math.max(this.limit - done, 0);
             var avaliableElem = dialog.helper.getPart('info-avaliable');
             avaliableElem.innerHTML = avaliable;
 
@@ -411,9 +415,8 @@ define(
          */
         exports.initEvents = function () {
             var me = this;
-            var button = this.helper.getPart('button');
-            lib.on(
-                button,
+            var button = this.viewContext.get('button');
+            button.on(
                 'click',
                 function (event) {
                     showDialog.call(me);
@@ -433,8 +436,8 @@ define(
             {
                 name: ['text'],
                 paint: function (control, text) {
-                    var button = control.helper.getPart('button');
-                    button.innerHTML = u.escape(text);
+                    var button = control.viewContext.get('button');
+                    button.setContent(u.escape(text));
                 }
             },
             {
@@ -445,16 +448,13 @@ define(
 
                     control.main.style.width = widthWithUnit;
                     control.main.style.height = heightWithUnit;
-                    var button = control.helper.getPart('button');
-                    // button的高度计算要考虑padding, border
-                    var padding = parseInt(lib.getStyle(button, 'paddingTop'), 10)
-                        + parseInt(lib.getStyle(button, 'paddingBottom'), 10);
-                    var border = parseInt(lib.getStyle(button, 'borderTopWidth'), 10)
-                        + parseInt(lib.getStyle(button, 'borderBottomWidth'), 10);
-                    height = height - padding - border;
-                    heightWithUnit = height + 'px'
-                    button.style.lineHeight = heightWithUnit;
-                    button.style.height = heightWithUnit;
+                    var button = control.viewContext.get('button');
+                    button.setProperties(
+                        {
+                            width: width,
+                            height: height
+                        }
+                    );
                 }
             },
             {
@@ -543,7 +543,9 @@ define(
             text: '点击上传',
             autoUpload: true,
             action: '',
-            extraArgs: {}
+            extraArgs: {},
+            buttonVariants: 'primary'
+
         };
 
         require('esui').register(UploaderPro);

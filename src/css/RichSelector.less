@@ -7,128 +7,117 @@
   * @author lixiang
   */
 
-@esui-rich-selector-frame-border: 1px solid #ebebeb;
+@esui-richselector-font-size: 14px;
+@esui-richselector-border-color: #EBEBEB;
+@esui-richselector-border: 1px solid @esui-richselector-border-color;
+@esui-richselector-line-height: 2em;
 
-@esui-rich-selector-head-bg: #ebebeb;
-@esui-rich-selector-head-border-bottom: 1px solid #ebebeb;
-@esui-rich-selector-batch-action-link-color: #67c1a5;
+@esui-richselector-head-height: 2em;
+@esui-richselector-head-bg: #EBEBEB;
+@esui-richselector-head-border-bottom-color: #EBEBEB;
+@esui-richselector-head-border-bottom: 1px solid @esui-richselector-head-border-bottom-color;
+@esui-richselector-batch-action-link-color: #67C1A5;
+@esui-richselector-head-title-color: #333;
+@esui-richselector-head-count-color: #999;
 
-// head 颜色
-@esui-rich-selector-head-title-color: #333;
-@esui-rich-selector-head-count-color: #999;
+@esui-richselector-query-result-bg: #FEF9D4;
+@esui-richselector-clear-query-link-color: #6CCDC0;
+@esui-richselector-search-count-color: #666;
 
-@esui-rich-selector-query-result-bg: #fef9d4;
-@esui-rich-selector-clear-query-link-color: #67c1a5;
+@esui-richselector-body-bg: #FCFCFC;
 
-
-@esui-rich-selector-line-height: 35px;
-
-@esui-rich-selector-body-bg: #fcfcfc;
-@esui-rich-selector-foot-bg: #f9f9f9;
-
-@esui-rich-selector-search-count-color: #666;
-
-// 文字颜色
-@esui-rich-selector-content-color: #666;
-@esui-rich-selector-selected-content-color: #999;
+@esui-richselector-foot-bg: #F9F9F9;
+@esui-richselector-foot-color: #666;
 
 
-// RichSelector控件单项悬浮状态
-@esui-rich-selector-item-background-color-hover: #fffaee;
-
-//不可选状态
-@esui-rich-selector-item-background-color-disabled: none;
-
-esui-rich-selector {
+.@{ui-class-prefix}-richselector {
+    font-size: @esui-richselector-font-size;
+    .box-sizing(border-box);
+    border: @esui-richselector-border;
     display: block;
 }
 
-.@{ui-class-prefix}-richselector {
-    font-size: 12px;
-    .box-sizing(border-box);
-    border: @esui-rich-selector-frame-border;
-}
-
 .@{ui-class-prefix}-richselector-head {
-    height: 26px;
-    line-height: 26px;
-    padding: 0 10px;
-    border-bottom: @esui-rich-selector-head-border-bottom;
-    background: @esui-rich-selector-head-bg;
+    height: @esui-richselector-head-height;
+    line-height: @esui-richselector-head-height;
+    padding: 0 0.75em;
+    border-bottom: @esui-richselector-head-border-bottom;
+    background: @esui-richselector-head-bg;
 
     h3 {
+        font-size: @esui-richselector-font-size;
         margin: 0;
         padding: 0;
         font-weight: bold;
-        font-size: 12px;
         float: left;
-        color: @esui-rich-selector-head-title-color;
+        color: @esui-richselector-head-title-color;
+        line-height: @esui-richselector-head-height;
     }
+}
 
-    .@{ui-class-prefix}-richselector-batch-action-link {
-        float: right;
-        text-decoration: none;
-        cursor: pointer;
-        color: @esui-rich-selector-batch-action-link-color;
-    }
+.@{ui-class-prefix}-richselector-batch-action-link {
+    float: right;
+    text-decoration: none;
+    cursor: pointer;
+    color: @esui-richselector-batch-action-link-color;
+}
 
-    .@{ui-class-prefix}-richselector-head-count {
-        font-weight: bold;
-        color: @esui-rich-selector-head-count-color;
-    }
+.@{ui-class-prefix}-richselector-head-count {
+    font-weight: bold;
+    color: @esui-richselector-head-count-color;
 }
 
 .@{ui-class-prefix}-richselector-body {
     overflow-x: hidden;
     clear: both;
-    background: @esui-rich-selector-body-bg;
+    background: @esui-richselector-body-bg;
 }
 
 .@{ui-class-prefix}-richselector-search-wrapper {
-    height: 25px;
-    padding: 10px;
+    height: 2em;
+    padding: 0.75em;
 }
 
 .@{ui-class-prefix}-richselector-search-count {
-    color: @esui-rich-selector-search-count-color;
+    color: @esui-richselector-search-count-color;
     font-weight: bold;
 }
 
 // 搜索结果概要
 .@{ui-class-prefix}-richselector-query-result-general {
-    background: @esui-rich-selector-query-result-bg;
-    height: 30px;
-    line-height: 30px;
-    padding: 0 10px;
+    background: @esui-richselector-query-result-bg;
+    height: 2em;
+    line-height: 2em;
+    padding: 0 0.75em;
     display: none;
+}
 
-    .@{ui-class-prefix}-richselector-clear-query-link {
-        text-decoration: none;
-        color: @esui-rich-selector-clear-query-link-color;
-        cursor: pointer;
-        line-height: 30px;
-        float: right;
-    }
+.@{ui-class-prefix}-richselector-clear-query-link {
+    text-decoration: none;
+    color: @esui-richselector-clear-query-link-color;
+    cursor: pointer;
+    line-height: 2em;
+    float: right;
 }
 
 
 .@{ui-class-prefix}-richselector-content-wrapper {
     overflow-y: auto;
     overflow-x: hidden;
+}
 
-    .@{ui-class-prefix}-richselector-empty-text {
-        padding: 10px;
-        display: none;
-        text-align: center;
-    }
+.@{ui-class-prefix}-richselector-empty-text {
+    padding: 0.75em;
+    display: none;
+    text-align: center;
 }
 
 .@{ui-class-prefix}-richselector-foot {
-    height: 25px;
-    color: #555;
-    line-height: 25px;
-    background: @esui-rich-selector-foot-bg;
-    padding: 0 10px;
+    color: @esui-richselector-foot-color;
+    height: 2em;
+    line-height: 2em;
+    background: @esui-richselector-foot-bg;
+    padding: 0 0.75em;
 }
 
 // 搜索状态
@@ -150,12 +139,5 @@ esui-rich-selector {
 
     .@{ui-class-prefix}-richselector-query-result-general {
         display: none;
-    }
-}
-
-// 搜索状态
-.@{ui-class-prefix}-richselector-queried {
-    .@{ui-class-prefix}-richselector-query-result-general {
-        display: block;
     }
 }

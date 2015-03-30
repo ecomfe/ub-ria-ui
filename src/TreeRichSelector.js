@@ -58,7 +58,9 @@ define(
                 // 是否隐藏根节点
                 hideRoot: true,
                 // 节点状态切换时，父子节点是否需要同步状态
-                needSyncParentChild: true
+                needSyncParentChild: true,
+                // 树样式
+                treeVariants: 'icon angle hoverable'
             };
 
             lib.extend(properties, options);
@@ -252,7 +254,8 @@ define(
                         ),
                     wideToggleArea: this.wideToggleArea,
                     hideRoot: this.hideRoot,
-                    selectMode: this.multi ? 'multiple' : 'single'
+                    selectMode: this.multi ? 'multiple' : 'single',
+                    variants: this.treeVariants
                 };
                 if (this.getItemHTML) {
                     options.getItemHTML = this.getItemHTML;
