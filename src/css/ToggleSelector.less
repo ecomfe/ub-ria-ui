@@ -42,7 +42,7 @@
 .esui-toggle-select {
     .border-radius(@esui-toggle-select-border-radius);
     .eicons-font-style();
-    .eicons-icon-right(caret-down);
+    .esui-toggle-select-icon(caret-down);
     height: @esui-toggle-select-height;
     line-height: @esui-toggle-select-height;
     font-weight: bold;
@@ -63,7 +63,7 @@
 
 .@{ui-class-prefix}-togglepanel-expanded {
     .@{ui-class-prefix}-togglepanel-title {
-        .eicons-icon-right(caret-up);
+        .esui-toggle-select-icon(caret-up);
     }
 }
 
@@ -78,7 +78,7 @@
     }
 }
 
-.eicons-icon-right(@icon) {
+.esui-toggle-select-icon(@icon) {
     .eicons-icon(@icon);
     position: relative;
     &:before {
