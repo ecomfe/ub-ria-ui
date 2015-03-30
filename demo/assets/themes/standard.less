@@ -2,13 +2,19 @@
 
 .global-normalize();
 
-@import "../../../dep/esf/1.0.0-alpha.10/themes/standard/main.less";
+@import "../../../dep/esf/1.0.0-alpha.11/themes/standard/main.less";
 @import "../../../dep/esui/3.1.0-beta.6/themes/standard/Main.less";
 @import "../../../dep/eicons/1.0.0-alpha.5/src/main.less";
 
 @fa-font-path: "../../../dep/eicons/1.0.0-alpha.5/fonts/font-awesome";
 
 @import "../../../themes/standard/Main.less";
+
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-text-size-adjust: 100%; 
+  -ms-text-size-adjust: 100%;
+}
 
 .ui-demo-light-stage {
     background: @esf-palette-primary-bg-color;

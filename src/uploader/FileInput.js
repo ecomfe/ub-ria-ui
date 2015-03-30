@@ -10,7 +10,7 @@
 define(
     function (require) {
         var InputControl = require('esui/InputControl');
-        var File = require('uploader/File');
+        var File = require('./File');
 
         var u = require('underscore');
         var lib = require('esui/lib');
@@ -217,15 +217,13 @@ define(
             if (supportMultiple) {
                 var me = this;
                 var input = lib.g(this.lastUid);
-                var browseButton = lib.g(this.browseButton);
-                lib.on(
-                    browseButton,
+                this.browseButton.on(
                     'click',
                     function(e) {
                         if (input && !input.disabled) {
                             input.click();
                         }
-                        lib.event.preventDefault(e);
+                        e.preventDefault();
                     }
                 );
                 input.onchange = function () {

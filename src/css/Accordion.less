@@ -1,0 +1,47 @@
+/**
+ * ESUI (Enterprise Simple UI)
+ * Copyright 2013 Baidu Inc. All rights reserved.
+ * 
+ * @file 手风琴样式
+ * @author wangfj(wangfengjiao01@baidu.com)
+ */
+
+@esui-accordion-panel-bottom-margin: .1em;
+@esui-accordion-panel-padding: 1em;
+
+.@{ui-class-prefix}-accordion {
+    display: block;
+}
+
+.@{ui-class-prefix}-accordion-header {
+    .esui-accordion-header-theme();
+    cursor: pointer;
+    margin-bottom: @esui-accordion-panel-bottom-margin;
+    padding: .5em .5em .5em 2.2em;
+
+    .@{ui-class-prefix}-accordion-triangle-prefix {
+        left: 1em;
+    }
+
+    .@{ui-class-prefix}-accordion-triangle-suffix {
+        right: 1em;
+    }
+
+    .@{ui-class-prefix}-accordion-triangle-after {
+        margin-left: 10px;
+    }
+}
+
+.@{ui-class-prefix}-accordion-content {
+    padding: @esui-accordion-panel-padding;
+}
+
+.@{ui-class-prefix}-accordion-content-hidden {
+    display: none;
+}
+
+.@{ui-class-prefix}-accordion-panel-active {
+    .@{ui-class-prefix}-accordion-header {
+
+    }
+}
