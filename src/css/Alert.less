@@ -5,32 +5,32 @@
  * @file Alert样式
  * @author zhangyujie(zhangyujie@baidu.com)
  */
-@alert-show-keyframes-name: ~"ui-alert-show";
 
-@keyframes @alert-show-keyframes-name {
+@esui-alert-height: 50px;
+
+@keyframes esui-alert-show {
+    from {
+        height: 0;
+    }
+    to {
+        height: 100%;
+    }
+}
+
+@-webkit-keyframes esui-alert-show {
     from {
         height: 0px;
     }
     to {
-        height: 50px;
+        height: 100%;
     }
 }
 
-@-webkit-keyframes @alert-show-keyframes-name {
-    from {
-        height: 0px;
-    }
-    to {
-        height: 50px;
-    }
+.@{ui-class-prefix}-alert-toggle {
+    .animation(esui-alert-show .5s);
 }
 
-.ui-alert-toggle {
-    animation: @alert-show-keyframes-name .5s;
-    -webkit-animation: @alert-show-keyframes-name .5s;
-}
-
-.ui-alert-container {
+.@{ui-class-prefix}-alert-container {
     height: 50px;
     line-height: 50px;
     padding-left: 30px;
@@ -41,7 +41,7 @@
     }
 }
 
-.ui-alert-icon {
+.@{ui-class-prefix}-alert-icon {
     span {
         font-size: 22px;
         vertical-align: middle;
@@ -49,7 +49,7 @@
     }
 }
 
-.ui-alert-icon-content {
+.@{ui-class-prefix}-alert-icon-content {
     display: inline-block;
     font-family: FontAwesome;
     font-style: normal;
@@ -60,13 +60,11 @@
 }
 
 //默认消息
-.ui-alert-text {
+.@{ui-class-prefix}-alert-text {
     font-size: 14px;
 }
 
-@alert-step-in-keyframes-name: ~"ui-alert-step-in";
-
-@keyframes @alert-step-in-keyframes-name {
+@keyframes esui-alert-step-in {
     from {
         opacity: 0;
     }
@@ -75,7 +73,7 @@
     }
 }
 
-@-webkit-keyframes @alert-step-in-keyframes-name {
+@-webkit-keyframes esui-alert-step-in {
     from {
         opacity: 0;
     }
@@ -84,9 +82,7 @@
     }
 }
 
-@alert-step-out-keyframes-name: ~"ui-alert-step-out";
-
-@keyframes @alert-step-out-keyframes-name {
+@keyframes esui-alert-step-out {
     from {
         opacity: 1;
     }
@@ -95,7 +91,7 @@
     }
 }
 
-@-webkit-keyframes @alert-step-out-keyframes-name {
+@-webkit-keyframes esui-alert-step-out {
     from {
         opacity: 1;
     }
@@ -104,93 +100,86 @@
     }
 }
 
-@alert-step-in-keyframes-duration: .4s;
-@alert-step-out-keyframes-duration: .4s;
+@esui-alert-step-in-keyframes-duration: .4s;
+@esui-alert-step-out-keyframes-duration: .4s;
 
-.ui-alert-item-step-in {
-    animation: @alert-step-in-keyframes-name @alert-step-in-keyframes-duration;
-    -webkit-animation: @alert-step-in-keyframes-name @alert-step-in-keyframes-duration;
+.@{ui-class-prefix}-alert-item-step-in {
+    .animation(esui-alert-step-in @esui-alert-step-in-keyframes-duration);
 }
 
-.ui-alert-item-step-out {
-    animation: @alert-step-out-keyframes-name @alert-step-out-keyframes-duration;
-    -webkit-animation: @alert-step-out-keyframes-name @alert-step-out-keyframes-duration;
+.@{ui-class-prefix}-alert-item-step-out {
+    .animation(esui-alert-step-out @esui-alert-step-out-keyframes-duration);
 }
 
-.ui-alert-item-hidden {
+.@{ui-class-prefix}-alert-item-hidden {
     display: none;
 }
 
 //成功消息
-.ui-alert-success {
+.@{ui-class-prefix}-alert-success {
     color: #67bd47;
-    .ui-alert-container {
+    .@{ui-class-prefix}-alert-container {
         background-color: #d5f1c8;
     }
-    .ui-alert-icon-content:before {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f00c";
     }
 }
 
 //通知类消息
-.ui-alert-prompt {
+.@{ui-class-prefix}-alert-prompt {
     color: #4acfe4;
-    .ui-alert-container {
+    .@{ui-class-prefix}-alert-container {
         background-color: #c3f4fb;
     }
-    .ui-alert-icon-content:before {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f05a";
     }
 }
 
 //警告类消息
-.ui-alert-warning {
+.@{ui-class-prefix}-alert-warning {
     color: #ff900d;
-    .ui-alert-container {
+    .@{ui-class-prefix}-alert-container {
         background-color: #ffe8c3;
     }
-    .ui-alert-icon-content:before {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f071";
     }
 }
 
 //错误类消息
-.ui-alert-error {
+.@{ui-class-prefix}-alert-error {
     color: #ff8555;
-    .ui-alert-container {
+    .@{ui-class-prefix}-alert-container {
         background-color: #fee8df;
     }
-    .ui-alert-icon-content:before {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f06a";
     }
 }
 
 // 翻页
-.ui-alert-pager {
+.@{ui-class-prefix}-alert-pager {
     font-size: 12px;
     font-family: Arial;
     color: #666666;
     float: right;
     margin-right: 30px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -khtml-user-select: none;
     user-select: none;
     div {
         display: inline-block;
-        *display: inline;
         strong {
             font-weight: bold;
         }
     }
 }
-.ui-alert-index {
+.@{ui-class-prefix}-alert-index {
     margin: 0 10px;
 }
 
-.ui-alert-prev,
-.ui-alert-next {
+.@{ui-class-prefix}-alert-prev,
+.@{ui-class-prefix}-alert-next {
     span {
         cursor: pointer;
         font-size: 14px;
@@ -198,20 +187,18 @@
     }
 }
 
-.ui-alert-prev {
-    .ui-alert-icon-content:before {
+.@{ui-class-prefix}-alert-prev {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f0d9";
     }
 }
 
-.ui-alert-next {
-    .ui-alert-icon-content:before {
-        content: "\f0da";
-    }
+.@{ui-class-prefix}-alert-next {
+    .esf-disabled();
 }
 
-.ui-alert-prev-disabled,
-.ui-alert-next-disabled {
+.@{ui-class-prefix}-alert-prev-disabled,
+.@{ui-class-prefix}-alert-next-disabled {
     span {
         cursor: default;
         color: #B7B7B7;
@@ -219,13 +206,13 @@
 }
 
 // 关闭
-.ui-alert-close{
+.@{ui-class-prefix}-alert-close{
     float: right;
     font-size: 16px;
     color: #BDBDBD;
     margin-right: 20px;
     cursor: pointer;
-    .ui-alert-icon-content:before {
+    .@{ui-class-prefix}-alert-icon-content:before {
         content: "\f00d";
     }
 }

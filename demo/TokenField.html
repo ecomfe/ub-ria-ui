@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Token Field - Demo</title>
+    <title>Token Field - ESUI Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
@@ -16,21 +16,21 @@
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1>Carousel</h1>
+    <h1 id="branding">ESUI - Token Field</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
             <h2>输入多个</h2>
             <section class="intro">
-                <p>可以切换的Carousel。</p>
+                <p>输入多个字段。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example" id="container">
-                    <input data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan+liwei" data-ui-limit="30" data-ui-repeat="1" data-ui-delimiter=",+" data-ui-width="600" />
+                    <input data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan+liwei" data-ui-limit="30" data-ui-delimiter=",+" data-ui-width="600" />
                 </div>
             </section>
         </div>
@@ -43,7 +43,6 @@
             ],
             function (ui) {
                 ui.init();
-                //var tokenField = ui.init()[0];
             }
         );
     </script>

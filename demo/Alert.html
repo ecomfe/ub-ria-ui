@@ -1,164 +1,107 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Alert - UB-RIA-UI Demo</title>
-        <link rel="stylesheet" href="assets/themes/standard.css" />
-        <link href="assets/third-party/prism.css" rel="stylesheet" />
-        <script src="assets/loader/esl.js"></script>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Alert - ESUI Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.less" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
 
-        <!--[if lt IE 9]>
-        <script src="http://xy3.baidu.com/js/html5.js"></script>
-        <![endif]-->
-        <script src="assets/third-party/prism.js"></script>
-        <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
-        <script src="assets/demo.js"></script>
-        <style type="text/css">
-            #table td{
-                padding: 10px 0;
-            }
-
-            #stage {
-                margin-left: 20px;
-                width: 800px;
-                height: 600px;
-                border: solid 1px #4c5567;
-            }
-
-            #container {
-                position: relative;
-                height: 550px;
-            }
-
-            #nav {
-                height: 50px;
-                font-size: 20px;
-                background-color: #4c5567;
-                color: #FFFFFF;
-            }
-
-            #reverse {
-                background: #394C57;
-                display: inline-block;
-                width: 50px;
-                height: 50px;
-                line-height: 50px;
-                text-align: center;
-                font-size: 14px;
-                cursor: pointer;
-            }
-
-            #toolbar {
-                margin-left: 30px;
-                display: inline-block;
-            }
-
-            #sidebar {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100px;
-                height: 100%;
-                background-color: #E8E8E8;
-                color: #555555;
-                text-align: center;
-                line-height: 550px;
-            }
-
-            #main {
-                margin-left: 100px;
-            }
-
-            .container {
-                padding: 0 30px 50px;
-            }
-        </style>
-    </head>
-    <body>
-        <header>Alert</header>
-        <div id="stage">
-            <div id="nav">
-                <div id="reverse" title="就是测测你会不会点">
-                    ※
-                </div>
-                <div id="toolbar">
-                    Beidou FE
-                </div>
-            </div>
-            <div id="container">
-                <div id="sidebar">侧边栏</div>
-                <div id="main">
-                    <!-- <div id="sysinfo">
-                        <div data-ui-type="Alert"
-                            data-ui-id="alert"
-                            data-ui-msg-type="success"
-                            data-ui-message="成功"
-                            data-ui-auto-close="4000"
-                            data-ui-auto-slide="1000"
-                            data-ui-icon="true"
-                            ></div>
-                    </div> -->
-                    <div class="container">
-                        <table id="table">
-                            <tr>
-                                <td align="right">类型</td>
-                                <td>
-                                    <select id="type">
-                                        <option value="success">success</option>
-                                        <option value="warning">Warning</option>
-                                        <option value="prompt">Prompt</option>
-                                        <option value="error">Error</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="right">信息</td>
-                                <!-- <td>
-                                    <input class="message" value="您的账户已欠费，请尽快充值缴费" /><br />
-                                    <input class="message" value="您有两个人群未生效，请调整设置" /><br />
-                                    <input class="message" value="不得不说搭建demo页面是个费劲的过程" /><br />
-                                    <input class="message" value="Cannot believe you are still watching this." /><br />
-                                    <input class="message" />
-                                </td> -->
-                                <td>
-                                    <input class="message" value="11111111111111111" /><br />
-                                    <input class="message" value="22222222222222222" /><br />
-                                    <input class="message" value="33333333333333333" /><br />
-                                    <input class="message" value="44444444444444444" /><br />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="right">自动关闭时间<br />不填或false表示不自动关闭</td>
-                                <td>
-                                    <input id="autoClose" />ms
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="right">自动轮换时间间隔<br />不填或false表示不自动轮播</td>
-                                <td>
-                                    <input id="autoSlide" value="4000" />ms
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="right">是否带有关闭按钮</td>
-                                <td>
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+    <script src="assets/third-party/prism.js"></script>
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+    <script src="demo.js"></script>
+</head>
+<body>
+    <h1 id="branding">ESUI Alert</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <h2>Alert</h2>
+            <section class="intro">
+                <p>普通Accordion</p>
+            </section>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example ui-demo-light-stage">
+                    <table id="table" class="ui-raw-table ui-raw-table-bordered">
+                        
+                        <tr>
+                            <td align="right">类型</td>
+                            <td>
+                                <select id="type">
+                                    <option value="success">success</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="prompt">Prompt</option>
+                                    <option value="error">Error</option>
+                                </select>
+                                <button id="show" class="ui-button ui-button-primary">Show an Alert!</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">信息</td>
+                            <td>
+                                <div class="ui-textbox">
+                                    <input class="message" value="白日依山尽" />
+                                </div><br /><br />
+                                <div class="ui-textbox">
+                                    <input class="message" value="黄河入海流" />
+                                </div><br /><br />
+                                <div class="ui-textbox">
+                                    <input class="message" value="欲穷千里目" />
+                                </div><br /><br />
+                                <div class="ui-textbox">
+                                <input class="message" value="更上一层楼" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">自动关闭时间<br />不填或false表示不自动关闭</td>
+                            <td>
+                                <div class="ui-textbox">
+                                    <input id="autoClose" />
+                                </div>
+                                ms
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">自动轮换时间间隔<br />不填或false表示不自动轮播</td>
+                            <td>
+                                <div class="ui-textbox">
+                                    <input id="autoSlide" value="4000" />
+                                </div>
+                                ms
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">是否带有关闭按钮</td>
+                            <td>
+                                <div class="ui-checkbox-custom">
                                     <input type="checkbox" id="closeBtn" checked="checked" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="right">是否带有Icon</td>
-                                <td>
-                                    <input type="checkbox" checked="checked" id="icon" />
-                                </td>
-                            </tr>
-                        </table>
-                        <button id="show">Show an Alert!</button>
-                    </div>
+                                    <label for="closeBtn"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">是否带有Icon</td>
+                            <td>
+                                <div class="ui-checkbox-custom">
+                                    <input type="checkbox" id="icon">
+                                    <label for="icon"></label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-            </div>
+            </section>
         </div>
-        <script>
+    </div>
+    <script>
         require(
             [
                 'esui',
@@ -166,22 +109,16 @@
                 'esui/lib'
             ],
             function (ui, alert, lib) {
-                ui.init();
-                // ui.get('alert').show();
+                //ui.init();
                 lib.g('show').onclick = function() {
                     var options = {};
                     var msgType = lib.g('type').value;
                     options.message = [];
-                    // IE8不支持getElementsByClassName
-                    // options.message = [
-                    //     "您的账户已欠费，请尽快充值缴费",
-                    //     "您有两个人群未生效，请调整设置",
-                    //     "不得不说搭建demo页面是个费劲的过程",
-                    //     "Cannot believe you are still watching this."
-                    // ];
                     var messages = document.getElementsByClassName('message');
                     for (var i = 0; i < messages.length; i++) {
-                        options.message.push(messages[i].value);
+                        if (messages[i].value) {
+                            options.message.push(messages[i].value);
+                        }
                     }
                     options.autoClose = lib.g('autoClose').value;
                     options.autoSlide = lib.g('autoSlide').value;
@@ -192,7 +129,7 @@
                     alert[msgType](options);
                 };
             }
-        )
-        </script>
-    </body>
+        );
+    </script>
+</body>
 </html>

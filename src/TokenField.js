@@ -236,7 +236,7 @@ define(
 
                 var tokenElem = document.createElement('div');
                 tokenElem.className = this.helper.getPartClasses('item');
-                tokenElem.innerHTML = this.helper.getPartHTML('label', 'span') + this.helper.getPartHTML('close', 'a');
+                tokenElem.innerHTML = this.helper.getPartHTML('label', 'span') + this.helper.getPartHTML('close', 'span');
                 var guid = lib.getGUID();
                 lib.setAttribute(tokenElem, 'data-id', guid);
                 this.data[guid] = token;
@@ -249,28 +249,28 @@ define(
                 var tokenLabel = lib.dom.first(tokenElem);
                 tokenLabel.innerHTML = token.label;
                 var closeButton = lib.dom.last(tokenElem);
-                closeButton.innerHTML = '&times;';
-                this.helper.addDOMEvent(closeButton, 'click', this.remove);
+                lib.addClass(closeButton, this.helper.getIconClass('remove'));
+                this.helper.addDOMEvent(tokenElem, 'click', this.remove);
 
                 lib.insertBefore(tokenElem, inputElem);
 
-                // label要设一个最大宽度，避免溢出容器
-                if (!this.maxTokenWidth) {
-                    this.maxTokenWidth = this.width - closeButton.offsetWidth
-                        - parseInt(lib.getStyle(closeButton, 'margin-left'), 10)
-                        - parseInt(lib.getStyle(closeButton, 'margin-right'), 10)
-                        - parseInt(lib.getStyle(this.main, 'border-left-width'), 10)
-                        - parseInt(lib.getStyle(this.main, 'border-right-width'), 10)
-                        - parseInt(lib.getStyle(this.main, 'padding-left'), 10)
-                        - parseInt(lib.getStyle(this.main, 'padding-right'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'border-left-width'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'border-right-width'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'padding-left'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'padding-right'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'margin-left'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'margin-right'), 10);
-                }
-                tokenLabel.style.maxWidth = this.maxTokenWidth + 'px';
+                // // label要设一个最大宽度，避免溢出容器
+                // if (!this.maxTokenWidth) {
+                    // this.maxTokenWidth = this.width - closeButton.offsetWidth
+                        // - parseInt(lib.getStyle(closeButton, 'margin-left'), 10)
+                        // - parseInt(lib.getStyle(closeButton, 'margin-right'), 10)
+                        // - parseInt(lib.getStyle(this.main, 'border-left-width'), 10)
+                        // - parseInt(lib.getStyle(this.main, 'border-right-width'), 10)
+                        // - parseInt(lib.getStyle(this.main, 'padding-left'), 10)
+                        // - parseInt(lib.getStyle(this.main, 'padding-right'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'border-left-width'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'border-right-width'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'padding-left'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'padding-right'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'margin-left'), 10)
+                        // - parseInt(lib.getStyle(tokenLabel, 'margin-right'), 10);
+                // }
+                // tokenLabel.style.maxWidth = this.maxTokenWidth + 'px';
 
                 this.fire(
                     'aftercreate',
@@ -301,7 +301,6 @@ define(
                 this.focused = true;
                 this.helper.addStateClasses('focus');
             },
-
 
             /**
              * 响应blur
@@ -397,8 +396,11 @@ define(
                     target = lib.dom.previous(this.getInput().main);
                 }
 
+                var dataId = lib.getAttribute(target, 'data-id');
                 target.parentNode.removeChild(target);
+                delete this.data[dataId]
 
+                this.focusInput();
                 if (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -457,20 +459,12 @@ define(
              * 闪一下重复的token元素以做提示
              */
             flashToken: function(tokenElem) {
-                if (this.addFlashClsTimer || this.removeFlashClsTimer) {
-                    this.helper.removePartClasses('flash', tokenElem);
-                    clearTimeout(this.addFlashClsTimer);
-                    this.addFlashClsTimer = null;
-                    clearTimeout(this.removeFlashClsTimer);
-                    this.removeFlashClsTimer = null;
-                }
-
                 var me = this;
-                this.addFlashClsTimer = setTimeout(function() {
+                setTimeout(function() {
                     me.helper.addPartClasses('flash', tokenElem);
                 }, 0);
 
-                this.removeFlashClsTimer = setTimeout(function() {
+                setTimeout(function() {
                     me.helper.removePartClasses('flash', tokenElem);
                 }, 300);
             },

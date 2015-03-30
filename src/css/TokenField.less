@@ -1,89 +1,71 @@
-@esui-tokenfield-color: inherit;
-@esui-tokenfield-background: #FEFDFA;
-
-@esui-tokenfield-border-width: 1px;
-@esui-tokenfield-border-color: #ddd;
-@esui-tokenfield-border: @esui-tokenfield-border-width solid @esui-tokenfield-border-color;
-
-@esui-tokenfield-item-border-width: 1px;
-@esui-tokenfield-item-border-color: #d9d9d9;
-@esui-tokenfield-item-border: @esui-tokenfield-item-border-width solid @esui-tokenfield-item-border-color;
-@esui-tokenfield-item-background: #ededed;
-@esui-tokenfield-item-hover-color: lighten(@esui-tokenfield-item-background, 5%);
-@esui-tokenfield-item-active-color: darken(@esui-tokenfield-item-background, 10%);
+@esui-tokenfield-padding: .5em;
+@esui-tokenfield-border-radius: 5px;
 
 @esui-tokenfield-item-height: 1.5em;
-@esui-tokenfield-item-margin: 0.125em 0.25em;
+@esui-tokenfield-item-margin: .1em .2em 0.1em 0;
+@esui-tokenfield-item-padding: 0 .5em;
 @esui-tokenfield-item-radius: 5px;
 
-@esui-tokenfield-item-close-color: #222;
+@esui-tokenfield-item-remove-icon-left-margin: .2em;
 
 .@{ui-class-prefix}-tokenfield {
-    border: @esui-tokenfield-border;
-    padding: 0.625em;
-    color: @esui-tokenfield-color;
-    background: @esui-tokenfield-background;
+    .esf-border-radius(
+        @esui-tokenfield-border-radius,
+        @esui-tokenfield-border-radius
+    );
+    @esf-tokenfield-transition:
+        background-color 0.3s ease-out,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    .esf-transition(@esf-tokenfield-transition);
+    padding: @esui-tokenfield-padding;
+
+    .esui-tokenfield-theme();
 }
 
+.esui-tokenfield-theme() {}
+
 .@{ui-class-prefix}-tokenfield-flash {
-    .opacity(0);
+    .opacity(20);
 }
 
 .@{ui-class-prefix}-tokenfield-item {
     .box-sizing(border-box);
     .border-radius(@esui-tokenfield-item-radius);
-    .inline-block;
-    border: @esui-tokenfield-item-border;
-    background-color: @esui-tokenfield-item-background;
+    display: inline-block;
     white-space: nowrap;
-    margin: 0.125em 0.25em;
+    margin: @esui-tokenfield-item-margin;
+    padding: @esui-tokenfield-item-padding;
     height: @esui-tokenfield-item-height;
-    vertical-align: top;
-    .transition(opacity .3s ease-in-out);
-
-    &:hover {
-        background: @esui-tokenfield-item-hover-color;
-    }
-
-    &:active {
-        background: @esui-tokenfield-item-active-color;
-    }
+    vertical-align: middle;
+    cursor: pointer;
+    .esf-transition(opacity .1s ease-in-out);
+    .esui-tokenfield-item-theme();
 }
+
+.esui-tokenfield-item-theme() {}
 
 .@{ui-class-prefix}-tokenfield-close {
-    .inline-block;
-    margin-left: 0.25em;
-    padding-right: 0.25em;
-    vertical-align: top;
-    font-weight: bold;
-    text-decoration: none;
-    color: @esui-tokenfield-item-close-color;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: none;
-    }
+    display: inline-block;
+    margin-left: @esui-tokenfield-item-remove-icon-left-margin;
 }
 
-/** 要保证input和item的定位一致 */
+// 要保证input和item的定位一致
 .@{ui-class-prefix}-tokenfield-input {
-
     margin: @esui-tokenfield-item-margin;
 
     input[type="text"], textarea {
         border: none;
         background: transparent;
         height: @esui-tokenfield-item-height;
-        /** override textbox */
+        // override textbox
         padding-top: 0;
         padding-bottom: 0;
     }
 }
 
 .@{ui-class-prefix}-tokenfield-label {
-    .inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-left: 0.5em;
+    display: inline-block;
+    .ellipsis();
     vertical-align: top;
 }
