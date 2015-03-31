@@ -1,0 +1,111 @@
+@esui-richselector-node-icon-color: #6CCDC0;
+
+esui-tree-rich-selector {
+    display: block;
+}
+
+.@{ui-class-prefix}-tree-richselector {
+
+    .@{ui-class-prefix}-tree-root {
+        margin-left: 0.75em;
+    }
+
+    .@{ui-class-prefix}-tree-content-wrapper {
+        height: 2em;
+    }
+}
+
+// 单独存在，没有右侧备选栏的情况
+.@{ui-class-prefix}-tree-richselector.no-move-richselector {
+    &.@{ui-class-prefix}-richselector-add {
+        // 所有节点的未选择下的hover状态都没有图标
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            .@{ui-class-prefix}-tree-item-content {
+                background: none;
+            }
+        }
+    }
+}
+
+// 父节点不可选的情况
+.@{ui-class-prefix}-tree-richselector.@{ui-class-prefix}-richselector-only-leaf-selectable {
+    // 一级节点没有hover状态
+    .@{ui-class-prefix}-tree-node-level-1 {
+        >.@{ui-class-prefix}-tree-content-wrapper {
+            cursor: default;
+            &:hover {
+                background: none;
+                .@{ui-class-prefix}-tree-item-content {
+                    background: none;
+                }
+            }
+        }
+    }
+}
+
+// 无子节点或占位
+.@{ui-class-prefix}-tree-node-indicator-empty {
+    background: none;
+    
+}
+.@{ui-class-prefix}-tree-node-indicator-previous {
+    background: none;
+
+}
+.@{ui-class-prefix}-tree-node-indicator-far-previous {
+    background: none;
+
+}
+
+.@{ui-class-prefix}-tree-content-wrapper {
+    .eicons-font-style();
+    line-height: 2;
+    cursor: pointer;
+}
+
+// 很多样式无法确定是否联盟产品线统一，所以这里自己写一份
+.@{ui-class-prefix}-tree-richselector {
+    &.@{ui-class-prefix}-richselector-load,
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            // 默认带一个向右箭头
+            .esui-richselector-icon(arrow-right);
+        }
+    }
+
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-tree-content-wrapper-selected,
+        .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+            font-weight: bold;
+            .esui-richselector-icon(check);
+        }
+    }
+
+    &.@{ui-class-prefix}-richselector-del {
+        .@{ui-class-prefix}-tree-content-wrapper:hover {
+            // 默认带一个小对勾
+            .esui-richselector-icon(times);
+        }
+    }
+}
+
+// 单独存在，没有右侧备选栏的情况
+.@{ui-class-prefix}-tree-richselector.no-move-richselector {
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-tree-content-wrapper-selected,
+        .@{ui-class-prefix}-tree-content-wrapper-selected:hover {
+            .esui-richselector-icon(check);
+        }
+    }
+}
+
+// 树节点右侧icon
+.esui-richselector-icon(@icon) {
+    .eicons-icon(@icon);
+    position: relative;
+    &:before {
+        position: absolute;
+        right: 2em;
+        color: @esui-richselector-node-icon-color;
+    }
+}
