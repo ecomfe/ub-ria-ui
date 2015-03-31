@@ -372,7 +372,7 @@ define(
 
                 // 类型如果是string
                 var range = properties.range;
-                if (typeof range === 'string') {                    
+                if (typeof range === 'string') {
                     properties.range = this.convertToRaw(range);
                 }
                 this.setProperties(properties);
@@ -387,20 +387,34 @@ define(
             initStructure: function () {
                 // 如果主元素是输入元素，替换成`<div>`
                 // 如果输入了非块级元素，则不负责
-                if (lib.isInput(this.main)) {
-                    this.helper.replaceMain();
+                var controlHelper = this.helper;
+                var mainElement = this.main;
+                var calendar = 'calendar';
+                if (lib.isInput(mainElement)) {
+                    controlHelper.replaceMain();
+                    mainElement = this.main;
                 }
 
                 var template = ''
                     + '<div class="${classes}" id="${id}">${value}</div>'
-                    + '<div class="${arrow}"></div>';
+                    + '<div class="${arrow}"><span class="${icon}"></span></div>';
 
-                this.main.innerHTML = lib.format(
+                var textClass = [
+                    controlHelper.getPartClassName('text'),
+                    controlHelper.getPrefixClass('calendar-text')
+                ];
+                var arrowClass = [
+                    controlHelper.getPartClassName('arrow'),
+                    controlHelper.getPrefixClass('calendar-arrow')
+                ];
+                lib.addClass(mainElement, controlHelper.getPrefixClass(calendar));
+                mainElement.innerHTML = lib.format(
                     template,
                     {
-                        classes: this.helper.getPartClassName('text'),
-                        id: this.helper.getId('text'),
-                        arrow: this.helper.getPartClassName('arrow')
+                        classes: textClass.join(' '),
+                        id: controlHelper.getId('text'),
+                        arrow: arrowClass.join(' '),
+                        icon: controlHelper.getIconClass(calendar)
                     }
                 );
             },
@@ -469,7 +483,6 @@ define(
                         }
                     }
                 },
-
                 {
                     name: ['disabled', 'hidden', 'readOnly'],
                     paint: function (multiCalendar, disabled, hidden, readOnly) {
