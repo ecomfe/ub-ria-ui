@@ -369,27 +369,13 @@ define(
                 }
             },
             {
-                name: ['width', 'height', 'showProgress'],
+                name: ['width', 'showProgress'],
                 paint: function (uploader, width, height, showProgress) {
-                    var widthWithUnit = width + 'px';
-                    var heightWithUnit = height + 'px';
-
-                    uploader.main.style.width = widthWithUnit;
-                    uploader.main.style.height = heightWithUnit;
-                    // 进度条高度, 如果不显示进度条，则为0
-                    if (showProgress) {
-                        // 留出高度给进度条
-                        height -= uploader.progressHeight;
-                        heightWithUnit = height + 'px';
-                    }
-                    var inputContainer = lib.g(uploader.helper.getId('input-container'));
-                    inputContainer.style.height = heightWithUnit;
-
+                    uploader.main.style.width = width + 'px';
                     var button = getButton.call(uploader);
                     button.setProperties(
                         {
-                            width: width,
-                            height: height
+                            width: width
                         }
                     );
                 }
@@ -848,7 +834,6 @@ define(
          */
         Uploader.defaultProperties = {
             width: 80,
-            height: 25,
             fileType: '*',
             text: '点击上传',
             busyText: '正在上传...',
