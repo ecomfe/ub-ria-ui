@@ -1,115 +1,117 @@
-@import "./mixin.less";
-@import "./variables.less";
-
 esui-table-rich-selector {
     display: block;
 }
 
-// 表格
-@table-rich-selector-th-bg: transparent;
-@table-rich-selector-tr-bg: transparent;
-@table-rich-selector-tr-active-bg: transparent;
+@esui-table-richselector-th-height: 2.5em;
+@esui-table-richselector-th-bg: transparent;
 
-@table-rich-selector-th-height: 35px;
+@esui-richselector-row-color-selected: #666;
+@esui-richselector-row-color-disabled: #666;
+@esui-richselector-row-icon-color: #6CCDC0;
+@esui-richselector-row-background-color-hover: #FFFAEE;
+@esui-richselector-row-background-color-disabled: none;
 
-@table-rich-selector-operate-color: #67c1a5;
-@table-rich-selector-operate-delete-color: #f00;
 
-.ui-table-richselector {
-    .ui-richselector-query-list {
+.@{ui-class-prefix}-table-richselector {
+
+    .@{ui-class-prefix}-richselector-query-list {
         table {
             border-collapse: collapse;
             width: 100%;
 
+            th, td {
+                padding-left: 0.75em;
+            }
+
             th {
-                background-color: @table-rich-selector-th-bg;
+                background-color: @esui-table-richselector-th-bg;
                 font-weight: bold;
-                height: @table-rich-selector-th-height;
+                height: @esui-table-richselector-th-height;
                 text-align: left;
-                padding-left: 10px;
             }
 
 
             td {
-                height: @rich-selector-line-height;
-                line-height: @rich-selector-line-height;
+                height: @esui-richselector-line-height;
+                line-height: @esui-richselector-line-height;
                 vertical-align: middle;
-                padding-left: 10px;
                 .ellipsis();
             }
         }
-        .ui-richselector-content-table {
-            .ui-richselector-row {
-                cursor:pointer;
-                &:hover {
-                    background: @rich-selector-item-background-color-hover;
-                    .ui-richselector-row-action-icon {
-                        display: block;
-                    }
-                }
-            }
+    }
 
-            .ui-richselector-row-selected,
-            .ui-richselector-row-selected:hover {
-                cursor: default;
-                color: #666666;
-                .ui-richselector-row-action-icon {
-                    display: block;
-                }
-
-                td {
-                    font-weight: bold;
-                }
-            }
-
-            .ui-richselector-row-disabled,
-            .ui-richselector-row-disabled:hover {
-                cursor: default;
-                color: #666666;
-                background: @rich-selector-item-background-color-disabled;
-                .ui-richselector-row-action-icon {
-                    display: none;
-                }
-            }
-
-            .ui-richselector-row-action-icon {
-                background: none;
-                height: @rich-selector-line-height;
-                width: 100%;
-                display: none;
-            }
-
-        }
+    .@{ui-class-prefix}-richselector-row-action-icon {
+        .eicons-font-style;
+        color: @esui-richselector-row-icon-color;
     }
 
     // 添加型
-    &.ui-richselector-add {
-        .ui-richselector-row-action-icon {
-            .pseudo-icon(@eicon-var-arrow-right, @table-rich-selector-operate-color, 12px, center, 0, top);
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-richselector-row-action-icon {
+            .eicons-icon(arrow-right);
         }
 
-        .ui-richselector-row-selected,
-        .ui-richselector-row-selected:hover {
-            .ui-richselector-row-action-icon {
-                .pseudo-icon(@eicon-var-check, @table-rich-selector-operate-color, 12px, center, 0, top);
+        .@{ui-class-prefix}-richselector-row-selected,
+        .@{ui-class-prefix}-richselector-row-selected:hover {
+            .@{ui-class-prefix}-richselector-row-action-icon {
+                .eicons-icon(check);
             }
         }
     }
 
     // 删除型
-    &.ui-richselector-del {
-        .ui-richselector-row-action-icon {
-            .pseudo-icon(@eicon-var-times, @table-rich-selector-operate-delete-color, 12px, center, 0, top);
+    &.@{ui-class-prefix}-richselector-del {
+        .@{ui-class-prefix}-richselector-row-action-icon {
+            .eicons-icon(close);
         }
     }
-}
 
-// 单独存在，没有右侧备选栏的情况
-.no-move-richselector {
-    // 添加型
-    &.ui-richselector-add {
-        .ui-richselector-row-action-icon {
-            .pseudo-icon();
+    // 单独存在，没有右侧备选栏的情况
+    .no-move-richselector {
+        // 添加型
+        &.@{ui-class-prefix}-richselector-add {
+            .@{ui-class-prefix}-richselector-row-action-icon {
+                .eicons-icon(close);
+            }
         }
+    }
+
+    .@{ui-class-prefix}-richselector-row {
+        cursor:pointer;
+        &:hover {
+            background: @esui-richselector-row-background-color-hover;
+            .@{ui-class-prefix}-richselector-row-action-icon {
+                display: block;
+            }
+        }
+    }
+
+    .@{ui-class-prefix}-richselector-row-selected {
+        cursor: default;
+        color: @esui-richselector-row-color-selected;
+        .@{ui-class-prefix}-richselector-row-action-icon {
+            display: block;
+        }
+
+        td {
+            font-weight: bold;
+        }
+    }
+
+    .@{ui-class-prefix}-richselector-row-disabled {
+        cursor: default;
+        color: @esui-richselector-row-color-disabled;
+        background: @esui-richselector-row-background-color-disabled;
+        .@{ui-class-prefix}-richselector-row-action-icon {
+            display: none;
+        }
+    }
+
+    .@{ui-class-prefix}-richselector-row-action-icon {
+        background: none;
+        height: @esui-richselector-line-height;
+        line-height: @esui-richselector-line-height;
+        width: 100%;
+        display: none;
     }
 }

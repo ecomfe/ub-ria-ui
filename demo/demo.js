@@ -24,17 +24,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.1.0-beta.5/src',
-            'main': 'main'
-        },
-        {
-            'name': 'ub-ria-ui',
-            'location': '../src',
-            'main': 'main'
-        },
-        {
-            'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.2/src',
+            'location': '../dep/esui/3.1.0-beta.6/src',
             'main': 'main'
         },
         {
@@ -43,22 +33,27 @@ require.config({
             'main': 'main'
         },
         {
-            'name': 'est',
-            'location': '../dep/est/1.3.0/src'
-        },
-        {
-            'name': 'esf',
-            'location': '../dep/esf/1.0.0-alpha.4/src'
-        },
-        {
-            'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-alpha.1/src',
-            'main': 'main.less'
-        },
-        {
             'name': 'er',
             'location': '../dep/er/3.1.0-beta.6/src',
             'main': 'main'
+        },
+        {
+            'name': 'ef',
+            'location': '../dep/ef/3.1.0-beta.3/src',
+            'main': 'main'
+        },
+        {
+            'name': 'eicons',
+            'location': '../dep/eicons/1.0.0-alpha.5/src',
+            'main': 'main.less'
+        },
+        {
+            'name': 'esf',
+            'location': '../dep/esf/1.0.0-alpha.11/src'
+        },
+        {
+            'name': 'est',
+            'location': '../dep/est/1.3.0/src'
         }
     ]
 });
@@ -84,13 +79,25 @@ $(function () {
     $('.source, .viewer li').on('mousedown', false);
     //$('html').on('mousedown', hideSource);
 
-    var navItems =
-        '<li><a href="Carousel.html">Carousel</a></li>' +
-        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>' +
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>' +
-        '<li><a href="DrawerActionPanel.html">DrawerActionPanel</a></li>';
+    var navItems = [
+        '<li><a href="Accordion.html">Accordion</a></li>',
+        '<li><a href="Alert.html">Alert</a></li>',
+        '<li><a href="AutoComplete.html">AutoComplete</a></li>',
+        '<li><a href="Carousel.html">Carousel</a></li>',
+        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
+        '<li><a href="ColorPicker.html">ColorPicker</a></li>',
+        '<li><a href="Filter.html">Filter</a></li>',
+        '<li><a href="LightBox.html">LightBox</a></li>',
+        '<li><a href="MultiCalendar.html">MultiCalendar</a></li>',
+        '<li><a href="Slider.html">Slider</a></li>',
+        '<li><a href="Spinner.html">Spinner</a></li>',
+        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
+        '<li><a href="TokenField.html">TokenField</a></li>',
+        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
+        '<li><a href="Uploader.html">Uploader</a></li>'
 
-    $('#navigator').html(navItems);
+    ];
+    $('#navigator').html(navItems.join(''));
 
     $('.example').each(function (index, item) {
         var $sample = $('<pre class="source source-markup"><code class="language-markup"></code></pre>');
@@ -108,7 +115,7 @@ $(function () {
         }
         $code.text(targetArr.join('\n'));
     });
-    Prism.highlightAll();
+    //Prism.highlightAll();
 });
 var ready = (function () {
     var list = [];

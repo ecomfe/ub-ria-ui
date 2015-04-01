@@ -1,0 +1,53 @@
+/**
+ * 完整模式拾色器，包含高级模式和简单模式，并支持模式切换
+ */
+@full-color-picker-seperator-width: 10px;
+
+.ui-fullcolorpicker {
+    border: 1px solid #ddd;
+    overflow: hidden;
+    padding: @full-color-picker-seperator-width;
+
+    .clearfix();
+
+    &.ui-fullcolorpicker-simple {
+        .ui-fullcolorpicker-advanced-section {
+            display: none;
+        }
+
+        .ui-fullcolorpicker-simple-section {
+            border-bottom: none;
+        }
+    }
+
+    &.ui-fullcolorpicker-advanced {
+        .ui-fullcolorpicker-simple-section {
+            display: none;
+        }
+
+        .ui-fullcolorpicker-advanced-section {
+            padding-bottom: 0;
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+    }
+
+    .ui-fullcolorpicker-simple-section,
+    .ui-fullcolorpicker-advanced-section {
+        padding-bottom: @full-color-picker-seperator-width;
+        border-bottom: 1px dotted #c9c9c9;
+    }
+
+    .ui-fullcolorpicker-advanced-section {
+        margin-bottom: @full-color-picker-seperator-width;
+    }
+
+    .ui-simplecolorpicker {
+        margin-top: -10px;
+    }
+
+    .ui-fullcolorpicker-mode-switch {
+        margin-top: @full-color-picker-seperator-width;
+        width: 100%;
+    }
+}

@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Carousel - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <title>TreeRichSelector - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
 
@@ -13,7 +13,7 @@
     <script src="assets/third-party/prism.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
 
-    <script src="assets/demo.js"></script>
+    <script src="demo.js"></script>
 
     <style>
         .ui-richselector {
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-    <h1>Carousel</h1>
+    <h1>TreeRichSelector</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
@@ -62,8 +62,10 @@
                         data-ui-has-height="300"
                         data-ui-has-width="200"
                         data-ui-has-search-box="false"
-                        data-ui-datasource="@apps"
+                        data-ui-datasource="@apps">
+                        <!--
                         data-ui-disabled="disabled">
+                        -->
                     </div>
                 </div>
 
@@ -103,6 +105,9 @@
                         data-ui-hold-state="true"
                         data-ui-has-foot="false"
                         data-ui-only-leaf-select="false"
+                        data-ui-tree-variants="icon angle hoverable"
+                        data-ui-need-batch-action="true"
+                        data-ui-batch-action-label="选择全部"
                         data-ui-width="275">
                     </div>
                     <div data-ui-type="TreeRichSelector"
@@ -149,7 +154,7 @@
                             isSelected: isSelected
                         })
                     }
-                    table1.setProperties({datasource: arrayDatasource});
+                    table1.setProperties({datasource: arrayDatasource, rawValue:[5,7]});
 
                     var source = ui.get('all-table-slots');
                     var target = ui.get('selected-table-slots');
@@ -224,7 +229,8 @@
                         children.push({
                             text: '广告位' + (i + 1),
                             name: '广告位' + (i + 1),
-                            id: i + 1
+                            id: i + 1,
+                            isSelected: true
                         })
                     }
 
@@ -234,7 +240,8 @@
                             {
                                 text: '子节点' + i,
                                 name: '子节点' + (i),
-                                id: 100 + i
+                                id: 100 + i,
+                                isSelected: true
                             }
                         ]
                     }
@@ -250,6 +257,7 @@
                             datasource: newdata
                         })
                     });
+                    leftTree.fire('add');
 
                     rightTree.on('delete', function (arg) {
                         var items = arg.items;

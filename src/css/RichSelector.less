@@ -6,171 +6,138 @@
   * @file 富选择器
   * @author lixiang
   */
-@import "./mixin.less";
-@import "./variables.less";
 
-@rich-selector-frame-border: 1px solid #ebebeb;
+@esui-richselector-font-size: 14px;
+@esui-richselector-border-color: #EBEBEB;
+@esui-richselector-border: 1px solid @esui-richselector-border-color;
+@esui-richselector-line-height: 2em;
 
-@rich-selector-head-bg: #ebebeb;
-@rich-selector-head-border-bottom: 1px solid #ebebeb;
-@rich-selector-batch-action-link-color: #67c1a5;
+@esui-richselector-head-height: 2em;
+@esui-richselector-head-bg: #EBEBEB;
+@esui-richselector-head-border-bottom-color: #EBEBEB;
+@esui-richselector-head-border-bottom: 1px solid @esui-richselector-head-border-bottom-color;
+@esui-richselector-batch-action-link-color: #67C1A5;
+@esui-richselector-head-title-color: #333;
+@esui-richselector-head-count-color: #999;
 
-// head 颜色
-@rich-selector-head-title-color: #333;
-@rich-selector-head-count-color: #999;
+@esui-richselector-query-result-bg: #FEF9D4;
+@esui-richselector-clear-query-link-color: #6CCDC0;
+@esui-richselector-search-count-color: #666;
 
-@rich-selector-query-result-bg: #fef9d4;
-@rich-selector-clear-query-link-color: #67c1a5;
+@esui-richselector-body-bg: #FCFCFC;
 
-
-@rich-selector-line-height: 35px;
-
-@rich-selector-body-bg: #fcfcfc;
-@rich-selector-foot-bg: #f9f9f9;
-
-@rich-selector-search-count-color: #666;
-
-// 文字颜色
-@rich-selector-content-color: #666;
-@rich-selector-selected-content-color: #999;
+@esui-richselector-foot-bg: #F9F9F9;
+@esui-richselector-foot-color: #666;
 
 
-// RichSelector控件单项悬浮状态
-@rich-selector-item-background-color-hover: #fffaee;
-
-//不可选状态
-@rich-selector-item-background-color-disabled: none;
-
-esui-rich-selector {
+.@{ui-class-prefix}-richselector {
+    font-size: @esui-richselector-font-size;
+    .box-sizing(border-box);
+    border: @esui-richselector-border;
     display: block;
 }
 
-.ui-richselector {
-    font-size: 12px;
-    .box-sizing(border-box);
-    border: @rich-selector-frame-border;
-}
-
-.ui-richselector-head {
-    height: 26px;
-    line-height: 26px;
-    padding: 0 10px;
-    border-bottom: @rich-selector-head-border-bottom;
-    background: @rich-selector-head-bg;
+.@{ui-class-prefix}-richselector-head {
+    height: @esui-richselector-head-height;
+    line-height: @esui-richselector-head-height;
+    padding: 0 0.75em;
+    border-bottom: @esui-richselector-head-border-bottom;
+    background: @esui-richselector-head-bg;
 
     h3 {
+        font-size: @esui-richselector-font-size;
         margin: 0;
         padding: 0;
         font-weight: bold;
-        font-size: 12px;
         float: left;
-        color: @rich-selector-head-title-color;
-    }
-
-    .ui-richselector-batch-action-link {
-        float: right;
-        text-decoration: none;
-        cursor: pointer;
-        color: @rich-selector-batch-action-link-color;
-    }
-
-    .ui-richselector-head-count {
-        font-weight: bold;
-        color: @rich-selector-head-count-color;
+        color: @esui-richselector-head-title-color;
+        line-height: @esui-richselector-head-height;
     }
 }
 
-.ui-richselector-body {
+.@{ui-class-prefix}-richselector-batch-action-link {
+    float: right;
+    text-decoration: none;
+    cursor: pointer;
+    color: @esui-richselector-batch-action-link-color;
+}
+
+.@{ui-class-prefix}-richselector-head-count {
+    font-weight: bold;
+    color: @esui-richselector-head-count-color;
+}
+
+.@{ui-class-prefix}-richselector-body {
     overflow-x: hidden;
     clear: both;
-    background: @rich-selector-body-bg;
+    background: @esui-richselector-body-bg;
 }
 
-.ui-richselector-search-wrapper {
-    height: 25px;
-    padding: 10px;
+.@{ui-class-prefix}-richselector-search-wrapper {
+    height: 2em;
+    padding: 0.75em;
 }
 
-.ui-richselector-search-count {
-    color: @rich-selector-search-count-color;
+.@{ui-class-prefix}-richselector-search-count {
+    color: @esui-richselector-search-count-color;
     font-weight: bold;
 }
 
 // 搜索结果概要
-.ui-richselector-query-result-general {
-    background: @rich-selector-query-result-bg;
-    height: 30px;
-    line-height: 30px;
-    padding: 0 10px;
+.@{ui-class-prefix}-richselector-query-result-general {
+    background: @esui-richselector-query-result-bg;
+    height: 2em;
+    line-height: 2em;
+    padding: 0 0.75em;
     display: none;
+}
 
-    .ui-richselector-clear-query-link {
-        text-decoration: none;
-        color: @rich-selector-clear-query-link-color;
-        cursor: pointer;
-        line-height: 30px;
-        float: right;
-    }
+.@{ui-class-prefix}-richselector-clear-query-link {
+    text-decoration: none;
+    color: @esui-richselector-clear-query-link-color;
+    cursor: pointer;
+    line-height: 2em;
+    float: right;
 }
 
 
-.ui-richselector-content-wrapper {
+.@{ui-class-prefix}-richselector-content-wrapper {
     overflow-y: auto;
     overflow-x: hidden;
-
-    .ui-richselector-empty-text {
-        padding: 10px;
-        display: none;
-        text-align: center;
-    }
 }
 
-.ui-richselector-foot {
-    height: 25px;
-    color: #555;
-    line-height: 25px;
-    background: @rich-selector-foot-bg;
-    padding: 0 10px;
+.@{ui-class-prefix}-richselector-empty-text {
+    padding: 0.75em;
+    display: none;
+    text-align: center;
+}
+
+.@{ui-class-prefix}-richselector-foot {
+    color: @esui-richselector-foot-color;
+    height: 2em;
+    line-height: 2em;
+    background: @esui-richselector-foot-bg;
+    padding: 0 0.75em;
 }
 
 // 搜索状态
-.ui-richselector-queried {
-    .ui-richselector-query-result-general {
+.@{ui-class-prefix}-richselector-queried {
+    .@{ui-class-prefix}-richselector-query-result-general {
         display: block;
     }
 }
 
 // 无结果状态
-.ui-richselector-empty {
-    .ui-richselector-empty-text {
+.@{ui-class-prefix}-richselector-empty {
+    .@{ui-class-prefix}-richselector-empty-text {
         display: block;
     }
 
-    .ui-richselector-query-list {
+    .@{ui-class-prefix}-richselector-query-list {
         display: none;
     }
 
-    .ui-richselector-query-result-general {
+    .@{ui-class-prefix}-richselector-query-result-general {
         display: none;
     }
-}
-
-// 搜索状态
-.ui-richselector-queried {
-    .ui-richselector-query-result-general {
-        display: block;
-    }
-}
-
-
-// 错误提示
-.ui-richselector-validity-invalid {
-    .complex-component-validity-invalid();
-}
-.ui-richselector-validity-label {
-    .complex-component-validity-label();
-}
-
-.ui-richselector-validity-label-invalid {
-   .complex-component-validity-label-invalid();
 }
