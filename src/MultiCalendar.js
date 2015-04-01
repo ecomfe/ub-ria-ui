@@ -43,6 +43,7 @@ define(
             document.body.appendChild(element);
 
             var multiCalendar = this.control;
+            lib.addClass(element, this.control.helper.getPrefixClass('multicalendar-layer'));
             var tpl = ''
                 + '<div data-ui="type: MonthView; childName: prevMonthView" class="${prevClass}"></div>'
                 + '<div data-ui="type: MonthView; childName: nextMonthView" class="${nextClass}"></div>';
@@ -297,6 +298,11 @@ define(
             type: 'MultiCalendar',
 
             /**
+             * @override
+             */
+            styleType: 'Calendar',
+
+            /**
              * 初始化参数
              *
              * @param {Object=} options 构造函数传入的参数
@@ -399,21 +405,13 @@ define(
                     + '<div class="${classes}" id="${id}">${value}</div>'
                     + '<div class="${arrow}"><span class="${icon}"></span></div>';
 
-                var textClass = [
-                    controlHelper.getPartClassName('text'),
-                    controlHelper.getPrefixClass('calendar-text')
-                ];
-                var arrowClass = [
-                    controlHelper.getPartClassName('arrow'),
-                    controlHelper.getPrefixClass('calendar-arrow')
-                ];
                 lib.addClass(mainElement, controlHelper.getPrefixClass(calendar));
                 mainElement.innerHTML = lib.format(
                     template,
                     {
-                        classes: textClass.join(' '),
+                        classes: controlHelper.getPartClassName('text'),
                         id: controlHelper.getId('text'),
-                        arrow: arrowClass.join(' '),
+                        arrow: controlHelper.getPartClassName('arrow'),
                         icon: controlHelper.getIconClass(calendar)
                     }
                 );

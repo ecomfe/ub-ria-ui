@@ -369,15 +369,17 @@ define(
                 }
             },
             {
-                name: ['width', 'showProgress'],
-                paint: function (uploader, width, height, showProgress) {
-                    uploader.main.style.width = width + 'px';
-                    var button = getButton.call(uploader);
-                    button.setProperties(
-                        {
-                            width: width
-                        }
-                    );
+                name: ['width'],
+                paint: function (uploader, width) {
+                    if (!isNaN(width)) {
+                        uploader.main.style.width = width + 'px';
+                        var button = getButton.call(uploader);
+                        button.setProperties(
+                            {
+                                width: width
+                            }
+                        );
+                    }
                 }
             },
             {
@@ -833,7 +835,7 @@ define(
          * @public
          */
         Uploader.defaultProperties = {
-            width: 80,
+            width: '',
             fileType: '*',
             text: '点击上传',
             busyText: '正在上传...',
