@@ -80,6 +80,9 @@ define(function (require) {
                 }
                 if (sticky.currentTop != newTop) {
                     var style = stickyMainElement.style;
+                    var width = sticky.getWidthFrom ?
+                        lib.g(sticky.getWidthFrom).offsetWidth : stickyMainElement.offsetWidth;
+                    style.width = width + 'px';
                     style.position = 'fixed';
                     style.top = parseInt(newTop) + 'px';
                     style.left = lib.getOffset(stickyMainElement).left + 'px';
@@ -102,16 +105,18 @@ define(function (require) {
         },
 
         initStructure: function () {
+            var placeHolder = document.createElement('div');
             var mainElement = this.main;
-            var child = lib.getChildren(mainElement)[0];
-            var height = getCurrentStyle(child, 'position') != 'absolute' ? child.offsetHeight : ''; 
-            var style = mainElement.style;
+            lib.insertBefore(placeHolder, mainElement);
+            placeHolder.appendChild(mainElement);
+            lib.addClass(placeHolder, this.helper.getPartClassName('placeholder'));
+            var height = getCurrentStyle(mainElement, 'position') != 'absolute' ? mainElement.offsetHeight : ''; 
+            var style = placeHolder.style;
 
-            style.display = 'block';
             style.height = height + 'px';
-            style.float = getCurrentStyle(child, 'float') != 'none' ? getCurrentStyle(child).float : '';
-            style.margin = getCurrentStyle(child, 'margin');
-            this.initialTop = lib.getOffset(this.main).top;
+            style.float = getCurrentStyle(mainElement, 'float') != 'none' ? getCurrentStyle(mainElement).float : '';
+            style.margin = getCurrentStyle(mainElement, 'margin');
+            this.initialTop = lib.getOffset(mainElement).top;
   
             sticked.push(this);
         },
@@ -119,7 +124,7 @@ define(function (require) {
         initEvents: function() {
             if (!bindScroll) {
                 // addDOMEvent中对scroll进行了延迟，所以不够流畅
-                this.helper.addDOMEvent(window, 'scroll', checkscrollposition);
+                lib.on(window, 'scroll', checkscrollposition);
                 bindScroll = true;
             }
         }
