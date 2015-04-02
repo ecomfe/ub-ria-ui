@@ -84,7 +84,6 @@ $(function () {
         '<li><a href="Alert.html">Alert</a></li>',
         '<li><a href="AutoComplete.html">AutoComplete</a></li>',
         '<li><a href="Carousel.html">Carousel</a></li>',
-        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
         '<li><a href="ColorPicker.html">ColorPicker</a></li>',
         '<li><a href="Filter.html">Filter</a></li>',
         '<li><a href="LightBox.html">LightBox</a></li>',
