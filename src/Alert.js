@@ -24,7 +24,7 @@ define(
         }
 
         // 快捷方式注册
-        var allType = ['success', 'prompt', 'warning', 'error'];
+        var allType = ['success', 'info', 'warning', 'error'];
         u.each(allType, function (type) {
             Alert[type] = function (options) {
                 options.msgType = options.msgType || type;
@@ -33,34 +33,6 @@ define(
                 return alert;
             };
         });
-
-        /**
-         * @cfg defaultProperties
-         *
-         * 默认属性值
-         *
-         * @cfg {string} [defaultProperties.msgType='error'] 消息类型
-         *      `success`：成功：绿
-         *      `prompt` ：通知：蓝
-         *      `warning`：警告：黄
-         *      `error`  ：错误：红
-         * @cfg {string | Array} [defaultProperties.message] 数据源数组，可兼容单条string
-         * @cfg {number} [defaultProperties.autoClose=false] 自动关闭延迟
-         * @cfg {boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
-         * @cfg {number} [defaultProperties.autoSlide=4000] 多条消息自动滚动时间，Null表不自动滚动
-         * @cfg {boolean} [defaultProperties.icon=true] 是否使用系统默认图标
-         * @cfg {number} [defaultProperties.stepAnimationDuration=400] 切换的渐进效果时间间隔
-         * @static
-         */
-        Alert.defaultProperties = {
-            msgType: 'error',
-            autoClose: false,
-            closeBtn: true,
-            pageIndex: 1,
-            autoSlide: 4000,
-            icon: true,
-            stepAnimationDuration: 400
-        };
 
         /**
          * 控件类型，始终为`"Alert"`
@@ -78,8 +50,31 @@ define(
          * @override
          */
         Alert.prototype.initOptions = function (options) {
-            var properties = {};
-
+            /**
+             * @cfg defaultProperties
+             *
+             * 默认属性值
+             *
+             * @cfg {string} [defaultProperties.msgType='error'] 消息类型
+             *      `success`：成功：绿
+             *      `info` ：通知：蓝
+             *      `warning`：警告：黄
+             *      `error`  ：错误：红
+             * @cfg {string | Array} [defaultProperties.message] 数据源数组，可兼容单条string
+             * @cfg {number} [defaultProperties.autoClose=false] 自动关闭延迟
+             * @cfg {boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
+             * @cfg {number} [defaultProperties.autoSlide=4000] 多条消息自动滚动时间，Null表不自动滚动
+             * @cfg {boolean} [defaultProperties.icon=true] 是否使用系统默认图标
+             * @static
+             */
+            var properties = {
+                msgType: 'error',
+                autoClose: false,
+                closeBtn: true,
+                pageIndex: 1,
+                autoSlide: 4000,
+                icon: ''
+            };
             // 如果没有从html构造，则从js中构造时必须传入父容器
             if (!this.main.parentNode && u.isEmpty(options.container)) {
                 throw new Error('Parent is needed if constructed form scripts');
@@ -90,16 +85,10 @@ define(
                 options.message = [options.message];
             }
 
-            // message去空
-            options.message = u.chain(options.message).map(lib.trim).compact().value();
-            if (options.message.length === 0) {
-                throw new Error('Message cannot be empty');
-            }
-
             // 保存一份autoSlide，方便mouseout后恢复计时器使用
             properties.oriAutoSlide = options.autoSlide;
 
-            lib.extend(properties, Alert.defaultProperties, options);
+            lib.extend(properties, options);
             this.setProperties(properties);
         };
 
@@ -126,11 +115,12 @@ define(
          */
         Alert.prototype.initStructure = function () {
             var innerHTML = '';
+            var controlHelper = this.helper;
             var parts = ['icon', 'text', 'close', 'pager'];
-            u.each(parts, function (item, index) {
-                innerHTML += this.helper.getPartHTML(item, 'div');
-            }, this);
 
+            u.each(parts, function (item, index) {
+                innerHTML += controlHelper.getPartHTML(item, 'div');
+            }, this);
             this.main.innerHTML = this.getInjectedPartHTML('container', 'div', innerHTML);
         };
 
@@ -141,23 +131,26 @@ define(
          */
         function buildPager(self) {
 
+            var controlHelper = self.helper;
             // 上一条按钮
-            var prev = self.getInjectedPartHTML('prev', 'div', self.helper.getPartHTML('icon-content', 'span'));
+            var prev = self.getInjectedPartHTML('prev', 'div', controlHelper.getPartHTML('icon-content', 'span'));
 
             // 下一条按钮
-            var next = self.getInjectedPartHTML('next', 'div', self.helper.getPartHTML('icon-content', 'span'));
+            var next = self.getInjectedPartHTML('next', 'div', controlHelper.getPartHTML('icon-content', 'span'));
 
             // 页码
             var index = self.getInjectedPartHTML(
                 'index',
                 'div',
-                self.helper.getPartHTML('page', 'strong') + '/' + self.message.length
+                controlHelper.getPartHTML('page', 'strong') + '/' + self.message.length
             );
 
             // 渲染
-            self.helper.getPart('pager').innerHTML = prev + index + next;
-            self.helper.getPart('page').innerHTML = self.pageIndex;
-
+            controlHelper.getPart('pager').innerHTML = prev + index + next;
+            controlHelper.getPart('page').innerHTML = self.pageIndex;
+            var iconClass = controlHelper.getIconClass();
+            lib.addClass(controlHelper.getPart('prev'), iconClass);
+            lib.addClass(controlHelper.getPart('next'), iconClass);
             // 绑事件
             self.bindPagerEvent();
         }
@@ -188,10 +181,22 @@ define(
          * 为控件注入Icon
          *
          * @param {string} html 注入的HTML
+         * @param {string} icon 图标的class selector
          * @protected
          */
-        Alert.prototype.injectIcon = function (html) {
-            this.helper.getPart('icon').innerHTML = html;
+        Alert.prototype.injectIcon = function (html, icon) {
+            var controlerHelper = this.helper;
+            var iconContainer = controlerHelper.getPart('icon');
+            var mainElement = this.main;
+            iconContainer.innerHTML = html;
+            var iconClass = controlerHelper.getPartClassName('has-icon');
+            if (html) {
+                lib.addClass(mainElement, iconClass);
+                lib.addClass(iconContainer.firstChild, icon);
+            }
+            else {
+                lib.removeClass(mainElement, iconClass);
+            }
         };
 
         /**
@@ -210,13 +215,11 @@ define(
                  */
                 name: 'icon',
                 paint: function (self, icon) {
-
-                    // 默认为true的属性兼容从html构造传入false覆盖的情况
-                    if (!lib.trim(icon) || icon === 'false') {
+                    if (!icon) {
                         self.injectIcon('');
                         return;
                     }
-                    self.injectIcon(self.helper.getPartHTML('icon-content', 'span'));
+                    self.injectIcon(self.helper.getPartHTML('icon-content', 'span'), icon);
                 }
             },
             {
@@ -227,16 +230,19 @@ define(
                  */
                 name: 'message',
                 paint: function (self, message) {
+                    var html = '';
                     u.each(message, function (item) {
-                        self.helper.getPart('text').innerHTML +=
+                        html +=
                             self.getInjectedPartHTML('item', 'span', item);
                     });
-                    if (message.length !== 1) {
+                    self.helper.getPart('text').innerHTML = html;
+                    var pagerClass = self.helper.getPartClassName('has-pager');
+                    if (message.length > 1) {
+                        lib.addClass(self.main, pagerClass);
                         buildPager(self);
-                        var messages = lib.getChildren(self.helper.getPart('text'));
-                        u.each(messages, function (item) {
-                            self.helper.addPartClasses('item-hidden', item);
-                        });
+                    }
+                    else {
+                        lib.removeClass(self.main, pagerClass);
                     }
                 }
             },
@@ -248,7 +254,6 @@ define(
                  */
                 name: 'msgType',
                 paint: function (self, msgType) {
-
                     // 清理掉老的type
                     u.each(allType, function (type) {
                         self.helper.removePartClasses(type);
@@ -264,86 +269,39 @@ define(
                  */
                 name: 'pageIndex',
                 paint: function (self, pageIndex) {
-
-                    // 只在多条下响应pageIndex
+                    var controlHelper = self.helper;
+                    var messages = lib.getChildren(controlHelper.getPart('text'));
+                    var activeClassName = controlHelper.getPartClassName('item-active');
+                    var newMessage = messages[pageIndex - 1];
                     if (self.message.length === 1) {
+                        lib.addClass(newMessage, activeClassName);
                         return;
                     }
 
-                    // 实现渐进效果
-                    // 如果浏览器支持animation，则用animationend事件驱动新老message的交替显示
-                    var animationEndEventName = getAnimationEndEventName();
-
-                    var messages = lib.getChildren(self.helper.getPart('text'));
-
-                    // 清空挂在消息上的animation事件handler
-                    if (animationEndEventName) {
-                        u.each(messages, function (item) {
-                            this.helper.removeDOMEvent(item, animationEndEventName);
-                        }, self);
-                    }
-
-                    var hiddenClassName = self.helper.getPartClasses('item-hidden')[0];
-
-                    var newMessage = messages[pageIndex - 1];
                     var oldMessage = u.filter(messages, function (item) {
-                        return !lib.hasClass(item, hiddenClassName);
+                        return lib.hasClass(item, activeClassName);
                     })[0];
 
                     // 如果是初始的第一条，则不用切换任何渐进效果相关的class
-                    if (!oldMessage) {
-                        self.helper.removePartClasses('item-hidden', newMessage);
-                    }
-                    else {
-
-                        // 老message加`逐步消失`的动画类
-                        self.helper.addPartClasses('item-step-out', oldMessage);
-
-                        // 如果支持animation事件，则挂handler驱动新老交替
-                        if (animationEndEventName) {
-
-                            // 对于oldMessage，动画效果如果是`逐步消失`，需要在动画执行完毕后：
-                            // 1. 清掉自己`逐步消失`的动画类，并隐藏自己
-                            // 2. `逐步显示`下一条
-                            self.helper.addDOMEvent(oldMessage, animationEndEventName, function (e) {
-                                if (e.animationName.indexOf('step-out') !== -1) {
-                                    this.helper.removePartClasses('item-step-out', oldMessage);
-                                    this.helper.addPartClasses('item-hidden', oldMessage);
-
-                                    this.helper.removePartClasses('item-hidden', newMessage);
-                                    this.helper.addPartClasses('item-step-in', newMessage);
-                                }
-                            });
-
-                            // 对于newMessage，动画效果如果是`逐步显示`，需要在动画执行完毕后清掉自己的动画类
-                            self.helper.addDOMEvent(newMessage, animationEndEventName, function (e) {
-                                if (e.animationName.indexOf('step-in') !== -1) {
-                                    this.helper.removePartClasses('item-step-in', newMessage);
-                                }
-                            });
-                        }
-
-                        // 不支持animation的环境下，直接toggle新老message
-                        else {
-                            self.helper.addPartClasses('item-hidden', oldMessage);
-                            self.helper.removePartClasses('item-hidden', newMessage);
-                        }
+                    if (oldMessage) {
+                        lib.removeClass(oldMessage, activeClassName);
                     }
 
-                    self.helper.getPart('page').innerHTML = pageIndex;
+                    lib.addClass(newMessage, activeClassName);
+                    controlHelper.getPart('page').innerHTML = pageIndex;
 
                     // 分页器边界逻辑
                     if (pageIndex === 1) {
-                        self.helper.addPartClasses('prev-disabled', 'prev');
+                        controlHelper.addPartClasses('prev-disabled', 'prev');
                     }
                     else {
-                        self.helper.removePartClasses('prev-disabled', 'prev');
+                        controlHelper.removePartClasses('prev-disabled', 'prev');
                     }
                     if (pageIndex === self.message.length) {
-                        self.helper.addPartClasses('next-disabled', 'next');
+                        controlHelper.addPartClasses('next-disabled', 'next');
                     }
                     else {
-                        self.helper.removePartClasses('next-disabled', 'next');
+                        controlHelper.removePartClasses('next-disabled', 'next');
                     }
                 }
             },
@@ -356,16 +314,17 @@ define(
                 name: 'closeBtn',
                 paint: function (self, closeBtn) {
 
+                    var controlHelper = self.helper;
                     // 默认为true的属性兼容从html构造传入false覆盖的情况
                     if (!lib.trim(closeBtn) || closeBtn === 'false') {
-                        self.helper.getPart('button') && self.helper.removeDOMEvent('button');
-                        self.helper.getPart('close').innerHTML = '';
+                        controlHelper.getPart('button') && controlHelper.removeDOMEvent('button');
+                        controlHelper.getPart('close').innerHTML = '';
                         return;
                     }
-                    self.helper.getPart('close').innerHTML = '' +
-                        self.getInjectedPartHTML('button', 'div', self.helper.getPartHTML('icon-content', 'span'));
-
-                    self.helper.addDOMEvent('button', 'click', function (e) {
+                    controlHelper.getPart('close').innerHTML = '' +
+                        self.getInjectedPartHTML('button', 'div', controlHelper.getPartHTML('icon-content', 'span'));
+                    lib.addClass(controlHelper.getPart('button').firstChild, controlHelper.getIconClass());
+                    controlHelper.addDOMEvent('button', 'click', function (e) {
                         this.hide();
                     });
                 }
@@ -460,28 +419,6 @@ define(
             }
             this.setProperties({pageIndex: pageIndex});
         }
-
-        /**
-         * 获取当前浏览器环境下支持的animationend的事件名
-         *
-         * @return {string} 事件名称
-         */
-        function getAnimationEndEventName() {
-
-            // Chrome、Safari、Opera
-            if (window.WebKitAnimationEvent) {
-                return 'webkitAnimationEnd';
-            }
-
-            // IE10、FireFox
-            if (window.AnimationEvent) {
-                return 'animationend';
-            }
-
-            // lt IE10
-            return '';
-        }
-
 
         /**
          * 隐藏提示信息

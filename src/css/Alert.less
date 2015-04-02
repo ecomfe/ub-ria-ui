@@ -6,213 +6,127 @@
  * @author zhangyujie(zhangyujie@baidu.com)
  */
 
-@esui-alert-height: 50px;
+@esui-alert-margin: 0 0 .5em 0;
+@esui-alert-left-padding: 1em;
+@esui-alert-right-padding: 1em;
+@esui-alert-vertical-padding: 1em;
+@esui-alert-icon-font-size: 2em;
 
-@keyframes esui-alert-show {
-    from {
-        height: 0;
-    }
-    to {
-        height: 100%;
-    }
+@esui-alert-icon-right-margin: .5em;
+@esui-alert-close-icon-right: 1em;
+@esui-alert-close-icon-top: @esui-alert-vertical-padding;
+@esui-alert-pager-width: 6em;
+@esui-alert-pager-right: 3em;
+@esui-alert-pager-top: @esui-alert-vertical-padding;
+@esui-alert-pager-number-margin: 0 .5em;
+
+@esui-alert-border-radius: 5px;
+
+.@{ui-class-prefix}-alert {
+    display: block;
+    padding: @esui-alert-vertical-padding @esui-alert-right-padding @esui-alert-vertical-padding @esui-alert-left-padding;
+    position: relative;
+    margin: @esui-alert-margin;
+    .esf-border-radius(
+        @esui-alert-border-radius,
+        @esui-alert-border-radius
+    );
 }
 
-@-webkit-keyframes esui-alert-show {
-    from {
-        height: 0px;
-    }
-    to {
-        height: 100%;
-    }
+.@{ui-class-prefix}-alert-has-icon {
+    padding-left: @esui-alert-left-padding + @esui-alert-icon-font-size + @esui-alert-icon-right-margin;
 }
 
-.@{ui-class-prefix}-alert-toggle {
-    .animation(esui-alert-show .5s);
-}
-
-.@{ui-class-prefix}-alert-container {
-    height: 50px;
-    line-height: 50px;
-    padding-left: 30px;
-    overflow: hidden;
-    div {
-        display: inline-block;
-        *display: inline;
-    }
+.@{ui-class-prefix}-alert-has-pager {
+    padding-right: @esui-alert-right-padding + @esui-alert-pager-width;
 }
 
 .@{ui-class-prefix}-alert-icon {
-    span {
-        font-size: 22px;
-        vertical-align: middle;
-        margin-right: 10px;
+    > .@{ui-class-prefix}-alert-icon-content {
+        font-size: @esui-alert-icon-font-size;
     }
+    left: @esui-alert-left-padding;
+    top: 50%;
+    margin-top: -@esui-alert-icon-font-size/2;
+    position: absolute;
 }
 
-.@{ui-class-prefix}-alert-icon-content {
-    display: inline-block;
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-//默认消息
-.@{ui-class-prefix}-alert-text {
-    font-size: 14px;
-}
-
-@keyframes esui-alert-step-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes esui-alert-step-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes esui-alert-step-out {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-@-webkit-keyframes esui-alert-step-out {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-@esui-alert-step-in-keyframes-duration: .4s;
-@esui-alert-step-out-keyframes-duration: .4s;
-
-.@{ui-class-prefix}-alert-item-step-in {
-    .animation(esui-alert-step-in @esui-alert-step-in-keyframes-duration);
-}
-
-.@{ui-class-prefix}-alert-item-step-out {
-    .animation(esui-alert-step-out @esui-alert-step-out-keyframes-duration);
-}
-
-.@{ui-class-prefix}-alert-item-hidden {
+.@{ui-class-prefix}-alert-item {
     display: none;
+}
+
+.@{ui-class-prefix}-alert-item-active {
+    display: inline;
 }
 
 //成功消息
 .@{ui-class-prefix}-alert-success {
-    color: #67bd47;
-    .@{ui-class-prefix}-alert-container {
-        background-color: #d5f1c8;
-    }
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f00c";
-    }
+    .esui-alert-success-theme();
 }
 
+.esui-alert-success-theme() {}
+
 //通知类消息
-.@{ui-class-prefix}-alert-prompt {
-    color: #4acfe4;
-    .@{ui-class-prefix}-alert-container {
-        background-color: #c3f4fb;
-    }
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f05a";
-    }
+.@{ui-class-prefix}-alert-info {
+    .esui-alert-info-theme();
 }
+
+.esui-alert-info-theme() {}
 
 //警告类消息
 .@{ui-class-prefix}-alert-warning {
-    color: #ff900d;
-    .@{ui-class-prefix}-alert-container {
-        background-color: #ffe8c3;
-    }
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f071";
-    }
+    .esui-alert-warning-theme();
 }
 
-//错误类消息
+.esui-alert-warning-theme() {}
+
 .@{ui-class-prefix}-alert-error {
-    color: #ff8555;
-    .@{ui-class-prefix}-alert-container {
-        background-color: #fee8df;
-    }
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f06a";
-    }
+    .esui-alert-error-theme();
 }
 
-// 翻页
+.esui-alert-error-theme() {}
+
 .@{ui-class-prefix}-alert-pager {
-    font-size: 12px;
-    font-family: Arial;
-    color: #666666;
-    float: right;
-    margin-right: 30px;
-    user-select: none;
+    .user-select(none);
+    position: absolute;
+    right: @esui-alert-pager-right;
+    top: @esui-alert-pager-top;
     div {
         display: inline-block;
-        strong {
-            font-weight: bold;
-        }
     }
-}
-.@{ui-class-prefix}-alert-index {
-    margin: 0 10px;
+    .@{ui-class-prefix}-icon {
+        cursor: pointer;
+    }
 }
 
-.@{ui-class-prefix}-alert-prev,
-.@{ui-class-prefix}-alert-next {
-    span {
-        cursor: pointer;
-        font-size: 14px;
-        color: #666666;
-    }
+.@{ui-class-prefix}-alert-index {
+    margin: @esui-alert-pager-number-margin;
 }
 
 .@{ui-class-prefix}-alert-prev {
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f0d9";
+    .@{ui-class-prefix}-alert-icon-content {
+        .eicons-icon(caret-left);
     }
 }
 
 .@{ui-class-prefix}-alert-next {
-    .esf-disabled();
+    .@{ui-class-prefix}-alert-icon-content {
+        .eicons-icon(caret-right);
+    }
 }
 
 .@{ui-class-prefix}-alert-prev-disabled,
 .@{ui-class-prefix}-alert-next-disabled {
-    span {
-        cursor: default;
-        color: #B7B7B7;
-    }
+    .esf-disabled();
 }
 
-// 关闭
-.@{ui-class-prefix}-alert-close{
-    float: right;
-    font-size: 16px;
-    color: #BDBDBD;
-    margin-right: 20px;
+.@{ui-class-prefix}-alert-close {
+    .user-select(none);
     cursor: pointer;
-    .@{ui-class-prefix}-alert-icon-content:before {
-        content: "\f00d";
+    position: absolute;
+    right: @esui-alert-close-icon-right;
+    top: @esui-alert-close-icon-top;
+    .@{ui-class-prefix}-alert-icon-content {
+        .eicons-icon(close);
     }
 }
