@@ -19,16 +19,20 @@ define(function (require) {
     var INPUT = 'input';
     var TEXT = 'text';
 
-    function filter(value, datasource, caseSensitive) {
+    function filter(value, datasource) {
         return u.filter(datasource, function (data) {
             var text = u.isObject(data) ? data.text : data;
-            return (new RegExp('^' + escapeRegex(value), caseSensitive ? '' : 'i')).test(text);
+            return (new RegExp(escapeRegex(value), 'i')).test(text);
             // return caseSensitive ? text.indexOf(value) === 0;
         });
     }
 
     function escapeRegex(value) {
         return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+    }
+
+    function preProcessResponseData(data) {
+        return data;
     }
 
     function repaintSuggest(value) {
@@ -39,16 +43,18 @@ define(function (require) {
         var me = this;
         if (typeof this.target.datasource === 'function') {
             this.target.datasource.call(this, value, function (data) {
+                data = (me.target.preProcessResponseData || preProcessResponseData)(data) || data;
                 // renderSuggest.call(me, filter(value, data, me.casesensitive), value);
                 renderSuggest.call(me, data, value);
             });
         }
         else if (this.target.datasource && this.target.datasource.length) {
-            renderSuggest.call(me, filter(value, this.target.datasource, this.casesensitive), value);
+            renderSuggest.call(me, filter(value, this.target.datasource), value);
         }
     }
 
     function renderSuggest(data, inputValue) {
+        var me = this;
         var ret = '';
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
@@ -61,9 +67,11 @@ define(function (require) {
                     + ' "><span class="'
                     + this.target.helper.getPrefixClass('autocomplete-item-text')
                     + '">'
-                    + (u.isObject(item) ? item.text : item).replace(new RegExp('^' + inputValue), '<i class="'
-                    + this.target.helper.getPrefixClass('autocomplete-item-char-selected') + '">'
-                    + inputValue + '</i>') + '</span>'
+                    + (u.isObject(item) ? item.text : item).replace(new RegExp(escapeRegex(inputValue), 'i'), function (m, n, o) {
+                        return '<i class="'
+                            + me.target.helper.getPrefixClass('autocomplete-item-char-selected') + '">'
+                            + m + '</i>';
+                    }) + '</span>'
                     + (u.isObject(item) ? '<span class="' + this.target.helper.getPrefixClass('autocomplete-item-desc')
                     + '">' + item.desc + '</span>' : '')
                     + '</li>';
@@ -95,8 +103,15 @@ define(function (require) {
         inputElement = this.inputElement;
 
         helper.addDOMEvent(layerElement, 'click', obj.selectItem = function (e) {
-            setTargetValue.call(me, e.target.textContent);
+            var clickedTarget = e.target;
+            if (clickedTarget.nodeName === 'I') {
+                clickedTarget = clickedTarget.parentNode;
+            }
             hideSuggest.call(me);
+            if (target.select && target.select(clickedTarget.textContent, target) === false) {
+                return;
+            }
+            setTargetValue.call(me, clickedTarget.textContent);
         });
 
         helper.addDOMEvent(inputElement, 'keydown', obj.keyboard = function (e) {
@@ -110,50 +125,50 @@ define(function (require) {
                     e.preventDefault();
                     moveTo.call(me, 'up');
                     break;
-                    // down
+                // down
                 case 40:
                     e.preventDefault();
                     moveTo.call(me, 'down');
                     break;
-                    // esc
+                // esc
                 case 27:
                     hideSuggest.call(me);
                     break;
-                    // enter
+                // enter
                 case 13:
                     e.preventDefault();
                     var selectedItem = getSelectedItem.call(me);
                     if (!selectedItem) {
                         return;
                     }
-                    setTargetValue.call(me, selectedItem.firstChild.textContent);
                     hideSuggest.call(me);
+
+                    if (target.select
+                        && target.select(selectedItem.firstChild.textContent, target) === false) {
+                        return;
+                    }
+                    setTargetValue.call(me, selectedItem.firstChild.textContent);
                     break;
             }
         });
 
-        helper.addDOMEvent(inputElement, INPUT, obj.oninput = function oninput(e) {
+        helper.addDOMEvent(inputElement, INPUT, obj.oninput = function (e) {
             var elementValue = inputElement.value;
 
-            if (!elementValue || me.endWithClosefireCharRE.test(elementValue)) {
+            // 空格或逗号结尾都忽略
+            if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
                 repaintSuggest.call(me, '');
                 hideSuggest.call(me);
                 return;
             }
 
-            if (me.splitchar !== ' ') {
-                if (/\s$/.test(elementValue)) {
-                    return;
-                }
-            }
+            elementValue = (target.extractWord || extractMatchingWord)(elementValue);
 
-            if (me.endWithSplitCharRE.test(elementValue)) {
+            if (!elementValue) {
                 return;
             }
 
-            elementValue = extractMatchingWord.call(me, elementValue);
-
-            if (!elementValue) {
+            if (target.search && target.search(elementValue) === false) {
                 return;
             }
 
@@ -164,48 +179,29 @@ define(function (require) {
     function setTargetValue(value) {
         var targetValue = this.target.getValue();
         targetValue = lib.trim(targetValue);
-
+        var arr = [];
         if (/\n/.test(targetValue)) {
             var arr = targetValue.split(/\n/);
             targetValue = arr && arr.pop();
         }
 
-        if (this.splitCharRE) {
-            if (this.fireCharRE.test(targetValue)) {
-                value = targetValue.replace(this.fireCharRE, value);
-            }
-            else if (this.splitCharRE.test(targetValue)) {
-                value = targetValue.replace(this.splitCharRE, this.splitchar + value);
-            }
-        }
-        else if (this.fireCharRE.test(targetValue)) {
-            value = targetValue.replace(this.fireCharRE, value);
-        }
+        var words = targetValue.split(',');
+        var word = words.pop();
+        words.push(value);
 
-        if (arr && arr.length) {
-            arr.push(value);
+        if (arr) {
+            arr.push(words.join(','));
             value = arr.join('\n');
         }
         this.target.setValue(value);
     }
 
     function extractMatchingWord(value) {
-        if (this.splitCharRE && this.splitCharRE.test(value)) {
-            var arr = this.splitCharRE.exec(value);
-            value = arr && arr[1];
-        }
-
-        if (value) {
-            if (this.fireCharRE.test(value)) {
-                arr = this.fireCharRE.exec(value);
-                value = arr && arr[1];
-            }
-            else if (/\n/.test(value)) {
-                arr = value.split(/\n/);
-                value = arr && arr[arr.length - 1];
-            }
-        }
-        return value;
+        var lines = value.split(/\n/);
+        var line = lines.pop();
+        var words = line.split(',');
+        var word = words && words.pop();
+        return lib.trim(word);
     }
 
     function removemain() {
@@ -360,45 +356,7 @@ define(function (require) {
     };
 
     exports.initOptions = function () {
-        /**
-         * @property 英文字母大小写敏感
-         */
-        this.casesensitive;
-        /**
-         * @property 只作为分隔符, 不作为匹配word的成分参与匹配, 建议使用逗号或空格作为分隔符
-         */
-        this.splitchar;
-        /**
-         * @property 触发新的匹配动作, 并作为匹配word的一部分参与匹配
-         */
-        this.firechar = '{';
-        /**
-         * @property 结束匹配动作
-         */
-        this.closefirechar = '}';
 
-        if (this.casesensitive === 'false' || this.casesensitive === '0' || this.casesensitive === '') {
-            this.casesensitive = false;
-        }
-        else {
-            this.casesensitive = true;
-        }
-
-        if (this.splitchar) {
-            this.escapedSplitchar = escapeRegex(this.splitchar);
-            this.splitCharRE = new RegExp(this.escapedSplitchar + '([^' + this.escapedSplitchar + '\\s' + ']+)$');
-        }
-        this.escapedFirechar = escapeRegex(this.firechar);
-        this.escapedClosefirechar = escapeRegex(this.closefirechar);
-        this.endWithSplitCharRE = new RegExp(this.escapedSplitchar + '$');
-        this.endWithClosefireCharRE = new RegExp(this.escapedClosefirechar + '$');
-
-        this.fireCharRE = new RegExp('('
-            + this.escapedFirechar
-            + '[^' + this.escapedSplitchar
-            + this.escapedClosefirechar
-            + this.escapedFirechar + '\\s'
-            + ']*)$');
     };
 
     /**
