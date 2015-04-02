@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Sticky - Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link href="assets/third-party/prism.css" rel="stylesheet" />
+    <script src="assets/loader/esl.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <![endif]-->
+
+    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+
+    <script src="demo.js"></script>
+    <style>
+        .sticky_test {
+            height:30px;
+            width:800px;
+            border:1px solid #e5e5e5;
+            
+            padding: 15px;
+            background-color: #fafafa;
+            color:#666;
+            border-radius: 4px;
+        }
+        .big-row {
+            margin-bottom: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sticky</h1>
+    <div id="page">
+        <ul id="navigator">
+        </ul>
+        <div id="main">
+            <h2>Sticky</h2>
+            <section class="intro">
+                <p>悬浮在距离顶端的固定位置</p>
+            </section>
+            <section class="view">
+                <div class="big-row">
+                    <div class="sticky_test" data-ui="type:Sticky;top:0" >
+                        <div>设置top:0 可以悬浮在顶端</div>
+                    </div>
+                </div>
+                <div class="big-row">
+                    <div class="sticky_test" data-ui="type:Sticky;top:50" >
+                        <div>设置top:50 可以悬浮在距离顶端50px的位置</div>
+                    </div>
+                </div>
+                <div class="big-row">
+                    <div class="sticky_test" data-ui="type:Sticky;top:100" >
+                        <div>设置top:100 可以悬浮在距离顶端100px的位置</div>
+                    </div>
+                </div>
+                <div class="big-row">
+                    <div class="sticky_test" data-ui="type:Sticky;top:150" >
+                        <div>设置top:150 可以悬浮在距离顶端150px的位置</div>
+                    </div>
+                </div>
+                <div class="big-row">
+                    test
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        require(
+            [
+                'esui',
+                'Sticky'
+            ],
+            function (ui, Sticky) {
+                window.ui = ui;
+                var controls = ui.init();
+            }
+        );
+    </script>
+</body>
+</html>

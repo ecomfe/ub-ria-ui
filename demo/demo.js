@@ -90,6 +90,7 @@ $(function () {
         '<li><a href="MultiCalendar.html">MultiCalendar</a></li>',
         '<li><a href="Slider.html">Slider</a></li>',
         '<li><a href="Spinner.html">Spinner</a></li>',
+        '<li><a href="Sticky.html">Sticky</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
         '<li><a href="ToggleSelectors.html">ToggleSelectors</a></li>',
         '<li><a href="RichSelectors.html">RichSelectors</a></li>',
