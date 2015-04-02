@@ -185,8 +185,7 @@ define(
                     '<div data-ui="type:Panel;childName:searchBoxArea"',
                     ' class="${searchWrapperClass}">',
                     '<div data-ui="type:SearchBox;childName:itemSearch;"',
-                    ' data-ui-skin="magnifier"',
-                    ' data-ui-width="' + searchBoxWidth + '">',
+                    ' data-ui-button-variants="text-border icon">',
                     '</div>',
                     '</div>',
                     // 搜索结果概要
@@ -197,7 +196,7 @@ define(
                     '<span class="${linkClass}" id="${linkId}">清空</span>',
                     '共找到<span class="${countClass}" id="${queryResultCountId}"></span>个',
                     '</div>'
-                ].join('\n');
+                ].join('');
 
                 searchInput = lib.format(
                     searchInput,

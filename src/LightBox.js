@@ -20,6 +20,7 @@ define(function (require) {
         '</video>'
     ].join('');
 
+    // TODO: 做成一个可以配置的路径。
     var FLV_PLAYER = require.toUrl('img/video-preview-player.swf');
 
     var LOADING_TPL = '<div style="width:${width}px;height:${height}px;'
@@ -51,7 +52,8 @@ define(function (require) {
         var properties = {
             currentIndex: 0,
             width: 800,
-            height: 'auto'
+            height: 'auto',
+            dialogVariants: 'lightbox'
         };
         u.extend(properties, options);
         this.setProperties(properties);
@@ -79,7 +81,8 @@ define(function (require) {
             title: this.title || '',
             foot: this.foot || '',
             draggable: this.draggable || false,
-            needFoot: this.needFoot || false
+            needFoot: this.needFoot || false,
+            variants: this.dialogVariants
         });
         var dialog = ui.create('Dialog', properties);
         dialog.appendTo(document.body);
@@ -170,28 +173,6 @@ define(function (require) {
     exports.setContent = function (list) {
         this.setProperties({
             datasource: list
-        });
-    };
-
-    /**
-     * 设置头部标题
-     * @param {string} title 对话框头部标题
-     * @protected
-     */
-    exports.setTitle = function (title) {
-        this.setProperties({
-            title: title
-        });
-    };
-
-    /**
-     * 设置尾部内容
-     * @param {string} foot 对话框尾部内容
-     * @protected
-     */
-    exports.setFoot = function (foot) {
-        this.setProperties({
-            foot: foot
         });
     };
 

@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>LightBox - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <title>LightBox - ESUI Demo</title>
+    <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
 
@@ -16,7 +16,7 @@
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1>LightBox</h1>
+    <h1 id="branding">ESUI - LightBox</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
@@ -29,20 +29,21 @@
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
-                <div class="example" id="container">
+                <div class="example ui-demo-light-stage" id="container">
                     <button data-ui-type="Button"
                          data-ui-content="点我 show Single Image"
                          data-ui-id="btn1"/>
                     <button data-ui-type="Button"
-                         data-ui-content="点我 show Multiple Medias"
+                         data-ui-content="点我 show Multiple Media"
                          data-ui-id="btn2"/>
+                    
                     <div data-ui-type="LightBox"
                         data-ui-id="box1"
                         data-ui-title="Hi Baby, this is single image."
                         ></div>
                     <div data-ui-type="LightBox"
                         data-ui-id="box2"
-                        data-ui-title="Hi Baby, this is multiple medias."
+                        data-ui-title="Hi Baby, this is multiple media."
                         data-ui-width="400"
                         data-ui-height="300"
                         data-ui-current-index="1"
