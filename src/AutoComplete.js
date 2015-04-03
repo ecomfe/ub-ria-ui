@@ -107,6 +107,7 @@ define(function (require) {
             if (clickedTarget.nodeName === 'I') {
                 clickedTarget = clickedTarget.parentNode;
             }
+            clickedTarget = clickedTarget.parentNode.firstChild;
             hideSuggest.call(me);
             if (target.select && target.select(clickedTarget.textContent, target) === false) {
                 return;
@@ -177,7 +178,9 @@ define(function (require) {
     }
 
     function setTargetValue(value) {
-        var targetValue = this.target.getValue();
+        var controlType = this.target.type === TEXT_LINE ? TEXT : INPUT;
+        // this.target.getValue() 做了去重的事，这里不需要去重后的结果
+        var targetValue = this.target.helper.getPart(controlType).value;
         targetValue = lib.trim(targetValue);
         var arr = [];
         if (/\n/.test(targetValue)) {
