@@ -86,7 +86,6 @@ define(function (require) {
                     style.position = 'fixed';
                     style.top = parseInt(newTop) + 'px';
                     style.left = lib.getOffset(stickyMainElement).left + 'px';
-                    style.margin = '';
                     sticky.currentTop = newTop;
                 }
             }
@@ -117,16 +116,28 @@ define(function (require) {
             style.float = getCurrentStyle(mainElement, 'float') != 'none' ? getCurrentStyle(mainElement).float : '';
             style.margin = getCurrentStyle(mainElement, 'margin');
             this.initialTop = lib.getOffset(mainElement).top;
-  
-            sticked.push(this);
         },
 
         initEvents: function() {
-            if (!bindScroll) {
-                // addDOMEvent中对scroll进行了延迟，所以不够流畅
+            if (sticked.length === 0) {
                 lib.on(window, 'scroll', checkscrollposition);
-                bindScroll = true;
             }
+            sticked.push(this);
+        },
+
+        dispose: function () {
+            var me = this;
+            me.$super(arguments);
+            var mainElement = me.main;
+            reset(me);
+            sticked = u.without(sticked, me);
+            if (sticked.length === 0) {
+                lib.un(window, 'scroll', checkscrollposition);
+            }
+
+            var placeHolder = mainElement.parentNode;
+            lib.insertBefore(mainElement, mainElement.parentNode);
+            lib.removeNode(placeHolder);
         }
     };
 
