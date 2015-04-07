@@ -153,7 +153,10 @@ define(function (require) {
             }
         });
 
-        helper.addDOMEvent(inputElement, INPUT, obj.oninput = function (e) {
+        var inputEventName = ('oninput' in inputElement)
+            ? 'input'
+            : 'propertychange';
+        helper.addDOMEvent(inputElement, inputEventName, obj.oninput = function (e) {
             var elementValue = inputElement.value;
 
             // 空格或逗号结尾都忽略
