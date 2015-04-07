@@ -59,7 +59,7 @@ define(function (require) {
         if (data && data.length) {
             for (var i = 0, len = data.length; i < len; i++) {
                 var item = data[i];
-                ret += '<li'
+                ret += '<li tabindex="-1"'
                     + (u.isObject(item) && item.id ? ' data-id="' + item.id + '"' : '')
                     + ' class="'
                     + this.target.helper.getPrefixClass('autocomplete-item')
@@ -264,7 +264,9 @@ define(function (require) {
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, this.target.helper.getPrefixClass('autocomplete-item-hover'));
-        selectedItem.scrollIntoViewIfNeeded();
+        
+        selectedItem && selectedItem.focus();
+        this.inputElement.focus();
     }
 
     function getSelectedItemIndex() {
