@@ -109,10 +109,11 @@ define(function (require) {
             }
             clickedTarget = clickedTarget.parentNode.firstChild;
             hideSuggest.call(me);
-            if (target.select && target.select(clickedTarget.textContent, target) === false) {
+            var text = lib.getText(clickedTarget);
+            if (target.select && target.select(text, target) === false) {
                 return;
             }
-            setTargetValue.call(me, clickedTarget.textContent);
+            setTargetValue.call(me, text);
         });
 
         helper.addDOMEvent(inputElement, 'keydown', obj.keyboard = function (e) {
@@ -143,12 +144,12 @@ define(function (require) {
                         return;
                     }
                     hideSuggest.call(me);
-
+                    var text = lib.getText(selectedItem.firstChild);
                     if (target.select
-                        && target.select(selectedItem.firstChild.textContent, target) === false) {
+                        && target.select(text, target) === false) {
                         return;
                     }
-                    setTargetValue.call(me, selectedItem.firstChild.textContent);
+                    setTargetValue.call(me, text);
                     break;
             }
         });
@@ -200,6 +201,7 @@ define(function (require) {
             value = arr.join('\n');
         }
         this.target.setValue(value);
+        hideSuggest.call(this);
     }
 
     function extractMatchingWord(value) {

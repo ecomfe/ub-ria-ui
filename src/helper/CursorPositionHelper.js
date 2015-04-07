@@ -19,9 +19,15 @@ define(function (require) {
             if (document.selection) {
                 elem.focus();
                 var Sel = document.selection.createRange();
+                var doc = elem.ownerDocument;
+                var body = doc.body;
+                var docElem = doc.documentElement;
+                var clientTop = docElem.clientTop || body.clientTop || 0;
+                var top = Sel.boundingTop + (self.pageYOffset || docElem.scrollTop) - clientTop;
+                
                 ret = {
                     left: Sel.boundingLeft,
-                    top: Sel.boundingTop,
+                    top: top - 80,
                     bottom: Sel.boundingTop + Sel.boundingHeight
                 };
             }
