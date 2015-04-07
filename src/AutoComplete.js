@@ -264,6 +264,7 @@ define(function (require) {
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, this.target.helper.getPrefixClass('autocomplete-item-hover'));
+        selectedItem.scrollIntoViewIfNeeded();
     }
 
     function getSelectedItemIndex() {
