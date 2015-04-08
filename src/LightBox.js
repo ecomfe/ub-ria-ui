@@ -110,39 +110,42 @@ define(function (require) {
         });
 
         if (this.group) {
-            var groupElements = document.querySelectorAll('[data-lightbox-group="' + this.group + '"]');
-            var datasource = [];
-            u.each(groupElements, function (element, i) {
-                me.helper.addDOMEvent(element, 'click', function (e) {
-                    e.preventDefault();
-                    var target = e.target;
-                    while (target !== document.body && !lib.hasAttribute(target, 'data-lightbox-group')) {
-                        target = target.parentNode;
+            var container = this.groupContainerId ? lib.g(this.groupContainerId) : document.body;
+
+            me.helper.addDOMEvent(container, 'click', function (e) {
+                var target = e.target;
+                while (target !== document.body && !lib.hasAttribute(target, 'data-lightbox-group')) {
+                    target = target.parentNode;
+                }
+                if (!lib.hasAttribute(target, 'data-lightbox-group')) {
+                    return;
+                }
+                e.preventDefault();
+
+                var groupElements = document.querySelectorAll('[data-lightbox-group="' + me.group + '"]');
+                for (var i = 0; i < groupElements.length; i++) {
+                    if (groupElements[i] === target) {
+                        break;
                     }
-                    if (!lib.hasAttribute(target, 'data-lightbox-group')) {
-                        return;
-                    }
-                    for (var i = 0; i < groupElements.length; i++) {
-                        if (groupElements[i] === target) {
-                            break;
-                        }
-                    }
-                    me.show({
-                        currentIndex: i
-                    });
+                }
+                var datasource = [];
+                u.each(groupElements, function (element, i) {
+                    var item = {
+                        url: lib.getAttribute(element, 'href')
+                    };
+
+                    var dataType = lib.getAttribute(element, 'data-lightbox-type');
+                    dataType && (item.type = dataType);
+
+                    datasource.push(item);
                 });
 
-                var item = {
-                    url: lib.getAttribute(element, 'href')
-                };
+                me.datasource = datasource;
 
-                var dataType = lib.getAttribute(element, 'data-lightbox-type');
-                dataType && (item.type = dataType);
-
-                datasource.push(item);
+                me.show({
+                    currentIndex: i
+                });
             });
-
-            this.datasource = datasource;
         }
     };
 
