@@ -26,7 +26,8 @@ define(function (require) {
     ].join('');
 
     var ITEM_TPL = [
-        '<li class="${typeSelector}-item ${itemSelector}" index="${index}" style="width:${width}px;height:${height}px;">',
+        '<li class="${typeSelector}-item ${itemSelector}" index="${index}" ',
+            'style="width:${width}px;height:${height}px;margin-right:${spacing}px;">',
             '<img class="${typeSelector}-item-img" src="${imgSrc}"/>',
             '<span class="${typeSelector}-check ${iconCheck}"></span>',
         '</li>'
@@ -60,24 +61,35 @@ define(function (require) {
      * @param {Array} data 渲染数据
      * @param {number} itemWidth 单项的宽
      * @param {number} itemHeight 单项的高
+     * @param {number} spacing 图片间距
+     * @param {number} pageSize 图片间距
      * @return {string} html片段
      * @inner
      */
-    function getItemHtml(data, itemWidth, itemHeight) {
+    function getItemHtml(data, itemWidth, itemHeight, spacing, pageSize) {
         var html = [];
+        var len = data ? data.length : 0;
         u.each(data, function (item, index) {
-            var str = lib.format(
-                ITEM_TPL,
-                {
-                    'imgSrc': item.url,
-                    'width': itemWidth,
-                    'height': itemHeight,
-                    'index': index,
-                    'typeSelector': this.helper.getPrimaryClassName(),
-                    'itemSelector': this.isDisabled() ? this.helper.getPartClassName('disabled') : '',
-                    'iconCheck': this.helper.getIconClass('check')
-                }
-            );
+            var index1 = index + 1;
+            var str = '';
+            if (this.onRenderItem) {
+                str = this.onRenderItem(item);
+            }
+            else {
+                str = lib.format(
+                    ITEM_TPL,
+                    {
+                        'imgSrc': item.url,
+                        'width': itemWidth,
+                        'height': itemHeight,
+                        'index': index,
+                        'typeSelector': this.helper.getPrimaryClassName(),
+                        'itemSelector': this.isDisabled() ? this.helper.getPartClassName('disabled') : '',
+                        'iconCheck': this.helper.getIconClass('check'),
+                        'spacing': (index1 > 0 && index1 % pageSize === 0) ? 0 : spacing
+                    }
+                );
+            }
             html.push(str);
         }, this);
         return html.join('');
@@ -181,14 +193,16 @@ define(function (require) {
         if (this.isDisabled() || this.selectedIndex === index) {
             return;
         }
-        var selectedClass = this.helper.getPrimaryClassName('selected-item');
-        if (this.selectedIndex !== -1) {
-            var selector = this.helper.getPart('list');
-            var lis = selector.getElementsByTagName('li');
-            var li = lis[this.selectedIndex];
-            lib.removeClass(li, selectedClass);
+        if (this.emphasizeSelectedItem) {
+            var selectedClass = this.helper.getPrimaryClassName('selected-item');
+            if (this.selectedIndex !== -1) {
+                var selector = this.helper.getPart('list');
+                var lis = selector.getElementsByTagName('li');
+                var li = lis[this.selectedIndex];
+                lib.removeClass(li, selectedClass);
+            }
+            lib.addClass(el, selectedClass);
         }
-        lib.addClass(el, selectedClass);
         this.selectedIndex = index;
         this.selectedItem = this.getSelectedItem();
         this.value = this.selectedItem['id'];
@@ -260,24 +274,28 @@ define(function (require) {
          *
          * @param {Object} [options] 构造函数传入的参数
          * @param {number} option.pageSize 每页显示的个数
+         * @param {number} option.spacing 每个图片的间隔
          * @param {number} option.itemWidth 每项的宽度
          * @param {number} option.itemHeight 每项的高度
          * @param {Array} option.datasource 所有项的数据数组
          * @param {number} option.value 选中的项的id值
          * @param {number} option.selectedIndex 选中的项的序号
          * @param {boolean} option.disabled 是否禁用
+         * @param {boolean} option.emphasizeSelectedItem 是否高亮被选择的
          * @protected
          * @override
          */
         initOptions: function (options) {
             var properties = {
                 pageSize: 8,
+                spacing: 15,
                 itemWidth: 80,
                 itemHeight: 50,
                 datasource: [],
                 value: null,
                 selectedIndex: -1,
-                disabled: false
+                disabled: false,
+                emphasizeSelectedItem: true
             };
             u.extend(properties, options);
             if (properties.value) {
@@ -348,19 +366,25 @@ define(function (require) {
                 paint: function (carousel, datasource, itemWidth, itemHeight) {
                     var list = carousel.helper.getPart('list');
                     var toolbar = carousel.helper.getPart('toolbar');
-                    list.innerHTML = getItemHtml.call(carousel, datasource, itemWidth, itemHeight);
+                    var pageSize = carousel.pageSize;
+                    var spacing = carousel.spacing;
+                    list.innerHTML = 
+                        getItemHtml.call(
+                            carousel,
+                            datasource,
+                            itemWidth,
+                            itemHeight,
+                            spacing,
+                            pageSize
+                        );
                     toolbar.innerHTML = getToolbarHtml.call(carousel, datasource);
-                    //设置wrap的宽高
-                    //2为每项的margin宽度
-                    // FIXME 这些margin值被写死了
-                    var wrapWidth = (itemWidth + 2 * 2) * carousel.pageSize;
+
+                    var wrapWidth = itemWidth * carousel.pageSize + (pageSize - 1) * spacing;
                     var wrapHeight = itemHeight;
                     carousel.wrapWidth = wrapWidth;
                     var wrap = list.parentNode;
                     wrap.style.width = wrapWidth + 'px';
                     wrap.style.height = wrapHeight + 'px';
-                    var container = carousel.helper.getPart('main');
-                    container.style.width = wrapWidth + 30 * 2 + 'px';
                 }
             },
             {
@@ -378,6 +402,7 @@ define(function (require) {
          */
         setValue: function (value) {
             if (!value && value !== 0) {
+                this.setPage();
                 return;
             }
             this.value = parseInt(value, 10);
@@ -390,14 +415,16 @@ define(function (require) {
             this.selectedItem = this.getSelectedItem();
 
             if (this.selectedIndex !== -1) {
-                var selector = this.helper.getPart('list');
-                var lis = selector.getElementsByTagName('li');
-                var selectedClass = this.helper.getPrimaryClassName('selected-item');
-                u.each(lis, function (dom, i) {
-                    lib.removeClass(dom, selectedClass);
-                });
-                var li = lis[this.selectedIndex];
-                lib.addClass(li, selectedClass);
+                if (this.emphasizeSelectedItem) {
+                    var selector = this.helper.getPart('list');
+                    var lis = selector.getElementsByTagName('li');
+                    var selectedClass = this.helper.getPrimaryClassName('selected-item');
+                    u.each(lis, function (dom, i) {
+                        lib.removeClass(dom, selectedClass);
+                    });
+                    var li = lis[this.selectedIndex];
+                    lib.addClass(li, selectedClass);
+                }
             }
             var page = getPageByIndex.call(this);
             this.setPage(page);

@@ -68,12 +68,12 @@ define(
                 + '</div>'
                 + '<div class="${colorInputClass}" id="${colorInputId}" data-ui-type="TextBox"'
                 +     'data-ui-child-name="colorInput" data-ui-hint="#" data-ui-hint-type="prefix"'
-                +     'data-ui-width="120" data-ui-height="30"></div>';
+                +     'data-ui-width="auto"></div>';
             if (this.hasAlpha) {
                 mainTpl += ''
                     + '<div class="${alphaInputClass}" id="${alphaInputId}" data-ui-type="TextBox"'
                     +     'data-ui-child-name="alphaInput" data-ui-hint="%" data-ui-hint-type="suffix"'
-                    +     'data-ui-width="80" data-ui-height="30"></div>';
+                    +     'data-ui-width="auto"></div>';
             }
             this.main.innerHTML = lib.format(
                 mainTpl,

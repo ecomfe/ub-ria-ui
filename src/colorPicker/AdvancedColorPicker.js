@@ -11,7 +11,7 @@ define(
         var lib = require('esui/lib');
         var Control = require('esui/Control');
         var u = require('underscore');
-        var colorUtil = require('./util/color');
+        var colorUtil = require('./Color');
 
         require('esui/TextBox');
         require('esui/Label');
@@ -221,7 +221,7 @@ define(
          * @fires AdvancedColorPicker#change
          */
         function syncHBSToHex() {
-            var hex = require('./util/color').hsbToHex(
+            var hex = colorUtil.hsbToHex(
                 this.hue,
                 this.saturation,
                 this.bright
@@ -475,7 +475,7 @@ define(
          */
         function updateCanvasColor() {
             // 改掉Canvas的底色
-            var baseColor = require('./util/color').hsbToHex(this.hue, 1, 1);
+            var baseColor = colorUtil.hsbToHex(this.hue, 1, 1);
             var canvas = this.helper.getPart('canvas');
             canvas.style.backgroundColor = '#' + baseColor;
         }

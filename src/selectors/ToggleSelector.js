@@ -169,7 +169,7 @@ define(
             }
         };
 
-        var TogglePanel = require('./TogglePanel');
+        var TogglePanel = require('../TogglePanel');
         var ToggleSelector = require('eoo').create(TogglePanel, exports);
         require('esui').register(ToggleSelector);
 

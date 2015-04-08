@@ -84,16 +84,16 @@ $(function () {
         '<li><a href="Alert.html">Alert</a></li>',
         '<li><a href="AutoComplete.html">AutoComplete</a></li>',
         '<li><a href="Carousel.html">Carousel</a></li>',
-        '<li><a href="CascadingTreeRichSelector.html">CascadingTree</a></li>',
         '<li><a href="ColorPicker.html">ColorPicker</a></li>',
         '<li><a href="Filter.html">Filter</a></li>',
         '<li><a href="LightBox.html">LightBox</a></li>',
         '<li><a href="MultiCalendar.html">MultiCalendar</a></li>',
         '<li><a href="Slider.html">Slider</a></li>',
         '<li><a href="Spinner.html">Spinner</a></li>',
-        '<li><a href="ToggleSelector.html">ToggleSelector</a></li>',
+        '<li><a href="Sticky.html">Sticky</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
-        '<li><a href="TreeRichSelector.html">TreeRichSelector</a></li>',
+        '<li><a href="ToggleSelectors.html">ToggleSelectors</a></li>',
+        '<li><a href="RichSelectors.html">RichSelectors</a></li>',
         '<li><a href="Uploader.html">Uploader</a></li>'
 
     ];

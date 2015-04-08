@@ -52,7 +52,7 @@ define(
             if (!this.repeat) {
                 var repeatToken = checkRepeatToken.call(this, inputValue);
                 if (repeatToken.token) {
-                    flashToken(repeatToken.tokenElement);
+                    flashToken.call(this, repeatToken.tokenElement);
                     u.isFunction(this.repeatCallback) && this.repeatCallback(repeatToken);
                     return;
                 }
@@ -238,7 +238,7 @@ define(
                 var controlHelper = this.helper;
                 controlHelper.addDOMEvent(
                     this.main,
-                    'mousedown',
+                    'click',
                     this.focusInput
                 );
 
@@ -437,12 +437,6 @@ define(
                 var dataId = lib.getAttribute(target, 'data-id');
                 target.parentNode.removeChild(target);
                 delete this.data[dataId];
-
-                this.focusInput();
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
             },
 
             /**

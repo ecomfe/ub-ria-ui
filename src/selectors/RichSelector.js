@@ -20,6 +20,26 @@ define(
         /**
          * 控件类
          *
+         * 富选择控件有如下结构特点：
+         *
+         * - 一个标题栏          （可选）
+         *   - 标题栏总数显示    （可选）
+         *   - 标题栏批量操作    （可选）
+         * - 一个选择区          （必须）
+         *   - 选择区头部搜索框  （可选）
+         * - 一个底部状态栏      （可选）
+         *
+         * 富选择控件有两种交互模式：
+         *
+         * - add      选择后更新选择状态，并触发'add'事件
+         * - load     选择后更新选择状态，并触发'load'事件
+         * - del   选择后删除节点，并触发'delete'事件
+         *
+         * 富选择控件有两种选择模式：
+         *
+         * - 单选
+         * - 多选
+         *
          * @class ui.RichSelector
          * @extends esui.InputControl
          */
@@ -38,8 +58,6 @@ define(
          */
         exports.initOptions = function (options) {
             var properties = {
-                height: 340,
-                width: 200,
                 // 是否需要标题栏
                 hasHead: true,
                 // 标题栏是否需要统计数
@@ -65,7 +83,9 @@ define(
                 // add: 点击一个节点，把这个节点加到另一个容器里
                 // delete: 点击一个节点，删
                 mode: 'add',
-                multi: true
+                multi: true,
+                // 是否允许反选
+                allowUnselectNode: false
             };
 
             lib.extend(properties, options);
@@ -90,10 +110,17 @@ define(
                 properties.multi = false;
             }
 
-            properties.width = Math.max(200, properties.width);
-            this.setProperties(properties);
+            if (properties.allowUnselectNode === 'false') {
+                properties.allowUnselectNode = false;
+            }
+
+            this.$super([properties]);
         };
 
+        /**
+         * 创建标题栏HTML
+         * @return {string}
+         */
         exports.getHeadHTML = function () {
             var helper = this.helper;
             var actionLink = '';
@@ -137,6 +164,10 @@ define(
             return head;
         };
 
+        /**
+         * 创建底部状态栏HTML
+         * @return {string}
+         */
         exports.getFootHTML = function () {
             return [
                 '<div data-ui="type:Panel;childName:foot;"',
@@ -147,136 +178,91 @@ define(
             ].join('\n');
         };
 
+        /**
+         * 创建搜索框HTML
+         * @return {string}
+         */
+        exports.getSearchBoxHTML = function () {
+            return [
+                // 搜索区
+                '<div data-ui="type:Panel;childName:searchBoxArea"',
+                ' class="' + this.helper.getPartClassName('search-wrapper') + '">',
+                '    <div data-ui="type:SearchBox;childName:itemSearch;" ',
+                '      data-ui-button-variants="text-border icon"></div>',
+                '</div>'
+            ].join('');
+        };
+
+        /**
+         * @override
+         */
         exports.initStructure = function () {
             var tpl = [
-                // 表头
+                // 标题栏
                 '${head}',
                 // 内容
-                '<div data-ui="type:Panel;childName:body;"',
-                ' class="${bodyClass}">',
+                '<div data-ui="type:Panel;childName:body;" class="${bodyClass}">',
+                     // 搜索框
                 '    ${searchInput}',
-                // 搜索结果列表区
-                '    <div data-ui="type:Panel;childName:content"',
-                '     class="${contentClass}">',
-                // 结果为空提示
-                '        <div data-ui="type:Label;childName:emptyText"',
-                '         class="${emptyTextClass}">${emptyText}</div>',
-                // 结果列表
-                '        <div data-ui="type:Panel;childName:queryList"',
-                '         class="${queryListClass}">',
-                '        </div>',
+                     // 列表区
+                '    <div data-ui="type:Panel;childName:content" class="${contentClass}">',
+                         // 结果为空提示
+                '        <div data-ui="type:Label;childName:emptyText" class="${emptyTextClass}">${emptyText}</div>',
+                         // 结果列表
+                '        <div data-ui="type:Panel;childName:queryList" class="${queryListClass}"></div>',
                 '    </div>',
                 '</div>',
-                // 腿部概要信息
+                // 底部概要信息
                 '${footInfo}'
             ];
 
-            var helper = this.helper;
-            var head = '';
-            if (this.hasHead) {
-                head = this.getHeadHTML();
-            }
-
-            var searchInput = '';
-            if (this.hasSearchBox) {
-                var searchBoxWidth = this.width - 24;
-                searchInput = [
-                    // 搜索区
-                    '<div data-ui="type:Panel;childName:searchBoxArea"',
-                    ' class="${searchWrapperClass}">',
-                    '<div data-ui="type:SearchBox;childName:itemSearch;"',
-                    ' data-ui-skin="magnifier"',
-                    ' data-ui-width="' + searchBoxWidth + '">',
-                    '</div>',
-                    '</div>',
-                    // 搜索结果概要
-                    '<div data-ui="type:Panel;',
-                    'childName:generalQueryResultArea"',
-                    ' class="${generalQueryResultClass}"',
-                    ' id="${queryResultId}">',
-                    '<span class="${linkClass}" id="${linkId}">清空</span>',
-                    '共找到<span class="${countClass}" id="${queryResultCountId}"></span>个',
-                    '</div>'
-                ].join('\n');
-
-                searchInput = lib.format(
-                    searchInput,
-                    {
-                        searchWrapperClass: helper.getPartClassName('search-wrapper'),
-                        generalQueryResultClass: helper.getPartClassName('query-result-general'),
-                        queryResultCountId: helper.getId('result-count'),
-                        linkClass: helper.getPartClassName('clear-query-link'),
-                        linkId: helper.getId('clear-query'),
-                        countClass: helper.getPartClassName('search-count')
-                    }
-                );
-            }
-            var footInfo = '';
-            if (this.hasFoot) {
-                footInfo = this.getFootHTML();
-            }
-
-            this.main.style.width = this.width + 'px';
             this.main.innerHTML = lib.format(
                 tpl.join('\n'),
                 {
-                    head: head,
-                    bodyClass: helper.getPartClassName('body'),
-                    searchInput: searchInput,
-                    contentClass: helper.getPartClassName('content-wrapper'),
-                    emptyTextClass: helper.getPartClassName('empty-text'),
+                    head: this.hasHead ? this.getHeadHTML() : '',
+                    bodyClass: this.helper.getPartClassName('body'),
+                    searchInput: this.hasSearchBox ? this.getSearchBoxHTML() : '',
+                    contentClass: this.helper.getPartClassName('content-wrapper'),
+                    emptyTextClass: this.helper.getPartClassName('empty-text'),
                     emptyText: this.emptyText,
-                    queryListClass: helper.getPartClassName('query-list'),
-                    footInfo: footInfo
+                    queryListClass: this.helper.getPartClassName('query-list'),
+                    footInfo: this.hasFoot ? this.getFootHTML() : ''
                 }
             );
 
             this.initChildren();
 
             // 初始化模式状态
-            if (this.mode === 'load') {
-                this.addState('load');
-            }
-            else if (this.mode === 'add') {
-                this.addState('add');
-            }
-            else {
-                this.addState('del');
-            }
+            this.addState(this.mode || 'delete');
+
 
             // 绑事件
-            var batchActionLink = helper.getPart('batch-action');
-            if (batchActionLink) {
-                helper.addDOMEvent(
-                    batchActionLink,
+
+            // 批量操作
+            if (this.needBatchAction) {
+                this.helper.addDOMEvent(
+                    this.helper.getPart('batch-action'),
                     'click',
                     u.bind(this.batchAction, this)
                 );
             }
 
-            var clearQueryLink = helper.getPart('clear-query');
-            if (clearQueryLink) {
-                helper.addDOMEvent(
-                    clearQueryLink,
-                    'click',
-                    u.bind(this.clearQuery, this)
-                );
-            }
-
-            var searchBox = this.getSearchBox();
-            if (searchBox) {
+            // 搜索框
+            if (this.hasSearchBox) {
+                this.addState('has-search');
+                var searchBox = this.getSearchBox();
                 searchBox.on('search', search, this);
+                searchBox.on('clear', this.clearQuery, this);
             }
 
-            // 为备选区绑定事件
+            // 为备选区绑定点击事件
             var queryList = this.getQueryList().main;
-            helper.addDOMEvent(
+            this.helper.addDOMEvent(
                 queryList,
                 'click',
                 u.bind(this.eventDispatcher, this)
             );
         };
-
 
         /**
          * 点击行为分发器
@@ -287,7 +273,6 @@ define(
         exports.eventDispatcher = function (e) {
             return false;
         };
-
 
         /**
          * 根据关键词搜索结果
@@ -323,31 +308,18 @@ define(
             }
 
             if (event.filterData.length) {
-                // 查询
+                // 查询，更新数据源
                 this.queryItem(event.filterData);
-                // 更新概要搜索结果区
-                this.refreshResult();
                 // 更新腿部总结果
                 this.refreshFoot();
                 // 更新头部总结果
                 this.refreshHead();
-
                 // 更新状态
                 this.addState('queried');
-                // 调整高度
-                this.adjustHeight();
             }
             // 相当于执行清空操作
             else {
                 this.clearQuery();
-            }
-        };
-
-        exports.refreshResult = function () {
-            var count = this.getCurrentStateItemsCount();
-            var resultCount = this.helper.getPart('result-count');
-            if (resultCount) {
-                resultCount.innerHTML = count;
             }
         };
 
@@ -376,9 +348,6 @@ define(
             // 清空数据
             this.clearData();
 
-            // 概要搜索结果区归零
-            this.refreshResult();
-
             // 更新备选区
             this.refreshContent();
 
@@ -387,9 +356,6 @@ define(
 
             // 更新头部总结果
             this.refreshHead();
-
-            // 调整高度
-            this.adjustHeight();
 
             this.fire('clearquery');
 
@@ -508,36 +474,10 @@ define(
         };
 
         /**
-         * 调整高度。
-         * 出现搜索信息时，结果区域的高度要变小，才能使整个控件高度不变
+         * 数据适配
          *
+         * @public
          */
-        exports.adjustHeight = function () {
-            // 用户设置总高度
-            var settingHeight = this.height;
-
-            // 头部高度 contentHeight + border
-            var headHeight = 28;
-
-            // 是否有搜索框
-            var searchBoxHeight = this.hasSearchBox ? 45 : 0;
-
-            // 是否有腿部信息
-            var footHeight = this.hasFoot ? 25 : 0;
-
-            // 结果区高度 = 总高度 - 头部高度 - 搜索框高度 - 腿部高度
-            var contentHeight =
-                settingHeight - headHeight - searchBoxHeight - footHeight;
-
-            // 处于query状态时，会有一个30px的概要信息区
-            if (this.isQuery()) {
-                contentHeight -= 30;
-            }
-
-            var content = this.getContent().main;
-            content.style.height = contentHeight + 'px';
-        };
-
         exports.adaptData = function () {};
 
         /**
@@ -577,8 +517,6 @@ define(
                 this.refreshFoot();
                 // 更新头部总结果
                 this.refreshHead();
-                // 更新高度
-                this.adjustHeight();
             }
         };
 
@@ -662,12 +600,20 @@ define(
         };
 
         /**
+         * 获取已经选择的数据的完整数据结构
+         * @return {*}
+         * @public
+         */
+        exports.getSelectedItemsFullStructure = function () {
+            return {};
+        };
+
+        /**
          * 批量更新状态
          * @param {Array} items 需要更新的对象集合
          * @param {boolean} toBeSelected 要选择还是取消选择
          * @public
          */
-
 
         /**
          * 批量更新选择状态
@@ -680,20 +626,31 @@ define(
         /**
          * 设置元数据
          *
-         * @param {Array} selectedItems 置为选择的项.
+         * @param {Array | Object} value 置为选择的项.
          */
-        exports.setRawValue = function (selectedItems) {
-            this.rawValue = selectedItems;
-            this.selectItems(selectedItems, true);
+        exports.setRawValue = function (value) {
+            if (!u.isArray(value)) {
+                value = [value];
+            }
+
+            if (!this.multi && value.length > 1) {
+                value = value.slice(0);
+            }
+
+            this.selectItems(value, true);
         };
 
         /**
          * 获取已经选择的数据项
          *
-         * @return {Array}
+         * @return {Array | Object} 多选模式返回数组，单选模式返回单值
          */
         exports.getRawValue = function () {
-            return this.getSelectedItems();
+            var selectedItems = this.getSelectedItems();
+            if (!this.multi) {
+                return selectedItems[0];
+            }
+            return selectedItems;
         };
 
 
@@ -705,9 +662,14 @@ define(
          */
         exports.stringifyValue = function (rawValue) {
             var selectedIds = [];
-            u.each(rawValue, function (item) {
-                selectedIds.push(item.id);
-            });
+            if (!u.isArray(rawValue)) {
+                selectedIds = [rawValue];
+            }
+            else {
+                u.each(rawValue, function (item) {
+                    selectedIds.push(item.id);
+                });
+            }
             return selectedIds.join(',');
         };
 

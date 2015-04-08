@@ -22,7 +22,7 @@
         <div id="main">
             <h2>Alert</h2>
             <section class="intro">
-                <p>普通Accordion</p>
+                <p>利用Alert可以在页面上显示提示信息。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
@@ -34,12 +34,15 @@
                         <tr>
                             <td align="right">类型</td>
                             <td>
-                                <select id="type">
-                                    <option value="success">success</option>
-                                    <option value="warning">Warning</option>
-                                    <option value="prompt">Prompt</option>
-                                    <option value="error">Error</option>
-                                </select>
+                                <label class="ui-select-custom">
+                                    <select id="type">
+                                        <option value="success">Success</option>
+                                        <option value="warning">Warning</option>
+                                        <option value="info">Info</option>
+                                        <option value="error">Error</option>
+                                    </select>
+                                </label>
+
                                 <button id="show" class="ui-button ui-button-primary">Show an Alert!</button>
                             </td>
                         </tr>
@@ -56,7 +59,7 @@
                                     <input class="message" value="欲穷千里目" />
                                 </div><br /><br />
                                 <div class="ui-textbox">
-                                <input class="message" value="更上一层楼" />
+                                <input class="message" value="更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼" />
                                 </div>
                             </td>
                         </tr>
@@ -90,9 +93,8 @@
                         <tr>
                             <td align="right">是否带有Icon</td>
                             <td>
-                                <div class="ui-checkbox-custom">
-                                    <input type="checkbox" id="icon">
-                                    <label for="icon"></label>
+                                <div class="ui-textbox">
+                                    <input type="input" value="ui-icon-exclamation-circle" id="icon">
                                 </div>
                             </td>
                         </tr>
@@ -123,7 +125,7 @@
                     options.autoClose = lib.g('autoClose').value;
                     options.autoSlide = lib.g('autoSlide').value;
                     options.closeBtn = lib.g('closeBtn').checked;
-                    options.icon = lib.g('icon').checked;
+                    options.icon = lib.g('icon').value;
                     options.container = 'main';
 
                     alert[msgType](options);
