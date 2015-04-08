@@ -51,7 +51,7 @@ define(function (require) {
     exports.initOptions = function (options) {
         var properties = {
             currentIndex: 0,
-            width: 800,
+            width: 'auto',
             height: 'auto',
             dialogVariants: 'lightbox'
         };
@@ -108,6 +108,45 @@ define(function (require) {
         helper.addDOMEvent(this.dialog, rightLink, 'click', function (e) {
             me.showNextMedia();
         });
+
+        if (this.group) {
+            var container = this.groupContainerId ? lib.g(this.groupContainerId) : document.body;
+
+            me.helper.addDOMEvent(container, 'click', function (e) {
+                var target = e.target;
+                while (target !== document.body && !lib.hasAttribute(target, 'data-lightbox-group')) {
+                    target = target.parentNode;
+                }
+                if (!lib.hasAttribute(target, 'data-lightbox-group')) {
+                    return;
+                }
+                e.preventDefault();
+
+                var groupElements = document.querySelectorAll('[data-lightbox-group="' + me.group + '"]');
+                for (var i = 0; i < groupElements.length; i++) {
+                    if (groupElements[i] === target) {
+                        break;
+                    }
+                }
+                var datasource = [];
+                u.each(groupElements, function (element, i) {
+                    var item = {
+                        url: lib.getAttribute(element, 'href')
+                    };
+
+                    var dataType = lib.getAttribute(element, 'data-lightbox-type');
+                    dataType && (item.type = dataType);
+
+                    datasource.push(item);
+                });
+
+                me.datasource = datasource;
+
+                me.show({
+                    currentIndex: i
+                });
+            });
+        }
     };
 
     /**
@@ -185,6 +224,7 @@ define(function (require) {
         var data = this.datasource[this.currentIndex];
         this.showLoading();
 
+        // 这个是否要保留呢 ?
         if (!data.type) {
             if (/\.(?:jpg|png|gif|jpeg|bmp)$/i.test(data.url)) {
                 data.type = 'image';
@@ -210,7 +250,7 @@ define(function (require) {
     };
 
     /**
-     * 预览图片/视频
+     * 预览图片/视频/flash
      * @param {Object} options 预览参数
      * @protected
      * @return {Object} 播控方法
@@ -222,51 +262,18 @@ define(function (require) {
             options.id = options.id || 'preiew-' + Math.random();
             options.width = options.width || this.width;
             options.height = options.height || this.height;
-            if (type === 'image') {
-                this.previewImage(options);
-                return;
-            }
-            if (type === 'flash') {
-                html = getFlashHtml(options);
-            }
-            else if (type === 'video') {
-                var url = options.url;
-                if (/\.flv$/.test(url)) {
-                    html = getFlvHtml(options);
-                }
-                else if (/\.mp4|\.mov/.test(url)) {
-                    html = getVideoHtml(options);
-                }
-            }
-
-            this.mediaContainer.innerHTML = html;
-            this.dialog.show();
-
-            return {
-                play: function () {
-                    var flvPlayer = swf.getMovie(options.id);
-                    if (flvPlayer && flvPlayer.playVid) {
-                        setTimeout(function () {
-                            flvPlayer.playVid(options.url);
-                        }, 0);
-                    }
-                },
-                pause: function () {
-                    var flvPlayer = swf.getMovie(options.id);
-                    if (flvPlayer) {
-                        flvPlayer.playVid('');
-                    }
-                }
-            };
+            
+            var s = type.charAt(0).toUpperCase() + type.substring(1).toLowerCase();
+            (this['preview' + s] || this.previewNotSupported).call(this, options);
         }
     };
 
     /**
      * 预览图片
-     * @param {Object} data 图片数据
+     * @param {Object} options 图片数据
      * @protected
      */
-    exports.previewImage = function (data) {
+    exports.previewImage = function (options) {
         var me = this;
         var img = new Image();
         img.onload = function () {
@@ -280,7 +287,42 @@ define(function (require) {
             me.mediaContainer.innerHTML = lib.format(LOADED_FAILTURE_TPL, me);
             img.onload = img.onerror = null;
         };
-        img.src = data.url;
+        img.src = options.url;
+        options.width && (img.style.width = options.width + 'px');
+        options.height && (img.style.height = options.height + 'px');
+    };
+
+    /**
+     * 预览Flash
+     * @param {Object} options flash数据
+     * @protected
+     */
+    exports.previewFlash = function (options) {
+        var html = getFlashHtml(options);
+        this.mediaContainer.innerHTML = html;
+        this.dialog.show();
+    };
+
+    /**
+     * 预览视频
+     * @param {Object} options 视频数据
+     * @protected
+     */
+    exports.previewVideo = function (options) {
+        var url = options.url;
+        if (/\.flv$/.test(url)) {
+            html = getFlvHtml(options);
+        }
+        else if (/\.mp4|\.mov/.test(url)) {
+            html = getVideoHtml(options);
+        }
+        this.mediaContainer.innerHTML = html;
+        this.dialog.show();
+    };
+
+    exports.previewNotSupported = function () {
+        this.mediaContainer.innerHTML = NOT_SUPPORT_MESSAGE;
+        this.dialog.show();
     };
 
     /**

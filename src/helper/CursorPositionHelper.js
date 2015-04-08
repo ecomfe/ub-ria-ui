@@ -5,13 +5,7 @@
 
 define(function (require) {
     var _style = {};
-
-    // 获取最终样式
-    var _getStyle = 'getComputedStyle' in window ? function (elem, name) {
-        return getComputedStyle(elem, null)[name];
-    } : function (elem, name) {
-        return elem.currentStyle[name];
-    };
+    var lib = require('esui/lib');
 
     var helper = {
         /**
@@ -25,9 +19,15 @@ define(function (require) {
             if (document.selection) {
                 elem.focus();
                 var Sel = document.selection.createRange();
+                var doc = elem.ownerDocument;
+                var body = doc.body;
+                var docElem = doc.documentElement;
+                var clientTop = docElem.clientTop || body.clientTop || 0;
+                var top = Sel.boundingTop + (self.pageYOffset || docElem.scrollTop) - clientTop;
+                
                 ret = {
                     left: Sel.boundingLeft,
-                    top: Sel.boundingTop,
+                    top: top - 80,
                     bottom: Sel.boundingTop + Sel.boundingHeight
                 };
             }
@@ -97,7 +97,7 @@ define(function (require) {
 
         for (name in sStyle) {
             if (!rname.test(name)) {
-                val = _getStyle(elem, name);
+                val = lib.getComputedStyle(elem, name);
                 // Firefox 4
                 if (val !== '' && rstyle.test(typeof val)) {
                     name = name.replace(/([A-Z])/g, '-$1').toLowerCase();

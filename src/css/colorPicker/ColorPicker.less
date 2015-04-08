@@ -1,109 +1,101 @@
-@color-picker-main-height: 30px;
-@color-picker-block-frame-border-color: #666;
-@color-picker-block-frame-width: @color-picker-main-height - 2px;
-@color-picker-block-frame-height: @color-picker-main-height - 2px;
-@color-picker-alpha-input-width: 43px;
-@color-picker-color-input-width: 78px;
-@color-picker-layer-backgrond-color: #f1f1f1;
-@color-picker-layer-border-width: 1px;
-@color-picker-layer-border-color: #e4e4e4;
-@color-picker-head-height: 35px;
-@color-picker-header-padding-horizontal: 10px;
+@esui-color-picker-main-height: 2.5em;
+
+@esui-color-picker-head-height: 35px;
+@esui-color-picker-header-padding-horizontal: 10px;
+
+@esui-color-picker-color-block-border: 1px solid #DDD;
+@esui-color-picker-color-block-width: @esui-color-picker-main-height;
+@esui-color-picker-color-block-height: @esui-color-picker-main-height;
+@esui-color-picker-color-block-border-radius: 5px;
+@esui-color-picker-color-block-right-margin: .5em;
+
+@esui-color-picker-color-input-width: 5em;
+@esui-color-picker-color-input-right-margin: .5em;
+@esui-color-picker-alpha-input-width: 3em;
+
+@esui-color-picker-layer-top-margin: 1px;
 
 // 色彩信息描述区
-.ui-colorpicker {
-    .inline-block();
-    height: @color-picker-main-height;
-    line-height: @color-picker-main-height;
-    .clearfix();
+.@{ui-class-prefix}-colorpicker {
+    display: inline-block;
+    height: @esui-color-picker-main-height;
+    line-height: @esui-color-picker-main-height;
+    vertical-align: middle;
+}
 
-    // 所以这里加一个frame
-    .ui-colorpicker-color-block-frame {
-        border: 1px solid @color-picker-block-frame-border-color;
-        width: @color-picker-block-frame-width;
-        height: @color-picker-block-frame-height;
-        float: left;
-        margin-right: 10px;
-        .user-select(none);
+.@{ui-class-prefix}-colorpicker-color-block-frame {
+    float: left;
+    margin-right: @esui-color-picker-color-block-right-margin;
+}
 
-        .ui-colorpicker-color-block {
-            width: @color-picker-block-frame-width;
-            height: @color-picker-block-frame-height;
-            cursor: pointer;
-        }
+.@{ui-class-prefix}-colorpicker-color-block {
+    .border-radius(@esui-color-picker-color-block-border-radius);
+    border: @esui-color-picker-color-block-border;
+    width: @esui-color-picker-color-block-width;
+    height: @esui-color-picker-color-block-height;
+    cursor: pointer;
+    .user-select(none);
+    .box-sizing(border-box);
+}
+
+.@{ui-class-prefix}-colorpicker-color-input {
+    float: left;
+    margin-right: @esui-color-picker-color-input-right-margin;
+    input {
+        width: @esui-color-picker-color-input-width;
     }
+}
 
-    .ui-textbox {
-        float: left;
-        font-size: 13px;
-    }
-
-    .ui-colorpicker-color-input {
-        margin-right: 20px;
-        input {
-            // 这个地方这么写是因为textbox某些时候隐藏的时候input尺寸计算错误，
-            // 所以hardcode
-            width: @color-picker-color-input-width !important;
-            height: @color-picker-main-height !important;
-            // 这个地方这些，因为textbox在设置height的时候没有设置line-height
-            line-height: @color-picker-main-height;
-        }
-    }
-
-    .ui-colorpicker-alpha-input {
-        input {
-            width: @color-picker-alpha-input-width !important;
-            height: @color-picker-main-height !important;
-            // 这个地方这些，因为textbox在设置height的时候没有设置line-height
-            line-height: @color-picker-main-height;
-        }
+.@{ui-class-prefix}-colorpicker-alpha-input {
+    float: left;
+    input {
+        width: @esui-color-picker-alpha-input-width;
     }
 }
 
 // 拾色器浮层
-.ui-colorpicker-layer {
-    background-color: @color-picker-layer-backgrond-color;
-    margin-top: 1px;
-    border: @color-picker-layer-border-width solid @color-picker-layer-border-color;
+.@{ui-class-prefix}-colorpicker-layer {
+    margin-top: @esui-color-picker-layer-top-margin;
+    .esui-colorpicker-layer-theme();
 
-    .ui-fullcolorpicker {
+    .@{ui-class-prefix}-fullcolorpicker {
         border: none;
     }
 
-    &.ui-overlay-dialog {
-        .ui-fullcolorpicker {
+    &.@{ui-class-prefix}-overlay-dialog {
+        .@{ui-class-prefix}-fullcolorpicker {
             padding-top: 0;
             padding-bottom: 0;
         }
 
-        .ui-colorpicker-head {
-            height: @color-picker-head-height;
-            line-height: @color-picker-head-height;
-            padding: 0 @color-picker-header-padding-horizontal;
+        .@{ui-class-prefix}-colorpicker-head {
+            height: @esui-color-picker-head-height;
+            line-height: @esui-color-picker-head-height;
+            padding: 0 @esui-color-picker-header-padding-horizontal;
             font-size: 12px;
             .clearfix();
         }
 
-        .ui-colorpicker-title {
+        .@{ui-class-prefix}-colorpicker-title {
             float: left;
             text-align: left;
         }
 
-        .ui-colorpicker-close-btn {
+        .@{ui-class-prefix}-colorpicker-close-btn {
             float: right;
             width: 50px;
             text-align: right;
             cursor: pointer;
         }
 
-        .ui-colorpicker-foot-frame {
-            padding: @color-picker-header-padding-horizontal;
+        .@{ui-class-prefix}-colorpicker-foot-frame {
+            padding: @esui-color-picker-header-padding-horizontal;
             .clearfix();
 
-            .ui-colorpicker-foot {
+            .@{ui-class-prefix}-colorpicker-foot {
                 float: right;
 
-                .ui-button {
+                .@{ui-class-prefix}-button {
                     margin-left: 10px;
                     min-height: 0;
                     line-height: 26px;
@@ -113,9 +105,9 @@
         }
     }
 
-    &.ui-overlay-attached {
-        .ui-colorpicker-head,
-        .ui-colorpicker-foot-frame {
+    &.@{ui-class-prefix}-overlay-attached {
+        .@{ui-class-prefix}-colorpicker-head,
+        .@{ui-class-prefix}-colorpicker-foot-frame {
             display: none;
         }
     }
