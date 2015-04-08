@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Filter - Demo</title>
+    <title>FilterGroup - Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
@@ -16,66 +16,38 @@
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1>Filter</h1>
+    <h1>FilterGroup</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
-            <h2>Filter</h2>
+            <h2>FilterGroup</h2>
             <section class="intro">
-                <p>单选 Filter</p>
+                <p>FilterGroup</p>
             </section>
             <section class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example" id="container">
-                    <div data-ui-type="Filter"
+                    <div data-ui-type="FilterItem"
+                         data-ui-id="test1"
+                         data-ui-defaultFirst="true"
                          data-ui-custom="true"
-                         data-ui-id="test1">
-                     </div>
-                </div>
-            </section>
-
-            <section class="intro">
-                <p>多选 Filter</p>
-            </section>
-            <section class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example" id="container">
-                    <div data-ui-type="Filter"
-                         data-ui-multiple="true"
-                         data-ui-id="test2">
-                     </div>
-                </div>
-            </section>
-
-            <section class="intro">
-                <p>自定义 Filter</p>
-            </section>
-            <section class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example" id="container">
-                    <div data-ui-type="Filter"
-                         data-ui-multiple="true"
-                         data-ui-custom="true"
-                         data-ui-custom-label="自定义城市"
-                         data-ui-id="test3">
-                         <div class="custom-input" style="display:inline-block">
-                            <input type="text" style="width:50px"/>
-                            <span>-</span>
-                            <input type="text" style="width:50px"/>
-                            <input type="button" data-role="ok" value="确定"/>
-                            <input type="button" data-role="cancel" value="取消"/>
-                         </div>
+                         data-ui-label="单选">
                     </div>
-
+                    <div data-ui-type="FilterItem"
+                         data-ui-id="test2"
+                         data-ui-label="多选"
+                         data-ui-multiple="true">
+                    </div>
+                    <div data-ui-type="FilterResult"
+                         data-ui-id="result"
+                         data-ui-label="已选择">
+                    </div>
                 </div>
             </section>
+            <div data-ui-type="Button" data-ui-id="submit" data-ui-variants="success" style="margin-top:20px;">获取值</div>
         </div>
     </div>
     <script>
@@ -83,78 +55,87 @@
         require(
             [
                 'esui',
-                'Filter'
+                'FilterItem',
+                'FilterResult',
+                'esui/Button'
             ],
             function (ui) {
                 window.ui = ui;
+                var citys = [
+                    {
+                        text: '上海',
+                        value: 'SHANGHAI'
+                    },
+                    {
+                        text: '北京',
+                        value: 'BEIJING'
+                    },
+                    {
+                        text: '广州',
+                        value: 'GUANGZHOU'
+                    },
+                    {
+                        text: '深圳',
+                        value: 'SHENZHEN'
+                    },
+                    {
+                        text: '杭州',
+                        value: 'HANGZHOU'
+                    },
+                    {
+                        text: '南京',
+                        value: 'NANJING'
+                    },
+                    {
+                        text: '厦门',
+                        value: 'XIAMEN'
+                    },
+                    {
+                        text: '苏州',
+                        value: 'SUZHOU'
+                    },
+                    {
+                        text: '珠海',
+                        value: 'ZHUHAI'
+                    }
+                ];
                 var controls = ui.init();
-                for (var i = 0; i < controls.length; i++) {
-                    controls[i].setProperties({
-                        'datasource': [
-                            {
-                                text: '不限',
-                                value: 'ANY',
-                                isAny: true
-                            },
-                            {
-                                text: '上海',
-                                value: 'SHANGHAI'
-                            },
-                            {
-                                text: '北京',
-                                value: 'BEIJING'
-                            },
-                            {
-                                text: '广州',
-                                value: 'GUANGZHOU'
-                            },
-                            {
-                                text: '深圳',
-                                value: 'SHENZHEN'
-                            },
-                            {
-                                text: '杭州',
-                                value: 'HANGZHOU'
-                            },
-                            {
-                                text: '南京',
-                                value: 'NANJING'
-                            },
-                            {
-                                text: '厦门',
-                                value: 'XIAMEN'
-                            },
-                            {
-                                text: '苏州',
-                                value: 'SUZHOU'
-                            },
-                            {
-                                text: '珠海',
-                                value: 'ZHUHAI'
-                            }
-                        ],
-                        onselect: function(condition, item, target) {
-                            console.log('当前选中了：' + JSON.stringify(item));
-                            console.log('选择的条件：' + JSON.stringify(condition));
-                        },
-                        onunselect: function(condition, item, target) {
-                            console.log('当前移除了：' + JSON.stringify(item));
-                            console.log('选择的条件：' + JSON.stringify(condition));
-                        },
-                        onsave: function (itemTexts, res) {
-                            var item = {
-                                text: itemTexts.join('-'),
-                                value: CC2PY(itemTexts.join('-')).toUpperCase()
-                            };
-                            setTimeout(function(){
-                                res(item);
-                            }, 100);
-                        },
-                        itemsLabel: '城市：',
-                        selectedItemsLabel: '已选择：'
+                $.each(controls, function (index, control) {
+                    if (index + 2 >= controls.length) {
+                        return;
+                    }
+                    var citysClone = $.extend(true, [], citys);
+                    $.each(citysClone, function (i, city) {
+                        city.text += index;
+                        city.value += index;
                     });
-                }
-        });
+                    control.setProperties({
+                        'datasource': citysClone
+                    });
+                })
+                var filter1 = controls[0];
+                var filter2 = controls[1];
+                var result = controls[2];
+                filter1.on('select', function (e) {
+                    result.addItem(e.item);
+                    result.removeItem(e.lastItem);
+                });
+                filter2.on('select', function (e) {
+                    result.addItem(e.item);
+                });
+                result.on('unselect', function (e) {
+                    filter1.removeItem(e.item);
+                    filter2.removeItem(e.item);
+                    // console.log(filter2.getValue());
+                });
+                // 获取值
+                var submit = controls[3];
+                submit.on('click', function (e) {
+                    var val = result.getValue();
+                    console.log(val);
+                });
+            }
+        );
 
 
         var wordmap = {
