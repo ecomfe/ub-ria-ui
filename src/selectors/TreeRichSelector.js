@@ -14,7 +14,7 @@ define(
         var lib = require('esui/lib');
 
 
-        var u = require('underscore');
+        var u = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
 
@@ -52,11 +52,11 @@ define(
                 wideToggleArea: false,
                 // 是否只允许选择叶子节点
                 onlyLeafSelect: true,
-                // 是否允许反选
-                allowUnselectNode: false,
                 // 是否隐藏根节点
                 hideRoot: true,
                 // 节点状态切换时，父子节点是否需要同步状态
+                // 有些需求场景是，父子节点除了概念上的从属关系外，交互上没有任何关联
+                // 选择父节点不代表其下的子节点全被选中；选择全部子节点也不代表父节点选中
                 needSyncParentChild: true,
                 // 树样式
                 treeVariants: 'icon angle hoverable'
@@ -78,17 +78,6 @@ define(
 
             if (properties.wideToggleArea === 'false') {
                 properties.wideToggleArea  = false;
-            }
-
-            // multi 这东西本来是在基类里面定义的，但是因为有特殊处理情境，这里先处理下
-            // 如果是单选的，那一定只能选择叶子节点
-            // (也可能遇到那种选了父节点并不代表叶子节点全选的奇葩需求，那就请自行创建一个控件吧。。。)
-            if (properties.multi === 'false') {
-                properties.multi = false;
-            }
-
-            if (properties.multi === false) {
-                properties.onlyLeafSelect = true;
             }
 
             if (properties.needSyncParentChild === 'false') {
@@ -176,7 +165,7 @@ define(
              *     ]
              * }
              */
-            this.allData = this.datasource;
+            this.allData = u.deepClone(this.datasource);
             // 一个扁平化的索引
             // 其中包含父节点信息，以及节点选择状态
             var indexData = {};
@@ -223,9 +212,7 @@ define(
          */
         exports.refreshContent = function () {
             var treeData = this.isQuery() ? this.queriedData : this.allData;
-            if (!treeData
-                || !treeData.children
-                || !treeData.children.length) {
+            if (!treeData || !treeData.children || !treeData.children.length) {
                 this.addState('empty');
             }
             else {
@@ -284,7 +271,7 @@ define(
             }
             else {
                 tree.setProperties({
-                    'datasource': lib.deepClone(treeData),
+                    'datasource': u.deepClone(treeData),
                     'keyword': this.getKeyword()
                 });
             }
@@ -310,7 +297,7 @@ define(
         };
 
         exports.getDatasourceWithState = function () {
-            var datasource = lib.deepClone(this.datasource);
+            var datasource = u.deepClone(this.datasource);
             var indexData = this.indexData;
             this.walkTree(datasource, datasource.children, function (parent, child) {
                 child.isSelected = indexData[child.id].isSelected;
@@ -574,8 +561,7 @@ define(
             }
             else {
                 node.children = newChildren;
-                // datasource以引用形式分布下来，因此无需重新set了
-                control.refresh();
+                control.setProperties({datasource: control.allData});
             }
         }
 
@@ -695,7 +681,7 @@ define(
         exports.getSelectedTree = function () {
             var control = this;
             // clone完整数据，这个数据是原始的，不带最新选择状态的
-            var copyData = lib.deepClone(this.allData);
+            var copyData = u.deepClone(this.allData);
             // 遍历树，把各个节点的children更新成只包含已选状态节点的
             this.walkTree(
                 copyData,
@@ -716,6 +702,14 @@ define(
                 return node.children || control.indexData[node.id].isSelected;
             });
             return copyData;
+        };
+
+
+        /**
+         * @override
+         */
+        exports.getSelectedItemsFullStructure = function () {
+            return this.getSelectedTree();
         };
 
         function getSelectedNodesUnder(parentNode, control) {

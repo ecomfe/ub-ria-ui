@@ -21,9 +21,9 @@
         <ul id="navigator">
         </ul>
         <div id="main">
-            <h2>左右选择控件</h2>
+            <h2>左右选择Table Selector</h2>
             <section class="intro">
-                <p>左右选择Table Selector。</p>
+                <p>右两个列表型富选择器组成，支持从左侧添加到右侧，支持从右侧删除。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
@@ -33,31 +33,35 @@
                     <div class="row">
                         <h3>双向Table Rich Selector</h3>
                         <div
-                            data-ui-type="CascadingTableRichSelector"
+                            data-ui-type="CascadingRichSelector"
                             data-ui-id="cas-slots"
-                            data-ui-name="casSlots"
-                            data-ui-item-name="代码位"
-                            data-ui-source-title="请选代码位"
-                            data-ui-target-title="已选代码位"
-                            data-ui-source-empty-text="没有符合条件的代码位"
-                            data-ui-target-empty-text="请从左侧选择要添加的代码位"
-                            data-ui-has-source-search-box="true"
-                            data-ui-has-target-search-box="false"
-                            data-ui-height="300"
-                            data-ui-width="200"
-                            data-ui-has-search-box="false"
-                            data-ui-datasource="@apps">
-                            <!--
-                            data-ui-disabled="disabled">
-                            -->
+                            data-ui-name="cas-slots">
+                            <esui-table-rich-selector
+                                data-ui-child-name="source"
+                                data-ui-title="全部有效代码位"
+                                data-ui-has-head="true"
+                                data-ui-has-search-box="true"
+                                data-ui-need-batch-action="true"
+                                data-ui-batch-action-label="选择全部">
+                            </esui-table-rich-selector>
+                            <esui-table-rich-selector
+                                data-ui-child-name="target"
+                                data-ui-title="已选择代码位"
+                                data-ui-mode="delete"
+                                data-ui-need-batch-action="true"
+                                data-ui-batch-action-label="删除全部"
+                                data-ui-empty-text="请从左侧选择要添加的代码位">
+                            </esui-table-rich-selector>
                         </div>
                     </div>
+                    <esui-button data-ui-id="get-cas-slots">获取选值</esui-button>
+                    <esui-label data-ui-id="cas-slots-result"></esui-label>
                 </div>
             </section>
 
-            <h2>两个Table Rich Selector</h2>
+            <h2>左右选择Tree Selector</h2>
             <section class="intro">
-                <p>两个Table Rich Selector配合使用。</p>
+                <p>右两个树表型富选择器组成，支持从左侧添加到右侧，支持从右侧删除。</p>
             </section>
             <section class="view">
                 <ul class="viewer">
@@ -65,71 +69,38 @@
                 </ul>
                 <div class="example ui-demo-light-stage">
                     <div class="row">
-                        <h3>一级两列列表选择</h3>
-                        <esui-table-rich-selector
-                            data-ui-id="all-table-slots"
-                            data-ui-title="全部有效代码位"
-                            data-ui-has-foot="true"
-                            data-ui-has-head="true"
-                            data-ui-has-row-head="true"
-                            data-ui-need-batch-action="true"
-                            data-ui-batch-action-label="选择全部"
-                            data-ui-width="275">
-                        </esui-table-rich-selector>
-                        <esui-table-rich-selector
-                            data-ui-id="selected-table-slots"
-                            data-ui-title="已选择代码位"
-                            data-ui-mode="delete"
-                            data-ui-has-search-box="true"
-                            data-ui-has-foot="true"
-                            data-ui-need-batch-action="true"
-                            data-ui-batch-action-label="删除全部"
-                            data-ui-empty-text="请从左侧选择要添加的代码位"
-                            data-ui-has-row-head="true"
-                            data-ui-width="275">
-                        </esui-table-rich-selector>
-                    </div>
-                </div>
-            </section>
-
-            <h2>两个Tree Selector配合使用</h2>
-            <section class="intro">
-                <p>两个Tree Selector配合使用。</p>
-            </section>
-            <section class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage">
-                    <div class="row">
-                        <h3>一级两列列表选择</h3>
-                        <div data-ui-type="TreeRichSelector"
-                            data-ui-id="tree-all-slots"
-                            data-ui-title="全部有效代码位"
-                            data-ui-hold-state="true"
-                            data-ui-has-foot="false"
-                            data-ui-only-leaf-select="false"
-                            data-ui-tree-variants="icon angle hoverable"
-                            data-ui-need-batch-action="true"
-                            data-ui-batch-action-label="选择全部"
-                            data-ui-width="275">
-                        </div>
-                        <div data-ui-type="TreeRichSelector"
-                            data-ui-name="adpIds"
-                            data-ui-mode="delete"
-                            data-ui-id="tree-selected-slots"
-                            data-ui-has-search-box="false"
-                            data-ui-title="已分配代码位"
-                            data-ui-empty-text="请从左侧选择要添加的代码位"
-                            data-ui-has-foot="false"
-                            data-ui-need-batch-action="true"
-                            data-ui-batch-action-label="删除全部"
-                            data-ui-hold-state="true"
-                            data-ui-only-leaf-select="false"
-                            data-ui-width="275"
-                            data-ui-validity-label="slot-validity">
+                        <h3>双向Tree Rich Selector</h3>
+                        <div
+                            data-ui-type="CascadingRichSelector"
+                            data-ui-id="cas-apps"
+                            data-ui-name="cas-apps">
+                            <div data-ui-type="TreeRichSelector"
+                                data-ui-child-name="source"
+                                data-ui-title="全部有效代码位"
+                                data-ui-hold-state="true"
+                                data-ui-has-foot="false"
+                                data-ui-only-leaf-select="false"
+                                data-ui-tree-variants="icon angle hoverable"
+                                data-ui-need-batch-action="true"
+                                data-ui-batch-action-label="选择全部">
+                            </div>
+                            <div data-ui-type="TreeRichSelector"
+                                data-ui-child-name="target"
+                                data-ui-mode="delete"
+                                data-ui-has-search-box="false"
+                                data-ui-title="已分配代码位"
+                                data-ui-empty-text="请从左侧选择要添加的代码位"
+                                data-ui-has-foot="false"
+                                data-ui-need-batch-action="true"
+                                data-ui-batch-action-label="删除全部"
+                                data-ui-hold-state="true"
+                                data-ui-only-leaf-select="false"
+                                data-ui-validity-label="slot-validity">
+                            </div>
                         </div>
                     </div>
+                    <esui-button data-ui-id="get-cas-apps">获取选值</esui-button>
+                    <esui-label data-ui-id="cas-apps-result"></esui-label>
                 </div>
             </section>
         </div>
@@ -138,33 +109,27 @@
         require(
                 [
                     'esui',
+                    'selectors/CascadingRichSelector',
                     'selectors/CascadingTableRichSelector',
                     'selectors/TreeRichSelector'
                 ],
                 function (ui) {
-                    var tables = ui.init(document.body);
-                    var table1 = ui.get('cas-slots');
-
+                    ui.init();
                     var arrayDatasource = [];
                     for (var i = 0; i < 20; i++) {
-                        var isSelected = false;
-                        if (i == 20) {
-                            isSelected = true;
-                        }
                         arrayDatasource.push({
                             text: '广告位' + (i + 1),
                             name: '广告位' + (i + 1),
                             prop: '属性' + (i + 1),
-                            id: i + 1,
-                            isSelected: isSelected
+                            id: i + 1
                         })
                     }
-                    table1.setProperties({datasource: arrayDatasource, rawValue:[5,7]});
 
-                    var source = ui.get('all-table-slots');
-                    var target = ui.get('selected-table-slots');
+                    var cascading = ui.get('cas-slots');
+                    var casSource = cascading.getChild('source');
+                    var casTarget = cascading.getChild('target');
 
-                    source.setProperties({
+                    casSource.setProperties({
                         datasource: arrayDatasource,
                         fields: [
                             {
@@ -173,7 +138,8 @@
                                     return item.name;
                                 },
                                 searchScope: 'partial',
-                                width: 120,
+                                width: 100,
+                                isDefaultSearchField: true,
                                 title: '名称'
                             },
                             {
@@ -186,7 +152,7 @@
                             }
                         ]
                     });
-                    target.setProperties({
+                    casTarget.setProperties({
                         fields: [
                             {
                                 field: 'name',
@@ -209,17 +175,8 @@
                         ]
                     });
 
-
-                    source.on('change', function () {
-                        var newdata = this.getSelectedItems();
-                        target.setProperties({
-                            datasource: newdata
-                        })
-                    });
-
-                    target.on('delete', function (arg) {
-                        var items = arg.items;
-                        source.selectItems(arg.items, false);
+                    ui.get('get-cas-slots').on('click', function () {
+                        ui.get('cas-slots-result').setText(cascading.getValue());
                     });
 
                     var treeDatasource = {
@@ -232,8 +189,7 @@
                         children.push({
                             text: '广告位' + (i + 1),
                             name: '广告位' + (i + 1),
-                            id: i + 1,
-                            isSelected: true
+                            id: i + 1
                         })
                     }
 
@@ -249,22 +205,16 @@
                         ]
                     }
 
-                    var leftTree = ui.get('tree-all-slots');
-                    var rightTree = ui.get('tree-selected-slots');
-
+                    var appTree = ui.get('cas-apps');
+                    var leftTree = appTree.getChild('source');
+                    var rightTree = appTree.getChild('target');
                     leftTree.setProperties({datasource: treeDatasource});
+                    var treeData = leftTree.getSelectedTree();
+                    rightTree.setProperties({datasource: treeData});
 
-                    leftTree.on('add', function () {
-                        var newdata = this.getSelectedTree();
-                        rightTree.setProperties({
-                            datasource: newdata
-                        })
-                    });
-                    leftTree.fire('add');
 
-                    rightTree.on('delete', function (arg) {
-                        var items = arg.items;
-                        leftTree.selectItems(arg.items, false);
+                    ui.get('get-cas-apps').on('click', function () {
+                        ui.get('cas-apps-result').setText(appTree.getValue());
                     });
                 }
         );

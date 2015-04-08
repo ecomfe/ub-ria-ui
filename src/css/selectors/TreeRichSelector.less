@@ -81,10 +81,12 @@ esui-tree-rich-selector {
         }
     }
 
-    &.@{ui-class-prefix}-richselector-del {
+    &.@{ui-class-prefix}-richselector-delete {
         .@{ui-class-prefix}-tree-content-wrapper:hover {
-            // 默认带一个小对勾
-            .esui-richselector-icon(times);
+            .ui-tree-item-content {
+                // 默认带一个小对勾
+                .esui-richselector-icon(times);
+            }
         }
     }
 }
@@ -105,7 +107,7 @@ esui-tree-rich-selector {
     position: relative;
     &:before {
         position: absolute;
-        right: 2em;
+        right: 1em;
         color: @esui-richselector-node-icon-color;
     }
 }

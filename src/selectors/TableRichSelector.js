@@ -40,37 +40,26 @@ define(
          */
         exports.initOptions = function (options) {
             var properties = {
-                hasRowHead: true,
-                hasIcon: true,
-                // 是否触发在图标上
+                // 事件是否只触发在图标上
                 firedOnIcon: false,
-                // 数据源
+                // 数据源，全集数据
                 datasource: [],
-                // 选择数据
+                // 已选的数据
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
                     {field: 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
-                ],
-                allowUnselectNode: false
+                ]
             };
 
             lib.extend(properties, options);
-
-            if (properties.hasRowHead === 'false') {
-                properties.hasRowHead = false;
-            }
-
-            if (properties.hasIcon === 'false') {
-                properties.hasIcon = false;
-            }
 
             if (properties.firedOnIcon === 'false') {
                 properties.firedOnIcon = false;
             }
 
-            if (properties.allowUnselectNode === 'false') {
-                properties.allowUnselectNode = false;
+            if (properties.isStatableDatasource === 'false') {
+                properties.isStatableDatasource = false;
             }
 
             this.$super([properties]);
@@ -109,33 +98,25 @@ define(
 
         /**
          * 构建List可以使用的数据结构
-         * 用户传入数据：
-         * —— datasource
-         * {
-         *     allData: [{id: xxx, name: xxx}, {id: yyy, name: yyyy}...]
-         *     selectedData: [{id: zz, name: zzzz}, {id: mm, name: mmmm}...]
-         * }
-         * 将allData和SelectedData映射转换后
-         * —— mixedDatasource
-         * [
-         *    {id: xxx, name: xxx, isSelected: false},
-         *    {id: yyy, name: yyyy, isSelected: false}
-         *    ...
-         * ]
-         * —— indexData （就是一个以id为key，index做value的映射表）
+         * 把用户传入数据制作成一个副本allData：
+         * —— allData
+         * [{id: 1, name: xxx}, {id: 2, name: yyy}...]
+         *
+         * 把allData转换成索引表，方便查找，并附加状态信息
+         * —— indexData
+         * {1: {index: 1, isSelected: true}, 2: {index: 2, isDisabled: true}}
          *
          * @override
          */
         exports.adaptData = function () {
-            var allData = lib.deepClone(this.datasource);
-            // 先构建indexData
+            this.allData = lib.deepClone(this.datasource);
+            // 先构建indexData，把数据源里的选择状态清除
             var indexData = {};
-            u.each(allData, function (item, index) {
-                indexData[item.id] = index;
+            u.each(this.allData, function (item, index) {
+                indexData[item.id] = {index: index};
             });
-            this.indexData = indexData;
 
-            // 把选择状态merge进allData的数据项中
+            // 把选择状态merge进indexData的数据项中
             var selectedData = this.selectedData || [];
             // 单选模式
             if (!this.multi) {
@@ -151,22 +132,20 @@ define(
             }
 
             u.each(selectedData, function (item, index) {
-                var selectedIndex = indexData[item.id];
                 // 有可能出现已选的数据在备选中已经被删除的情况
-                // 此时selectedIndex会取到undefined，不做加标记处理
-                if (selectedIndex !== undefined) {
-                    allData[selectedIndex].isSelected = true;
+                if (indexData[item.id] !== undefined) {
+                    indexData[item.id].isSelected = true;
                 }
             });
 
             var disabledData = this.disabledData || [];
             u.each(disabledData, function (item, index) {
-                var selectedIndex = indexData[item.id];
-                if (selectedIndex !== undefined) {
-                    allData[selectedIndex].isDisabled = true;
+                if (indexData[item.id] !== undefined) {
+                    indexData[item.id].isDisabled = true;
                 }
             });
-            this.allData = allData;
+
+            this.indexData = indexData;
 
             // 处理fields，把fields也保存到一个索引中
             this.fieldsIndex = {};
@@ -181,6 +160,11 @@ define(
                 },
                 this
             );
+
+            return {
+                allData: this.allData,
+                indexData: this.indexData
+            };
         };
 
         /**
@@ -230,7 +214,7 @@ define(
                 );
             }
             // 最后一列用来装箭头
-            tpl.push('<th style="width:30px;"></th>');
+            tpl.push('<th></th>');
             tpl.push('</tr></table>');
             return tpl.join(' ');
         }
@@ -260,10 +244,11 @@ define(
             // 绘制内容
             u.each(data, function (item, index) {
                 var rowClasses = [baseRowClasses];
-                if (item.isSelected) {
+                var indexItem = indexData[item.id];
+                if (indexItem.isSelected) {
                     rowClasses.push(selectedRowClasses);
                 }
-                if (item.isDisabled) {
+                if (indexItem.isDisabled) {
                     rowClasses.push(disabledRowClasses);
                 }
                 tpl.push(
@@ -272,7 +257,7 @@ define(
                         {
                             rowId: control.helper.getId('row-' + item.id),
                             rowClass: rowClasses.join(' '),
-                            index: indexData[item.id],
+                            index: indexItem.index,
                             content: createRow(control, item, index)
                         }
                     )
@@ -328,11 +313,10 @@ define(
             var arrowHTML = '<span class="' + arrowClasses + '"></span>';
             if (tr) {
                 var td = tr.insertCell(cursor);
-                td.style.width = '30px';
                 td.innerHTML = arrowHTML;
             }
             else {
-                html.push('<td style="width:30px;">' + arrowHTML + '</td>');
+                html.push('<td>' + arrowHTML + '</td>');
                 return html.join(' ');
             }
         }
@@ -394,8 +378,7 @@ define(
         };
 
         function actionForAdd(control, row, item) {
-            var selectedClasses =
-                control.helper.getPartClassName('row-selected');
+            var selectedClasses = control.helper.getPartClassName('row-selected');
             var fire = false;
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
@@ -430,13 +413,6 @@ define(
          * @ignore
          */
         function selectItem(control, id, toBeSelected) {
-            // 完整数据
-            var indexData = control.indexData;
-            var data = control.allData;
-
-            var index = indexData[id];
-            var item = data[index];
-
             // 如果是单选，需要将其他的已选项置为未选
             if (!control.multi) {
                 // 移除原有选项
@@ -444,7 +420,7 @@ define(
                 // 赋予新值
                 control.currentSelectedId = toBeSelected ? id : null;
             }
-            updateSingleItemStatus(control, item, toBeSelected);
+            updateSingleItemStatus(control, id, toBeSelected);
         }
 
         // 撤销选择当前项
@@ -452,9 +428,7 @@ define(
             var curId = control.currentSelectedId;
             // 撤销当前选中项
             if (curId) {
-                var index = control.indexData[curId];
-                var item = control.allData[index];
-                updateSingleItemStatus(control, item, false);
+                updateSingleItemStatus(control, curId, false);
                 control.currentSelectedId = null;
             }
         }
@@ -463,17 +437,18 @@ define(
          * 更新单个结点状态
          *
          * @param {ui.TableRichSelector} control 类实例
-         * @param {Object} item 结点数据对象
+         * @param {string} id 结点数据id
          * @param {boolean} toBeSelected 置为选择还是取消选择
          *
          * @ignore
          */
-        function updateSingleItemStatus(control, item, toBeSelected) {
-            if (!item) {
+        function updateSingleItemStatus(control, id, toBeSelected) {
+            var indexItem = control.indexData[id];
+            if (!indexItem) {
                 return;
             }
-            item.isSelected = toBeSelected;
-            var itemDOM = control.helper.getPart('row-' + item.id);
+            indexItem.isSelected = toBeSelected;
+            var itemDOM = control.helper.getPart('row-' + id);
             var changeClass = toBeSelected ? lib.addClass : lib.removeClass;
             changeClass(
                 itemDOM,
@@ -504,21 +479,18 @@ define(
          * @param {boolean} toBeSelected 要选择还是取消选择
          * @override
          */
-        exports.selectItems =
-            function (items, toBeSelected) {
-                var allData = this.allData;
-                var indexData = this.indexData;
-                var control = this;
-                u.each(items, function (item) {
-                    var id = item.id !== undefined ? item.id : item;
-                    var itemIndex = indexData[id];
-                    if (itemIndex !== null && itemIndex !== undefined) {
-                        var rawItem = allData[itemIndex];
-                        // 更新状态，但不触发事件
-                        selectItem(control, rawItem.id, toBeSelected);
-                    }
-                });
-            };
+        exports.selectItems = function (items, toBeSelected) {
+            var indexData = this.indexData;
+            var control = this;
+            u.each(items, function (item) {
+                var id = item.id !== undefined ? item.id : item;
+                var itemIndex = indexData[id];
+                if (itemIndex !== null && itemIndex !== undefined) {
+                    // 更新状态，但不触发事件
+                    selectItem(control, id, toBeSelected);
+                }
+            });
+        };
 
         /**
          *  下面的方法专属delete型table
@@ -543,7 +515,7 @@ define(
         function deleteItem(control, id) {
             // 完整数据
             var indexData = control.indexData;
-            var index = indexData[id];
+            var index = indexData[id].index;
 
             var newData = [].slice.call(control.datasource, 0);
             newData.splice(index, 1);
@@ -663,15 +635,22 @@ define(
          */
         exports.getSelectedItems = function () {
             var rawData = this.datasource;
-            var allData = this.allData;
+            var indexData = this.indexData;
             var mode = this.mode;
             if (mode === 'delete') {
-                return allData;
+                return this.allData;
             }
             var selectedData = u.filter(rawData, function (item, index) {
-                return allData[index].isSelected;
+                return indexData[item.id].isSelected;
             });
             return selectedData;
+        };
+
+        /**
+         * @override
+         */
+        exports.getSelectedItemsFullStructure = function () {
+            return this.getSelectedItems();
         };
 
         /**
