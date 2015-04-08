@@ -32,18 +32,18 @@
                 <div class="example" id="container">
                     <div data-ui-type="FilterItem"
                          data-ui-id="test1"
-                         data-ui-defaultFirst="true"
                          data-ui-custom="true"
-                         data-ui-label="单选">
+                         data-ui-label="单选：">
                     </div>
                     <div data-ui-type="FilterItem"
                          data-ui-id="test2"
-                         data-ui-label="多选"
+                         data-ui-label="多选："
+                         data-ui-custom="true"
                          data-ui-multiple="true">
                     </div>
                     <div data-ui-type="FilterResult"
                          data-ui-id="result"
-                         data-ui-label="已选择">
+                         data-ui-label="已选择：">
                     </div>
                 </div>
             </section>
@@ -126,7 +126,6 @@
                 result.on('unselect', function (e) {
                     filter1.removeItem(e.item);
                     filter2.removeItem(e.item);
-                    // console.log(filter2.getValue());
                 });
                 // 获取值
                 var submit = controls[3];

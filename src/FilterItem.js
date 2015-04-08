@@ -41,7 +41,7 @@ define(function (require) {
         var me = this;
         var properties = {
             multiple: false,// 默认单选
-            defaultFirst: true, //单选时 默认选择第一个
+            defaultFirst: false, //单选时 默认选择第一个
             custom: false,// 是否支持自定义
             customBtnLabel: '自定义',// 自定义按钮Label
             // 默认自定义输入控件的确定按钮的回调
@@ -137,7 +137,8 @@ define(function (require) {
             );
         }, this);
         var itemsPanel = this.getItemsPanel();
-        itemsPanel.setContent(s);
+        // itemsPanel.setContent(s);
+        itemsPanel.main.innerHTML = s;
         this.custom && this.buildCustomItem();
     };
 
