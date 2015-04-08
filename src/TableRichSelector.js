@@ -452,12 +452,10 @@ define(
         function unselectCurrent(control) {
             var curId = control.currentSelectedId;
             // 撤销当前选中项
-            if (curId) {
-                var index = control.indexData[curId];
-                var item = control.allData[index];
-                updateSingleItemStatus(control, item, false);
-                control.currentSelectedId = null;
-            }
+            var index = control.indexData[curId];
+            var item = control.allData[index];
+            updateSingleItemStatus(control, item, false);
+            control.currentSelectedId = null;
         }
 
         /**

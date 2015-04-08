@@ -412,11 +412,9 @@ define(
         function unselectCurrent(control) {
             var curId = control.currentSeletedId;
             // 撤销当前选中项
-            if (curId) {
-                var treeList = control.getQueryList().getChild('tree');
-                treeList.unselectNode(curId);
-                control.currentSeletedId = null;
-            }
+            var treeList = control.getQueryList().getChild('tree');
+            treeList.unselectNode(curId);
+            control.currentSeletedId = null;
         }
 
         /**
