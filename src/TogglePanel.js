@@ -123,7 +123,7 @@ define(
             var options = {
                 main: contentElem,
                 childName: 'content',
-                attachedDOM: this.getChild('title').main,
+                attachedDOM: this.main,
                 attachedLayout: 'bottom,left',
                 autoClose: false,
                 viewContext: this.viewContext,
@@ -178,6 +178,7 @@ define(
 
                 if (!isAttachedTarget) {
                     this.removeState('expanded');
+                    this.removeState('active');
                 }
             }
         }
@@ -197,11 +198,17 @@ define(
          * @inner
          */
         exports.toggleContent = function () {
+            this.toggleStates();
+            this.fire('change');
+        };
+
+        exports.toggleStates = function () {
             var position = this.position;
 
             if (position === 'fixed') {
                 // 占位模式
                 this.toggleState('expanded');
+                this.toggleState('active');
             }
             else {
                 // 浮层模式
@@ -209,15 +216,15 @@ define(
 
                 if (this.isExpanded()) {
                     this.removeState('expanded');
+                    this.removeState('active');
                     contentLayer.hide();
                 }
                 else {
-                    this.toggleState('expanded');
+                    this.addState('expanded');
+                    this.addState('active');
                     contentLayer.show();
                 }
             }
-
-            this.fire('change');
         };
 
         var painters = require('esui/painters');
@@ -241,7 +248,13 @@ define(
                 paint: function (panel, content) {
                     panel.getChild('content').set('content', content);
                 }
-            }
+            },
+            /**
+             * @property {number} width
+             *
+             * 宽度
+             */
+            painters.style('width')
         );
 
         exports.isExpanded = function () {

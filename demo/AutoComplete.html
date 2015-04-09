@@ -33,7 +33,6 @@
                     <input data-ui-type="TextBox"
                            data-ui-mode="text"
                            data-ui-id="test"
-                           data-ui-extension-autocomplete-casesensitive="false"
                            data-ui-extension-autocomplete-type="AutoComplete"
                     />
                 </div>
@@ -67,7 +66,6 @@
                            data-ui-mode="text"
                            data-ui-id="test2"
                            data-ui-extension-autocomplete-type="AutoComplete"
-                           data-ui-extension-autocomplete-firechar="{"
                            style="height:200px"
                     ></textarea>
                 </div>
@@ -85,8 +83,6 @@
                            data-ui-mode="text"
                            data-ui-id="test3"
                            data-ui-extension-autocomplete-type="AutoComplete"
-                           data-ui-extension-autocomplete-firechar="{"
-                           data-ui-extension-autocomplete-splitchar=" "
                            style="height:200px"
                     ></textarea>
                 </div>
@@ -104,8 +100,6 @@
                            data-ui-mode="text"
                            data-ui-id="test4"
                            data-ui-extension-autocomplete-type="AutoComplete"
-                           data-ui-extension-autocomplete-firechar="{"
-                           data-ui-extension-autocomplete-splitchar=","
                            style="height:200px"
                     ></textarea>
                 </div>
@@ -191,7 +185,26 @@
                         datasource = data;
                     }
                     controls[i].setProperties({
-                        'datasource': datasource
+                        'datasource': datasource,
+                        /*
+                        search: function (v) {
+                            if (v.length < 2) {
+                                return false;
+                            }
+                        },
+                        */
+                        select: function (value, target) {
+                            //target.setValue('你好');
+                            //return false;
+
+                        },
+                        /*extractWord: function (s) {
+
+                        },*/
+                        preProcessResponseData: function (data) {
+                            data = ['你好', 'Hello'];
+                            return data;
+                        }
                     });
                 }
             }

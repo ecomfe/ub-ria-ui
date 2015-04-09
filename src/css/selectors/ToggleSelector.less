@@ -1,0 +1,28 @@
+/**
+  * SSP for WEB
+  * Copyright 2014 Baidu Inc. All rights reserved.
+  *
+  * @ignore
+  * @file 可展开收起的选择控件包装样式
+  * @author lixiang
+  */
+
+@esui-toggleselector-fixed-content-margin: -1em;
+
+.@{ui-class-prefix}-toggleselector {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.@{ui-class-prefix}-toggleselector {
+    .@{ui-class-prefix}-toggleselector-content {
+        display: none;
+        margin-left: @esui-toggleselector-fixed-content-margin;
+    }
+}
+
+.@{ui-class-prefix}-toggleselector.@{ui-state-prefix}-active {
+    .@{ui-class-prefix}-toggleselector-content {
+        display: block;
+    }
+}
