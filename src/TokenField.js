@@ -15,17 +15,66 @@ define(
 
         require('esui/TextBox');
 
-        // 存储token列表
-        // var data = {};
+        var flashToken = function (tokenElem) {
+            var me = this;
+            setTimeout(function () {
+                me.helper.addPartClasses('flash', tokenElem);
+            }, 0);
 
+            setTimeout(function () {
+                me.helper.removePartClasses('flash', tokenElem);
+            }, 300);
+        };
+
+        var checkRepeatToken = function (tokenValue) {
+            var repeatToken = {};
+            u.each(this.data, function (token, dataId) {
+                if (token.value === tokenValue) {
+                    repeatToken.dataId = dataId;
+                    repeatToken.token = token;
+                    return false;
+                }
+            });
+
+            if (repeatToken.dataId) {
+                repeatToken.tokenElement = document.querySelector('div[data-id=' + repeatToken.dataId + ']');
+            }
+            return repeatToken;
+        };
+
+        var createTokensFromInput = function () {
+            var input = this.getInput();
+            var inputValue = input.getRawValue();
+            if (inputValue.length < this.minLength) {
+                return;
+            }
+
+            if (!this.repeat) {
+                var repeatToken = checkRepeatToken.call(this, inputValue);
+                if (repeatToken.token) {
+                    flashToken.call(this, repeatToken.tokenElement);
+                    u.isFunction(this.repeatCallback) && this.repeatCallback(repeatToken);
+                    return;
+                }
+            }
+
+            var before = this.getRawValue();
+            this.setTokens(inputValue, true);
+            if (before === this.getRawValue() && inputValue.length) {
+                return;
+            }
+            // token创建成功，清空输入框
+            input.setRawValue('');
+        };
+        
         /**
          * TokenField
          *
          * @extends InputControl
          * @constructor
          */
-        exports = {
-            constructor: function() {
+        var exports = {
+            constructor: function () {
                 this.$super(arguments);
                 this.data = {};
             },
@@ -58,17 +107,50 @@ define(
              */
             initOptions: function (options) {
                 var properties = {
+                    /**
+                     * 控件宽度
+                     *
+                     * @type {number}
+                    */
                     width: 300,
-                    minWidth: 60, // 输入框最小宽度,剩余宽度不够就换行了
-                    minLength: 0, // token最小字符串长度，低于该长度不创建, 默认不限制
-                    limit: 0, // token最大数量,默认不限制
-                    delimiter: ',', // 分隔符
+                    /**
+                     * 输入input宽度
+                     *
+                     * @type {number}
+                    */
+                    inputWidth: 90, // 输入框最小宽度,剩余宽度不够就换行了
+                    /**
+                     * token最小字符串长度，低于该长度不创建, 默认不限制
+                     *
+                     * @type {number}
+                    */
+                    minLength: 0,
+                    /**
+                     * token最大数量,默认不限制
+                     *
+                     * @type {number}
+                    */
+                    limit: 0,
+                    /**
+                     * 分隔符
+                     *
+                     * @type {string}
+                    */
+                    delimiter: ',',
+                    /**
+                     * TokenField的值
+                     *
+                     * @type {string}
+                    */
                     tokens: '',
-                    repeat: false // token是否允许重复
+                    /**
+                     * 是否允许重复
+                     *
+                     * @type {bool}
+                    */
+                    repeat: false
                 };
                 u.extend(properties, options);
-
-                this.setProperties(properties);
 
                 if (this.repeat === 'false' || this.repeat === '') {
                     this.repeat = false;
@@ -105,6 +187,8 @@ define(
 
                 properties.name =
                     properties.name || this.main.getAttribute('name');
+
+                this.setProperties(properties);
             },
 
             /**
@@ -125,7 +209,8 @@ define(
                     '<input type="text" name="${inputName}" autocomplete="off"',
                     ' class="${inputClasses}"',
                     ' data-ui-type="TextBox"',
-                    ' data-ui-id="${inputId}" />',
+                    ' data-ui-width="${width}"',
+                    ' data-ui-id="${inputId}" />'
                 ].join('');
 
                 this.main.innerHTML = lib.format(
@@ -133,22 +218,14 @@ define(
                     {
                         inputName: this.name,
                         inputId: this.helper.getId('input'),
-                        inputClasses: this.helper.getPartClasses('input')
+                        inputClasses: this.helper.getPartClasses('input'),
+                        width: this.inputWidth
                     }
                 );
                 // 创建控件树
                 this.initChildren(this.main);
                 // 创建初始token
                 this.setTokens(this.tokens, false);
-            },
-            /**
-             * 首次渲染完成后的操作
-             *
-             * @protected
-             */
-            onafterrender: function() {
-                // 计算输入框宽度
-                this.updateInput();
             },
 
             /**
@@ -158,10 +235,10 @@ define(
              * @override
              */
             initEvents: function () {
-
-                this.helper.addDOMEvent(
+                var controlHelper = this.helper;
+                controlHelper.addDOMEvent(
                     this.main,
-                    'mousedown',
+                    'click',
                     this.focusInput
                 );
 
@@ -172,16 +249,10 @@ define(
                 input.on('blur', u.bind(this.blur, this));
                 input.on('enter', u.bind(this.enter, this));
                 input.on('keypress', u.bind(this.keypress, this));
+
                 // TODO: TextBox不提供keydown / keyup事件
-                this.helper.addDOMEvent(inputElem, 'keydown', this.keydown);
-                this.helper.addDOMEvent(inputElem, 'keyup', this.keyup);
-
-                this.helper.addDOMEvent(
-                    window,
-                    'resize',
-                    this.updateInput
-                );
-
+                controlHelper.addDOMEvent(inputElem, 'keydown', this.keydown);
+                controlHelper.addDOMEvent(inputElem, 'keyup', this.keyup);
             },
 
             /**
@@ -194,25 +265,12 @@ define(
             },
 
             /**
-             * 更新输入框宽度
-             */
-            updateInput: function () {
-                var input = this.getInput();
-                var main = this.main;
-                var width = lib.getOffset(main).left
-                    + parseInt(lib.getStyle(main, 'width'), 10)
-                    // + parseInt(lib.getStyle(main, 'padding-left'), 10)
-                    - lib.getOffset(input.main).left;
-                input.setProperties({ width: width });
-            },
-
-            /**
              * 创建token，添加到dom中
-             * @param {string|Object} token
+             * @param {string|Object} token 要创建的token定义
              */
             createToken: function (token) {
                 if (typeof token === 'string') {
-                    token = { value: token, label: token };
+                    token = {value: token, label: token};
                 }
                 else {
                     // 复制一份，避免污染原数据
@@ -232,45 +290,27 @@ define(
                     return;
                 }
 
-                this.fire('beforecreate', { token: token });
+                this.fire('beforecreate', {token: token});
 
                 var tokenElem = document.createElement('div');
                 tokenElem.className = this.helper.getPartClasses('item');
-                tokenElem.innerHTML = this.helper.getPartHTML('label', 'span') + this.helper.getPartHTML('close', 'a');
+                tokenElem.innerHTML =
+                    this.helper.getPartHTML('label', 'span')
+                    + this.helper.getPartHTML('close', 'span');
                 var guid = lib.getGUID();
                 lib.setAttribute(tokenElem, 'data-id', guid);
                 this.data[guid] = token;
 
                 var input = this.getInput();
                 var inputElem = input.main;
-                // input先设一个最小宽度，待token插入后重新计算宽度
-                inputElem.style.width = this.minWidth + 'px';
 
                 var tokenLabel = lib.dom.first(tokenElem);
                 tokenLabel.innerHTML = token.label;
                 var closeButton = lib.dom.last(tokenElem);
-                closeButton.innerHTML = '&times;';
-                this.helper.addDOMEvent(closeButton, 'click', this.remove);
+                lib.addClass(closeButton, this.helper.getIconClass('remove'));
+                this.helper.addDOMEvent(tokenElem, 'click', this.remove);
 
                 lib.insertBefore(tokenElem, inputElem);
-
-                // label要设一个最大宽度，避免溢出容器
-                if (!this.maxTokenWidth) {
-                    this.maxTokenWidth = this.width - closeButton.offsetWidth
-                        - parseInt(lib.getStyle(closeButton, 'margin-left'), 10)
-                        - parseInt(lib.getStyle(closeButton, 'margin-right'), 10)
-                        - parseInt(lib.getStyle(this.main, 'border-left-width'), 10)
-                        - parseInt(lib.getStyle(this.main, 'border-right-width'), 10)
-                        - parseInt(lib.getStyle(this.main, 'padding-left'), 10)
-                        - parseInt(lib.getStyle(this.main, 'padding-right'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'border-left-width'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'border-right-width'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'padding-left'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'padding-right'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'margin-left'), 10)
-                        - parseInt(lib.getStyle(tokenLabel, 'margin-right'), 10);
-                }
-                tokenLabel.style.maxWidth = this.maxTokenWidth + 'px';
 
                 this.fire(
                     'aftercreate',
@@ -279,10 +319,7 @@ define(
                         relatedTarget: tokenElem
                     }
                 );
-                // 重新计算输入框宽度
-                this.updateInput();
             },
-
 
             /**
              * 输入框focus
@@ -302,7 +339,6 @@ define(
                 this.helper.addStateClasses('focus');
             },
 
-
             /**
              * 响应blur
              * @param {Event} e 事件对象
@@ -318,7 +354,7 @@ define(
              */
             keydown: function (e) {
                 var input = this.getInput();
-                switch(e.keyCode) {
+                switch (e.keyCode) {
                     case 8: // backspace
                         if (input.getFocusTarget() === document.activeElement) {
                             // keydown触发早于keyup，keydown时记下当前输入框的字符
@@ -329,7 +365,6 @@ define(
                     default:
                         break;
                 }
-                this.updateInput();
             },
 
             /**
@@ -338,7 +373,8 @@ define(
              */
             keypress: function (e) {
                 var input = e.target;
-                if (u.indexOf(this.triggerKeys, e.keyCode) > -1 && input.getFocusTarget() === document.activeElement) {
+                if (u.indexOf(this.triggerKeys, e.keyCode) > -1
+                    && input.getFocusTarget() === document.activeElement) {
                     this.enter(e);
                     // 最后触发的字符不再作为输入内容
                     e.preventDefault();
@@ -350,10 +386,12 @@ define(
              * @param {Event} e 事件对象
              */
             keyup: function (e) {
-                if (!this.focused) return;
+                if (!this.focused) {
+                    return;
+                }
                 var input = this.getInput();
                 var inputValue = input.getRawValue();
-                switch(e.keyCode) {
+                switch (e.keyCode) {
                     case 8: // backspace
                     case 46: // delete
                         if (input.getFocusTarget() === document.activeElement) {
@@ -374,8 +412,7 @@ define(
                 var input = e.target;
                 var inputValue = input.getRawValue();
                 if (input.getFocusTarget() === document.activeElement && inputValue.length) {
-                    this.createTokensFromInput();
-                    return false;
+                    createTokensFromInput.call(this);
                 }
             },
 
@@ -389,7 +426,7 @@ define(
                 var target = e && e.target;
                 if (target) {
                     var tokenClassName = this.helper.getPartClasses('item');
-                    while(!lib.hasClass(target, tokenClassName)) {
+                    while (!lib.hasClass(target, tokenClassName)) {
                         target = target.parentNode;
                     }
                 }
@@ -397,94 +434,23 @@ define(
                     target = lib.dom.previous(this.getInput().main);
                 }
 
+                var dataId = lib.getAttribute(target, 'data-id');
                 target.parentNode.removeChild(target);
-
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            },
-
-
-            /**
-             * 根据input输入创建token
-             */
-            createTokensFromInput: function () {
-                var input = this.getInput();
-                var inputValue = input.getRawValue();
-                if (inputValue.length < this.minLength) {
-                    return;
-                }
-
-                if (!this.repeat) {
-                    var repeatToken = this.checkRepeatToken(inputValue);
-                    if (repeatToken.token) {
-                        this.flashToken(repeatToken.tokenElement);
-                        u.isFunction(this.repeatCallback) && this.repeatCallback(repeatToken);
-                        return;
-                    }
-                }
-
-
-                var before = this.getRawValue();
-                this.setTokens(inputValue, true);
-                if (before == this.getRawValue() && inputValue.length) {
-                    return false;
-                }
-                // token创建成功，清空输入框
-                input.setRawValue('');
-            },
-
-            /**
-             * 检测重复Token
-             */
-            checkRepeatToken: function(tokenValue) {
-                var repeatToken = {};
-                u.each(this.data, function(token, dataId) {
-                    if (token.value === tokenValue) {
-                        repeatToken.dataId = dataId;
-                        repeatToken.token = token;
-                        return false;
-                    }
-                });
-
-                if (repeatToken.dataId) {
-                    repeatToken.tokenElement = document.querySelector('div[data-id=' + repeatToken.dataId + ']');
-                }
-                return repeatToken;
-            },
-            /**
-             * 闪一下重复的token元素以做提示
-             */
-            flashToken: function(tokenElem) {
-                if (this.addFlashClsTimer || this.removeFlashClsTimer) {
-                    this.helper.removePartClasses('flash', tokenElem);
-                    clearTimeout(this.addFlashClsTimer);
-                    this.addFlashClsTimer = null;
-                    clearTimeout(this.removeFlashClsTimer);
-                    this.removeFlashClsTimer = null;
-                }
-
-                var me = this;
-                this.addFlashClsTimer = setTimeout(function() {
-                    me.helper.addPartClasses('flash', tokenElem);
-                }, 0);
-
-                this.removeFlashClsTimer = setTimeout(function() {
-                    me.helper.removePartClasses('flash', tokenElem);
-                }, 300);
+                delete this.data[dataId];
             },
 
             /**
              * 对tokens进行预处理
-             * @param {string|Array} setTokens
+             * @param {string|Array} tokens 要添加的Token
              * @param {boolean} isAdd 是否增量，如果为false，则清空已添加token列表
              */
             setTokens: function (tokens, isAdd) {
-                if (!tokens) return;
+                if (!tokens) {
+                    return;
+                }
 
+                var me = this;
                 if (!isAdd) {
-                    var me = this;
                     u.each(
                         lib.getChildren(this.main),
                         function (tokenElem) {
@@ -509,7 +475,6 @@ define(
                     }
                 }
 
-                var me = this;
                 u.each(
                     tokens,
                     function (token) {
@@ -543,6 +508,7 @@ define(
             /**
              * 获取控件表单值
              * @param {string=} separator token join分隔符
+             * @return {string} 组件的值
              */
             getRawValue: function (separator) {
                 separator = separator || this.delimiter;
@@ -570,6 +536,18 @@ define(
                             return;
                         }
                         tokenField.main.style.width = parseInt(width, 10) + 'px';
+                    }
+                },
+                {
+                    name: ['disabled', 'readOnly'],
+                    paint: function (textbox, disabled, readOnly) {
+                        var input = textbox.getInput();
+                        input.setProperties(
+                            {
+                                disabled: disabled,
+                                readOnly: readOnly
+                            }
+                        );
                     }
                 }
             )

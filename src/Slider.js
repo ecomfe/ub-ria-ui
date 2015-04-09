@@ -16,6 +16,7 @@ define(
         require('esui/validator/PatternRule');
 
         var esui = require('esui');
+        var u = require('underscore');
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
 
@@ -76,7 +77,6 @@ define(
 
                 hasFoot: false,
                 footStep: 2,
-                footTextWidth: 40,
 
                 range: false
             };
@@ -371,6 +371,8 @@ define(
                     = this.cursorElementTwo
                     = this.helper.createPart('body-cursortwo');
 
+                lib.addClass(this.cursorElementTwo, this.helper.getPartClasses('body-cursor'));
+
                 bodyElement.appendChild(cursorElementTwo);
             }
 
@@ -391,7 +393,7 @@ define(
             initBodyElements(this);
         };
 
-        exports.footTemplate = '<li style="left: ${left}px;">${text}${unitText}</li>';
+        exports.footTemplate = '<li>${text}${unitText}</li>';
 
         /**
          * 创建滑动杆的脚
@@ -428,16 +430,21 @@ define(
             // 创建角标的元素
             for (var i = 0; i <= len; i++) {
                 var data = {
-                    left: i * footStepWidth - this.footTextWidth / 2,
                     text: this.start + i * this.footStep,
                     unitText: unitText
                 };
-
                 footHtml += lib.format(this.footTemplate, data);
             }
-
             footElement.innerHTML = footHtml;
             this.main.appendChild(footElement);
+
+            u.each(
+                lib.getChildren(footElement),
+                function (elem, index) {
+                    elem.style.left = (index * footStepWidth - lib.getOffset(elem).width / 2) + 'px';
+                }
+            )
+
         };
 
         /**
@@ -461,37 +468,16 @@ define(
          * @private
          */
         function bindCursorEvents() {
-            var cursorElement = this.cursorElement;
+            var body = this.helper.getPart('body');
 
             // 给滑块绑定事件
-            if (cursorElement) {
-                initDragEvents(this, cursorElement);
-            }
-
-            // 值是区间时 给第二个滑块绑定事件
-            if (this.range) {
-                initDragEvents(this, this.cursorElementTwo);
+            if (body) {
+                initDragEvents(this, body);
             }
         }
 
         function returnFalse() {
             return false;
-        }
-
-        /**
-         * 禁止用户的选择事件
-         * @param  {Slider} slider     控件实例
-         * @param  {Element} element    禁止的元素
-         * @param  {boolean} unselected 绑定为false,解绑为true
-         * @private
-         */
-        function makeUnselectable(slider, element, unselected) {
-            if (unselected) {
-                slider.helper.removeDOMEvent(element, 'selectstart');
-            }
-            else {
-                slider.helper.addDOMEvent(element, 'selectstart', returnFalse);
-            }
         }
 
         /**
@@ -504,7 +490,7 @@ define(
             var widthHeight = this.widthHeight;
 
             // 滑块的宽度
-            var cursorWH = this.cursorWH;
+            var cursorWH = getCursorWH(this.cursorElement, widthHeight);
             // 滑块容器的宽度
             var tmpWidthHeight = this[widthHeight];
             // 选择的宽度
@@ -528,7 +514,7 @@ define(
          */
         function getLeftTopByValue(value) {
             var widthHeight = this.widthHeight;
-            var cursorWH = this.cursorWH;
+            var cursorWH = getCursorWH(this.cursorElement, widthHeight);
 
             var tmpwidthHeight = this[widthHeight];
             var start = this.start;
@@ -582,13 +568,15 @@ define(
 
             // 已选择的部分加个背景色显示
             if (slider.isShowSelectedBG) {
+
+                var cursorWH = getCursorWH(slider.cursorElement, widthHeight);
                 if (slider.range) {
-                    slider.bodySelectedElement.style[leftTop] = cursorLeftTop + slider.cursorWH / 2 + 'px';
+                    slider.bodySelectedElement.style[leftTop] = cursorLeftTop + cursorWH / 2 + 'px';
 
                     slider.bodySelectedElement.style[widthHeight] = cursorLeftTopTwo - cursorLeftTop + 'px';
                 }
                 else {
-                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTop + slider.cursorWH / 2 + 'px';
+                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTop + cursorWH / 2 + 'px';
                 }
             }
 
@@ -753,6 +741,8 @@ define(
             }
 
             if (!isMouseUp) {
+                // 避免抖动，这里根据value值重新计算出leftTop
+                cursorLeftTop = getLeftTopByValue.call(this, curValue);
                 target.style[this.leftTop] = cursorLeftTop + 'px';
 
                 // 已选择的部分加个背景色显示
@@ -774,8 +764,9 @@ define(
 
                     }
                     else {
+                        var cursorWH = getCursorWH(this.cursorElement, widthHeight);
                         this.bodySelectedElement.style[widthHeight]
-                            = cursorLeftTop + this.cursorWH / 2 + 'px';
+                            = cursorLeftTop + cursorWH / 2 + 'px';
                     }
                 }
 
@@ -819,7 +810,7 @@ define(
             this.helper.removeDOMEvent(doc, 'mouseup', mouseupHandler);
             this.helper.removeDOMEvent(doc, 'mousemove', mousemoveHandler);
             // 清除浏览器select的事件
-            makeUnselectable(this, this.main, true);
+            e.preventDefault();
         }
 
         /**
@@ -838,13 +829,6 @@ define(
 
             // 获取滑块容器的宽度，用来计算值用
             slider[widthHeight] = bodyPos[widthHeight];
-
-            // 获取滑块的宽度
-            var cursorWH =
-                parseInt(lib.getStyle(cursorElement, widthHeight), 10);
-
-            // 保存滑块的宽度
-            slider.cursorWH = cursorWH;
 
             // 滑块能去的最左边
             if (typeof slider.min !== 'undefined') {
@@ -865,29 +849,67 @@ define(
         }
 
         /**
+         * 根据鼠标位置，寻找离鼠标位置最近的handle
+         * @param {Event} e 事件对象
+         * @private
+         */
+        function findNearestCursorElement(e) {
+            var mousePos = lib.event.getMousePosition(e);
+            var pageXY = this.pageXY;
+            var leftTop = this.leftTop;
+            var bodyElement = this.helper.getPart('body');
+            var bodyPos = lib.getOffset(bodyElement);
+
+            var mouseLeftTop = mousePos[pageXY] - bodyPos[leftTop];
+
+            // 有两个滑块
+            if (this.range) {
+                var firstLeftTop = getLeftTopByValue.call(this, this.minRangeValue);
+                var secondLeftTop = getLeftTopByValue.call(this, this.maxRangeValue);
+                var middleLeftTop = firstLeftTop + (secondLeftTop - firstLeftTop) / 2;
+                if (mouseLeftTop > middleLeftTop && this.cursorElementTwo) {
+                    return this.cursorElementTwo;
+                }
+            }
+            return this.cursorElement;
+        }
+
+        /**
+         * 获取滑块的宽高,由于页面加载过程中存在css抖动，这个值最好即时获取
+         */
+        function getCursorWH(elem, widthHeight) {
+            return parseInt(lib.getStyle(elem, widthHeight), 10);
+        }
+
+        /**
          * 鼠标的按下事件
          * @param {Event} e 事件对象
          * @private
          */
         function mousedownHandler(e) {
+            var cursorElement = findNearestCursorElement.call(this, e);
+
             // 存住活动的对象
-            this.activeCursorElement = e.target;
+            this.activeCursorElement = cursorElement;
 
             // 增加active的样式
-            lib.addClass(e.target, this.helper.getPartClasses('body-cursor-active')[0]);
+            lib.addClass(cursorElement, this.helper.getPartClasses('body-cursor-active')[0]);
 
             // 点击的时候再初始化各种坐标 为了一些初始化时不在屏幕内的控件
             initBodyElements(this);
 
+            // 禁止鼠标反选
+            e.preventDefault();
+
+            // 滑块首先移动到鼠标点击位置
+            mousemoveHandler.call(this, e);
+
             var doc = document;
-
-            // 禁止鼠标select事件
-            makeUnselectable(this, this.main);
-
             // 鼠标的松开事件
             this.helper.addDOMEvent(doc, 'mouseup', mouseupHandler);
             // 鼠标的移动事件
             this.helper.addDOMEvent(doc, 'mousemove', mousemoveHandler);
+
         }
 
         /**

@@ -1,9 +1,32 @@
+.@{ui-class-prefix}-dialog-lightbox {
+    .@{ui-class-prefix}-dialog-title,
+    .@{ui-class-prefix}-dialog-foot-panel {
+        display: none;
+    }
+    .@{ui-class-prefix}-dialog-close-icon {
+        z-index: 1;
+        .esf-circular();
+        .size(1.5em);
+        line-height: 1.5em;
+        text-align: center;
+        background: white;
+        top: -.8em;
+        right: -.8em;
+    }
+    .@{ui-class-prefix}-dialog-lightbox-content-media {
+        img {
+            vertical-align: top
+        }
+    }
+}
+
 .@{ui-class-prefix}-dialog-lightbox-content-link-left {
     position: absolute;
     font-size: 2em;
     top: 46%;
     color: #fff;
     left: 20px;
+    z-index: 1;
 }
 
 .@{ui-class-prefix}-dialog-lightbox-content-link-right {
@@ -12,6 +35,7 @@
     top: 46%;
     color: #fff;
     right: 20px;
+    z-index: 1;
 }
 
 .@{ui-class-prefix}-dialog-lightbox-content-link {

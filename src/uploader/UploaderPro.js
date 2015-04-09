@@ -282,7 +282,6 @@ define(
                     id: dialog.helper.getId('uploader'),
                     skin: 'pro',
                     width: 96,
-                    height: 40,
                     action: this.action,
                     name: this.name,
                     autoUpload: false,
@@ -441,18 +440,15 @@ define(
                 }
             },
             {
-                name: ['width', 'height'],
-                paint: function (control, width, height, showProgress) {
+                name: ['width'],
+                paint: function (control, width) {
                     var widthWithUnit = width + 'px';
-                    var heightWithUnit = height + 'px';
 
                     control.main.style.width = widthWithUnit;
-                    control.main.style.height = heightWithUnit;
                     var button = control.viewContext.get('button');
                     button.setProperties(
                         {
                             width: width,
-                            height: height
                         }
                     );
                 }
@@ -538,7 +534,6 @@ define(
          */
         UploaderPro.defaultProperties = {
             width: 80,
-            height: 25,
             fileType: '*',
             text: '点击上传',
             autoUpload: true,

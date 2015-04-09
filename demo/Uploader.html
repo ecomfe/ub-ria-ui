@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Uploader - Demo</title>
+    <title>Uploader - ESUI Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.less" />
     <script src="assets/loader/esl.js"></script>
 
@@ -14,7 +14,7 @@
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1>Uploader</h1>
+    <h1 id="branding">ESUI - Uploader</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
@@ -27,20 +27,24 @@
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
-                <div class="example" id="container1">
-                    自定义多文本上传按钮：
-                    <input type="file"
-                        data-ui-id="uploader" data-ui-type="Uploader"
-                        data-ui-action="/upload"
-                        data-ui-file-type="auto"
-                        data-ui-name="file"
-                        data-ui-skin="flat-button"
-                        data-ui-width="120"
-                        data-ui-height="40"
-                        title="上传图片或Flash"
-                        accept=".gif,.jpg,.png,.swf"
-                        multiple
-                        />
+                <div class="example ui-demo-light-stage" id="container1">
+                    <form class="edit-form ui-form">
+                        <div class="ui-form-row">
+                            <div class="ui-form-key"><label>上传图像：</label></div>
+                            <div class="ui-form-value">
+                                <input type="file"
+                                    data-ui-id="uploader" data-ui-type="Uploader"
+                                    data-ui-action="/upload"
+                                    data-ui-file-type="auto"
+                                    data-ui-name="file"
+                                    data-ui-text="&lt;span class='ui-icon-upload'&gt;&lt;/span&gt; 上传文件"
+                                    title="上传图片或Flash"
+                                    accept=".gif,.jpg,.png,.swf"
+                                    multiple
+                                    />
+                            </div>
+                        </div>
+                    </form>
                     <ul class="file-list" id="list">
                     </ul>
                     <p id="start"><a href="javascript:">开始上传</a></p>
@@ -58,7 +62,6 @@
                         data-ui-name="file"
                         data-ui-skin="flat-button"
                         data-ui-width="120"
-                        data-ui-height="40"
                         data-ui-auto-upload="true"
                         title="上传图片或Flash"
                         accept=".gif,.jpg,.png,.swf"
@@ -77,7 +80,6 @@
                         data-ui-name="file"
                         data-ui-skin="flat-button"
                         data-ui-width="120"
-                        data-ui-height="40"
                         data-ui-limit="5"
                         data-ui-accept=".gif,.jpg,.png,.swf"
                         data-ui-button-variants="danger"
