@@ -4,7 +4,7 @@
  *
  * @ignore
  * @file 输入框微调输入扩展
- * @author jiangyuan(jiangyuan01@baidu.com)
+ * @author maoquan(maoquan@baidu.com), jiangyuan(jiangyuan01@baidu.com)
  */
 define(
     function (require) {
@@ -14,15 +14,10 @@ define(
         require('esui/validator/RequiredRule');
         require('esui/validator/PatternRule');
 
-        var Extension = require('esui/Extension');
         var lib = require('esui/lib');
         var m = require('moment');
         var u = require('underscore');
-        var helper = require('esui/controlHelper');
         var main = require('esui/main');
-        var TextBox = require('esui/TextBox');
-        var ValidityState = require('esui/validator/ValidityState');
-        var Validity = require('esui/validator/Validity');
 
         var spinnerTpl = [
             '<div id="${scrollUpId}" class="${scrollUpClass}">',
