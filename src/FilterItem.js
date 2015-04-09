@@ -43,15 +43,7 @@ define(function (require) {
             multiple: false,// 默认单选
             defaultFirst: false, //单选时 默认选择第一个
             custom: false,// 是否支持自定义
-            customBtnLabel: '自定义',// 自定义按钮Label
-            // 默认自定义输入控件的确定按钮的回调
-            onsave: function (itemTexts, res) {
-                var item = {
-                    text: itemTexts.join('-'),
-                    value: itemTexts.join('-')
-                };
-                res(item);
-            }
+            customBtnLabel: '自定义'// 自定义按钮Label
         };
         u.extend(properties, options);
 
@@ -258,19 +250,29 @@ define(function (require) {
             alert('不允许输入为空，请输入完整！');
             return;
         }
-
-        this.onsave(itemsText, function (item) {
-            if (me.hasRepeatItemInDatasource(item)) {
-                alert('存在重复的选择项，请重新输入！');
-                return;
-            }
+        var item = {
+            text: itemsText.join('-'),
+            value: itemsText.join('-')
+        };
+        if (me.hasRepeatItemInDatasource(item)) {
+            alert('存在重复的选择项，请重新输入！');
+            return;
+        }
+        this.onsave(item, function () {
             me.datasource.push(item);
             var element = me.buildItem(item);
             me.removeCustemInput();
             me.selectItem(item, element);
         });
     };
-
+    /**
+     * 点击自定义保存时触发的事件接口
+     * @param {Object} 自定义的项
+     * @param {Function} callback 回调
+     */
+    exports.onsave = function (item, callback) {
+        callback();
+    };
     /**
      * 检查在datasource中是否存在重复的选项
      * @param {Object} repeatItem 待检测的选项数据
