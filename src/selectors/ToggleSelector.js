@@ -42,16 +42,24 @@ define(
          * @override
          */
         exports.initStructure = function () {
-            this.$super(arguments);
-            lib.addClass(this.main, this.helper.getPrefixClass('select'));
-            var children = lib.getChildren(this.main);
-            if (children.length > 0) {
-                lib.addClass(children[0], this.helper.getPrefixClass('select-text'));
-            }
+            var me = this;
+            var mainElement = me.main;
+            var controlHelper = this.helper;
+            me.$super(arguments);
+
+            lib.addClass(mainElement, controlHelper.getPrefixClass('select'));
+
+            var children = lib.getChildren(mainElement);
+            var innerSelect = document.createElement('div');
+            lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
+            // 这里没有做判断，因为toggle panel中已经假设有2个子节点
+            lib.addClass(children[0], controlHelper.getPrefixClass('select-text'));
+            innerSelect.appendChild(children[0]);
             var caret = document.createElement('span');
-            lib.addClass(caret, this.helper.getPrefixClass('select-arrow'));
-            lib.addClass(caret, this.helper.getIconClass('caret-down'));
-            this.main.appendChild(caret);
+            lib.addClass(caret, controlHelper.getPrefixClass('select-arrow'));
+            lib.addClass(caret, controlHelper.getIconClass('caret-down'));
+            innerSelect.appendChild(caret);
+            lib.insertBefore(innerSelect, mainElement.firstChild);
         };
 
         /**
