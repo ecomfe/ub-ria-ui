@@ -21,7 +21,6 @@ define(
          * @override
          */
         exports.type = 'ToggleSelector';
-        exports.styleType = 'TogglePanel';
 
         exports.getCategory = function () {
             return 'input';
@@ -43,11 +42,24 @@ define(
          * @override
          */
         exports.initStructure = function () {
-            this.$super(arguments);
-            lib.addClass(
-                this.main,
-                'ui-toggle-selector'
-            );
+            var me = this;
+            var mainElement = me.main;
+            var controlHelper = this.helper;
+            me.$super(arguments);
+
+            lib.addClass(mainElement, controlHelper.getPrefixClass('select'));
+
+            var children = lib.getChildren(mainElement);
+            var innerSelect = document.createElement('div');
+            lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
+            // 这里没有做判断，因为toggle panel中已经假设有2个子节点
+            lib.addClass(children[0], controlHelper.getPrefixClass('select-text'));
+            innerSelect.appendChild(children[0]);
+            var caret = document.createElement('span');
+            lib.addClass(caret, controlHelper.getPrefixClass('select-arrow'));
+            lib.addClass(caret, controlHelper.getIconClass('caret-down'));
+            innerSelect.appendChild(caret);
+            lib.insertBefore(innerSelect, mainElement.firstChild);
         };
 
         /**
@@ -66,25 +78,7 @@ define(
          */
         exports.toggleContent = function () {
             if (!this.isDisabled()) {
-                var position = this.position;
-
-                if (position === 'fixed') {
-                    // 占位模式
-                    this.toggleState('expanded');
-                }
-                else {
-                    // 浮层模式
-                    var contentLayer = this.getChild('content');
-
-                    if (this.isExpanded()) {
-                        this.removeState('expanded');
-                        contentLayer.hide();
-                    }
-                    else {
-                        this.toggleState('expanded');
-                        contentLayer.show();
-                    }
-                }
+                this.toggleStates();
             }
         };
 

@@ -29,11 +29,11 @@ define(
          *   - 选择区头部搜索框  （可选）
          * - 一个底部状态栏      （可选）
          *
-         * 富选择控件有两种交互模式：
+         * 富选择控件有三种交互模式：
          *
-         * - add      选择后更新选择状态，并触发'add'事件
-         * - load     选择后更新选择状态，并触发'load'事件
-         * - del   选择后删除节点，并触发'delete'事件
+         * - add      点击节点，执行选择行为，并触发'add'事件
+         * - load     点击节点，执行选择行为，并触发'load'事件
+         * - del      点击节点，执行删除行为，并触发'delete'事件
          *
          * 富选择控件有两种选择模式：
          *
@@ -569,7 +569,7 @@ define(
             return 0;
         };
 
-
+        var painters = require('esui/painters');
         /**
          * 重新渲染视图
          * 仅当生命周期处于RENDER时，该方法才重新渲染
@@ -577,7 +577,7 @@ define(
          * @param {Array=} 变更过的属性的集合
          * @override
          */
-        exports.repaint = require('esui/painters').createRepaint(
+        exports.repaint = painters.createRepaint(
             InputControl.prototype.repaint,
             {
                 name: 'title',
@@ -586,7 +586,8 @@ define(
                     var titleLabel = head && head.getChild('title');
                     titleLabel && titleLabel.setText(title);
                 }
-            }
+            },
+            painters.style('width')
         );
 
         /**

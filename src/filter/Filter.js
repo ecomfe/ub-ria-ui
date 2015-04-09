@@ -1,7 +1,7 @@
 /**
  * 过滤器
- * @file: Filter.js
- * @author: liwei
+ * @file: FilterItem.js
+ * @author: yaofeifei@baidu.com; liwei47@baidu.com
  *
  */
 
@@ -18,17 +18,18 @@ define(function (require) {
 
 
     /**
-     * Filter
+     * FilterItem
      *
      * @extends Panel
      * @constructor
      */
     exports.constructor = function () {
         this.$super(arguments);
-        this.conditionMap = {};
     };
 
     exports.type = 'Filter';
+    
+    exports.datasource = [];
 
     /**
      * 初始化配置
@@ -37,18 +38,12 @@ define(function (require) {
      * @override
      */
     exports.initOptions = function (options) {
+        var me = this;
         var properties = {
             multiple: false,// 默认单选
+            defaultFirst: false, //单选时 默认选择第一个
             custom: false,// 是否支持自定义
-            customBtnLabel: '自定义',// 自定义按钮Label
-            // 默认自定义输入控件的确定按钮的回调
-            onsave: function (itemTexts, res) {
-                var item = {
-                    text: itemTexts.join('-'),
-                    value: itemTexts.join('-')
-                };
-                res(item);
-            }
+            customBtnLabel: '自定义'// 自定义按钮Label
         };
         u.extend(properties, options);
 
@@ -57,7 +52,9 @@ define(function (require) {
         if (this.multiple === 'false' || this.multiple === '0' || this.multiple === '') {
             this.multiple = false;
         }
-
+        if (this.defaultFirst === 'false' || this.defaultFirst === '0' || this.defaultFirst === '') {
+            this.defaultFirst = false;
+        }
         if (this.custom === 'false' || this.custom === '0' || this.custom === '') {
             this.custom = false;
         }
@@ -79,7 +76,6 @@ define(function (require) {
                     me.customElements.push(node);
                 }
             });
-
             if (!this.customElements.length) {
                 var customTpl = '<div style="display:inline-block"><input type="text" style="width:50px"/>'
                     + '<input type="button" data-role="ok" value="确定"/><input type="button" data-role="cancel" value="取消"/></div>';
@@ -93,7 +89,6 @@ define(function (require) {
             }
         }
 
-
         var html = '<div data-ui-type="Panel" data-ui-id="${filterPanelId}" class="${filterPanelStyle}">'
                 + '<label data-ui-type="Label" data-ui-id="${labelId}"></label>'
                 + '<div data-ui-type="Panel" data-ui-id="${contentPanelId}" class="${contentPanelStyle}"></div></div>';
@@ -105,15 +100,6 @@ define(function (require) {
                 labelId: this.helper.getId('items-label'),
                 contentPanelId: this.helper.getId('items-panel'),
                 contentPanelStyle: this.helper.getPartClassName('items-panel')
-            }
-        ) + lib.format(
-            html,
-            {
-                filterPanelStyle: this.helper.getPartClassName('panel'),
-                filterPanelId: this.helper.getId('items-selected-wrapper-panel'),
-                labelId: this.helper.getId('items-selected-label'),
-                contentPanelId: this.helper.getId('items-selected-panel'),
-                contentPanelStyle: this.helper.getPartClassName('items-selected-panel')
             }
         );
 
@@ -127,23 +113,24 @@ define(function (require) {
      * @private
      */
     exports.buildItems = function (datasource) {
-        var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a>';
+        var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a> ';
         var s = '';
         var helper = this.helper;
 
         u.forEach(datasource, function (item) {
+            var active = item.selected ? helper.getPartClassName('item-active') : '';
             s += lib.format(
                 html,
                 {
                     value: item.value,
                     text: item.text,
-                    style: helper.getPartClassName('item')
+                    style: helper.getPartClassName('item') + ' ' + active
                 }
             );
-        });
+        }, this);
         var itemsPanel = this.getItemsPanel();
-        itemsPanel.setContent(s);
-
+        // itemsPanel.setContent(s);
+        itemsPanel.main.innerHTML = s;
         this.custom && this.buildCustomItem();
     };
 
@@ -184,20 +171,6 @@ define(function (require) {
     };
 
     /**
-     * 提示区域生成选中项
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @private
-     */
-    exports.buildSelectedItems = function (item) {
-        var html = '<a href="javascript:;" class="${style}" data-value="${value}">'
-                + '<span>${text}</span><i>&times;</i></a>';
-        var selectedItemsPanel = this.getSelectedItemsPanel();
-        var clonedItem = u.extend({}, item);
-        clonedItem.style = this.helper.getPartClassName('item-selected');
-        selectedItemsPanel[this.multiple ? 'appendContent' : 'setContent'](lib.format(html, clonedItem));
-    };
-
-    /**
      * 获取备选项Panel
      * @return {Panel} 备选项Panel
      * @private
@@ -208,16 +181,6 @@ define(function (require) {
     };
 
     /**
-     * 获取提示已选项Panel
-     * @return {Panel} 提示已选项Panel
-     * @private
-     */
-    exports.getSelectedItemsPanel = function () {
-        var selectedPanelId = this.helper.getId('items-selected-panel');
-        return this.viewContext.get(selectedPanelId);
-    };
-
-    /**
      * 获取备选项提示Label
      * @return {Panel} 备选项提示Label
      * @private
@@ -225,16 +188,6 @@ define(function (require) {
     exports.getItemsLabel = function () {
         var itemsLabelId = this.helper.getId('items-label');
         return this.viewContext.get(itemsLabelId);
-    };
-
-    /**
-     * 获取提示已选项提示Label
-     * @return {Panel} 提示已选项提示Label
-     * @private
-     */
-    exports.getSelectedItemsLabel = function () {
-        var selectedLabelId = this.helper.getId('items-selected-label');
-        return this.viewContext.get(selectedLabelId);
     };
 
     /**
@@ -297,19 +250,29 @@ define(function (require) {
             alert('不允许输入为空，请输入完整！');
             return;
         }
-
-        this.onsave(itemsText, function (item) {
-            if (me.hasRepeatItemInDatasource(item)) {
-                alert('存在重复的选择项，请重新输入！');
-                return;
-            }
+        var item = {
+            text: itemsText.join('-'),
+            value: itemsText.join('-')
+        };
+        if (me.hasRepeatItemInDatasource(item)) {
+            alert('存在重复的选择项，请重新输入！');
+            return;
+        }
+        this.onsave(item, function () {
             me.datasource.push(item);
             var element = me.buildItem(item);
             me.removeCustemInput();
             me.selectItem(item, element);
         });
     };
-
+    /**
+     * 点击自定义保存时触发的事件接口
+     * @param {Object} 自定义的项
+     * @param {Function} callback 回调
+     */
+    exports.onsave = function (item, callback) {
+        callback();
+    };
     /**
      * 检查在datasource中是否存在重复的选项
      * @param {Object} repeatItem 待检测的选项数据
@@ -334,7 +297,6 @@ define(function (require) {
      */
     exports.initEvents = function () {
         var itemsPanel = this.getItemsPanel();
-        var selectedItemsPanel = this.getSelectedItemsPanel();
         var me = this;
         this.helper.addDOMEvent(
             itemsPanel.main,
@@ -370,76 +332,24 @@ define(function (require) {
                 me.selectItem(item, target);
             }
         );
-
-        this.helper.addDOMEvent(
-            selectedItemsPanel.main,
-            'click',
-            function (e) {
-                var target = e.target;
-                if (!/^(?:A|I|SPAN)$/.test(target.nodeName)) {
-                    return;
-                }
-                target = /^A$/.test(target.nodeName) ? target : target.parentNode;
-                var value = lib.getAttribute(target, 'data-value');
-                var text = lib.getText(lib.dom.first(target));
-                var item = {
-                    value: value,
-                    text: text
-                };
-
-                me.removeSelectedItem(item, target);
-            }
-        );
     };
-
     /**
-     * 取消选择`不限`项
-     *
-     * @private
+     * 设置选择项
+     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
+     * @public
      */
-    exports.unselectAnyItem = function () {
-        if (!this.anyItem) {
+    exports.removeItem = function (item) {
+        if (!item || !this.getItemByValue(item.value)) {
             return;
         }
-        var me = this;
-        this.removeCondition(this.anyItem);
-        var itemsPanel = this.getItemsPanel();
-        var itemLinks = itemsPanel.main.childNodes;
-        u.each(itemLinks, function (itemLink) {
-            if (lib.getAttribute(itemLink, 'data-value') === me.anyItem.value) {
-                me.helper.removePartClasses('item-active', itemLink);
-                return false;
-            }
+        var datasource = lib.deepClone(this.datasource);
+        var targetItem = this.getItemByValue(item.value, datasource);
+        targetItem.selected = false;
+        this.setProperties({
+            'datasource': datasource
         });
     };
-
-    /**
-     * 选择`不限`项
-     *
-     * @private
-     */
-    exports.selectAnyItem = function () {
-        if (!this.anyItem) {
-            return;
-        }
-
-        var selectedItemsPanel = this.getSelectedItemsPanel();
-        if (selectedItemsPanel.main.childNodes.length) {
-            return;
-        }
-
-        var me = this;
-        var itemsPanel = this.getItemsPanel();
-        var itemLinks = itemsPanel.main.childNodes;
-        u.each(itemLinks, function (itemLink) {
-            if (lib.getAttribute(itemLink, 'data-value') === me.anyItem.value) {
-                me.helper.addPartClasses('item-active', itemLink);
-                return false;
-            }
-        });
-        this.addCondition(this.anyItem);
-    };
-
+    
     /**
      * 选择项
      * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
@@ -447,14 +357,26 @@ define(function (require) {
      * @private
      */
     exports.selectItem = function (item, target) {
-        this.unselectAnyItem();
-        if (this.hasCondition(item)) {
-            return;
+        var selectedItem = this.getItemByValue(item.value);
+        // 是否之前被选中过
+        var isChecked = false;
+        if (selectedItem.selected) {
+            selectedItem.selected = false;
+            isChecked = true;
         }
-
+        else {
+            selectedItem.selected = true;
+        }
         var helper = this.helper;
+        // 对单选的特殊处理
         if (!this.multiple) {
-            this.conditionMap = {};
+            if (selectedItem === this.lastSelectedItem) {
+                selectedItem.selected = false;
+                this.lastSelectedItem = null;
+            }
+            else {
+                this.lastSelectedItem && (this.lastSelectedItem.selected = false);
+            }
             var cls = helper.getPartClassName('item-active');
             var itemLinks = target.parentNode.childNodes;
             u.each(itemLinks, function (itemLink) {
@@ -464,102 +386,44 @@ define(function (require) {
                 }
             });
         }
-
-        this.addCondition(item);
-        this.showSelectedItem(item);
-        helper.addPartClasses('item-active', target);
-        u.isFunction(this.onselect) && this.onselect(this.conditionMap, item, target);
-    };
-
-    /**
-     * 更新提示区的选中项
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @private
-     */
-    exports.showSelectedItem = function (item) {
-        if (this.anyItem && item.value === this.anyItem.value) {
-            this.removeAllSelectedItems();
+        if (isChecked) {
+            helper.removePartClasses('item-active', target);
         }
         else {
-            this.buildSelectedItems(item);
+            helper.addPartClasses('item-active', target);
+        }
+
+        /**
+         * @event select
+         *
+         * 选择时触发
+         */
+        this.fire('change', {
+            'item': item,
+            'lastItem': this.lastSelectedItem,
+            'action': isChecked ? 'remove' : 'add'
+        });
+        if (this.multiple || !isChecked) {
+            this.lastSelectedItem = selectedItem;
         }
     };
-
+    
     /**
-     * 移除选中项
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @param {HtmlElement} target 取消选中的元素
-     * @private
+     * 根据值获取整个选择项的数据
+     * @param {string} value 值
+     * @param {Object=} datasource 数据源
+     * @return {Object} item 选中项的数据 格式如: {value: '', text: ''}
+     * @public
      */
-    exports.removeSelectedItem = function (item, target) {
-        lib.removeNode(target);
-
-        var helper = this.helper;
-        var itemsPanel = this.getItemsPanel();
-        var itemLinks = itemsPanel.main.childNodes;
-        u.each(itemLinks, function (itemLink) {
-            if (lib.getAttribute(itemLink, 'data-value') === item.value) {
-                helper.removePartClasses('item-active', itemLink);
-                return false;
+    exports.getItemByValue = function (value, datasource) {
+        var item;
+        datasource = datasource || this.datasource;
+        u.each(datasource, function (single, index) {
+            if (single.value === value) {
+                item = single;
             }
         });
-
-        this.removeCondition(item);
-
-        this.selectAnyItem();
-        u.isFunction(this.onunselect) && this.onunselect(this.conditionMap, item, target);
-    };
-
-    /**
-     * 移除所有选中项
-     * @private
-     */
-    exports.removeAllSelectedItems = function () {
-        var selectedItemsPanel = this.getSelectedItemsPanel();
-        selectedItemsPanel.main.innerHTML = '';
-
-        var me = this;
-        var helper = this.helper;
-        var cls = helper.getPartClassName('item-active');
-        var itemsPanel = this.getItemsPanel();
-        var itemLinks = itemsPanel.main.childNodes;
-        u.each(itemLinks, function (itemLink) {
-            if (lib.hasClass(itemLink, cls)) {
-                helper.removePartClasses('item-active', itemLink);
-                me.removeCondition({
-                    value: lib.getAttribute(itemLink, 'data-value'),
-                    text: lib.getText(itemLink)
-                });
-            }
-        });
-    };
-
-    /**
-     * 添加选中项条件
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @protected
-     */
-    exports.addCondition = function (item) {
-        this.conditionMap[item.value] = item.text;
-    };
-
-    /**
-     * 移除选中项条件
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @protected
-     */
-    exports.removeCondition = function (item) {
-        delete this.conditionMap[item.value];
-    };
-
-    /**
-     * 判断选中条件是否已经存在
-     * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-     * @return {bool} 是否已经存在选中条件
-     * @protected
-     */
-    exports.hasCondition = function (item) {
-        return !!this.conditionMap[item.value];
+        return item;
     };
 
     /**
@@ -572,35 +436,69 @@ define(function (require) {
     exports.repaint = require('esui/painters').createRepaint(
         Panel.prototype.repaint,
         {
-            name: ['datasource'],
-            paint: function (filterPanel, datasource) {
-                filterPanel.buildItems(datasource);
-                // 设置`不限`的选项，使用isAny字段标识
-                u.each(datasource, function (item) {
-                    if (item.isAny) {
-                        filterPanel.anyItem = item;
-                        return false;
-                    }
+            name: ['datasource', 'value'],
+            paint: function (filterPanel, datasource, value) {
+                if (u.isString(value)) {
+                    value = [value];
+                }
+                filterPanel.lastSelectedItem = null;
+                u.each(datasource, function (item, index) {
+                    u.each(value, function (single, i) {
+                        if (item.value === single) {
+                            item.selected = true;
+                            if (!filterPanel.multiple) {
+                                filterPanel.lastSelectedItem = item;
+                            }
+                        }
+                    });
                 });
+                // 单选时， 如果没有设置默认值，则默认选择第一个
+                if (!filterPanel.multiple
+                    && !filterPanel.lastSelectedItem
+                    && filterPanel.defaultFirst
+                    && datasource
+                    && datasource[0]) {
+                    datasource[0].selected = true;
+                    filterPanel.lastSelectedItem = datasource[0];
+                }
+                filterPanel.buildItems(datasource);
             }
         },
         {
-            name: ['itemsLabel', 'selectedItemsLabel'],
-            paint: function (filterPanel, itemLabel, selectedLabel) {
-                filterPanel.getItemsLabel().setText(itemLabel);
-                filterPanel.getSelectedItemsLabel().setText(selectedLabel);
+            name: ['itemsLabel'],
+            paint: function (filterPanel, label) {
+                label = label || filterPanel.label;
+                filterPanel.getItemsLabel().setText(label);
             }
         }
     );
 
     /**
-     * 获取选中的条件
-     * @return {Object} 选中的条件
+     * 获取选中的项
+     * @return {Object} 选中项
+     */
+    exports.getSelectedItems = function () {
+        var items = [];
+        u.each(this.datasource, function (item, index) {
+            if (item.selected) {
+                items.push(item);
+            }
+        });
+        return items;
+    };
+    
+    /**
+     * 获取选中的值
+     * @return {Object} 选中项
      */
     exports.getValue = function () {
-        return this.conditionMap;
+        var items = this.getSelectedItems();
+        var valueArr = [];
+        u.each(items, function (item, index) {
+            valueArr.push(item.value);
+        });
+        return valueArr;
     };
-
 
     function walkDomTree (root, callback) {
         if (root.nodeType !== 1) {
@@ -614,7 +512,7 @@ define(function (require) {
         }
     }
 
-    var Filter = eoo.create(Panel, exports);
-    require('esui/main').register(Filter);
-    return Filter;
+    var FilterItem = eoo.create(Panel, exports);
+    require('esui/main').register(FilterItem);
+    return FilterItem;
 });

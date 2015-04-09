@@ -265,7 +265,8 @@ define(
                 tree.on(
                     'unselectnode',
                     function (e) {
-                        control.setItemState(e.node.id, 'isSelected', false);
+                        // control.setItemState(e.node.id, 'isSelected', false);
+                        control.handlerAfterClickNode(e.node);
                     }
                 );
             }
@@ -336,20 +337,27 @@ define(
          *
          */
         exports.actionForAdd = function (item) {
-            this.setItemState(item.node.id, 'isSelected', true);
+            var stateNode = this.getStateNode(item.node.id);
+            var toBeSelected = true;
+            if (stateNode.isSelected && this.allowUnselectNode) {
+                toBeSelected = false;
+            }
+            this.setItemState(item.node.id, 'isSelected', toBeSelected);
             // 如果是单选，需要将其他的已选项置为未选
             if (!this.multi) {
                 // 如果以前选中了一个，要取消选择
                 // 节点的状态切换Tree控件会完成，因此无需这里手动unselect
                 if (this.currentSeletedId) {
-                    this.setItemState(this.currentSeletedId, 'isSelected', false);
+                    this.setItemState(this.currentSeletedId, 'isSelected', !toBeSelected);
                 }
                 // 赋予新值
-                this.currentSeletedId = item.node.id;
+                if (toBeSelected) {
+                    this.currentSeletedId = item.node.id;
+                }
             }
             // 多选同步父子状态
             else {
-                trySyncParentAndChildrenStates(this, item, true);
+                trySyncParentAndChildrenStates(this, item, toBeSelected);
             }
             this.fire('add', {item: item.node});
             this.fire('change');

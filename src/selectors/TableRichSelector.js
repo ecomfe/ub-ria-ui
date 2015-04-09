@@ -382,11 +382,9 @@ define(
             var fire = false;
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
-                if (!control.multi) {
-                    if (control.allowUnselectNode) {
-                        selectItem(control, item.id, false);
-                        fire = true;
-                    }
+                if (control.allowUnselectNode) {
+                    selectItem(control, item.id, false);
+                    fire = true;
                 }
             }
             else {
