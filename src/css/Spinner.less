@@ -6,27 +6,14 @@
  * @author jiangyuan(jiangyuan01@baidu.com)
  */
 
-@import "mixin.less";
-@import "variables.less";
-
+@ui-spinner-input-active-border-color: #CCC;
+@ui-spinner-divide-line-color: #CCC;
+@ui-textbox-spinner-wrapper-width: 1em;
+@ui-spinner-btn-color: #EEE;
+@ui-spinner-hover-btn-color: #ddd;
+@ui-spinner-active-btn-color: #bbb;
 
 .@{ui-class-prefix}-textbox {
-  .ui-input;
-  .input-variant(
-  @input-text-color,
-  @input-background-color,
-  @input-border-color,
-  @ui-spinner-input-active-border-color,
-  @input-active-background-color,
-  @ui-spinner-input-active-border-color,
-  @input-focus-background-color,
-  @input-disabled-border-color,
-  @input-disabled-background-color,
-  @input-error-border-color,
-  @input-error-background-color,
-  @input-error-text-color,
-  @input-error-placeholder-color
-  );
 
   >input {
     &:hover {
@@ -68,13 +55,13 @@
     .@{ui-class-prefix}-textbox-scroll-up {
       top: 0;
       &:before {
-        content: @fa-var-caret-up;
+        /*content: @fa-var-caret-up;*/
       }
     }
     .@{ui-class-prefix}-textbox-scroll-down {
       bottom: 0;
       &:before {
-        content: @fa-var-caret-down;
+        /*content: @fa-var-caret-down;*/
       }
     }
   }
