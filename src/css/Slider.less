@@ -1,88 +1,65 @@
-@import "./mixin.less";
-@import "./variables.less";
-
 /* 滑动杆控件开始 */
-@slider-width: 640px;
-@slider-padding: 10px 0;
+@esui-slider-padding: 0.5em 0;
 
 /* 滑动杆的头 */
-@slider-head-line-height: 38px;
-@slider-head-margin-bottom: 10px;
-@slider-head-textbox-margin-top: 5px;
-@slider-head-select-margin-top: 13px;
-@slider-head-unit-margin-left: 5px;
+@esui-slider-head-line-height: 2.5em;
+@esui-slider-head-margin-bottom: 1em;
+@esui-slider-head-unit-margin-left: 0.25em;
+@esui-slider-head-color: #444;
 
 /* 横向滑动杆体 */
-@slider-body-width: 600px;
-@slider-body-height: 20px;
-@slider-body-border: 1px solid #ccc;
-@slider-body-margin: 10px 20px;
+@esui-slider-body-width: 600px;
+@esui-slider-body-height: 1em;
+@esui-slider-body-border-color: #ccc;
+@esui-slider-body-border-width: 1px;
+@esui-slider-body-border: @esui-slider-body-border-width solid @esui-slider-body-border-color;
 
 /* 纵向滑动杆体 */
-@slider-vertical-body-width: 20px;
-@slider-vertical-body-heigth: 400px;
-@slider-vertical-body-margin: 20px 10px;
+@esui-slider-vertical-body-width: 1em;
+@esui-slider-vertical-body-heigth: 400px;
+@esui-slider-vertical-body-margin: 1em 0.5em;
 
 /* 滑杆的选择部分 */
-@slider-body-selected-height: 20px;
-@slider-body-selected-background-color: #ccc;
-@slider-vertical-body-selected-width: 20px;
+@esui-slider-body-selected-height: 1em;
+@esui-slider-body-selected-background: #ccc;
+@esui-slider-vertical-body-selected-width: 1em;
 
 
 /* 滑块 */
-@slider-body-cursor-width: 40px;
-@slider-body-cursor-height: 40px;
-@slider-vertical-body-cursor-width: 40px;
-@slider-vertical-body-cursor-height: 40px;
-@slider-body-cursor-background-color: #093ac9;
-@slider-body-cursor-border-radius: 5px;
+@esui-slider-body-cursor-width: 1em;
+@esui-slider-body-cursor-height: 1em;
+@esui-slider-vertical-body-cursor-width: 1em;
+@esui-slider-vertical-body-cursor-height: 1em;
+@esui-slider-body-cursor-background: #093ac9;
+@esui-slider-body-cursor-border-radius: 2px;
 
-/* 滑动杆的脚 */
-@slider-foot-margin-bottom: 10px;
-@slider-foot-li-width: 40px;
+/* 滑块腿 */
+@esui-slider-foot-color: #444;
 
 .@{ui-class-prefix}-slider {
-    width: @slider-width;
-    padding: @slider-padding;
+    padding: @esui-slider-padding;
     .box-sizing(border-box);
-    font-size: 12px;
-}
-
-.@{ui-class-prefix}-slider-vertical {
-
+    .user-select(none);
 }
 
 .@{ui-class-prefix}-slider-body {
     .box-sizing(border-box);
     position: relative;
-    width: @slider-body-width;
-    height: @slider-body-height;
-    margin: @slider-body-margin;
-    border: @slider-body-border;
+    width: @esui-slider-body-width;
+    height: @esui-slider-body-height;
+    border: @esui-slider-body-border;
+    margin: 0.5em 0;
 }
 
-.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body {
-    width: @slider-vertical-body-width;
-    height: @slider-vertical-body-heigth;
-    margin: @slider-vertical-body-margin;
-}
 
-.@{ui-class-prefix}-slider-body-cursor,
-.@{ui-class-prefix}-slider-body-cursortwo {
+.@{ui-class-prefix}-slider-body-cursor {
     position: absolute;
-    top: -10px;
-    left: -20px;
-    width: @slider-body-cursor-width;
-    height: @slider-body-cursor-height;
-    .border-radius(@slider-body-cursor-border-radius);
-    background-color: @slider-body-cursor-background-color;
+    top: -@esui-slider-body-border-width;
+    width: @esui-slider-body-cursor-width;
+    height: @esui-slider-body-cursor-height;
+    .border-radius(@esui-slider-body-cursor-border-radius);
+    background: @esui-slider-body-cursor-background;
     z-index: 2;
-}
-
-.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-cursor,
-.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-cursortwo {
-    top: -20px;
-    left: -10px;
 }
 
 .@{ui-class-prefix}-slider-body-cursortwo {
@@ -96,23 +73,21 @@
 .@{ui-class-prefix}-slider-body-selected {
     .box-sizing(border-box);
     position: absolute;
-    height: @slider-body-selected-height;
-    background-color: @slider-body-selected-background-color;
+    top: -@esui-slider-body-border-width;
+    height: @esui-slider-body-selected-height;
+    background: @esui-slider-body-selected-background;
     z-index: 1;
 }
 
-.@{ui-class-prefix}-slider-vertical .@{ui-class-prefix}-slider-body-selected {
-    width: @slider-vertical-body-selected-width;
-}
-
 .@{ui-class-prefix}-slider-head {
-    height: @slider-head-line-height;
-    margin-bottom: @slider-head-margin-bottom;
+    color: @esui-slider-head-color;
+    height: @esui-slider-head-line-height;
+    margin-bottom: @esui-slider-head-margin-bottom;
 }
 
 .@{ui-class-prefix}-slider-head-label {
     display: inline-block;
-    line-height: @slider-head-line-height;
+    line-height: @esui-slider-head-line-height;
 }
 
 .@{ui-class-prefix}-slider-head-value,
@@ -121,35 +96,46 @@
 }
 
 .@{ui-class-prefix}-slider-head-select {
-    margin-top: @slider-head-select-margin-top;
     z-index: 3;
-}
-
-.@{ui-class-prefix}-slider-head-textbox {
-    margin-top: @slider-head-textbox-margin-top;
 }
 
 .@{ui-class-prefix}-slider-head-span,
 .@{ui-class-prefix}-slider-head-unit {
-    line-height: @slider-head-line-height;
+    line-height: @esui-slider-head-line-height;
 }
 
 .@{ui-class-prefix}-slider-head-unit {
-    margin-left: @slider-head-unit-margin-left;
+    margin-left: @esui-slider-head-unit-margin-left;
 }
 
 .@{ui-class-prefix}-slider-foot {
+    color: @esui-slider-foot-color;
     position: relative;
-    width: 600px;
-    margin: 20px 20px 0 20px;
-    padding-bottom: @slider-foot-margin-bottom;
+    padding-bottom: 0.5em;
 }
 
 .@{ui-class-prefix}-slider-foot li{
     position: absolute;
     display: inline-block;
-    width: @slider-foot-li-width;
     text-align: center;
 }
+
+.@{ui-class-prefix}-slider-vertical {
+    .@{ui-class-prefix}-slider-body {
+        width: @esui-slider-vertical-body-width;
+        height: @esui-slider-vertical-body-heigth;
+        margin: @esui-slider-vertical-body-margin;
+    }
+
+    .@{ui-class-prefix}-slider-body-cursor {
+        left: -@esui-slider-body-border-width;
+    }
+
+    .@{ui-class-prefix}-slider-body-selected {
+        left: -@esui-slider-body-border-width;
+        width: @esui-slider-vertical-body-selected-width;
+    }
+}
+
 
 /* 滑动杆控件结束 */
