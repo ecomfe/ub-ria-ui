@@ -7,83 +7,22 @@
   * @author lixiang
   */
 
-@esui-toggle-select-color: #666;
-@esui-toggle-select-border-color: transparent;
-@esui-toggle-select-border: 1px solid @esui-toggle-select-border-color;
-@esui-toggle-select-width: 150px;
-@esui-toggle-select-height: 30px;
-@esui-toggle-select-padding: 2.5em;
-@esui-toggle-select-border-radius: 0.25em;
+@esui-toggleselector-fixed-content-margin: -1em;
 
-// Select
-@esui-toggle-select-background-color: #EBEBEB;
-@esui-toggle-select-background-color-hover: lighten(@esui-toggle-select-background-color, 5%);
-@esui-toggle-select-background-color-active: darken(@esui-toggle-select-background-color, 10%);
-@esui-toggle-select-background-color-disabled: #999;
-
-// icon color
-@esui-toggle-select-icon-color: #7d7d7d;
-@esui-toggle-select-icon-color-disabled: #b7b7b7;
-
-
-.@{ui-class-prefix}-toggle-selector {
+.@{ui-class-prefix}-toggleselector {
+    display: inline-block;
+    vertical-align: middle;
 }
 
-.@{ui-class-prefix}-togglepanel-title {
-    .esui-toggle-select();
-    .ellipsis();
-    .box-sizing(border-box);
-    width: @esui-toggle-select-width;
-    margin: 0;
-    display: block;
-    font-size: 15px;
-}
-
-.esui-toggle-select {
-    .border-radius(@esui-toggle-select-border-radius);
-    .eicons-font-style();
-    .esui-toggle-select-icon(caret-down);
-    height: @esui-toggle-select-height;
-    line-height: @esui-toggle-select-height;
-    font-weight: bold;
-    cursor: pointer;
-    background: @esui-toggle-select-background-color;
-    border: @esui-toggle-select-border;
-    color: @esui-toggle-select-color;
-    padding-left: @esui-toggle-select-padding;
-
-    &:hover {
-        background: @esui-toggle-select-background-color-hover;
-    }
-
-    &:active {
-        background: @esui-toggle-select-background-color-active;
+.@{ui-class-prefix}-toggleselector {
+    .@{ui-class-prefix}-toggleselector-content {
+        display: none;
+        margin-left: @esui-toggleselector-fixed-content-margin;
     }
 }
 
-.@{ui-class-prefix}-togglepanel-expanded {
-    .@{ui-class-prefix}-togglepanel-title {
-        .esui-toggle-select-icon(caret-up);
-    }
-}
-
-.@{ui-class-prefix}-toggle-select-disabled,
-.@{ui-class-prefix}-toggle-select-read-only,
-.@{ui-class-prefix}-toggle-select-disabled:hover,
-.@{ui-class-prefix}-toggle-select-read-only:hover {
-    color: @esui-toggle-select-icon-color-disabled;
-    background: @esui-toggle-select-background-color-disabled;
-    &:before {
-        color: @esui-toggle-select-icon-color-disabled;
-    }
-}
-
-.esui-toggle-select-icon(@icon) {
-    .eicons-icon(@icon);
-    position: relative;
-    &:before {
-        position: absolute;
-        right: @esui-toggle-select-padding;
-        color: @esui-toggle-select-icon-color;
+.@{ui-class-prefix}-toggleselector.@{ui-state-prefix}-active {
+    .@{ui-class-prefix}-toggleselector-content {
+        display: block;
     }
 }

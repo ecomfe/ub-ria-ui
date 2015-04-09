@@ -569,7 +569,7 @@ define(
             return 0;
         };
 
-
+        var painters = require('esui/painters');
         /**
          * 重新渲染视图
          * 仅当生命周期处于RENDER时，该方法才重新渲染
@@ -577,7 +577,7 @@ define(
          * @param {Array=} 变更过的属性的集合
          * @override
          */
-        exports.repaint = require('esui/painters').createRepaint(
+        exports.repaint = painters.createRepaint(
             InputControl.prototype.repaint,
             {
                 name: 'title',
@@ -586,7 +586,8 @@ define(
                     var titleLabel = head && head.getChild('title');
                     titleLabel && titleLabel.setText(title);
                 }
-            }
+            },
+            painters.style('width')
         );
 
         /**
