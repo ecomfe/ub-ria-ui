@@ -11,7 +11,7 @@ define(function (require) {
     var Dialog = require('esui/Dialog');
     var Control = require('esui/Control');
     var helper = require('esui/controlHelper');
-    var swf = require('./swf');
+    var swf = require('helper/swfHelper');
 
     var NOT_SUPPORT_MESSAGE = '暂不支持该格式预览';
     var VIDEO_TPL = [
@@ -20,14 +20,9 @@ define(function (require) {
         '</video>'
     ].join('');
 
-    // TODO: 做成一个可以配置的路径。
-    var FLV_PLAYER = require.toUrl('resource/video-preview-player.swf');
+    var LOADING_TPL = '<div class="${loadingStyle}">加载中...</div>';
 
-    var LOADING_TPL = '<div style="width:${width}px;height:${height}px;'
-        + 'line-height:${height}px;text-align:center;">加载中...</div>';
-
-    var LOADED_FAILTURE_TPL = '<div style="width:${width}px;height:${height}px;'
-        + 'line-height:${height}px;text-align:center;">加载图片失败</div>';
+    var LOADED_FAILTURE_TPL = '<div class="${loadedFailtureStyle}">加载图片失败</div>';
 
     var exports = {};
 
@@ -53,7 +48,9 @@ define(function (require) {
             currentIndex: 0,
             width: 'auto',
             height: 'auto',
-            dialogVariants: 'lightbox'
+            dialogVariants: 'lightbox',
+            loadingStyle: this.helper.getPartClassName('media-loading'),
+            loadedFailtureStyle: this.helper.getPartClassName('media-loaded-failture')
         };
         u.extend(properties, options);
         this.setProperties(properties);
@@ -311,7 +308,7 @@ define(function (require) {
     exports.previewVideo = function (options) {
         var url = options.url;
         if (/\.flv$/.test(url)) {
-            html = getFlvHtml(options);
+            html = getFlvHtml(options, this.swfPath);
         }
         else if (/\.mp4|\.mov/.test(url)) {
             html = getVideoHtml(options);
@@ -384,10 +381,10 @@ define(function (require) {
      * @private
      * @return {string}
      */
-    function getFlvHtml(options) {
+    function getFlvHtml(options, swfPath) {
         return swf.createHTML({
             'id': options.id || 'preview-flv',
-            'url': FLV_PLAYER,
+            'url': swfPath,
             'width': options.width,
             'height': options.height,
             'wmode': 'transparent',
