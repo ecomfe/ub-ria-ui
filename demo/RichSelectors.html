@@ -21,6 +21,34 @@
         <ul id="navigator">
         </ul>
         <div id="main">
+            <h2>单一选择Table Selector</h2>
+            <section class="view">
+                <ul class="viewer">
+                    <li class="view-markup">结构</li>
+                </ul>
+                <div class="example ui-demo-light-stage">
+                    <div class="row">
+                        <h3>单一选择Table Selector</h3>
+                        <div
+                            data-ui-type="RichSelectorGroup"
+                            data-ui-id="single-slots"
+                            data-ui-name="single-slots">
+                            <esui-table-rich-selector
+                                data-ui-child-name="source"
+                                data-ui-title="全部有效代码位"
+                                data-ui-has-head="true"
+                                data-ui-has-search-box="true"
+                                data-ui-need-batch-action="true"
+                                data-ui-allow-unselect-node="true"
+                                data-ui-batch-action-label="选择全部">
+                            </esui-table-rich-selector>
+                        </div>
+                    </div>
+                    <esui-button data-ui-id="get-single-slots">获取选值</esui-button>
+                    <esui-label data-ui-id="single-slots-result"></esui-label>
+                </div>
+            </section>
+
             <h2>左右选择Table Selector</h2>
             <section class="intro">
                 <p>右两个列表型富选择器组成，支持从左侧添加到右侧，支持从右侧删除。</p>
@@ -33,7 +61,7 @@
                     <div class="row">
                         <h3>双向Table Rich Selector</h3>
                         <div
-                            data-ui-type="CascadingRichSelector"
+                            data-ui-type="RichSelectorGroup"
                             data-ui-id="cas-slots"
                             data-ui-name="cas-slots">
                             <esui-table-rich-selector
@@ -42,6 +70,7 @@
                                 data-ui-has-head="true"
                                 data-ui-has-search-box="true"
                                 data-ui-need-batch-action="true"
+                                data-ui-allow-unselect-node="true"
                                 data-ui-batch-action-label="选择全部">
                             </esui-table-rich-selector>
                             <esui-table-rich-selector
@@ -71,7 +100,7 @@
                     <div class="row">
                         <h3>双向Tree Rich Selector</h3>
                         <div
-                            data-ui-type="CascadingRichSelector"
+                            data-ui-type="RichSelectorGroup"
                             data-ui-id="cas-apps"
                             data-ui-name="cas-apps">
                             <div data-ui-type="TreeRichSelector"
@@ -82,6 +111,7 @@
                                 data-ui-only-leaf-select="false"
                                 data-ui-tree-variants="icon angle hoverable"
                                 data-ui-need-batch-action="true"
+                                data-ui-allow-unselect-node="true"
                                 data-ui-batch-action-label="选择全部">
                             </div>
                             <div data-ui-type="TreeRichSelector"
@@ -109,8 +139,8 @@
         require(
                 [
                     'esui',
-                    'selectors/CascadingRichSelector',
-                    'selectors/CascadingTableRichSelector',
+                    'selectors/RichSelectorGroup',
+                    'selectors/TableRichSelector',
                     'selectors/TreeRichSelector'
                 ],
                 function (ui) {
@@ -124,6 +154,28 @@
                             id: i + 1
                         })
                     }
+
+                    var single = ui.get('single-slots');
+                    var singleSource = single.getChild('source');
+                    singleSource.setProperties({
+                        datasource: arrayDatasource,
+                        fields: [
+                            {
+                                field: 'name',
+                                content: function (item) {
+                                    return item.name;
+                                },
+                                searchScope: 'partial',
+                                width: 170,
+                                isDefaultSearchField: true,
+                                title: '名称'
+                            }
+                        ]
+                    });
+
+                    ui.get('get-single-slots').on('click', function () {
+                        ui.get('single-slots-result').setText(single.getValue());
+                    });
 
                     var cascading = ui.get('cas-slots');
                     var casSource = cascading.getChild('source');
@@ -197,10 +249,15 @@
                         var node = children[i];
                         node.children = [
                             {
-                                text: '子节点' + i,
-                                name: '子节点' + (i),
-                                id: 100 + i,
+                                text: '子节点' + i + 1,
+                                name: '子节点' + i + 1,
+                                id: (i + 1) * 100 + 1,
                                 isSelected: true
+                            },
+                            {
+                                text: '子节点' + i + 2,
+                                name: '子节点' + i + 2,
+                                id: (i + 1) * 100 + 2
                             }
                         ]
                     }
