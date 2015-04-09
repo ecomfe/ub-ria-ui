@@ -22,20 +22,26 @@
     margin: 0.5em 0;
 }
 
-.@{ui-class-prefix}-filter-items-panel, .@{ui-class-prefix}-filter-items-selected-panel {
+.@{ui-class-prefix}-filter-items-panel,
+.@{ui-class-prefix}-filteritem-items-panel,
+.@{ui-class-prefix}-filter-items-selected-panel,
+.@{ui-class-prefix}-filterresult-items-selected-panel {
     .inline-block();
 }
 
-.@{ui-class-prefix}-filter-item, .@{ui-class-prefix}-filter-item-selected {
+.@{ui-class-prefix}-filter-item,
+.@{ui-class-prefix}-filteritem-item,
+.@{ui-class-prefix}-filter-item-selected,
+.@{ui-class-prefix}-filterresult-item-selected {
     margin: 0 0.5em;
     padding: 0.25em;
     text-decoration: none;
 }
 
-.@{ui-class-prefix}-filter-item {
+.@{ui-class-prefix}-filter-item,
+.@{ui-class-prefix}-filteritem-item {
     color: @esui-filter-color;
     background: @esui-filter-bg-color;
-
     &:hover {
         background: @esui-filter-bg-color-hover;
         color: @esui-filter-color-hover;
@@ -43,13 +49,15 @@
     }
 }
 
-.@{ui-class-prefix}-filter-item-active {
+.@{ui-class-prefix}-filter-item-active,
+.@{ui-class-prefix}-filteritem-item-active {
     background: @esui-filter-bg-color-active;
     color: @esui-filter-color-active;
     cursor: text;
 }
 
-.@{ui-class-prefix}-filter-item-selected {
+.@{ui-class-prefix}-filter-item-selected,
+.@{ui-class-prefix}-filterresult-item-selected {
     color: @esui-filter-color-selected;
     background: @esui-filter-bg-color-selected;
 
@@ -64,7 +72,8 @@
     }
 }
 
-.@{ui-class-prefix}-filter-item-cmd {
+.@{ui-class-prefix}-filter-item-cmd,
+.@{ui-class-prefix}-filteritem-item-cmd {
     color: @esui-filter-cmd-color;
     background: @esui-filter-cmd-bg-color;
     text-decoration: none;
