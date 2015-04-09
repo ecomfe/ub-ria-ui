@@ -21,7 +21,7 @@ define(function (require) {
     ].join('');
 
     // TODO: 做成一个可以配置的路径。
-    var FLV_PLAYER = require.toUrl('img/video-preview-player.swf');
+    var FLV_PLAYER = require.toUrl('resource/video-preview-player.swf');
 
     var LOADING_TPL = '<div style="width:${width}px;height:${height}px;'
         + 'line-height:${height}px;text-align:center;">加载中...</div>';
@@ -84,7 +84,7 @@ define(function (require) {
             needFoot: this.needFoot || false,
             variants: this.dialogVariants
         });
-        var dialog = ui.create('Dialog', properties);
+        var dialog = require('esui').create('Dialog', properties);
         dialog.appendTo(document.body);
         this.dialog = dialog;
     };

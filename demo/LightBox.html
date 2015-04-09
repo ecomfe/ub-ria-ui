@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>LightBox - ESUI Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
+    <link rel="stylesheet" href="assets/themes/standard.less" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
     <script src="assets/loader/esl.js"></script>
 
@@ -30,13 +30,6 @@
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example ui-demo-light-stage" id="container">
-                    <button data-ui-type="Button"
-                         data-ui-content="点我 show Single Image"
-                         data-ui-id="btn1"></button>
-                    <button data-ui-type="Button"
-                         data-ui-content="点我 show Multiple Media"
-                         data-ui-id="btn2"></button>
-
                     <div id="image-container">
                         <a href="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" data-lightbox-group="group-1">
                             <img src="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" width="100" height="100"/>
@@ -48,17 +41,6 @@
                             <img src="http://file.ynet.com/2/1503/23/9928834.jpg" width="100" height="100"/>
                         </a>
                     </div>
-                    <div data-ui-type="LightBox"
-                        data-ui-id="box1"
-                        data-ui-title="Hi Baby, this is single image."
-                        ></div>
-                    <div data-ui-type="LightBox"
-                        data-ui-id="box2"
-                        data-ui-title="Hi Baby, this is multiple media."
-                        data-ui-width="400"
-                        data-ui-height="300"
-                        data-ui-current-index="1"
-                        ></div>
 
                     <div data-ui-type="LightBox"
                         data-ui-id="box3"
@@ -75,56 +57,11 @@
         require(
             [
                 'esui',
-                'esui/Button',
                 'LightBox'
             ],
             function (ui) {
-                window.ui = ui;
-                var controls = ui.init();
-                var data = {
-                    datasource: [
-                        {
-                            url: 'http://getuikit.com/docs/images/placeholder_800x600_2.jpg',
-                            type: 'image'
-                        }
-                    ]
-                };
-                var data1 = {
-                    datasource: [
-                        {
-                            url: 'http://getuikit.com/docs/images/placeholder_800x600_1.jpg',
-                            type: 'image'
-                        },
-                        {
-                            url: 'http://file.ynet.com/2/1503/23/9928834.jpg',
-                            type: 'image'
-                        },
-                        {
-                            //url: 'http://stimgcn4.s-msn.com/msnportal/money/2013/11/01/650bfa26-5d52-4082-b90b-195c2ad7e601.jpg'
-                            url: 'http://ips.ifeng.com/video19.ifeng.com/video09/2015/03/16/3088974-102-008-1928.mp4',
-                            type: 'video'
-                        },
-                        {
-                            // url: 'http://stimgcn3.s-msn.com/msnportal/money/2015/03/22/09c7109c-7c6d-4a65-b51e-b59d99331258.jpg'
-                            url: '/demo/flash2489.swf',
-                            type: 'flash'
-                        },
-                        {
-                            url: 'http://ips.ifeng.com/video19.ifeng.com/video09/2015/03/07/3033589-102-008-2028.mp4',
-                            width: 500,
-                            height: 500,
-                            type: 'video'
-                        }
-                    ]
-                };
-                var box1 = controls[2];
-                var box2 = controls[3];
-                controls[0].onclick = function () {
-                    box1.show(data);
-                };
-                controls[1].onclick = function () {
-                    box2.show(data1);
-                };
+
+                ui.init();
         });
 
     </script>
