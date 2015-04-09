@@ -356,17 +356,25 @@ define(function (require) {
      */
     exports.selectItem = function (item, target) {
         var selectedItem = this.getItemByValue(item.value);
-        if (!this.multiple && this.lastSelectedItem) {
-            this.lastSelectedItem.selected = false;
-        }
+        // 是否之前被选中过
+        var isChecked = false;
         if (selectedItem.selected) {
-            return;
+            selectedItem.selected = false;
+            isChecked = true;
         }
         else {
             selectedItem.selected = true;
         }
         var helper = this.helper;
+        // 对单选的特殊处理
         if (!this.multiple) {
+            if (selectedItem === this.lastSelectedItem) {
+                selectedItem.selected = false;
+                this.lastSelectedItem = null;
+            }
+            else {
+                this.lastSelectedItem && (this.lastSelectedItem.selected = false);
+            }
             var cls = helper.getPartClassName('item-active');
             var itemLinks = target.parentNode.childNodes;
             u.each(itemLinks, function (itemLink) {
@@ -376,15 +384,22 @@ define(function (require) {
                 }
             });
         }
-        helper.addPartClasses('item-active', target);
+        if (isChecked) {
+            helper.removePartClasses('item-active', target);
+        }
+        else {
+            helper.addPartClasses('item-active', target);
+        }
+
         /**
          * @event select
          *
          * 选择时触发
          */
-        this.fire('select', {
+        this.fire('change', {
             'item': item,
-            'lastItem': this.lastSelectedItem
+            'lastItem': this.lastSelectedItem,
+            'action': isChecked ? 'remove' : 'add'
         });
         this.lastSelectedItem = selectedItem;
     };
@@ -422,13 +437,14 @@ define(function (require) {
                 if (u.isString(value)) {
                     value = [value];
                 }
+                filterPanel.lastSelectedItem = null;
                 u.each(datasource, function (item, index) {
                     u.each(value, function (single, i) {
                         if (item.value === single) {
                             item.selected = true;
-                             if (!filterPanel.multiple) {
-                                 filterPanel.lastSelectedItem = item;
-                             }
+                            if (!filterPanel.multiple) {
+                                filterPanel.lastSelectedItem = item;
+                            }
                         }
                     });
                 });

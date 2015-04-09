@@ -165,7 +165,7 @@ define(function (require) {
          *
          * 移除时触发
          */
-        this.fire('unselect', {
+        this.fire('change', {
             'item': item
         });
     };

@@ -116,14 +116,24 @@
                 var filter1 = controls[0];
                 var filter2 = controls[1];
                 var result = controls[2];
-                filter1.on('select', function (e) {
-                    result.addItem(e.item);
-                    result.removeItem(e.lastItem);
+                filter1.on('change', function (e) {
+                    if (e.action === 'add') {
+                        result.addItem(e.item);
+                        result.removeItem(e.lastItem);
+                    }
+                    else {
+                        result.removeItem(e.item);
+                    }
                 });
-                filter2.on('select', function (e) {
-                    result.addItem(e.item);
+                filter2.on('change', function (e) {
+                    if (e.action === 'add') {
+                        result.addItem(e.item);
+                    }
+                    else {
+                        result.removeItem(e.item);
+                    }
                 });
-                result.on('unselect', function (e) {
+                result.on('change', function (e) {
                     filter1.removeItem(e.item);
                     filter2.removeItem(e.item);
                 });
@@ -135,7 +145,6 @@
                 });
             }
         );
-
 
         var wordmap = {
             "a" : "\u554a\u963f\u9515",
