@@ -21,7 +21,6 @@ define(
          * @override
          */
         exports.type = 'ToggleSelector';
-        exports.styleType = 'TogglePanel';
 
         exports.getCategory = function () {
             return 'input';
@@ -44,10 +43,15 @@ define(
          */
         exports.initStructure = function () {
             this.$super(arguments);
-            lib.addClass(
-                this.main,
-                'ui-toggle-selector'
-            );
+            lib.addClass(this.main, this.helper.getPrefixClass('select'));
+            var children = lib.getChildren(this.main);
+            if (children.length > 0) {
+                lib.addClass(children[0], this.helper.getPrefixClass('select-text'));
+            }
+            var caret = document.createElement('span');
+            lib.addClass(caret, this.helper.getPrefixClass('select-arrow'));
+            lib.addClass(caret, this.helper.getIconClass('caret-down'));
+            this.main.appendChild(caret);
         };
 
         /**
@@ -66,25 +70,7 @@ define(
          */
         exports.toggleContent = function () {
             if (!this.isDisabled()) {
-                var position = this.position;
-
-                if (position === 'fixed') {
-                    // 占位模式
-                    this.toggleState('expanded');
-                }
-                else {
-                    // 浮层模式
-                    var contentLayer = this.getChild('content');
-
-                    if (this.isExpanded()) {
-                        this.removeState('expanded');
-                        contentLayer.hide();
-                    }
-                    else {
-                        this.toggleState('expanded');
-                        contentLayer.show();
-                    }
-                }
+                this.toggleStates();
             }
         };
 
