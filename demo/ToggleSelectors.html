@@ -81,6 +81,44 @@
                         </div>
                     </div>
                     <div class="row">
+                        <label class="label">单选一级双列：</label>
+                        <div
+                            data-ui-type="ToggleSelector"
+                            data-ui-id="delivery"
+                            data-ui-name="delivery"
+                            data-ui-target-control="delivery-under-order"
+                            data-ui-text-field="name"
+                            data-ui-width="200"
+                            data-ui-value-field="id">
+                            <span>请选择</span>
+                            <section>
+                                <div data-ui-type="RichSelectorGroup"
+                                    data-ui-id="delivery-under-order">
+                                    <esui-table-rich-selector-with-filter
+                                        data-ui-child-name="filter"
+                                        data-ui-title="订单"
+                                        data-ui-has-head="false"
+                                        data-ui-has-search-box="true"
+                                        data-ui-need-batch-action="false"
+                                        data-ui-has-row-head="true"
+                                        data-ui-multi="false"
+                                        data-ui-mode="load">
+                                    </esui-table-rich-selector-with-filter>
+                                    <esui-table-rich-selector-with-filter
+                                        data-ui-child-name="source"
+                                        data-ui-title="广告"
+                                        data-ui-mode="add"
+                                        data-ui-has-head="false"
+                                        data-ui-has-row-head="false"
+                                        data-ui-multi="false"
+                                        data-ui-need-batch-action="false"
+                                        data-ui-empty-text="请从左侧选择要订单">
+                                    </esui-table-rich-selector-with-filter>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="row">
                         <label class="label">占位：</label>
                         <div
                             data-ui-type="ToggleSelector"
@@ -111,9 +149,11 @@
         require(
                 [
                     'esui',
+                    'selectors/RichSelectorGroup',
                     'selectors/TreeRichSelector',
                     'selectors/TableRichSelector',
-                    'selectors/ToggleSelector'
+                    'selectors/ToggleSelector',
+                    'selectors/TableRichSelectorWithFilter'
                 ],
                 function (ui) {
                     var tables = ui.init(document.body);
@@ -128,6 +168,7 @@
                         arrayDatasource.push({
                             text: '<input />选项' + (i + 1),
                             name: '<input />选项' + (i + 1),
+                            status: i % 2 + '',
                             id: i + 1,
                             isSelected: isSelected
                         })
@@ -171,6 +212,61 @@
 
                     table3 = ui.get('all-slots-oppucied');
                     table3.setProperties({datasource: datasource});
+
+                    var deliveryUnderOrder = ui.get('delivery-under-order');
+
+                    var order = deliveryUnderOrder.getChild('filter');
+                    var delivery = deliveryUnderOrder.getChild('source');
+
+                    order.setProperties({
+                        datasource: arrayDatasource,
+                        fields: [
+                            {
+                                field: 'name',
+                                content: 'name',
+                                searchScope: 'partial',
+                                width: 100,
+                                isDefaultSearchField: true,
+                                title: '名称'
+                            },
+                            {
+                                field: 'status',
+                                content: function (item) {
+                                    return '' + item.status;
+                                },
+                                searchScope: 'full',
+                                width: 70,
+                                isDefaultSearchField: true,
+                                title: '状态'
+                            }
+                        ],
+                        filterField: 'status',
+                        filterDatasource: [
+                            {
+                                value: '',
+                                text: '全部'
+                            },
+                            {
+                                value: 1,
+                                text: 1
+                            },
+                            {
+                                value: 2,
+                                text: 2
+                            },
+                            {
+                                value: 3,
+                                text: 3
+                            }
+                        ]
+                    });
+
+                    deliveryUnderOrder.on('load', function (e) {
+                        var item = e.item;
+                        delivery.setProperties({datasource: arrayDatasource.slice(item.id)});
+                    });
+
+
                 }
         );
     </script>

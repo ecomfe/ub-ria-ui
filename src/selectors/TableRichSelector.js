@@ -9,7 +9,7 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var u = require('underscore');
+        var u = require('../util');
 
         var RichSelector = require('./RichSelector');
 
@@ -48,19 +48,15 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    {field: 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
-                ]
+                    {field: 'name', title: '名称', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
+                ],
+                // 是否展示表格属性栏
+                hasRowHead: true
             };
 
             lib.extend(properties, options);
 
-            if (properties.firedOnIcon === 'false') {
-                properties.firedOnIcon = false;
-            }
-
-            if (properties.isStatableDatasource === 'false') {
-                properties.isStatableDatasource = false;
-            }
+            u.parseBoolean(properties);
 
             this.$super([properties]);
         };
@@ -87,9 +83,9 @@ define(
         exports.repaint = require('esui/painters').createRepaint(
             RichSelector.prototype.repaint,
             {
-                name: ['datasource', 'selectedData', 'disabledData'],
+                name: ['datasource', 'selectedData', 'disabledData', 'fields'],
                 paint:
-                    function (control, datasource, selectedData, disabledData) {
+                    function (control, datasource, selectedData, disabledData, fields) {
                         control.refresh();
                         control.fire('change');
                     }
@@ -184,9 +180,9 @@ define(
             // 开始构建
             var htmlArray = [];
             if (this.hasRowHead) {
-                htmlArray.push(createTableHead(this));
+                htmlArray.push(this.createTableHead());
             }
-            htmlArray.push(createTableContent(this, data));
+            htmlArray.push(this.createTableContent(data));
 
             var queryList = this.getQueryList();
             queryList.setContent(htmlArray.join(''));
@@ -196,16 +192,16 @@ define(
          * 创建表头
          *
          * @public
-         * @param {ui.TableRichSelector} control 当前控件实例
          * @return {string} 表头html
          */
-        function createTableHead(control) {
-            var tableClass = control.helper.getPartClassName('head-table');
-            var tpl = ['<table border=0 class="' + tableClass + '"><tr>'];
-            var colmNum = control.fields.length;
+        exports.createTableHead = function () {
+            var tableClass = this.helper.getPartClassName('head-table');
+            var tableId = this.helper.getId('head-table');
+            var tpl = ['<table border=0 class="' + tableClass + '" id="' + tableId + '"><tr>'];
+            var colmNum = this.fields.length;
             // 绘制表头th
             for (var i = 0; i < colmNum; i++) {
-                var field = control.fields[i];
+                var field = this.fields[i];
                 tpl.push(''
                     + '<th class="th' + i + '"'
                     + ' style="width:' + field.width + 'px;">'
@@ -217,7 +213,7 @@ define(
             tpl.push('<th></th>');
             tpl.push('</tr></table>');
             return tpl.join(' ');
-        }
+        };
 
         exports.rowTpl = ''
             + '<tr id="${rowId}" class="${rowClass}" '
@@ -226,46 +222,50 @@ define(
         /**
          * 创建表格体
          *
-         * @param {ui.TableForSelector} control 类实例
          * @param {Object} data 绘制的内容
          * @return {string}
          * @ignore
          */
-        function createTableContent(control, data) {
-            var indexData = control.indexData;
-            var helper = control.helper;
+        exports.createTableContent = function (data) {
+            var indexData = this.indexData;
+            var helper = this.helper;
 
             var tableClasses = helper.getPartClassName('content-table');
-            var tpl = ['<table border=0 class="' + tableClasses + '">'];
+            var tableId = helper.getId('content-table');
+            var tpl = ['<table border=0 class="' + tableClasses + '" id="' + tableId + '">'];
             var baseRowClasses = helper.getPartClassName('row');
             var selectedRowClasses = helper.getPartClassName('row-selected');
             var disabledRowClasses = helper.getPartClassName('row-disabled');
 
             // 绘制内容
-            u.each(data, function (item, index) {
-                var rowClasses = [baseRowClasses];
-                var indexItem = indexData[item.id];
-                if (indexItem.isSelected) {
-                    rowClasses.push(selectedRowClasses);
-                }
-                if (indexItem.isDisabled) {
-                    rowClasses.push(disabledRowClasses);
-                }
-                tpl.push(
-                    lib.format(
-                        control.rowTpl,
-                        {
-                            rowId: control.helper.getId('row-' + item.id),
-                            rowClass: rowClasses.join(' '),
-                            index: indexItem.index,
-                            content: createRow(control, item, index)
-                        }
-                    )
-                );
-            });
+            u.each(
+                data,
+                function (item, index) {
+                    var rowClasses = [baseRowClasses];
+                    var indexItem = indexData[item.id];
+                    if (indexItem.isSelected) {
+                        rowClasses.push(selectedRowClasses);
+                    }
+                    if (indexItem.isDisabled) {
+                        rowClasses.push(disabledRowClasses);
+                    }
+                    tpl.push(
+                        lib.format(
+                            this.rowTpl,
+                            {
+                                rowId: this.helper.getId('row-' + item.id),
+                                rowClass: rowClasses.join(' '),
+                                index: indexItem.index,
+                                content: createRow(this, item, index)
+                            }
+                        )
+                    );
+                },
+                this
+            );
             tpl.push('</table>');
             return tpl.join(' ');
-        }
+        };
 
         /**
          * 创建Table的每行
@@ -534,14 +534,13 @@ define(
             this.fire('change');
         };
 
-
         function actionForLoad(control, row, item) {
             var selectedClasses =
                 control.helper.getPartClassName('row-selected');
             // 点击未选中的，执行
             if (!lib.hasClass(row, selectedClasses)) {
                 selectItem(control, item.id, true);
-                control.fire('load');
+                control.fire('load', {item: item});
                 control.fire('change');
             }
         }
@@ -560,7 +559,6 @@ define(
             // 判断数据的某个field是命中
             function checkHitByFilterItem(field, expectValue, data) {
                 var hit = false;
-
                 // 只有字符串类去空格
                 if (typeof expectValue === 'string') {
                     expectValue = lib.trim(expectValue);
@@ -610,6 +608,11 @@ define(
                 this
             );
 
+            this.afterQueryHandler();
+
+        };
+
+        exports.afterQueryHandler = function () {
             // 更新状态
             this.addState('queried');
             this.refreshContent();

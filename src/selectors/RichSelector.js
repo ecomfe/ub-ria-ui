@@ -15,7 +15,7 @@ define(
 
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * 控件类
@@ -90,29 +90,7 @@ define(
 
             lib.extend(properties, options);
 
-            if (properties.hasHead === 'false') {
-                properties.hasHead = false;
-            }
-
-            if (properties.hasSearchBox === 'false') {
-                properties.hasSearchBox = false;
-            }
-
-            if (properties.hasFoot === 'false') {
-                properties.hasFoot = false;
-            }
-
-            if (properties.holdState === 'false') {
-                properties.holdState = false;
-            }
-
-            if (properties.multi === 'false') {
-                properties.multi = false;
-            }
-
-            if (properties.allowUnselectNode === 'false') {
-                properties.allowUnselectNode = false;
-            }
+            u.parseBoolean(properties);
 
             this.$super([properties]);
         };
@@ -234,7 +212,6 @@ define(
 
             // 初始化模式状态
             this.addState(this.mode || 'delete');
-
 
             // 绑事件
 
