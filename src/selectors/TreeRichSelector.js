@@ -64,25 +64,7 @@ define(
 
             lib.extend(properties, options);
 
-            if (properties.onlyLeafSelect === 'false') {
-                properties.onlyLeafSelect  = false;
-            }
-
-            if (properties.orientExpand === 'false') {
-                properties.orientExpand  = false;
-            }
-
-            if (properties.hideRoot === 'false') {
-                properties.hideRoot  = false;
-            }
-
-            if (properties.wideToggleArea === 'false') {
-                properties.wideToggleArea  = false;
-            }
-
-            if (properties.needSyncParentChild === 'false') {
-                properties.needSyncParentChild  = false;
-            }
+            u.parseBoolean(properties);
 
             this.$super([properties]);
         };

@@ -9,7 +9,7 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * @class ToggleSelector

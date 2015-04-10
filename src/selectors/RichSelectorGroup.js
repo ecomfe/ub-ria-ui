@@ -59,17 +59,23 @@ define(
          */
         exports.initStructure = function () {
             this.helper.initChildren();
+
+            var filter = this.getChild('filter');
             var source = this.getChild('source');
             var target = this.getChild('target');
 
             // 绑事件
+            filter && filter.on('load', this.fire.bind(this, 'load'));
+
             source && source.on(
                 'add',
-                function () {
-                    var newdata = this.getSelectedItemsFullStructure();
+                function (e) {
+                    var newdata = e.target.getSelectedItemsFullStructure();
                     target && target.setProperties({datasource: newdata});
+                    this.fire('add');
                     this.fire('change');
-                }
+                },
+                this
             );
 
             target && target.on(
@@ -77,8 +83,10 @@ define(
                 function (arg) {
                     var items = arg.items;
                     source && source.selectItems(items, false);
+                    this.fire('delete');
                     this.fire('change');
-                }
+                },
+                this
             );
         };
 

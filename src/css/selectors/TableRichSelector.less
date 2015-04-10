@@ -13,7 +13,8 @@ esui-table-rich-selector {
 
 
 .@{ui-class-prefix}-table-richselector {
-    .@{ui-class-prefix}-richselector-query-list {
+    .@{ui-class-prefix}-richselector-query-list,
+    &.@{ui-class-prefix}-table-richselector-with-filter {
         table {
             border-collapse: collapse;
             width: 100%;
@@ -65,16 +66,6 @@ esui-table-rich-selector {
         }
     }
 
-    // 单独存在，没有右侧备选栏的情况
-    .no-move-richselector {
-        // 添加型
-        &.@{ui-class-prefix}-richselector-add {
-            .@{ui-class-prefix}-richselector-row-action-icon {
-                .eicons-icon(close);
-            }
-        }
-    }
-
     .@{ui-class-prefix}-richselector-row {
         cursor:pointer;
         &:hover {
@@ -112,5 +103,14 @@ esui-table-rich-selector {
         line-height: @esui-richselector-line-height;
         width: 100%;
         display: none;
+    }
+}
+// 单独存在，没有右侧备选栏的情况
+.no-move-richselector {
+    // 添加型
+    &.@{ui-class-prefix}-richselector-add {
+        .@{ui-class-prefix}-richselector-row-action-icon {
+            display: none !important;
+        }
     }
 }
