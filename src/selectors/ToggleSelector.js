@@ -47,11 +47,10 @@ define(
             var controlHelper = this.helper;
             me.$super(arguments);
 
-            lib.addClass(mainElement, controlHelper.getPrefixClass('select'));
-
             var children = lib.getChildren(mainElement);
             var innerSelect = document.createElement('div');
             lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
+            lib.addClass(innerSelect, controlHelper.getPrefixClass('select'));
             // 这里没有做判断，因为toggle panel中已经假设有2个子节点
             lib.addClass(children[0], controlHelper.getPrefixClass('select-text'));
             innerSelect.appendChild(children[0]);
