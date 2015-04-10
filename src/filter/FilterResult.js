@@ -55,10 +55,10 @@ define(function (require) {
             html,
             {
                 filterPanelStyle: this.helper.getPartClassName('panel'),
-                filterPanelId: this.helper.getId('items-selected-wrapper-panel'),
-                labelId: this.helper.getId('items-selected-label'),
-                contentPanelId: this.helper.getId('items-selected-panel'),
-                contentPanelStyle: this.helper.getPartClassName('items-selected-panel')
+                filterPanelId: this.helper.getId('items-wrapper-panel'),
+                labelId: this.helper.getId('items-label'),
+                contentPanelId: this.helper.getId('items-panel'),
+                contentPanelStyle: this.helper.getPartClassName('items-panel')
             }
         );
 
@@ -105,7 +105,7 @@ define(function (require) {
      * @private
      */
     exports.getSelectedItemsPanel = function () {
-        var selectedPanelId = this.helper.getId('items-selected-panel');
+        var selectedPanelId = this.helper.getId('items-panel');
         return this.viewContext.get(selectedPanelId);
     };
 
@@ -115,7 +115,7 @@ define(function (require) {
      * @private
      */
     exports.getSelectedItemsLabel = function () {
-        var selectedLabelId = this.helper.getId('items-selected-label');
+        var selectedLabelId = this.helper.getId('items-label');
         return this.viewContext.get(selectedLabelId);
     };
 
@@ -236,7 +236,7 @@ define(function (require) {
                 {
                     value: item.value,
                     text: item.text,
-                    style: helper.getPartClassName('item-selected')
+                    style: helper.getPartClassName('item')
                 }
             );
         });

@@ -27,7 +27,7 @@ define(function (require) {
         this.$super(arguments);
     };
 
-    exports.type = 'FilterItem';
+    exports.type = 'Filter';
     
     exports.datasource = [];
 
@@ -113,7 +113,7 @@ define(function (require) {
      * @private
      */
     exports.buildItems = function (datasource) {
-        var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a>';
+        var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a> ';
         var s = '';
         var helper = this.helper;
 
@@ -403,7 +403,9 @@ define(function (require) {
             'lastItem': this.lastSelectedItem,
             'action': isChecked ? 'remove' : 'add'
         });
-        this.lastSelectedItem = selectedItem;
+        if (this.multiple || !isChecked) {
+            this.lastSelectedItem = selectedItem;
+        }
     };
     
     /**
