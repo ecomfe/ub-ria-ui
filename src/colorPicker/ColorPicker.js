@@ -202,7 +202,7 @@ define(
                 +         '<div class="' + this.helper.getPartClassName('ok-btn') + '"'
                 +             'data-ui="type:Button;childName:btnOk;variants:primary">确定</div>'
                 +         '<div class="' + this.helper.getPartClassName('cancel-btn') + '"'
-                +             'data-ui="type:Button;childName:btnCancel;variants:primary">取消</div>'
+                +             'data-ui="type:Button;childName:btnCancel;variants:link">取消</div>'
                 +     this.helper.getPartEndTag('foot', 'div')
                 + this.helper.getPartEndTag('foot-frame', 'div');
 

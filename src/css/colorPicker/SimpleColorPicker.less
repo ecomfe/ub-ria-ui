@@ -4,17 +4,17 @@
 @simple-color-picker-width: 350px;
 @simple-color-picker-block-width: 20px;
 @simple-color-picker-block-height: 20px;
-@simple-color-picker-block-border-color: #eaeaea;
+@simple-color-picker-block-border-color: #ddd;
 @simple-color-picker-block-border-color-selected: #6df2ff;
 
-.ui-simplecolorpicker {
+.@{ui-class-prefix}-simplecolorpicker {
     width: @simple-color-picker-width;
     line-height: 0;
     .box-sizing(border-box);
     .clearfix();
 }
 
-.ui-simplecolorpicker-block {
+.@{ui-class-prefix}-simplecolorpicker-block {
     display: inline-block;
     width: @simple-color-picker-block-width;
     height: @simple-color-picker-block-height;
@@ -33,6 +33,6 @@
     }
 }
 
-.ui-simplecolorpicker-selected {
+.@{ui-class-prefix}-simplecolorpicker-selected {
     border: 1px solid @simple-color-picker-block-border-color-selected;
 }
