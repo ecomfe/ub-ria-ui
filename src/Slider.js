@@ -458,6 +458,7 @@ define(
                 lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
             }
 
+            this.main.style[this.widthHeight] = this.size + 'px';
             this.createHead();
             this.createBody();
             this.createFoot();

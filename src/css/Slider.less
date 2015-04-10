@@ -8,30 +8,15 @@
 @esui-slider-head-color: #444;
 
 /* 横向滑动杆体 */
-@esui-slider-body-width: 600px;
-@esui-slider-body-height: 1em;
-@esui-slider-body-border-color: #ccc;
-@esui-slider-body-border-width: 1px;
-@esui-slider-body-border: @esui-slider-body-border-width solid @esui-slider-body-border-color;
+@esui-slider-body-height: .8em;
 
 /* 纵向滑动杆体 */
-@esui-slider-vertical-body-width: 1em;
 @esui-slider-vertical-body-heigth: 400px;
 @esui-slider-vertical-body-margin: 1em 0.5em;
 
-/* 滑杆的选择部分 */
-@esui-slider-body-selected-height: 1em;
-@esui-slider-body-selected-background: #ccc;
-@esui-slider-vertical-body-selected-width: 1em;
-
-
 /* 滑块 */
-@esui-slider-body-cursor-width: 1em;
-@esui-slider-body-cursor-height: 1em;
-@esui-slider-vertical-body-cursor-width: 1em;
-@esui-slider-vertical-body-cursor-height: 1em;
-@esui-slider-body-cursor-background: #093ac9;
-@esui-slider-body-cursor-border-radius: 2px;
+@esui-slider-body-cursor-width: 1.4em;
+@esui-slider-body-cursor-height: 1.4em;
 
 /* 滑块腿 */
 @esui-slider-foot-color: #444;
@@ -43,40 +28,31 @@
 }
 
 .@{ui-class-prefix}-slider-body {
-    .box-sizing(border-box);
     position: relative;
-    width: @esui-slider-body-width;
     height: @esui-slider-body-height;
-    border: @esui-slider-body-border;
     margin: 0.5em 0;
+    .esui-slider-body-theme();
 }
-
 
 .@{ui-class-prefix}-slider-body-cursor {
     position: absolute;
-    top: -@esui-slider-body-border-width;
+    cursor: pointer;
+    top: -(@esui-slider-body-cursor-height - @esui-slider-body-height)/2;
     width: @esui-slider-body-cursor-width;
     height: @esui-slider-body-cursor-height;
-    .border-radius(@esui-slider-body-cursor-border-radius);
-    background: @esui-slider-body-cursor-background;
     z-index: 2;
+    .esui-slider-cursor-theme();
 }
 
 .@{ui-class-prefix}-slider-body-cursortwo {
     z-index: 3;
 }
 
-.@{ui-class-prefix}-slider-body-cursor-active {
-    
-}
-
 .@{ui-class-prefix}-slider-body-selected {
-    .box-sizing(border-box);
     position: absolute;
-    top: -@esui-slider-body-border-width;
-    height: @esui-slider-body-selected-height;
-    background: @esui-slider-body-selected-background;
+    height: @esui-slider-body-height;
     z-index: 1;
+    .esui-slider-body-selected-theme();
 }
 
 .@{ui-class-prefix}-slider-head {
@@ -122,20 +98,21 @@
 
 .@{ui-class-prefix}-slider-vertical {
     .@{ui-class-prefix}-slider-body {
-        width: @esui-slider-vertical-body-width;
+        width: @esui-slider-body-height;
         height: @esui-slider-vertical-body-heigth;
         margin: @esui-slider-vertical-body-margin;
     }
 
     .@{ui-class-prefix}-slider-body-cursor {
-        left: -@esui-slider-body-border-width;
+        left: -(@esui-slider-body-cursor-height - @esui-slider-body-height)/2;
     }
 
     .@{ui-class-prefix}-slider-body-selected {
-        left: -@esui-slider-body-border-width;
-        width: @esui-slider-vertical-body-selected-width;
+        width: @esui-slider-body-height;
     }
 }
 
-
+.esui-slider-body-theme() {}
+.esui-slider-cursor-theme() {}
+.esui-slider-body-selected-theme() {}
 /* 滑动杆控件结束 */
