@@ -20,8 +20,6 @@ define(function (require) {
         '</video>'
     ].join('');
 
-    var LOADING_TPL = '<div class="${loadingStyle}">加载中...</div>';
-
     var LOADED_FAILTURE_TPL = '<div class="${loadedFailtureStyle}">加载图片失败</div>';
 
     var exports = {};
@@ -155,29 +153,34 @@ define(function (require) {
         var tpl = [
             '<div id="${mediaId}" class="${mediaStyle}"></div>',
             '<div id="${linkId}" class="${linkStyle}">',
-            '<a href="javascript:;" id="${leftLinkId}" class="${leftLinkStyle}">',
-            '<i class="${leftLinkIconStyle}"></i></a>',
-            '<a href="javascript:;" id="${rightLinkId}" class="${rightLinkStyle}">',
-            '<i class="${rightLinkIconStyle}"></i></a>',
+            '<a href="javascript:;" id="${leftLinkId}" class="${leftLinkStyle}"></a>',
+            '<a href="javascript:;" id="${rightLinkId}" class="${rightLinkStyle}"></a>',
             '</div>'
         ].join('');
         var body = this.dialog.getBody();
+        var dialogHelper = this.dialog.helper;
+        var leftIcon = dialogHelper.getPartClassName('lightbox-content-link-left')
+            + ' '
+            + dialogHelper.getIconClass();
+        var rightIcon = dialogHelper.getPartClassName('lightbox-content-link-right')
+            + ' '
+            + dialogHelper.getIconClass();
         body.setContent(
             lib.format(tpl, {
-                mediaId: helper.getId(this.dialog, 'media'),
-                mediaStyle: this.dialog.helper.getPartClassName('lightbox-content-media'),
-                linkId: helper.getId(this.dialog, 'link'),
-                linkStyle: this.dialog.helper.getPartClassName('lightbox-content-link'),
-                leftLinkId: helper.getId(this.dialog, 'link-left'),
-                leftLinkStyle: this.dialog.helper.getPartClassName('lightbox-content-link-left'),
-                leftLinkIconStyle: this.dialog.helper.getIconClass('chevron-left'),
-                rightLinkId: helper.getId(this.dialog, 'link-right'),
-                rightLinkStyle: this.dialog.helper.getPartClassName('lightbox-content-link-right'),
-                rightLinkIconStyle: this.dialog.helper.getIconClass('chevron-right')
+                mediaId: dialogHelper.getId('media'),
+                mediaStyle: dialogHelper.getPartClassName('lightbox-content-media'),
+                linkId: dialogHelper.getId('link'),
+                linkStyle: dialogHelper.getPartClassName('lightbox-content-link'),
+                leftLinkId: dialogHelper.getId('link-left'),
+                leftLinkStyle: leftIcon,
+                rightLinkId: dialogHelper.getId('link-right'),
+                rightLinkStyle: rightIcon
             })
         );
+    };
 
-        this.mediaContainer = lib.g(helper.getId(this.dialog, 'media'));
+    exports.mediaContainer = function () {
+        return lib.g(helper.getId(this.dialog, 'media'));
     };
 
     /**
@@ -242,8 +245,16 @@ define(function (require) {
      * @protected
      */
     exports.showLoading = function () {
-        this.mediaContainer.innerHTML = lib.format(LOADING_TPL, this);
-        this.dialog.show();
+        lib.addClass(this.dialog.main, this.helper.getPartClassName('loading'));
+    };
+
+    /**
+     * 取消加载状态
+     *
+     * @protected
+     */
+    exports.hideLoading = function () {
+        lib.removeClass(this.dialog.main, this.helper.getPartClassName('loading'));
     };
 
     /**
@@ -274,15 +285,18 @@ define(function (require) {
         var me = this;
         var img = new Image();
         img.onload = function () {
-            me.mediaContainer.innerHTML = '';
-            me.mediaContainer.appendChild(img);
+            me.hideLoading();
+            me.mediaContainer().innerHTML = '';
+            me.mediaContainer().appendChild(img);
             me.dialog.show();
             img.onload = img.onerror = null;
         };
 
         img.onerror = function () {
-            me.mediaContainer.innerHTML = lib.format(LOADED_FAILTURE_TPL, me);
+            me.hideLoading();
+            me.mediaContainer().innerHTML = lib.format(LOADED_FAILTURE_TPL, me);
             img.onload = img.onerror = null;
+            me.dialog.show();
         };
         img.src = options.url;
         options.width && (img.style.width = options.width + 'px');
@@ -296,6 +310,7 @@ define(function (require) {
      */
     exports.previewFlash = function (options) {
         var html = getFlashHtml(options);
+        this.hideLoading();
         this.mediaContainer.innerHTML = html;
         this.dialog.show();
     };
@@ -313,12 +328,14 @@ define(function (require) {
         else if (/\.mp4|\.mov/.test(url)) {
             html = getVideoHtml(options);
         }
-        this.mediaContainer.innerHTML = html;
+        this.hideLoading();
+        this.mediaContainer().innerHTML = html;
         this.dialog.show();
     };
 
     exports.previewNotSupported = function () {
-        this.mediaContainer.innerHTML = NOT_SUPPORT_MESSAGE;
+        this.hideLoading();
+        this.mediaContainer().innerHTML = NOT_SUPPORT_MESSAGE;
         this.dialog.show();
     };
 
