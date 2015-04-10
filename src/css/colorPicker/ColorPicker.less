@@ -1,13 +1,13 @@
 @esui-color-picker-main-height: 2.5em;
 
-@esui-color-picker-head-height: 35px;
-@esui-color-picker-header-padding-horizontal: 10px;
+@esui-color-picker-head-height: 2em;
+@esui-color-picker-header-padding-horizontal: 1em;
 
 @esui-color-picker-color-block-border: 1px solid #DDD;
 @esui-color-picker-color-block-width: @esui-color-picker-main-height;
 @esui-color-picker-color-block-height: @esui-color-picker-main-height;
 @esui-color-picker-color-block-border-radius: 5px;
-@esui-color-picker-color-block-right-margin: .5em;
+@esui-color-picker-color-block-margin: 0 .5em 0 0;
 
 @esui-color-picker-color-input-width: 5em;
 @esui-color-picker-color-input-right-margin: .5em;
@@ -25,7 +25,7 @@
 
 .@{ui-class-prefix}-colorpicker-color-block-frame {
     float: left;
-    margin-right: @esui-color-picker-color-block-right-margin;
+    margin: @esui-color-picker-color-block-margin;
 }
 
 .@{ui-class-prefix}-colorpicker-color-block {
@@ -72,8 +72,6 @@
             height: @esui-color-picker-head-height;
             line-height: @esui-color-picker-head-height;
             padding: 0 @esui-color-picker-header-padding-horizontal;
-            font-size: 12px;
-            .clearfix();
         }
 
         .@{ui-class-prefix}-colorpicker-title {
@@ -83,24 +81,15 @@
 
         .@{ui-class-prefix}-colorpicker-close-btn {
             float: right;
-            width: 50px;
             text-align: right;
             cursor: pointer;
         }
 
         .@{ui-class-prefix}-colorpicker-foot-frame {
             padding: @esui-color-picker-header-padding-horizontal;
-            .clearfix();
 
             .@{ui-class-prefix}-colorpicker-foot {
-                float: right;
-
-                .@{ui-class-prefix}-button {
-                    margin-left: 10px;
-                    min-height: 0;
-                    line-height: 26px;
-                    height: 26px;
-                }
+                text-align: right;
             }
         }
     }

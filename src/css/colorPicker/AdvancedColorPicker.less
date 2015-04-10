@@ -11,20 +11,29 @@
 @advanced-color-picker-hue-pointer-height: 2px;
 @advanced-color-picker-compare-color-width: 127px;
 @advanced-color-picker-compare-color-height: 30px;
-@advanced-color-picker-color-field-width: 42px;
+@advanced-color-picker-color-field-width: 3em;
 @advanced-color-picker-color-field-label-color: #666;
 @advanced-color-picker-color-field-input-height: 25px;
-@advanced-color-picker-color-field-hex-width: 70px;
+@advanced-color-picker-color-field-hex-width: 5em;
 
 @advanced-color-resource-path: "../../../resource";
 
-.ui-advancedcolorpicker {
+.@{ui-class-prefix}-advancedcolorpicker {
     position: relative;
 }
 
-.ui-advancedcolorpicker-pallete {
+.esui-advancedcolorpicker-hue-pointer {
+    position: absolute;
+    left: 0;
+    width: @advanced-color-picker-hue-width - 2px;
+    height: @advanced-color-picker-hue-pointer-height;
+    background: transparent;
+    border: 1px solid #fff;
+}
+
+.@{ui-class-prefix}-advancedcolorpicker-pallete {
     // Hue调节
-    .ui-advancedcolorpicker-hue {
+    .@{ui-class-prefix}-advancedcolorpicker-hue {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -47,7 +56,7 @@
     }
 
     // Hue滑动条
-    .ui-advancedcolorpicker-hue-slider {
+    .@{ui-class-prefix}-advancedcolorpicker-hue-slider {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -56,17 +65,12 @@
     }
 
     // Hue滑动光标
-    .ui-advancedcolorpicker-hue-pointer {
-        position: absolute;
-        left: 0;
-        width: @advanced-color-picker-hue-width - 2px;
-        height: @advanced-color-picker-hue-pointer-height;
-        background: transparent;
-        border: 1px solid #fff;
+    .@{ui-class-prefix}-advancedcolorpicker-hue-pointer {
+        &:extend(.esui-advancedcolorpicker-hue-pointer);
     }
 
     // Saturation + Bright面板
-    .ui-advancedcolorpicker-canvas {
+    .@{ui-class-prefix}-advancedcolorpicker-canvas {
         position: relative;
         width: @advanced-color-picker-canvas-width;
         height: @advanced-color-picker-canvas-height;
@@ -76,7 +80,7 @@
     }
 
     // Bright遮罩
-    .ui-advancedcolorpicker-canvas-mask {
+    .@{ui-class-prefix}-advancedcolorpicker-canvas-mask {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -85,7 +89,7 @@
     }
 
     // 面板光标
-    .ui-advancedcolorpicker-canvas-pointer {
+    .@{ui-class-prefix}-advancedcolorpicker-canvas-pointer {
         position: absolute;
         width: @advanced-color-picker-canvas-pointer-width;
         height: @advanced-color-picker-canvas-pointer-width;
@@ -94,7 +98,7 @@
     }
 
     // 透明度调节
-    .ui-advancedcolorpicker-alpha {
+    .@{ui-class-prefix}-advancedcolorpicker-alpha {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -110,7 +114,7 @@
         cursor: pointer;
     }
 
-    .ui-advancedcolorpicker-alpha-slider {
+    .@{ui-class-prefix}-advancedcolorpicker-alpha-slider {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -118,26 +122,24 @@
         width: @advanced-color-picker-alpha-width;
     }
 
-    .ui-advancedcolorpicker-alpha-pointer {
-        .ui-advancedcolorpicker-hue-pointer();
+    .@{ui-class-prefix}-advancedcolorpicker-alpha-pointer {
+        &:extend(.esui-advancedcolorpicker-hue-pointer);
     }
 }
 
 // 历史对比
-.ui-advancedcolorpicker-compare {
+.@{ui-class-prefix}-advancedcolorpicker-compare {
     margin: 15px 0;
     .clearfix();
 
-    .ui-advancedcolorpicker-compare-title {
-        width: @advanced-color-picker-hue-width + 2px;
+    .@{ui-class-prefix}-advancedcolorpicker-compare-title {
         text-align: center;
         float: left;
         line-height: @advanced-color-picker-compare-color-height;
-        font-size: 12px;
     }
 
-    .ui-advancedcolorpicker-compare-color-old,
-    .ui-advancedcolorpicker-compare-color-new {
+    .@{ui-class-prefix}-advancedcolorpicker-compare-color-old,
+    .@{ui-class-prefix}-advancedcolorpicker-compare-color-new {
         width: @advanced-color-picker-compare-color-width;
         height: @advanced-color-picker-compare-color-height;
         line-height: @advanced-color-picker-compare-color-height;
@@ -145,60 +147,54 @@
         float: left;
     }
 
-    .ui-advancedcolorpicker-compare-color-old {
+    .@{ui-class-prefix}-advancedcolorpicker-compare-color-old {
         border-right: none;
     }
 
-    .ui-advancedcolorpicker-compare-color-old {
+    .@{ui-class-prefix}-advancedcolorpicker-compare-color-old {
         margin-left: @advanced-color-picker-canvas-margin-left;
     }
 
-    .ui-advancedcolorpicker-compare-color-new {
+    .@{ui-class-prefix}-advancedcolorpicker-compare-color-new {
         margin-right: @advanced-color-picker-canvas-margin-left;
     }
 }
 
 // 色彩指标输入框
-.ui-advancedcolorpicker-input {
+.@{ui-class-prefix}-advancedcolorpicker-input {
     .clearfix();
 }
 
-.ui-advancedcolorpicker-color-field {
+.@{ui-class-prefix}-advancedcolorpicker-color-field {
+    text-align: center;
     width: @advanced-color-picker-color-field-width;
     float: left;
 
-    .ui-label,
-    .ui-textbox input {
-        display: block;
-        text-align: center;
-        font-size: 12px;
-    }
-
-    .ui-label {
+    .@{ui-class-prefix}-label {
         color: @advanced-color-picker-color-field-label-color;
     }
 
-    .ui-textbox {
-        margin-bottom: 5px;
+    .@{ui-class-prefix}-textbox {
+        margin-bottom: .5em;
     }
 }
 
-.ui-advancedcolorpicker-color-field-hex {
+.@{ui-class-prefix}-advancedcolorpicker-color-field-hex {
     width: @advanced-color-picker-color-field-hex-width;
 }
 
-.ui-advancedcolorpicker-input-rgba {
+.@{ui-class-prefix}-advancedcolorpicker-input-rgba {
     float: right;
 
-    .ui-advancedcolorpicker-color-field {
-        margin-left: 10px;
+    .@{ui-class-prefix}-advancedcolorpicker-color-field {
+        margin-left: .5em;
     }
 }
 
 // 无透明度状态
-.ui-advancedcolorpicker-no-alpha {
-    .ui-advancedcolorpicker-alpha,
-    .ui-advancedcolorpicker-color-field-alpha {
+.@{ui-class-prefix}-advancedcolorpicker-no-alpha {
+    .@{ui-class-prefix}-advancedcolorpicker-alpha,
+    .@{ui-class-prefix}-advancedcolorpicker-color-field-alpha {
         display: none;
     }
 }

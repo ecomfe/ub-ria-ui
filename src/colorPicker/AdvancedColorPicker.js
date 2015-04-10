@@ -150,13 +150,9 @@ define(
                 control.helper.getPartClassName('color-field'),
                 control.helper.getPartClassName('color-field-' + colorType)
             ];
-            var colorWidth = 42;
-            if (colorType === 'hex') {
-                colorWidth = 70;
-            }
             var html = ''
                 + '<div class="' + classes.join(' ') + '">'
-                +     '<div id="' + id + '" data-ui-type="TextBox" data-ui-width="' + colorWidth + '"'
+                +     '<div id="' + id + '" data-ui-type="TextBox" data-ui-variants="fluid" data-ui-width="auto"'
                 +     'data-ui-child-name="' + childName + '" ></div>'
                 +     '<label data-ui-type="Label" for="' + id + '">' + colorText + '</label>'
                 + '</div>';
