@@ -309,7 +309,9 @@ define(
 
             // 最后一列添加箭头
             var arrowClasses =
-                control.helper.getPartClassName('row-action-icon');
+                control.helper.getPartClassName('row-action-icon')
+                + ' '
+                + control.helper.getIconClass();
             var arrowHTML = '<span class="' + arrowClasses + '"></span>';
             if (tr) {
                 var td = tr.insertCell(cursor);

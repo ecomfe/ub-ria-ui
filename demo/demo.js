@@ -93,8 +93,8 @@ $(function () {
         '<li><a href="Sticky.html">Sticky</a></li>',
         '<li><a href="TokenField.html">TokenField</a></li>',
         '<li><a href="ToggleSelectors.html">ToggleSelectors</a></li>',
-        '<li><a href="RichSelectors.html">RichSelectors</a></li>',
-        '<li><a href="Uploader.html">Uploader</a></li>'
+        '<li><a href="RichSelectors.html">RichSelectors</a></li>'
+        //'<li><a href="Uploader.html">Uploader</a></li>'
 
     ];
     $('#navigator').html(navItems.join(''));
