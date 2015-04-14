@@ -107,10 +107,10 @@ define(
                 var linkClassName = helper.getPartClassName('batch-action-link');
                 var linkId = this.helper.getId('batch-action');
                 actionLink = ''
-                    + '<span class="' + linkClassName
+                    + '<a class="' + linkClassName
                     + '" id="' + linkId + '" >'
                     + this.batchActionLabel
-                    + '</span>';
+                    + '</a>';
             }
 
             if (this.hasHead && this.needHeadCount) {
@@ -123,8 +123,8 @@ define(
             var head = [
                 '<div data-ui="type:Panel;childName:head;"',
                 ' class="${headClass}">',
-                '<h3 data-ui="type:Label;childName:title;title:;">',
-                '${title}</h3>${totalCount}',
+                '<span class="${headTitleClass}" data-ui="type:Label;childName:title;title:;">',
+                '${title}</span>${totalCount}',
                 '${actionLink}',
                 '</div>'
             ].join('\n');
@@ -133,6 +133,7 @@ define(
                 head,
                 {
                     headClass: helper.getPartClassName('head'),
+                    headTitleClass: helper.getPartClassName('head-title'),
                     title: this.title,
                     actionLink: actionLink,
                     totalCount: headCount

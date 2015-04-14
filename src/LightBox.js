@@ -11,7 +11,7 @@ define(function (require) {
     var Dialog = require('esui/Dialog');
     var Control = require('esui/Control');
     var helper = require('esui/controlHelper');
-    var swf = require('helper/swfHelper');
+    var swf = require('./helper/swfHelper');
 
     var NOT_SUPPORT_MESSAGE = '暂不支持该格式预览';
     var VIDEO_TPL = [

@@ -12,7 +12,7 @@ define(function (require) {
     var Layer = require('esui/Layer');
     var Extension = require('esui/Extension');
     var eoo = require('eoo');
-    var cursorHelper = require('helper/CursorPositionHelper');
+    var cursorHelper = require('./helper/CursorPositionHelper');
 
     var TEXT_LINE = 'TextLine';
     var TEXT_BOX = 'TextBox';

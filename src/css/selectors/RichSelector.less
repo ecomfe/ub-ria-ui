@@ -7,81 +7,45 @@
   * @author lixiang
   */
 
-@esui-richselector-font-size: 12px;
-@esui-richselector-border-color: #EBEBEB;
-@esui-richselector-border: 1px solid @esui-richselector-border-color;
-@esui-richselector-line-height: 2em;
-@esui-richselector-width: 200px;
+@esui-richselector-width: 20em;
 
 /** 标题栏 */
 @esui-richselector-head-height: 2em;
-@esui-richselector-head-bg: #EBEBEB;
-@esui-richselector-head-border-bottom-color: #EBEBEB;
-@esui-richselector-head-border-bottom: 1px solid @esui-richselector-head-border-bottom-color;
-@esui-richselector-batch-action-link-color: #67C1A5;
-@esui-richselector-head-title-color: #333;
-@esui-richselector-head-count-color: #999;
+@esui-richselector-head-padding: 0 .75em;
 
 /** 主体 */
-@esui-richselector-body-bg: #FCFCFC;
 @esui-richselector-body-height: 25em;
+@esui-richselector-empty-text-padding: .75em;
 
 /** 搜索框 */
-@esui-richselector-searchbox-wrapper-height: 3em;
-@esui-richselector-searchbox-wrapper-padding: 0.75em;
-
+@esui-richselector-searchbox-wrapper-padding: .75em;
 
 /** 底部状态栏 */
-@esui-richselector-foot-bg: #F9F9F9;
-@esui-richselector-foot-color: #666;
-
+@esui-richselector-foot-line-height: 2em;
+@esui-richselector-foot-padding: 0 .75em;
 
 .@{ui-class-prefix}-richselector {
-    font-size: @esui-richselector-font-size;
     .box-sizing(border-box);
-    border: @esui-richselector-border;
     display: inline-block;
     width: @esui-richselector-width;
+
+    .esui-richselector-theme();
 }
 
 .@{ui-class-prefix}-richselector-head {
-    height: @esui-richselector-head-height;
     line-height: @esui-richselector-head-height;
-    padding: 0 0.75em;
-    border-bottom: @esui-richselector-head-border-bottom;
-    background: @esui-richselector-head-bg;
+    padding: @esui-richselector-head-padding;
 
-    h3 {
-        font-size: @esui-richselector-font-size;
-        margin: 0;
-        padding: 0;
-        font-weight: bold;
-        float: left;
-        color: @esui-richselector-head-title-color;
-        line-height: @esui-richselector-head-height;
-    }
-}
-
-.@{ui-class-prefix}-richselector-batch-action-link {
-    float: right;
-    text-decoration: none;
-    cursor: pointer;
-    color: @esui-richselector-batch-action-link-color;
-}
-
-.@{ui-class-prefix}-richselector-head-count {
-    font-weight: bold;
-    color: @esui-richselector-head-count-color;
+    .esui-richselector-head-theme();
 }
 
 .@{ui-class-prefix}-richselector-body {
     overflow-x: hidden;
-    clear: both;
-    background: @esui-richselector-body-bg;
+
+    .esui-richselector-body-theme();
 }
 
 .@{ui-class-prefix}-richselector-search-wrapper {
-    height: @esui-richselector-searchbox-wrapper-height;
     padding: @esui-richselector-searchbox-wrapper-padding;
 }
 
@@ -92,31 +56,30 @@
 }
 
 .@{ui-class-prefix}-richselector-has-search .@{ui-class-prefix}-richselector-content-wrapper {
-    height: @esui-richselector-body-height - @esui-richselector-searchbox-wrapper-height - 2*@esui-richselector-searchbox-wrapper-padding;
+    height: @esui-richselector-body-height - @esf-textbox-height - 2*@esui-richselector-searchbox-wrapper-padding;
 }
-
-.@{ui-class-prefix}-richselector-empty-text {
-    padding: 0.75em;
-    display: none;
-    text-align: center;
-}
-
-.@{ui-class-prefix}-richselector-foot {
-    color: @esui-richselector-foot-color;
-    height: 2em;
-    line-height: 2em;
-    background: @esui-richselector-foot-bg;
-    padding: 0 0.75em;
-}
-
 
 // 无结果状态
 .@{ui-class-prefix}-richselector-empty {
     .@{ui-class-prefix}-richselector-empty-text {
         display: block;
     }
-
-    .@{ui-class-prefix}-richselector-query-list {
-        display: none;
-    }
 }
+
+.@{ui-class-prefix}-richselector-empty-text {
+    padding: @esui-richselector-empty-text-padding;
+    display: none;
+    text-align: center;
+}
+
+.@{ui-class-prefix}-richselector-foot {
+    line-height: @esui-richselector-foot-line-height;
+    padding: @esui-richselector-foot-padding;
+
+    .esui-richselector-foot-theme();
+}
+
+.esui-richselector-theme() {}
+.esui-richselector-head-theme() {}
+.esui-richselector-body-theme() {}
+.esui-richselector-foot-theme() {}

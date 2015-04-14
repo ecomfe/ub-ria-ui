@@ -76,8 +76,9 @@ define(
         exports.getSearchBoxHTML = function () {
             var searchBoxHTML = this.$super(arguments);
 
-            var filterHTML = '<div data-ui-type="Panel" data-ui-child-name="filter"></div>';
+            var filterHTML = '<div class="${queryListClass}" data-ui-type="Panel" data-ui-child-name="filter"></div>';
 
+            filterHTML = lib.format(filterHTML, this.helper.getPrefixClass('richselector-query-list'));
             return searchBoxHTML + filterHTML;
         };
 
@@ -120,9 +121,14 @@ define(
         exports.initStructure = function () {
             this.$super(arguments);
 
-            lib.addClass(
+            var controlHelper = this.helper;
+            var cls = [
+                controlHelper.getPrefixClass('table-richselector-with-filter'),
+                controlHelper.getPrefixClass('table-richselector')
+            ];
+            lib.addClasses(
                 this.main,
-                'ui-table-richselector-with-filter'
+                cls
             );
         };
 
