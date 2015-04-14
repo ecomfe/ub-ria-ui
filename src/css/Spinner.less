@@ -2,90 +2,78 @@
  * UB-RIA UI Library
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @file Table样式
- * @author jiangyuan(jiangyuan01@baidu.com)
+ * @file Spinner样式
+ * @author maoquan(maoquan@baidu.com), jiangyuan(jiangyuan01@baidu.com)
  */
 
-@ui-spinner-input-active-border-color: #CCC;
-@ui-spinner-divide-line-color: #CCC;
-@ui-textbox-spinner-wrapper-width: 1em;
-@ui-spinner-btn-color: #EEE;
-@ui-spinner-hover-btn-color: #ddd;
-@ui-spinner-active-btn-color: #bbb;
+@esui-spinner-border-color: #CCC;
+@esui-spinner-border-width: 1px;
+@esui-spinner-border-hover-color: #6CCDC0;
+@esui-spinner-border: @esui-spinner-border-width solid @esui-spinner-border-color;
+@esui-spinner-border-hover: @esui-spinner-border-width solid @esui-spinner-border-hover-color;
 
-.@{ui-class-prefix}-textbox {
+@esui-spinner-border-radius: 5px;
 
-  >input {
-    &:hover {
-      border-color: @ui-spinner-input-active-border-color;
+@esui-spinner-btn-color: #444;
+@esui-spinner-btn-bg-color: #DDD;
+@esui-spinner-btn-hover-bg-color: #CCC;
+@esui-spinner-btn-active-bg-color: #BBB;
+
+.@{ui-class-prefix}-spinner {
+    position: relative;
+    border: @esui-spinner-border;
+    .border-radius(@esui-spinner-border-radius);
+
+    input {
+        vertical-align: middle;
+        border: none;
+        padding-left: 0.5em;
+        .box-sizing(border-box);
+        .border-left-radius(@esui-spinner-border-radius);
+
+        &:focus {
+            outline: none;
+        }
     }
-    vertical-align: middle;
-  }
+}
 
-  .@{ui-class-prefix}-textbox-spinner-wrapper {
+.@{ui-class-prefix}-spinner-focus,
+.@{ui-class-prefix}-spinner:hover {
+    border: @esui-spinner-border-hover;
+}
+
+.@{ui-class-prefix}-spinner-up,
+.@{ui-class-prefix}-spinner-down {
+    .eicons-font-style();
+    font-size: .8em;
     position: absolute;
-    width: @ui-textbox-spinner-wrapper-width;
-    border-left: 1px solid @ui-spinner-divide-line-color;
-    background-color: @ui-spinner-btn-color;
-    height: e("calc(100% - 2px)");
-    top: 1px;
-    right: 1px;
-    .@{ui-class-prefix}-textbox-scroll-up,
-    .@{ui-class-prefix}-textbox-scroll-down {
-      font-family: FontAwesome;
-      font-size: 100%;
-      position: absolute;
-      width: 100%;
-      height: 1.2em;
-      line-height: 1.2em;
-      &:hover {
-        background-color: @ui-spinner-hover-btn-color;
-      }
-      &:active {
-        background-color: @ui-spinner-active-btn-color;
-      }
-      &:before {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        text-align: center;
-        cursor: pointer;
-      }
+    right: 0;
+    width: 1.2em;
+    height: 50%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    cursor: default;
+    color: @esui-spinner-btn-color;
+    background: @esui-spinner-btn-bg-color;
+
+    &:hover {
+        background: @esui-spinner-btn-hover-bg-color;
     }
-    .@{ui-class-prefix}-textbox-scroll-up {
-      top: 0;
-      &:before {
-        /*content: @fa-var-caret-up;*/
-      }
+
+    &:active {
+        background: @esui-spinner-btn-active-bg-color;
     }
-    .@{ui-class-prefix}-textbox-scroll-down {
-      bottom: 0;
-      &:before {
-        /*content: @fa-var-caret-down;*/
-      }
-    }
-  }
 }
 
-.@{ui-class-prefix}-textbox-hint {
-  background-color: #f2f2f2;
-  border: 1px solid #a8adb6;
-  box-sizing: border-box;
-  display: inline-block;
-  height: 2.4em;
-  line-height: 100%;
-  padding: 0.65em;
-  vertical-align: middle;
+.@{ui-class-prefix}-spinner-up {
+    top: 0;
+    .eicons-icon(caret-up);
+    .border-top-right-radius(@esui-spinner-border-radius);
 }
 
-.@{ui-class-prefix}-textbox-hint-suffix {
-  .@{ui-class-prefix}-textbox-hint {
-    border-left: 0 none;
-  }
-}
-
-.@{ui-class-prefix}-textbox-hint-prefix {
-  .@{ui-class-prefix}-textbox-hint {
-    border-right: 0 none;
-  }
+.@{ui-class-prefix}-spinner-down {
+    bottom: 0;
+    .eicons-icon(caret-down);
+    .border-bottom-right-radius(@esui-spinner-border-radius);
 }
