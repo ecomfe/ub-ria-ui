@@ -78,7 +78,13 @@ define(
 
             var filterHTML = '<div class="${queryListClass}" data-ui-type="Panel" data-ui-child-name="filter"></div>';
 
-            filterHTML = lib.format(filterHTML, this.helper.getPrefixClass('richselector-query-list'));
+            filterHTML = lib.format(
+                filterHTML,
+                {
+                    queryListClass:
+                        this.helper.getPrefixClass('richselector-query-list')
+                }
+            );
             return searchBoxHTML + filterHTML;
         };
 
