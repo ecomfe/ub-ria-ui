@@ -6,48 +6,18 @@
  * @author maoquan(maoquan@baidu.com), jiangyuan(jiangyuan01@baidu.com)
  */
 
-@esui-spinner-border-color: #CCC;
-@esui-spinner-border-width: 1px;
-@esui-spinner-border-hover-color: #6CCDC0;
-@esui-spinner-border: @esui-spinner-border-width solid @esui-spinner-border-color;
-@esui-spinner-border-hover: @esui-spinner-border-width solid @esui-spinner-border-hover-color;
-
-@esui-spinner-border-radius: 5px;
-
 @esui-spinner-btn-color: #444;
-@esui-spinner-btn-bg-color: #DDD;
-@esui-spinner-btn-hover-bg-color: #CCC;
-@esui-spinner-btn-active-bg-color: #BBB;
+@esui-spinner-btn-background: #DDD;
+@esui-spinner-btn-hover-background: #CCC;
+@esui-spinner-btn-active-background: #BBB;
 
 .@{ui-class-prefix}-spinner {
-    position: relative;
-    border: @esui-spinner-border;
-    .border-radius(@esui-spinner-border-radius);
-
-    input {
-        vertical-align: middle;
-        border: none;
-        padding-left: 0.5em;
-        .box-sizing(border-box);
-        .border-left-radius(@esui-spinner-border-radius);
-
-        &:focus {
-            outline: none;
-        }
-    }
-}
-
-.@{ui-class-prefix}-spinner-focus,
-.@{ui-class-prefix}-spinner:hover {
-    border: @esui-spinner-border-hover;
 }
 
 .@{ui-class-prefix}-spinner-up,
 .@{ui-class-prefix}-spinner-down {
-    .eicons-font-style();
-    font-size: .8em;
     position: absolute;
-    right: 0;
+    right: 1px;
     width: 1.2em;
     height: 50%;
     padding: 0;
@@ -55,25 +25,29 @@
     text-align: center;
     cursor: default;
     color: @esui-spinner-btn-color;
-    background: @esui-spinner-btn-bg-color;
+    background: @esui-spinner-btn-background;
 
     &:hover {
-        background: @esui-spinner-btn-hover-bg-color;
+        background: @esui-spinner-btn-hover-background;
     }
 
     &:active {
-        background: @esui-spinner-btn-active-bg-color;
+        background: @esui-spinner-btn-active-background;
     }
 }
 
 .@{ui-class-prefix}-spinner-up {
-    top: 0;
+    top: 1px;
     .eicons-icon(caret-up);
-    .border-top-right-radius(@esui-spinner-border-radius);
+    .border-top-right-radius(@esf-textbox-radius);
 }
 
 .@{ui-class-prefix}-spinner-down {
-    bottom: 0;
-    .eicons-icon(caret-down);
-    .border-bottom-right-radius(@esui-spinner-border-radius);
+    bottom: 1px;
+    .border-bottom-right-radius(@esf-textbox-radius);
+
+    &:before {
+        .eicons-icon-content(caret-down);
+        vertical-align: sub;
+    }
 }

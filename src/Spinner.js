@@ -282,22 +282,27 @@ define(
 
             var spinnerTpl = [
                 '<input id="${inputId}" type="text" />',
-                '<span id="${upId}" class="${upClass}"></span>',
-                '<span id=${downId} class="${downClass}"></span>'
+                '<span id="${upId}" class="${upClass} ${iconClass}"></span>',
+                '<span id=${downId} class="${downClass} ${iconClass}"></span>'
             ].join('');
 
-            this.main.innerHTML = lib.format(
+            var mainElement = this.main;
+
+            mainElement.innerHTML = lib.format(
                 spinnerTpl,
                 {
                     inputId: helper.getId('input'),
                     upId: helper.getId('up'),
                     upClass: helper.getPartClasses('up'),
                     downId: helper.getId('down'),
-                    downClass: helper.getPartClasses('down')
+                    downClass: helper.getPartClasses('down'),
+                    iconClass: helper.getIconClass()
                 }
             );
 
-            ui.init(this.main, {viewContext: this.viewContext});
+            lib.addClass(mainElement, helper.getPrefixClass('textbox'));
+
+            ui.init(mainElement, {viewContext: this.viewContext});
         };
 
         /**
@@ -314,11 +319,6 @@ define(
             helper.addDOMEvent(down, 'mouseup',  mouseUpHandler);
             helper.addDOMEvent(up, 'mouseout',  mouseUpHandler);
             helper.addDOMEvent(down, 'mouseout',  mouseUpHandler);
-
-            // input focus
-            var input = this.getInput();
-            helper.addDOMEvent(input, 'focus',  function () { this.addState('focus'); });
-            helper.addDOMEvent(input, 'blur',  function () { this.removeState('focus'); });
         };
 
         /**
@@ -355,18 +355,10 @@ define(
                 }
             },
             {
-                name: ['width', 'height'],
-                paint: function (spinner, width, height) {
+                name: ['width'],
+                paint: function (spinner, width) {
                     width = parseInt(width, 10);
-                    height = parseInt(height, 10);
-
                     spinner.main.style.width = width + 'px';
-
-                    var input = spinner.getInput();
-                    var up = spinner.helper.getPart('up');
-                    var scrollWidth = lib.getOffset(up).width;
-                    input.style.width = (width - scrollWidth) + 'px';
-                    input.style.height = height + 'px';
                 }
             },
             {
