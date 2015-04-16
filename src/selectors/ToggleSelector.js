@@ -49,6 +49,7 @@ define(
 
             var children = lib.getChildren(mainElement);
             var innerSelect = document.createElement('div');
+            innerSelect.id = this.helper.getId('title');
             lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
             lib.addClass(innerSelect, controlHelper.getPrefixClass('select'));
             // 这里没有做判断，因为toggle panel中已经假设有2个子节点
@@ -79,6 +80,16 @@ define(
             if (!this.isDisabled()) {
                 this.toggleStates();
             }
+        };
+
+        /**
+         * @override
+         */
+        exports.toggleStates = function () {
+            this.$super(arguments);
+
+            var title = this.helper.getPart('title');
+            lib.toggleClass(title, 'state-active');
         };
 
         /**
