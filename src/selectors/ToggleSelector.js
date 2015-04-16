@@ -49,9 +49,9 @@ define(
 
             var children = lib.getChildren(mainElement);
             var innerSelect = document.createElement('div');
-            innerSelect.id = this.helper.getId('title');
+            innerSelect.id = controlHelper.getId('select-inner');
             lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
-            lib.addClass(innerSelect, controlHelper.getPrefixClass('select'));
+            lib.addClass(mainElement, controlHelper.getPrefixClass('select'));
             // 这里没有做判断，因为toggle panel中已经假设有2个子节点
             lib.addClass(children[0], controlHelper.getPrefixClass('select-text'));
             innerSelect.appendChild(children[0]);
@@ -66,11 +66,18 @@ define(
          * @override
          */
         exports.initEvents = function () {
-            this.$super(arguments);
-            var target = this.viewContext.getSafely(this.targetControl);
-            target.on('change', u.bind(changeHandler, this));
-            target.on('add', u.bind(addHandler, this));
-            this.updateDisplayText(target);
+            //this.$super(arguments);
+            var me = this;
+            var target = me.viewContext.getSafely(me.targetControl);
+            var controlHelper = me.helper;
+            target.on('change', u.bind(changeHandler, me));
+            target.on('add', u.bind(addHandler, me));
+            me.updateDisplayText(target);
+            controlHelper.addDOMEvent(
+                controlHelper.getPart('select-inner'),
+                'click',
+                me.toggleContent
+            );
         };
 
         /**
@@ -80,16 +87,6 @@ define(
             if (!this.isDisabled()) {
                 this.toggleStates();
             }
-        };
-
-        /**
-         * @override
-         */
-        exports.toggleStates = function () {
-            this.$super(arguments);
-
-            var title = this.helper.getPart('title');
-            lib.toggleClass(title, 'state-active');
         };
 
         /**
