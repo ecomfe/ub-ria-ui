@@ -299,8 +299,8 @@ define(function (require) {
             me.dialog.show();
         };
         img.src = options.url;
-        options.width && (img.style.width = options.width + 'px');
-        options.height && (img.style.height = options.height + 'px');
+        /\d+/.test(options.width) && (img.style.width = options.width + 'px');
+        /\d+/.test(options.height) && (img.style.height = options.height + 'px');
     };
 
     /**

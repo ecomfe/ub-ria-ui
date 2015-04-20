@@ -113,7 +113,14 @@ define(function (require) {
             var style = placeHolder.style;
 
             style.height = height + 'px';
-            style.float = getCurrentStyle(mainElement, 'float') != 'none' ? getCurrentStyle(mainElement).float : '';
+            var _float = getCurrentStyle(mainElement, 'float');
+            if (_float && _float !== 'none') {
+                var currentStyle = getCurrentStyle(mainElement);
+                _float = currentStyle && currentStyle.float;
+            }
+            style.float = _float || '';
+             
+            // style.float = getCurrentStyle(mainElement, 'float') != 'none' ? getCurrentStyle(mainElement).float : '';
             style.margin = getCurrentStyle(mainElement, 'margin');
             this.initialTop = lib.getOffset(mainElement).top;
         },
