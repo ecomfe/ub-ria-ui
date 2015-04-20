@@ -81,10 +81,10 @@ define(
             var min = this.min;
 
             //如果用户手动输入一个非法值，会默认显示最小值
-            value = value.isValid() ? value : min;
             if (direct == Direct.UP) {
                 value = value.add(scale.value, scale.key);
-                if (m.max(value, max) == max) {
+                value = value.isValid() ? value : min;
+                if (m.max(value, max).diff(max, 'day') === 0) {
                     value = m(value, timeFormat).format(timeFormat);
                 }
                 else {
@@ -98,7 +98,8 @@ define(
             }
             else {
                 value = value.subtract(scale.value, scale.key);
-                if (m.min(value, min) == min) {
+                value = value.isValid() ? value : min;
+                if (m.min(value, min).diff(min, 'day') === 0) {
                     value = m(value, timeFormat).format(timeFormat);
                 }
                 else {
