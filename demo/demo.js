@@ -24,7 +24,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.2.0-beta/src',
+            'location': '../dep/esui/3.2.0-beta.1/src',
             'main': 'main'
         },
         {
@@ -44,12 +44,12 @@ require.config({
         },
         {
             'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-beta/src',
+            'location': '../dep/eicons/1.0.0-beta.1/src',
             'main': 'main.less'
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-beta/src'
+            'location': '../dep/esf/1.0.0-beta.1/src'
         },
         {
             'name': 'est',
