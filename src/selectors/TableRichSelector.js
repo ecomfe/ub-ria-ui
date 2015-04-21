@@ -382,11 +382,13 @@ define(
         function actionForAdd(control, row, item) {
             var selectedClasses = control.helper.getPartClassName('row-selected');
             var fire = false;
+            var eventArgs = {item: item, status: 1};
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
                 if (control.allowUnselectNode) {
                     selectItem(control, item.id, false);
                     fire = true;
+                    eventArgs.status = -1;
                 }
             }
             else {
@@ -396,7 +398,7 @@ define(
 
             if (fire) {
                 // 需要增加上一个参数，因为有的时候需要了解当前操作的对象是什么
-                control.fire('add', {item: item});
+                control.fire('add', eventArgs);
                 control.fire('change');
             }
         }

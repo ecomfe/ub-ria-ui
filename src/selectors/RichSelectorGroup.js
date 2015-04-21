@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-
+        var u = require('../util');
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选
          *
@@ -16,11 +16,11 @@ define(
          *
          * ```
          * <div
-         *   data-ui-type="CascadingRichSelector"
+         *   data-ui-type="RichSelectorGroup"
          *   data-ui-id="cas-slots"
          *   data-ui-name="cas-slots">
          *   <esui-table-rich-selector
-         *       data-ui-child-name="source"
+         *       data-ui-role="source"
          *       data-ui-title="全部有效代码位"
          *       data-ui-has-head="true"
          *       data-ui-has-search-box="true"
@@ -28,7 +28,7 @@ define(
          *      data-ui-batch-action-label="选择全部">
          *   </esui-table-rich-selector>
          *   <esui-table-rich-selector
-         *       data-ui-child-name="target"
+         *       data-ui-role="target"
          *       data-ui-title="已选择代码位"
          *       data-ui-mode="delete"
          *       data-ui-need-batch-action="true"
@@ -38,7 +38,7 @@ define(
          * </div>
          *
          * ```
-         * 选择控件必须配置childName，'source'代表源选择器，'target'代表目标选择器
+         * 选择控件必须配置data-ui-role，'source'代表源选择器，'target'代表目标选择器
          *
          * @class RichSelectorGroup
          * @extends esui.Panel
@@ -60,29 +60,36 @@ define(
         exports.initStructure = function () {
             this.helper.initChildren();
 
-            var filter = this.getChild('filter');
-            var source = this.getChild('source');
-            var target = this.getChild('target');
+            // 获取children
+            var selectors = this.children;
+            u.each(
+                selectors,
+                function (selector) {
+                    var main = selector.main;
+                    var role = selector.main.getAttribute('data-ui-role');
+                    if (role) {
+                        this[role] = selector;
+                    }
+                },
+                this
+            );
 
-            // 绑事件
-            filter && filter.on('load', this.fire.bind(this, 'load'));
-
-            source && source.on(
+            this.source && this.source.on(
                 'add',
                 function (e) {
                     var newdata = e.target.getSelectedItemsFullStructure();
-                    target && target.setProperties({datasource: newdata});
+                    this.target && this.target.setProperties({datasource: newdata});
                     this.fire('add');
                     this.fire('change');
                 },
                 this
             );
 
-            target && target.on(
+            this.target && this.target.on(
                 'delete',
                 function (arg) {
                     var items = arg.items;
-                    source && source.selectItems(items, false);
+                    this.source && this.source.selectItems(items, false);
                     this.fire('delete');
                     this.fire('change');
                 },
@@ -91,12 +98,7 @@ define(
         };
 
         exports.getRealTargetSelector = function () {
-            var source = this.getChild('source');
-            var target = this.getChild('target');
-            if (target) {
-                return target;
-            }
-            return source;
+            return this.targret || this.source;
         };
 
         exports.getValue = function () {

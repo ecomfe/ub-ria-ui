@@ -95,10 +95,10 @@
                             data-ui-value-field="id">
                             <span>请选择</span>
                             <section>
-                                <div data-ui-type="RichSelectorGroup"
+                                <div data-ui-type="FilterRichSelectorGroup"
                                     data-ui-id="delivery-under-order">
                                     <esui-table-rich-selector-with-filter
-                                        data-ui-child-name="filter"
+                                        data-ui-role="filter"
                                         data-ui-title="订单"
                                         data-ui-has-head="false"
                                         data-ui-has-search-box="true"
@@ -108,7 +108,7 @@
                                         data-ui-mode="load">
                                     </esui-table-rich-selector-with-filter>
                                     <esui-table-rich-selector
-                                        data-ui-child-name="source"
+                                        data-ui-role="source"
                                         data-ui-title="广告"
                                         data-ui-mode="add"
                                         data-ui-has-head="false"
@@ -155,8 +155,9 @@
                     'selectors/RichSelectorGroup',
                     'selectors/TreeRichSelector',
                     'selectors/TableRichSelector',
+                    'selectors/TableRichSelectorWithFilter',
                     'selectors/ToggleSelector',
-                    'selectors/TableRichSelectorWithFilter'
+                    'selectors/FilterRichSelectorGroup'
                 ],
                 function (ui) {
                     var tables = ui.init(document.body);
@@ -218,8 +219,8 @@
 
                     var deliveryUnderOrder = ui.get('delivery-under-order');
 
-                    var order = deliveryUnderOrder.getChild('filter');
-                    var delivery = deliveryUnderOrder.getChild('source');
+                    var order = deliveryUnderOrder.filter;
+                    var delivery = deliveryUnderOrder.source;
 
                     order.setProperties({
                         datasource: arrayDatasource,
@@ -265,8 +266,7 @@
                     });
 
                     deliveryUnderOrder.on('load', function (e) {
-                        var item = e.item;
-                        delivery.setProperties({datasource: arrayDatasource.slice(item.id)});
+                        e.data = arrayDatasource.slice(e.item.id);
                     });
 
 
