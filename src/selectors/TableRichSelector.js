@@ -427,10 +427,8 @@ define(
         function unselectCurrent(control) {
             var curId = control.currentSelectedId;
             // 撤销当前选中项
-            if (curId) {
-                updateSingleItemStatus(control, curId, false);
-                control.currentSelectedId = null;
-            }
+            updateSingleItemStatus(control, curId, false);
+            control.currentSelectedId = null;
         }
 
         /**
