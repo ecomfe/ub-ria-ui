@@ -84,7 +84,7 @@ define(
          * @override
          */
         exports.toggleContent = function () {
-            if (!this.isDisabled()) {
+            if (!this.isDisabled() && !this.isReadOnly()) {
                 this.toggleStates();
             }
         };
@@ -151,6 +151,25 @@ define(
             var rawValue = [{id: value}];
 
             this.setRawValue(rawValue);
+        };
+
+        /**
+         * 设置控件的只读状态
+         *
+         * @param {boolean} readOnly 是否只读
+         */
+        exports.setReadOnly = function (readOnly) {
+            readOnly = !!readOnly;
+            this[readOnly ? 'addState' : 'removeState']('read-only');
+        };
+
+        /**
+         * 判读控件是否处于只读状态
+         *
+         * @return {boolean}
+         */
+        exports.isReadOnly = function () {
+            return this.hasState('read-only');
         };
 
         /**
