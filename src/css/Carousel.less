@@ -1,36 +1,26 @@
-@ub-ria-ui-carousel-toolbar-pageColor: #ddd;
-@ub-ria-ui-carousel-toolbar-currentPageColor: @primary-color;
+@esui-carousel-padding: 0 2em;
 
-@ub-ria-ui-carousel-selected-color: @primary-color;
-@ub-ria-ui-carousel-selected-text-color: @white;
-@ub-ria-ui-carousel-listItem-border: 4px solid #fff;
-@ub-ria-ui-carousel-listItem-selected-border: 4px solid @ub-ria-ui-carousel-selected-color;
-@ui-ria-ui-carousel-pointer-color: @primary-color;
-@ui-ria-ui-carousel-pointer-hover-color: lighten(@primary-color, 5%);
-@ui-ria-ui-carousel-pointer-active-color: darken(@primary-color, 10%);
+@esui-carousel-toolbar-pageColor: #DDD;
+@esui-carousel-toolbar-currentPageColor: #6CCDC0;
 
-.@{ui-class-prefix}-carousel-main {
-    max-width: 1000px;
-    max-height: 500px;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
+@esui-carousel-selected-color: #6CCDC0;
+@esui-carousel-selected-text-color: #FFFFFF;
+@esui-carousel-pointer-color: #6CCDC0;
+@esui-carousel-pointer-hover-color: lighten(#6CCDC0, 5%);
 
 .@{ui-class-prefix}-carousel-content {
     position: relative;
+    padding: @esui-carousel-padding;
 }
 
 .@{ui-class-prefix}-carousel-pointer {
     cursor: pointer;
-    position:absolute;
+    position: absolute;
     top: 50%;
     margin-top: -.5em;
-    color: @ui-ria-ui-carousel-pointer-color;
+    color: @esui-carousel-pointer-color;
     &:hover {
-        color: @ui-ria-ui-carousel-pointer-hover-color;
-    }
-    &:active {
-        color: @ui-ria-ui-carousel-pointer-hover-color;
+        color: @esui-carousel-pointer-hover-color;
     }
 }
 
@@ -49,7 +39,6 @@
 .@{ui-class-prefix}-carouse-list-wrap {
     position: relative;
     overflow: hidden;
-    margin: 0 30px;
 }
 
 .@{ui-class-prefix}-carousel-list {
@@ -57,51 +46,44 @@
     top: 0;
     left: 0;
     .transition(.4s all ease);
+    padding: 0;
+    margin: 0;
 }
 
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item {
-    margin: 0 2px;
-    border: @ub-ria-ui-carousel-listItem-border;
+.@{ui-class-prefix}-carousel-item {
     float: left;
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
     position: relative;
     cursor: pointer;
+    overflow: hidden;
+    display: inline-block;
+    .box-sizing(border-box);
 }
 
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item img {
+.@{ui-class-prefix}-carousel-item img {
     width: 100%;
 }
 
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-disabled {
-    opacity: 0.5;
+.@{ui-class-prefix}-carousel-selected-item {
     cursor: auto;
 }
 
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-selected-item {
-    border: @ub-ria-ui-carousel-listItem-selected-border;
-    cursor: auto;
-    opacity: 1;
-}
-
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-item .@{ui-class-prefix}-carousel-check {
+.@{ui-class-prefix}-carousel-item .@{ui-class-prefix}-carousel-check {
     display: none;
     position: absolute;
     right: 0;
     bottom:0;
-    background: @ub-ria-ui-carousel-selected-color;
-    color: @ub-ria-ui-carousel-selected-text-color;
+    background: @esui-carousel-selected-color;
+    color: @esui-carousel-selected-text-color;
 }
 
-.@{ui-class-prefix}-carousel-list .@{ui-class-prefix}-carousel-selected-item .@{ui-class-prefix}-carousel-check{
+.@{ui-class-prefix}-carousel-selected-item .@{ui-class-prefix}-carousel-check {
     display: inline-block;
 }
 
 .@{ui-class-prefix}-carousel-toolbar {
-    margin: 10px 0;
+    margin: 0.625em 0;
     position: relative;
-    height: 8px;
+    height: 0.5em;
 }
 
 .@{ui-class-prefix}-carousel-toolbar ul {
@@ -109,18 +91,22 @@
 }
 
 .@{ui-class-prefix}-carousel-toolbar .@{ui-class-prefix}-carousel-page {
-    margin: 0 5px;
-    width: 8px;
-    height: 8px;
-    background: @ub-ria-ui-carousel-toolbar-pageColor;
+    margin: 0 0.375em;
+    width: 0.5em;
+    height: 0.5em;
+    background: @esui-carousel-toolbar-pageColor;
     display: inline-block;
-    *display: inline;
-    zoom: 1;
     cursor: pointer;
-    .border-radius(50%);
+    .esf-circular();
 }
 
 .@{ui-class-prefix}-carousel-toolbar .@{ui-class-prefix}-carousel-current-page {
-    background: @ub-ria-ui-carousel-toolbar-currentPageColor;
+    background: @esui-carousel-toolbar-currentPageColor;
     cursor: auto;
+}
+
+.@{ui-class-prefix}-carousel.@{ui-state-prefix}-disabled {
+    .@{ui-class-prefix}-carousel-item {
+        cursor: not-allowed;
+    }
 }
