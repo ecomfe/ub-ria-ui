@@ -20,6 +20,8 @@ define(
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
 
+        var Mouse = require('esui/behavior/Mouse');
+
         var exports = {};
 
         /**
@@ -473,7 +475,27 @@ define(
 
             // 给滑块绑定事件
             if (body) {
-                initDragEvents(this, body);
+                var mouse = new Mouse(body);
+                mouse.on(
+                    'mousestart',
+                    mousedownHandler,
+                    this
+                );
+
+                mouse.on(
+                    'mousedrag',
+                    mousemoveHandler,
+                    this
+                );
+
+                mouse.on(
+                    'mousestop',
+                    mouseupHandler,
+                    this
+                );
+
+                // 点在其他空白处，滑块也要移动到这里
+                 this.helper.addDOMEvent(body, 'click', mousedownHandler);
             }
         }
 
@@ -666,6 +688,7 @@ define(
          * @private
          */
         function mousemoveHandler(e, isMouseUp) {
+            console.log('mousemove');
             var target = this.activeCursorElement;
             var cursorElement = this.cursorElement;
             var mousePos = lib.event.getMousePosition(e);
@@ -787,6 +810,7 @@ define(
          * @private
          */
         function mouseupHandler(e) {
+            console.log('mouseup')
             // 去掉active的样式
             lib.removeClass(
                 this.activeCursorElement,
@@ -805,13 +829,6 @@ define(
 
             // 放开鼠标的时候触发change事件
             this.fire('change', value);
-
-            var doc = document;
-
-            this.helper.removeDOMEvent(doc, 'mouseup', mouseupHandler);
-            this.helper.removeDOMEvent(doc, 'mousemove', mousemoveHandler);
-            // 清除浏览器select的事件
-            e.preventDefault();
         }
 
         /**
@@ -899,34 +916,8 @@ define(
             // 点击的时候再初始化各种坐标 为了一些初始化时不在屏幕内的控件
             initBodyElements(this);
 
-            // 禁止鼠标反选
-            e.preventDefault();
-
             // 滑块首先移动到鼠标点击位置
             mousemoveHandler.call(this, e);
-
-            var doc = document;
-            // 鼠标的松开事件
-            this.helper.addDOMEvent(doc, 'mouseup', mouseupHandler);
-            // 鼠标的移动事件
-            this.helper.addDOMEvent(doc, 'mousemove', mousemoveHandler);
-
-        }
-
-        /**
-         * 处理拖拽事件
-         * @param  {Slider} slider  控件的实例
-         * @param  {Element} element  处理事件的dom元素
-         * @param  {boolean} unbind  绑定为false 解绑为true
-         * @private
-         */
-        function initDragEvents(slider, element, unbind) {
-            if (unbind) {
-                slider.helper.removeDOMEvent(element, 'mousedown', mousedownHandler);
-            }
-            else {
-                slider.helper.addDOMEvent(element, 'mousedown', mousedownHandler);
-            }
         }
 
         /**
