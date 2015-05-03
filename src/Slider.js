@@ -475,24 +475,31 @@ define(
 
             // 给滑块绑定事件
             if (body) {
-                var mouse = new Mouse(body);
-                mouse.on(
-                    'mousestart',
-                    mousedownHandler,
-                    this
+                $(body).mouse(
+                    {
+                        onMousestart: u.bind(mousedownHandler, this),
+                        onMousedrag: u.bind(mousemoveHandler, this),
+                        onMousestop: u.bind(mouseupHandler, this),
+                    }
                 );
+                // var mouse = new Mouse(body);
+                // mouse.on(
+                //     'mousestart',
+                //     mousedownHandler,
+                //     this
+                // );
 
-                mouse.on(
-                    'mousedrag',
-                    mousemoveHandler,
-                    this
-                );
+                // mouse.on(
+                //     'mousedrag',
+                //     mousemoveHandler,
+                //     this
+                // );
 
-                mouse.on(
-                    'mousestop',
-                    mouseupHandler,
-                    this
-                );
+                // mouse.on(
+                //     'mousestop',
+                //     mouseupHandler,
+                //     this
+                // );
 
                 // 点在其他空白处，滑块也要移动到这里
                  this.helper.addDOMEvent(body, 'click', mousedownHandler);
