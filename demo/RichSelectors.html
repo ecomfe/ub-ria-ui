@@ -34,7 +34,7 @@
                             data-ui-id="single-slots"
                             data-ui-name="single-slots">
                             <esui-table-rich-selector
-                                data-ui-child-name="source"
+                                data-ui-role="source"
                                 data-ui-title="全部有效"
                                 data-ui-has-head="true"
                                 data-ui-has-search-box="true"
@@ -66,7 +66,7 @@
                             data-ui-id="cas-slots"
                             data-ui-name="cas-slots">
                             <esui-table-rich-selector
-                                data-ui-child-name="source"
+                                data-ui-role="source"
                                 data-ui-title="全部有效"
                                 data-ui-has-head="true"
                                 data-ui-has-search-box="true"
@@ -75,7 +75,7 @@
                                 data-ui-batch-action-label="选择全部">
                             </esui-table-rich-selector>
                             <esui-table-rich-selector
-                                data-ui-child-name="target"
+                                data-ui-role="target"
                                 data-ui-title="已选择"
                                 data-ui-mode="delete"
                                 data-ui-need-batch-action="true"
@@ -105,7 +105,7 @@
                             data-ui-id="cas-apps"
                             data-ui-name="cas-apps">
                             <div data-ui-type="TreeRichSelector"
-                                data-ui-child-name="source"
+                                data-ui-role="source"
                                 data-ui-title="全部有效"
                                 data-ui-hold-state="true"
                                 data-ui-has-foot="false"
@@ -115,7 +115,7 @@
                                 data-ui-batch-action-label="选择全部">
                             </div>
                             <div data-ui-type="TreeRichSelector"
-                                data-ui-child-name="target"
+                                data-ui-role="target"
                                 data-ui-mode="delete"
                                 data-ui-has-search-box="false"
                                 data-ui-title="已分配"
@@ -207,7 +207,7 @@
                     }
 
                     var single = ui.get('single-slots');
-                    var singleSource = single.getChild('source');
+                    var singleSource = single.source;
                     singleSource.setProperties({
                         datasource: arrayDatasource,
                         fields: [
@@ -229,8 +229,8 @@
                     });
 
                     var cascading = ui.get('cas-slots');
-                    var casSource = cascading.getChild('source');
-                    var casTarget = cascading.getChild('target');
+                    var casSource = cascading.source;
+                    var casTarget = cascading.target;
 
                     casSource.setProperties({
                         datasource: arrayDatasource,
@@ -314,8 +314,8 @@
                     }
 
                     var appTree = ui.get('cas-apps');
-                    var leftTree = appTree.getChild('source');
-                    var rightTree = appTree.getChild('target');
+                    var leftTree = appTree.source;
+                    var rightTree = appTree.target;
                     leftTree.setProperties({datasource: treeDatasource});
                     var treeData = leftTree.getSelectedTree();
                     rightTree.setProperties({datasource: treeData});
