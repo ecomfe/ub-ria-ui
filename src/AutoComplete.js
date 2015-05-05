@@ -116,6 +116,7 @@ define(function (require) {
             setTargetValue.call(me, text);
         });
 
+        // 这里不使用keyup是为了上下选中后回车不出现keypress事件引起的换行效果
         helper.addDOMEvent(inputElement, 'keydown', obj.keyboard = function (e) {
             if (me.layer.isHidden()) {
                 return;
@@ -154,12 +155,19 @@ define(function (require) {
             }
         });
 
-        var inputEventName = ('oninput' in inputElement)
-            ? 'input'
-            : 'propertychange';
-        helper.addDOMEvent(inputElement, inputEventName, obj.oninput = function (e) {
-            var elementValue = inputElement.value;
+        obj.oninput = function (e) {
+            if (e.type === 'keyup') {
+                switch (e.keyCode) {
+                    case 13:
+                    case 27:
+                    case 38:
+                    case 40:
+                    //e.preventDefault();
+                    return;
+                }
+            }
 
+            var elementValue = inputElement.value;
             // 空格或逗号结尾都忽略
             if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
                 repaintSuggest.call(me, '');
@@ -178,7 +186,12 @@ define(function (require) {
             }
 
             repaintSuggest.call(me, elementValue);
-        });
+        };
+
+        // 用keyup、cut、paste事件替代input事件，绕开input事件的bug
+        helper.addDOMEvent(inputElement, 'keyup', obj.oninput);
+        helper.addDOMEvent(inputElement, 'cut', obj.oninput);
+        helper.addDOMEvent(inputElement, 'paste', obj.oninput);
     }
 
     function setTargetValue(value) {
@@ -227,7 +240,7 @@ define(function (require) {
             var scrollTop = input.scrollTop;
             var scrollLeft = input.scrollLeft;
             style.left = pos.left - offset.left - scrollLeft + 'px';
-            style.top = pos.top - offset.top - scrollTop + parseInt(lib.getStyle(input, 'fontSize'), 10) + 'px';
+            style.top = pos.top - offset.top - scrollTop + parseInt(lib.getComputedStyle(input, 'fontSize'), 10) + 'px';
         }
         else {
             style.left = 0;
@@ -412,7 +425,9 @@ define(function (require) {
         var helper = this.target.helper;
         var inputEle = this.inputElement;
 
-        helper.removeDOMEvent(inputEle, INPUT, obj.oninput);
+        helper.removeDOMEvent(inputEle, 'keyup', obj.oninput);
+        helper.removeDOMEvent(inputEle, 'cut', obj.oninput);
+        helper.removeDOMEvent(inputEle, 'paste', obj.oninput);
 
         var layerMain = this.layer.getElement(false);
         helper.removeDOMEvent(inputEle, 'keydown', obj.keyboard);
