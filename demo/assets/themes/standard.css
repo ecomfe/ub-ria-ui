@@ -2682,7 +2682,7 @@ hr {
 .ui-boxgroup-button-style-danger .ui-boxgroup-wrapper-checked label {
   background: #f77c7c;
 }
-esui-box-group {
+.ui-boxgroup {
   display: block;
 }
 .ui-boxgroup-button-style-separated .ui-boxgroup-wrapper:not(:last-child) label {
@@ -2745,7 +2745,7 @@ esui-box-group {
   margin: 0;
 }
 .ui-layer-hidden {
-  display: none !important;
+  display: none;
 }
 /**
  * ESUI (Enterprise Simple UI)
@@ -3040,6 +3040,7 @@ esui-box-group {
   padding: 0;
   line-height: 1.3;
   vertical-align: middle;
+  display: block;
 }
 .ui-crumb-separator {
   margin: 0 0.5em;
@@ -3166,6 +3167,9 @@ span.ui-crumb-node {
 * @file 翻页样式
 * @author shenbin langxingjian
 */
+.ui-pager {
+  display: block;
+}
 .ui-pager-select-wrapper {
   display: inline-block;
 }
@@ -3183,6 +3187,7 @@ span.ui-crumb-node {
 .ui-pager-main li {
   margin: 0 0 0 0.5em;
   padding: 0 0.2em;
+  min-width: 1.2em;
   text-align: center;
   display: inline-block;
   cursor: pointer;
@@ -3661,6 +3666,9 @@ span.ui-crumb-node {
   text-indent: 0;
   visibility: visible;
 }
+.ui-tab {
+  display: block;
+}
 .ui-tab-navigator {
   margin: 0;
   padding: 0;
@@ -3816,6 +3824,7 @@ span.ui-crumb-node {
 .ui-table {
   overflow-x: auto;
   line-height: 1.4;
+  display: block;
 }
 .ui-table table {
   table-layout: fixed;
@@ -4202,6 +4211,7 @@ span.ui-crumb-node {
   position: absolute;
   left: 0;
   top: 0;
+  height: 100%;
   -webkit-border-top-left-radius: 5px;
   -moz-border-radius-topleft: 5px;
   border-top-left-radius: 5px;
@@ -4245,6 +4255,7 @@ span.ui-crumb-node {
   padding: 0.5em;
   z-index: 1002;
   position: absolute;
+  display: block;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -4367,10 +4378,8 @@ span.ui-crumb-node {
   * @file 树样式
   * @author dbear
   */
-.esui-tree {
-  display: block;
-}
 .ui-tree {
+  display: block;
   line-height: 2;
 }
 .ui-tree ul,
@@ -4384,7 +4393,7 @@ span.ui-crumb-node {
   overflow: hidden;
 }
 .ui-tree-node-indicator {
-  text-indent: -500%;
+  text-indent: -5000px;
   vertical-align: middle;
   width: 1.5em;
   float: left;
@@ -4523,6 +4532,9 @@ span.ui-crumb-node {
   * @file Wizard样式
   * @author dbear
   */
+.ui-wizard {
+  display: block;
+}
 .ui-wizard-panel-hidden {
   display: none;
 }
@@ -6301,6 +6313,9 @@ i.ui-autocomplete-item-char-selected {
 }
 /*@import "Uploader.less";*/
 /*@import "UploaderPro.less";*/
+.ui-carousel {
+  display: block;
+}
 .ui-carousel-content {
   position: relative;
   padding: 0 2em;
@@ -6406,6 +6421,7 @@ i.ui-autocomplete-item-char-selected {
   transition: background-color 0.3s ease-out, box-shadow 0.2s ease, border-color 0.2s ease;
   padding: 0.5em;
   position: relative;
+  display: inline-block;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -6486,6 +6502,7 @@ i.ui-autocomplete-item-char-selected {
 .ui-filter,
 .ui-filterresult {
   line-height: 2;
+  display: block;
 }
 .ui-filter-items-panel,
 .ui-filterresult-items-panel {
@@ -6550,6 +6567,7 @@ i.ui-autocomplete-item-char-selected {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  display: block;
 }
 .ui-slider-body {
   position: relative;
