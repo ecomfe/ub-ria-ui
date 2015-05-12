@@ -9,29 +9,37 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var painter = require('esui/painters');
         var u = require('underscore');
 
-        var util = require('ub-ria/util');
+        var util = require('./util');
         var RichSelector = require('./RichSelector');
 
 
         /**
          * 控件类
          *
-         * @constructor
-         * @param {Object} options 初始化参数
+         * @class ui.TableRichSelector
+         * @extends ui.RichSelector
          */
-        function TableRichSelector(options) {
-            RichSelector.apply(this, arguments);
-        }
+        var exports = {};
 
-        lib.inherits(TableRichSelector, RichSelector);
+        /**
+         * 控件类型，始终为`"TableRichSelector"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'TableRichSelector';
 
-        TableRichSelector.prototype.type = 'TableRichSelector';
-        TableRichSelector.prototype.styleType = 'RichSelector';
+        /**
+         * @override
+         */
+        exports.styleType = 'RichSelector';
 
-        TableRichSelector.prototype.initOptions = function (options) {
+        /**
+         * @override
+         */
+        exports.initOptions = function (options) {
             var properties = {
                 hasRowHead: true,
                 hasIcon: true,
@@ -43,33 +51,44 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
-                ]
+                    {field: 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
+                ],
+                allowUnselectNode: false
             };
 
-            if (options.hasRowHead === 'false') {
-                options.hasRowHead = false;
-            }
-
-            if (options.hasIcon === 'false') {
-                options.hasIcon = false;
-            }
-
-            if (options.firedOnIcon === 'false') {
-                options.firedOnIcon = false;
-            }
-
             lib.extend(properties, options);
-            RichSelector.prototype.initOptions.call(this, properties);
+
+            if (properties.hasRowHead === 'false') {
+                properties.hasRowHead = false;
+            }
+
+            if (properties.hasIcon === 'false') {
+                properties.hasIcon = false;
+            }
+
+            if (properties.firedOnIcon === 'false') {
+                properties.firedOnIcon = false;
+            }
+
+            if (properties.allowUnselectNode === 'false') {
+                properties.allowUnselectNode = false;
+            }
+
+            this.$super([properties]);
         };
 
-        TableRichSelector.prototype.initStructure = function () {
-            RichSelector.prototype.initStructure.apply(this, arguments);
+        /**
+         * @override
+         */
+        exports.initStructure = function () {
+            this.$super(arguments);
+
             lib.addClass(
                 this.main,
                 'ui-table-richselector'
             );
         };
+
         /**
          * 重新渲染视图
          * 仅当生命周期处于RENDER时，该方法才重新渲染
@@ -77,7 +96,7 @@ define(
          * @param {Array=} 变更过的属性的集合
          * @override
          */
-        TableRichSelector.prototype.repaint = painter.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             RichSelector.prototype.repaint,
             {
                 name: ['datasource', 'selectedData', 'disabledData'],
@@ -108,7 +127,7 @@ define(
          *
          * @override
          */
-        TableRichSelector.prototype.adaptData = function () {
+        exports.adaptData = function () {
             var allData = util.deepClone(this.datasource);
             // 先构建indexData
             var indexData = {};
@@ -124,7 +143,7 @@ define(
                 // 如果不是数组，这个值就是id
                 if (!u.isArray(selectedData)) {
                     this.currentSelectedId = selectedData;
-                    selectedData = [{ id: selectedData }];
+                    selectedData = [{id: selectedData}];
                 }
                 // 如果是数组，保存第一个值为当前选值
                 else if (selectedData.length) {
@@ -170,7 +189,7 @@ define(
          *
          * @override
          */
-        TableRichSelector.prototype.refreshContent = function () {
+        exports.refreshContent = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
             if (!data || data.length === 0) {
                 this.addState('empty');
@@ -193,7 +212,8 @@ define(
         /**
          * 创建表头
          *
-         * public
+         * @public
+         * @param {ui.TableRichSelector} control 当前控件实例
          * @return {string} 表头html
          */
         function createTableHead(control) {
@@ -216,13 +236,16 @@ define(
             return tpl.join(' ');
         }
 
-        TableRichSelector.prototype.rowTpl = ''
+        exports.rowTpl = ''
             + '<tr id="${rowId}" class="${rowClass}" '
             + 'index="${index}">${content}</tr>';
 
         /**
          * 创建表格体
+         *
          * @param {ui.TableForSelector} control 类实例
+         * @param {Object} data 绘制的内容
+         * @return {string}
          * @ignore
          */
         function createTableContent(control, data) {
@@ -267,6 +290,7 @@ define(
          * @param {Object} item 每行的数据
          * @param {number} index 行索引
          * @param {HTMLElement} tr 容器节点
+         * @return {string}
          * @ignore
          */
         function createRow(control, item, index, tr) {
@@ -278,7 +302,7 @@ define(
                 var content = field.content;
                 var innerHTML = ('function' === typeof content
                     ? content.call(control, item, index, i)
-                    : item[content]);
+                    : u.escape(item[content]));
 
                 // IE不支持tr.innerHTML，所以这里要使用insertCell
                 if (tr) {
@@ -319,7 +343,7 @@ define(
          * @param {Event} e 事件对象
          * @ignore
          */
-        TableRichSelector.prototype.eventDispatcher = function (e) {
+        exports.eventDispatcher = function (e) {
             var tar = e.target;
             var helper = this.helper;
             var rowClasses = helper.getPartClassName('row');
@@ -348,7 +372,7 @@ define(
         };
 
         // 可重写
-        TableRichSelector.prototype.operateRow = function (row) {
+        exports.operateRow = function (row) {
             var disabledClasses = this.helper.getPartClassName('row-disabled');
             if (lib.hasClass(row, disabledClasses)) {
                 return;
@@ -377,8 +401,10 @@ define(
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
                 if (!control.multi) {
-                    selectItem(control, item.id, false);
-                    fire = true;
+                    if (control.allowUnselectNode) {
+                        selectItem(control, item.id, false);
+                        fire = true;
+                    }
                 }
             }
             else {
@@ -388,7 +414,7 @@ define(
 
             if (fire) {
                 // 需要增加上一个参数，因为有的时候需要了解当前操作的对象是什么
-                control.fire('add', { item: item });
+                control.fire('add', {item: item});
                 control.fire('change');
             }
         }
@@ -426,12 +452,10 @@ define(
         function unselectCurrent(control) {
             var curId = control.currentSelectedId;
             // 撤销当前选中项
-            if (curId) {
-                var index = control.indexData[curId];
-                var item = control.allData[index];
-                updateSingleItemStatus(control, item, false);
-                control.currentSelectedId = null;
-            }
+            var index = control.indexData[curId];
+            var item = control.allData[index];
+            updateSingleItemStatus(control, item, false);
+            control.currentSelectedId = null;
         }
 
         /**
@@ -461,7 +485,7 @@ define(
          * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
          * @public
          */
-        TableRichSelector.prototype.selectAll = function () {
+        exports.selectAll = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
             var control = this;
             u.each(data, function (item) {
@@ -479,7 +503,7 @@ define(
          * @param {boolean} toBeSelected 要选择还是取消选择
          * @override
          */
-        TableRichSelector.prototype.selectItems =
+        exports.selectItems =
             function (items, toBeSelected) {
                 var allData = this.allData;
                 var indexData = this.indexData;
@@ -503,7 +527,7 @@ define(
         function actionForDelete(control, row, item) {
             deleteItem(control, item.id);
             // 外部需要知道什么数据被删除了
-            control.fire('delete', { items: [item] });
+            control.fire('delete', {items: [item]});
             control.fire('change');
         }
 
@@ -532,10 +556,10 @@ define(
          * @FIXME 删除全部要区分搜索和非搜索状态么
          * @override
          */
-        TableRichSelector.prototype.deleteAll = function () {
+        exports.deleteAll = function () {
             var items = u.clone(this.datasource);
             this.set('datasource', []);
-            this.fire('delete', { items: items });
+            this.fire('delete', {items: items});
             this.fire('change');
         };
 
@@ -559,7 +583,7 @@ define(
          * @param {Array} filters 过滤参数
          * @public
          */
-        TableRichSelector.prototype.queryItem = function (filters) {
+        exports.queryItem = function (filters) {
             // 查找过滤 [{ keys: ['xxx', 'yyy'], value: 'xxx' }]
             filters = filters || [];
             // 判断数据的某个field是命中
@@ -624,7 +648,7 @@ define(
          * 清空搜索的结果
          *
          */
-        TableRichSelector.prototype.clearData = function () {
+        exports.clearData = function () {
             // 清空数据
             this.queriedData = [];
         };
@@ -636,7 +660,7 @@ define(
          * @return {Object}
          * @public
          */
-        TableRichSelector.prototype.getSelectedItems = function () {
+        exports.getSelectedItems = function () {
             var rawData = this.datasource;
             var allData = this.allData;
             var mode = this.mode;
@@ -655,11 +679,13 @@ define(
          * @return {number}
          * @override
          */
-        TableRichSelector.prototype.getCurrentStateItemsCount = function () {
+        exports.getCurrentStateItemsCount = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
             data = data || [];
             return data.length;
         };
+
+        var TableRichSelector = require('eoo').create(RichSelector, exports);
 
         require('esui').register(TableRichSelector);
 

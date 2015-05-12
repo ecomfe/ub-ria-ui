@@ -9,6 +9,38 @@
 @import "./mixin.less";
 @import "./variables.less";
 
+@rich-selector-frame-border: 1px solid #ebebeb;
+
+@rich-selector-head-bg: #ebebeb;
+@rich-selector-head-border-bottom: 1px solid #ebebeb;
+@rich-selector-batch-action-link-color: #67c1a5;
+
+// head 颜色
+@rich-selector-head-title-color: #333;
+@rich-selector-head-count-color: #999;
+
+@rich-selector-query-result-bg: #fef9d4;
+@rich-selector-clear-query-link-color: #67c1a5;
+
+
+@rich-selector-line-height: 35px;
+
+@rich-selector-body-bg: #fcfcfc;
+@rich-selector-foot-bg: #f9f9f9;
+
+@rich-selector-search-count-color: #666;
+
+// 文字颜色
+@rich-selector-content-color: #666;
+@rich-selector-selected-content-color: #999;
+
+
+// RichSelector控件单项悬浮状态
+@rich-selector-item-background-color-hover: #fffaee;
+
+//不可选状态
+@rich-selector-item-background-color-disabled: none;
+
 esui-rich-selector {
     display: block;
 }
@@ -32,6 +64,7 @@ esui-rich-selector {
         font-weight: bold;
         font-size: 12px;
         float: left;
+        color: @rich-selector-head-title-color;
     }
 
     .ui-richselector-batch-action-link {
@@ -39,6 +72,11 @@ esui-rich-selector {
         text-decoration: none;
         cursor: pointer;
         color: @rich-selector-batch-action-link-color;
+    }
+
+    .ui-richselector-head-count {
+        font-weight: bold;
+        color: @rich-selector-head-count-color;
     }
 }
 
@@ -50,7 +88,12 @@ esui-rich-selector {
 
 .ui-richselector-search-wrapper {
     height: 25px;
-    padding: 10px 5px;
+    padding: 10px;
+}
+
+.ui-richselector-search-count {
+    color: @rich-selector-search-count-color;
+    font-weight: bold;
 }
 
 // 搜索结果概要
@@ -70,14 +113,16 @@ esui-rich-selector {
     }
 }
 
+
 .ui-richselector-content-wrapper {
     overflow-y: auto;
     overflow-x: hidden;
-}
 
-.ui-richselector-empty-text {
-    padding: 10px;
-    display: none;
+    .ui-richselector-empty-text {
+        padding: 10px;
+        display: none;
+        text-align: center;
+    }
 }
 
 .ui-richselector-foot {
@@ -117,15 +162,15 @@ esui-rich-selector {
     }
 }
 
+
 // 错误提示
 .ui-richselector-validity-invalid {
     .complex-component-validity-invalid();
 }
-
 .ui-richselector-validity-label {
     .complex-component-validity-label();
 }
 
 .ui-richselector-validity-label-invalid {
-    .complex-component-validity-label-invalid();
+   .complex-component-validity-label-invalid();
 }
