@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='global-property-'>/**
+</span> * UB-RIA-UI
+ * Copyright 2015 Baidu Inc. All rights reserved.
+ *
+ * @file 带概要展示的拾色器
+ * 由一个色彩信息描述区和一个完整版拾色器浮层组成
+ *
+ * 控件是由一个缩略信息展示区和一个拾色器浮层组成的
+ * 如果你只需要一个拾色器效果，
+ * 请使用{@link FullColorPicker}控件
+ *
+ * @exports FullColorPicker
+ * @author dbear
+ */
+define(
+    function (require) {
+        var lib = require('esui/lib');
+        var ui = require('esui/main');
+        var InputControl = require('esui/InputControl');
+
+        require('./FullColorPicker');
+        require('esui/Overlay');
+        require('esui/TextBox');
+        require('esui/Button');
+<span id='ColorPicker'>        /**
+</span>         * @class ColorPicker
+         * @extends ub-ria-ui.ColorPicker
+         */
+
+        var exports = {};
+<span id='ColorPicker-property-type'>        /**
+</span>         * 控件类型
+         *
+         * @override
+         */
+        exports.type = 'ColorPicker';
+
+<span id='ColorPicker-method-initOptions'>        /**
+</span>         * 初始化参数
+         *
+         * @override
+         * @protected
+         */
+        exports.initOptions = function (options) {
+            var properties = {
+                // 展示模式 'attached' | 'dialog'
+                displayMode: 'attached',
+                // 默认拾色器模式，支持 'simple' | 'advanced' | 'full'
+                featureMode: 'simple',
+                switchable: false,
+                hex: '000000',
+                alpha: 100,
+                hasAlpha: true
+            };
+            lib.extend(properties, options);
+            if (properties.hasAlpha === 'false') {
+                properties.hasAlpha = false;
+            }
+            this.setProperties(properties);
+        };
+
+<span id='ColorPicker-method-initStructure'>        /**
+</span>         * 初始化DOM结构
+         *
+         * @override
+         * @protected
+         */
+        exports.initStructure = function () {
+            var mainTpl = ''
+                + '&lt;div class=&quot;${colorBlockFrameClass}&quot; id=&quot;${colorBlockFrameId}&quot;&gt;'
+                +     '&lt;div class=&quot;${colorBlockClass}&quot; id=&quot;${colorBlockId}&quot;&gt;&lt;/div&gt;'
+                + '&lt;/div&gt;'
+                + '&lt;div class=&quot;${colorInputClass}&quot; id=&quot;${colorInputId}&quot; data-ui-type=&quot;TextBox&quot;'
+                +     'data-ui-child-name=&quot;colorInput&quot; data-ui-hint=&quot;#&quot; data-ui-hint-type=&quot;prefix&quot;'
+                +     'data-ui-width=&quot;auto&quot;&gt;&lt;/div&gt;';
+            if (this.hasAlpha) {
+                mainTpl += ''
+                    + '&lt;div class=&quot;${alphaInputClass}&quot; id=&quot;${alphaInputId}&quot; data-ui-type=&quot;TextBox&quot;'
+                    +     'data-ui-child-name=&quot;alphaInput&quot; data-ui-hint=&quot;%&quot; data-ui-hint-type=&quot;suffix&quot;'
+                    +     'data-ui-width=&quot;auto&quot;&gt;&lt;/div&gt;';
+            }
+            this.main.innerHTML = lib.format(
+                mainTpl,
+                {
+                    colorBlockFrameClass: this.helper.getPartClassName('color-block-frame'),
+                    colorBlockFrameId: this.helper.getId('color-block-frame'),
+                    colorBlockClass: this.helper.getPartClassName('color-block'),
+                    colorBlockId: this.helper.getId('color-block'),
+                    colorInputClass: this.helper.getPartClassName('color-input'),
+                    colorInputId: this.helper.getId('color-input'),
+                    alphaInputClass: this.helper.getPartClassName('alpha-input'),
+                    alphaInputId: this.helper.getId('alpha-input')
+                }
+            );
+
+            this.initChildren();
+        };
+
+<span id='ColorPicker-method-initEvents'>        /**
+</span>         * @override
+         */
+        exports.initEvents = function () {
+            this.$super(arguments);
+
+            var colorBlock = this.helper.getPart('color-block');
+            // 点色块走的是toggle，所以阻止冒泡到`document`
+            this.helper.addDOMEvent(
+                colorBlock,
+                'mousedown',
+                function (e) {
+                    e.stopPropagation();
+                }
+            );
+            this.helper.addDOMEvent(colorBlock, 'mousedown', toggleLayer);
+
+            var colorInput = this.getChild('colorInput');
+            colorInput.on('input', onColorInput, this);
+
+            var alphaInput = this.getChild('alphaInput');
+            if (alphaInput) {
+                alphaInput.on('input', onAlphaInput, this);
+            }
+        };
+
+<span id='ColorPicker-method-onColorInput'>        /**
+</span>         * 颜色输入框输入事件处理
+         *
+         * @param {mini-event.Event} e 事件参数
+         */
+        function onColorInput(e) {
+            var colorInput = e.target;
+            var hex = colorInput.getValue();
+            // 只取输入的前6位
+            if (hex.length &gt; 6) {
+                hex = hex.slice(0, 6);
+            }
+            hex = new Array(6 - hex.length + 1).join('0') + hex;
+            // 更新主元素显示
+            var colorBlock = this.helper.getPart('color-block');
+            colorBlock.style.background = '#' + hex;
+
+            this.hex = hex;
+
+            // 修改后需要fire一个事件出去
+            this.fire('change');
+        }
+
+<span id='ColorPicker-method-onAlphaInput'>        /**
+</span>         * 透明度输入框输入事件处理
+         *
+         * @param {mini-event.Event} e 事件参数
+         */
+        function onAlphaInput(e) {
+            var alpha = e.target.getValue();
+            this.alpha = alpha;
+            // 修改后需要fire一个事件出去
+            this.fire('change');
+        }
+
+        function updateColorDisplay() {
+            var colorBlock = this.helper.getPart('color-block');
+            colorBlock.style.backgroundColor = '#' + this.hex;
+
+            var colorInput = this.getChild('colorInput');
+            colorInput.setValue(this.hex);
+
+            if (this.hasAlpha) {
+                var alphaInput = this.getChild('alphaInput');
+                alphaInput.setValue(this.alpha);
+            }
+        }
+
+        function syncValue() {
+            var overlay = this.getChild('layer');
+            if (overlay) {
+                var properties = {};
+                properties.hex = this.getChild('colorInput').getValue();
+
+                if (this.hasAlpha) {
+                    properties.alpha = this.getChild('alphaInput').getValue();
+                }
+                var colorPicker = overlay.getChild('colorPicker');
+                if (colorPicker) {
+                    colorPicker.setProperties(properties);
+                }
+            }
+        }
+
+        function createLayer() {
+            var overlayMain = this.helper.createPart('layer', 'div');
+            lib.addClass(overlayMain, this.helper.getPartClassName('layer'));
+
+            var pickerContent = ''
+                + this.helper.getPartBeginTag('head', 'div')
+                +     this.helper.getPartBeginTag('title', 'div') + '颜色选择' + this.helper.getPartEndTag('title', 'div')
+                +     this.helper.getPartBeginTag('close-btn', 'div') + '关闭'
+                +     this.helper.getPartEndTag('close-btn', 'div')
+                + this.helper.getPartEndTag('head', 'div')
+                + '&lt;div data-ui-type=&quot;FullColorPicker&quot; data-ui-child-name=&quot;colorPicker&quot;'
+                +     'data-ui-default-mode=&quot;' + this.featureMode + '&quot;'
+                +     'data-ui-switchable=&quot;' + this.switchable + '&quot;'
+                +     'data-ui-has-alpha=&quot;' + this.hasAlpha + '&quot;&gt;'
+                + '&lt;/div&gt;'
+                + this.helper.getPartBeginTag('foot-frame', 'div')
+                +     this.helper.getPartBeginTag('foot', 'div')
+                +         '&lt;div class=&quot;' + this.helper.getPartClassName('ok-btn') + '&quot;'
+                +             'data-ui=&quot;type:Button;childName:btnOk;variants:primary&quot;&gt;确定&lt;/div&gt;'
+                +         '&lt;div class=&quot;' + this.helper.getPartClassName('cancel-btn') + '&quot;'
+                +             'data-ui=&quot;type:Button;childName:btnCancel;variants:link&quot;&gt;取消&lt;/div&gt;'
+                +     this.helper.getPartEndTag('foot', 'div')
+                + this.helper.getPartEndTag('foot-frame', 'div');
+
+            var colorPickerOverLay = ui.create(
+                'Overlay',
+                {
+                    main: overlayMain,
+                    childName: 'layer',
+                    content: pickerContent
+                }
+            );
+
+            this.addChild(colorPickerOverLay);
+            colorPickerOverLay.appendTo(this.main);
+            colorPickerOverLay.addState(this.displayMode);
+
+            var colorPicker = colorPickerOverLay.getChild('colorPicker');
+
+            // displayMode决定弹层展示模式
+            if (this.displayMode === 'attached') {
+                // 变了即时更新
+                var control = this;
+                colorPicker.on(
+                    'change',
+                    function (e) {
+                        var hex = this.getDisplayHex();
+                        var alpha = this.getDisplayAlpha();
+                        if (hex !== control.hex || alpha !== control.alpha) {
+                            control.setProperties({hex: hex, alpha: alpha});
+                        }
+                    }
+                );
+            }
+            else {
+                // 初始化关闭按钮
+                var closeBtn = this.helper.getPart('close-btn');
+                if (closeBtn) {
+                    this.helper.addDOMEvent(closeBtn, 'mousedown', hideOverlay);
+                }
+
+                // 初始化提交和取消按钮
+                var btnOk = colorPickerOverLay.getChild('btnOk');
+                var btnCancel = colorPickerOverLay.getChild('btnCancel');
+
+                btnOk.on('click', submit, this);
+                btnCancel.on('click', hideOverlay, this);
+            }
+
+            return this.getChild('layer');
+        }
+
+<span id='ColorPicker-method-submit'>        /**
+</span>         * 确认颜色选择
+         *
+         * @fires ColorPicker#submit
+         */
+        function submit() {
+            var pickerOverlay = this.getChild('layer');
+            var fullColorPicker = pickerOverlay.getChild('colorPicker');
+            this.setProperties({hex: fullColorPicker.getDisplayHex(), alpha: fullColorPicker.getDisplayAlpha()});
+            pickerOverlay.hide();
+            this.fire('submit');
+        }
+
+        function hideOverlay() {
+            var pickerOverlay = this.getChild('layer');
+            pickerOverlay.hide();
+        }
+
+<span id='ColorPicker-method-showLayer'>        /**
+</span>         * 显示下拉弹层
+         */
+        function showLayer() {
+            var colorPickerOverLay = this.getChild('layer');
+            // displayMode决定弹层展示模式
+            var properties = {
+                hasMask: true,
+                fixed: false,
+                autoClose: false
+            };
+            if (this.displayMode === 'attached') {
+                properties = {
+                    attachedDOM: this.helper.getId('color-block-frame'),
+                    attachedLayout: 'bottom,left'
+                };
+            }
+            colorPickerOverLay.setProperties(properties);
+            colorPickerOverLay.show();
+            colorPickerOverLay.resize();
+        }
+
+<span id='ColorPicker-method-toggleLayer'>        /**
+</span>         * 根据当前状态显示或隐藏浮层
+         */
+        function toggleLayer() {
+            var layer = this.getChild('layer');
+            if (!layer) {
+                layer = createLayer.call(this);
+            }
+
+            if (layer.isHidden()) {
+                syncValue.call(this);
+                showLayer.call(this);
+            }
+            else {
+                layer.hide();
+            }
+        }
+
+<span id='ColorPicker-property-repaint'>        /**
+</span>         * 渲染自身
+         *
+         * @override
+         * @protected
+         * @fires ColorPicker#change
+         */
+        exports.repaint = require('esui/painters').createRepaint(
+            InputControl.prototype.repaint,
+            {
+                name: ['hex', 'alpha'],
+                paint: function (colorPicker, hex, alpha) {
+                    updateColorDisplay.call(colorPicker);
+                    syncValue.call(colorPicker);
+                    colorPicker.fire('change');
+                }
+            }
+        );
+
+<span id='ColorPicker-method-setProperties'>        /**
+</span>         * 批量更新属性并重绘
+         *
+         * @override
+         * @fires ColorPicker#change
+         */
+        exports.setProperties = function (properties) {
+            var changes = this.$super(arguments);
+
+            if (changes.hasOwnProperty('rawValue')) {
+                this.fire('change');
+            }
+
+            return changes;
+        };
+
+<span id='ColorPicker-method-getRawValue'>        /**
+</span>         * @override
+         * @return {Object}
+         */
+        exports.getRawValue = function () {
+            var result = {};
+            result.hex = this.hex;
+            if (this.hasAlpha) {
+                result.alpha = this.alpha;
+            }
+            return result;
+        };
+
+        var ColorPicker = require('eoo').create(InputControl, exports);
+
+        require('esui').register(ColorPicker);
+        return ColorPicker;
+    }
+);
+</pre>
+</body>
+</html>

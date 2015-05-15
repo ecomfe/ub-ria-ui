@@ -87,6 +87,7 @@ define(
             this.addChild(titlePanel, 'title');
             titlePanel.render();
             this.set('title', titleElem && titleElem.innerHTML);
+            titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, this));
         }
 
         /**
@@ -224,13 +225,6 @@ define(
                     contentLayer.show();
                 }
             }
-        };
-
-        exports.initEvents = function () {
-            var me = this;
-            me.$super(arguments);
-            var titlePanel = me.getChild('title');
-            me.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, me));
         };
 
         var painters = require('esui/painters');

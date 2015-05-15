@@ -1,4 +1,5 @@
 /**
+ * UB-RIA-UI 1.0
  * @file Carousel控件类
  * @author yaofeifei(yaofeifei@baidu.com)
  */
@@ -9,6 +10,11 @@ define(function (require) {
     var paint = require('esui/painters');
     var Control = require('esui/Control');
     var eoo = require('eoo');
+
+    /**
+         * @class Carousel
+         * @extends ub-ria-ui.Carousel
+         */
 
     var MAIN_TPL = [
         '<div class="${typeSelector}-main" id="${contentId}">',

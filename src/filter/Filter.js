@@ -1,4 +1,5 @@
 /**
+ * UB-RIA-UI 1.0
  * 过滤器
  * @file: FilterItem.js
  * @author: yaofeifei@baidu.com; liwei47@baidu.com
@@ -13,6 +14,10 @@ define(function (require) {
 
     require('esui/Panel');
     require('esui/Label');
+    /**
+     * @class Filter
+     * @extends ub-ria-ui.Filter
+     */
 
     var exports = {};
 

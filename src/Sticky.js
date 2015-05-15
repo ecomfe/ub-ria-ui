@@ -9,6 +9,10 @@ define(function (require) {
     var paint = require('esui/painters');
     var Control = require('esui/Control');
     var eoo = require('eoo');
+    /**
+         * @class Sticky
+         * @extends ub-ria-ui.Sticky
+         */
 
     var sticked = [];
     var bindScroll = false;

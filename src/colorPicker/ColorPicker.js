@@ -22,6 +22,10 @@ define(
         require('esui/Overlay');
         require('esui/TextBox');
         require('esui/Button');
+        /**
+         * @class ColorPicker
+         * @extends ub-ria-ui.ColorPicker
+         */
 
         var exports = {};
         /**
