@@ -15,6 +15,11 @@ define(
         require('esui/validator/MinRule');
         require('esui/validator/PatternRule');
 
+        /**
+         * @class Slider
+         * @extends ub-ria-ui.Slider
+         */
+
         var esui = require('esui');
         var u = require('underscore');
         var lib = require('esui/lib');
@@ -458,7 +463,7 @@ define(
                 lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
             }
 
-            /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
+            this.main.style[this.widthHeight] = this.size + 'px';
             this.createHead();
             this.createBody();
             this.createFoot();

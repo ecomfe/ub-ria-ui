@@ -49,9 +49,8 @@ define(
 
             var children = lib.getChildren(mainElement);
             var innerSelect = document.createElement('div');
-            innerSelect.id = controlHelper.getId('select-inner');
             lib.addClass(innerSelect, controlHelper.getPrefixClass('select-inner'));
-            lib.addClass(mainElement, controlHelper.getPrefixClass('select'));
+            lib.addClass(innerSelect, controlHelper.getPrefixClass('select'));
             // 这里没有做判断，因为toggle panel中已经假设有2个子节点
             lib.addClass(children[0], controlHelper.getPrefixClass('select-text'));
             innerSelect.appendChild(children[0]);
@@ -66,18 +65,11 @@ define(
          * @override
          */
         exports.initEvents = function () {
-            //this.$super(arguments);
-            var me = this;
-            var target = me.viewContext.getSafely(me.targetControl);
-            var controlHelper = me.helper;
-            target.on('change', u.bind(changeHandler, me));
-            target.on('add', u.bind(addHandler, me));
-            me.updateDisplayText(target);
-            controlHelper.addDOMEvent(
-                controlHelper.getPart('select-inner'),
-                'click',
-                me.toggleContent
-            );
+            this.$super(arguments);
+            var target = this.viewContext.getSafely(this.targetControl);
+            target.on('change', u.bind(changeHandler, this));
+            target.on('add', u.bind(addHandler, this));
+            this.updateDisplayText(target);
         };
 
         /**

@@ -14,6 +14,11 @@ define(
         var eoo = require('eoo');
 
         require('esui/TextBox');
+        
+        /**
+         * @class TokenField
+         * @extends ub-ria-ui.TokenField
+         */
 
         var flashToken = function (tokenElem) {
             var me = this;
@@ -425,8 +430,8 @@ define(
             remove: function (e) {
                 var target = e && e.target;
                 if (target) {
-                    var tokenClassName = this.helper.getPartClassName('item');
-                    while (target && !lib.hasClass(target, tokenClassName)) {
+                    var tokenClassName = this.helper.getPartClasses('item');
+                    while (!lib.hasClass(target, tokenClassName)) {
                         target = target.parentNode;
                     }
                 }
