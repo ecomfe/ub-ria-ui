@@ -11,7 +11,11 @@ define(
         var u = require('underscore');
         var lib = require('esui/lib');
         var Control = require('esui/Control');
-
+        /**
+         * @class Alert
+         * @extends ub-ria-ui.Alert
+         */
+         
         /**
          * Alert控件
          *

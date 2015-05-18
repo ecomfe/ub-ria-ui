@@ -14,6 +14,11 @@ define(
         var eoo = require('eoo');
 
         require('esui/TextBox');
+        
+        /**
+         * @class TokenField
+         * @extends ub-ria-ui.TokenField
+         */
 
         var flashToken = function (tokenElem) {
             var me = this;
