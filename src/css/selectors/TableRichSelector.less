@@ -77,10 +77,17 @@
 
     // 隐藏icon
     &.@{ui-state-prefix}-no-hover-icon {
-        .@{ui-class-prefix}-richselector-row:not(.@{ui-class-prefix}-richselector-row-selected) {
+        .@{ui-class-prefix}-richselector-row {
             &:hover {
                 .@{ui-class-prefix}-richselector-row-action-icon {
-                    display: none !important;
+                    display: none;
+                }
+            }
+        }
+        .@{ui-class-prefix}-richselector-row-selected {
+            &:hover {
+                .@{ui-class-prefix}-richselector-row-action-icon {
+                    display: block;
                 }
             }
         }

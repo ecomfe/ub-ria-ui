@@ -5,13 +5,13 @@
     <title>Alert - ESUI Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
     <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <link rel="stylesheet" href="assets/ie8.css" />
     <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
+    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
+    <script src="assets/loader/esl.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
+    <script src="assets/google-code-prettify/prettify.js"></script>
     <script src="demo.js"></script>
 </head>
 <body>
@@ -109,14 +109,14 @@
                 'Alert',
                 'esui/lib'
             ],
-            function (ui, alert, lib) {
+            function (ui, esuiAlert, lib) {
                 //ui.init();
                 lib.g('show').onclick = function() {
                     var options = {};
                     var msgType = lib.g('type').value;
                     options.message = [];
-                    var messages = document.getElementsByClassName('message');
-                    for (var i = 0; i < messages.length; i++) {
+                    var messages = $('.message');
+                    for (var i = 0; i < messages.size(); i++) {
                         if (messages[i].value) {
                             options.message.push(messages[i].value);
                         }
@@ -127,10 +127,11 @@
                     options.icon = lib.g('icon').value;
                     options.container = 'main';
 
-                    alert[msgType](options);
+                    esuiAlert[msgType](options);
                 };
             }
         );
+        copyExample();
     </script>
 </body>
 </html>

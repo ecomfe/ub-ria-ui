@@ -5,29 +5,28 @@
     <title>Spinner - Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
     <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <link rel="stylesheet" href="assets/ie8.css" />
     <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
+    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
+    <script src="assets/loader/esl.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
+    <script src="assets/google-code-prettify/prettify.js"></script>
     <script src="demo.js"></script>
 </head>
 <body>
-<h1 id="branding">Spinner</h1>
+<h1 id="branding">ESUI - Spinner</h1>
 <div id="page">
     <ul id="navigator">
     </ul>
     <div id="main">
         <h2>Spinner的实例</h2>
-        <section class="intro">
+        <div class="intro">
             <p>
                 1. 日期微调
             </p>
-        </section>
-        <section class="view">
+        </div>
+        <div class="view">
             <ul class="viewer">
                 <li class="view-markup">结构</li>
             </ul>
@@ -42,14 +41,14 @@
                      data-ui-scale='{"key": "day", "value": 1}'
                      ></div>
             </div>
-        </section>
+        </div>
         
-        <section class="intro">
+        <div class="intro">
             <p>
                 2. 日期微调(循环)
             </p>
-        </section>
-        <section class="view">
+        </div>
+        <div class="view">
             <ul class="viewer">
                 <li class="view-markup">结构</li>
             </ul>
@@ -63,14 +62,14 @@
                      data-ui-value="20150402"
                      ></div>
             </div>
-        </section>
+        </div>
         
-        <section class="intro">
+        <div class="intro">
             <p>
                 3. 数字微调
             </p>
-        </section>
-        <section class="view">
+        </div>
+        <div class="view">
             <ul class="viewer">
                 <li class="view-markup">结构</li>
             </ul>
@@ -84,14 +83,14 @@
                      data-ui-value="1000"
                      ></div>
             </div>
-        </section>
+        </div>
         
-        <section class="intro">
+        <div class="intro">
             <p>
                 4. 小数微调
             </p>
-        </section>
-        <section class="view">
+        </div>
+        <div class="view">
             <ul class="viewer">
                 <li class="view-markup">结构</li>
             </ul>
@@ -106,7 +105,7 @@
                      data-ui-value="1.87"
                      ></div>
             </div>
-        </section>
+        </div>
     </div>
 </div>
 
@@ -119,6 +118,7 @@
         mySpinner = ui.get('dateTurnSpinner');
         mySpinner.scale = {key: "day", value: 1};
     });
+    copyExample();
 </script>
 </body>
 </html>

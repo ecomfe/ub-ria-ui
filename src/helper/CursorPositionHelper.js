@@ -27,7 +27,7 @@ define(function (require) {
                 
                 ret = {
                     left: Sel.boundingLeft,
-                    top: top - 80,
+                    top: top,
                     bottom: Sel.boundingTop + Sel.boundingHeight
                 };
             }

@@ -2,30 +2,29 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>AutoComplete - ESUI Demo</title>
+    <title>AutoComplete Extension - ESUI Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
     <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <link rel="stylesheet" href="assets/ie8.css" />
     <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
+    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
+    <script src="assets/loader/esl.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
+    <script src="assets/google-code-prettify/prettify.js"></script>
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1 id="branding">ESUI AutoComplete Extension</h1>
+    <h1 id="branding">ESUI - AutoComplete Extension</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
             <h2>Input</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>AutoComplete绑定到一个Input。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -36,12 +35,12 @@
                            data-ui-extension-autocomplete-type="AutoComplete"
                     />
                 </div>
-            </section>
+            </div>
             <h2>TextLine</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>AutoComplete 绑定到TextLine。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -52,12 +51,12 @@
                            data-ui-extension-autocomplete-type="AutoComplete"
                     /></textarea>
                 </div>
-            </section>
+            </div>
             <h2>TextArea</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>TextArea AutoComplete。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -69,12 +68,12 @@
                            style="height:200px"
                     ></textarea>
                 </div>
-            </section>
+            </div>
             <h2>分割字符</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>TextArea AutoComplete(split by ' ')。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -86,12 +85,12 @@
                            style="height:200px"
                     ></textarea>
                 </div>
-            </section>
+            </div>
             <h2>触发器</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>TextArea AutoComplete with mock ajax(split by ',', fire by '{')。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -103,7 +102,7 @@
                            style="height:200px"
                     ></textarea>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
     <script>
@@ -210,6 +209,7 @@
                 }
             }
         );
+        copyExample();
     </script>
 </body>
 </html>

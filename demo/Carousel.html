@@ -5,34 +5,33 @@
     <title>Carousel - Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
     <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <link rel="stylesheet" href="assets/ie8.css" />
     <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
+    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
+    <script src="assets/loader/esl.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
+    <script src="assets/google-code-prettify/prettify.js"></script>
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1 id="branding">Carousel</h1>
+    <h1 id="branding">ESUI - Carousel</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
             <h2>Carousel显示</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>可以切换的Carousel。</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
                 <div class="example ui-demo-light-stage" id="container">
                     <div data-ui="type:Carousel;id:car;" style="margin-bottom:30px;"></div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
     <script>
@@ -80,6 +79,7 @@
                 
             }
         );
+        copyExample();
     </script>
 </body>
 </html>

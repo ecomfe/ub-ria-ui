@@ -185,10 +185,10 @@ define(
                 '    ${searchInput}',
                      // 列表区
                 '    <div data-ui="type:Panel;childName:content" class="${contentClass}">',
-                         // 结果为空提示
-                '        <div data-ui="type:Label;childName:emptyText" class="${emptyTextClass}">${emptyText}</div>',
                          // 结果列表
                 '        <div data-ui="type:Panel;childName:queryList" class="${queryListClass}"></div>',
+                         // 结果为空提示
+                '        <div data-ui="type:Label;childName:emptyText" class="${emptyTextClass}">${emptyText}</div>',
                 '    </div>',
                 '</div>',
                 // 底部概要信息

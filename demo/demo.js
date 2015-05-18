@@ -58,7 +58,7 @@ require.config({
     ]
 });
 
-$(function () {
+function copyExample() {
     function hideSource(e) {
         $('.source-visible').removeClass('source-visible');
     }
@@ -100,7 +100,7 @@ $(function () {
     $('#navigator').html(navItems.join(''));
 
     $('.example').each(function (index, item) {
-        var $sample = $('<pre class="source source-markup"><code class="language-markup"></code></pre>');
+        var $sample = $('<pre class="source source-markup prettyprint"><code class="language-markup"></code></pre>');
         var $code = $sample.find('.language-markup');
         var $item = $(item);
         $sample.insertAfter($item);
@@ -115,8 +115,9 @@ $(function () {
         }
         $code.text(targetArr.join('\n'));
     });
-    //Prism.highlightAll();
-});
+    prettyPrint();
+};
+
 var ready = (function () {
     var list = [];
     return function (callback) {

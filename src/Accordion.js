@@ -220,8 +220,7 @@ define(
                 if (this.collapsible) {
                     // 该元素内容已展开，折叠收缩
                     if (this.helper.isPart(panel, 'panel-active')) {
-                        collapseAccordion.call(this);
-                        this.activeIndex = -1;
+                        this.set('activeIndex', -1);
                     }
                     else {
                         // 只激活当前元素
@@ -272,23 +271,6 @@ define(
                     lib.addClass(icon, iconClass);
                 }
             }
-        }
-
-        /**
-         * 折叠处于激活状态的panel
-         *
-         *
-         */
-        function collapseAccordion() {
-            var elements = lib.getChildren(this.main);
-            var controlHelper = this.helper;
-            var panel = elements[this.activeIndex];
-            var content = lib.getChildren(panel)[1];
-
-            if (content) {
-                controlHelper.addPartClasses('content-hidden', content);
-            }
-            controlHelper.removePartClasses('panel-active', panel);
         }
 
         /**

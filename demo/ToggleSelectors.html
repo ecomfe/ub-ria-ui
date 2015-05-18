@@ -5,27 +5,26 @@
     <title>ToggleSelector - Demo</title>
     <link rel="stylesheet" href="assets/themes/standard.css" />
     <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
     <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
+    <link rel="stylesheet" href="assets/ie8.css" />
     <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
+    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
+    <script src="assets/loader/esl.js"></script>
     <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
+    <script src="assets/google-code-prettify/prettify.js"></script>
     <script src="demo.js"></script>
 </head>
 <body>
-    <h1 id="branding">ToggleSelector</h1>
+    <h1 id="branding">ESUI - ToggleSelector</h1>
     <div id="page">
         <ul id="navigator">
         </ul>
         <div id="main">
             <h2>下拉选择控件</h2>
-            <section class="intro">
+            <div class="intro">
                 <p>下拉选择</p>
-            </section>
-            <section class="view">
+            </div>
+            <div class="view">
                 <ul class="viewer">
                     <li class="view-markup">结构</li>
                 </ul>
@@ -40,7 +39,7 @@
                             data-ui-text-field="name"
                             data-ui-value-field="id">
                             <span>请选择</span>
-                            <section>
+                            <div>
                                 <div
                                     data-ui-type="TableRichSelector"
                                     data-ui-id="slot-channel-selector"
@@ -49,17 +48,16 @@
                                     data-ui-has-foot="true"
                                     data-ui-has-head="false"
                                     data-ui-has-row-head="false"
-                                    class="no-move-richselector">
+                                    data-ui-states="no-hover-icon">
                                 </div>
-                            </section>
+                            </div>
                         </div>
                         <div
-                            data-ui-type="TogglePanel"
-                            >
+                            data-ui-type="TogglePanel">
                             <span>Panel</span>
-                            <section>
+                            <div>
                                 test
-                            </section>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -72,8 +70,8 @@
                             data-ui-text-field="name"
                             data-ui-value-field="id">
                             <span>请选择</span>
-                            <section>
-                                <div class="no-move-richselector"
+                            <div>
+                                <div data-ui-states="no-hover-icon"
                                     data-ui-type="TreeRichSelector"
                                     data-ui-id="all-slots"
                                     data-ui-multi="false"
@@ -81,7 +79,7 @@
                                     data-ui-has-head="false"
                                     data-ui-only-leaf-select="true">
                                 </div>
-                            </section>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -94,10 +92,11 @@
                             data-ui-text-field="name"
                             data-ui-value-field="id">
                             <span>请选择</span>
-                            <section>
+                            <div>
                                 <div data-ui-type="FilterRichSelectorGroup"
                                     data-ui-id="delivery-under-order">
-                                    <esui-table-rich-selector-with-filter
+                                    <div
+                                        data-ui-type="TableRichSelectorWithFilter"
                                         data-ui-role="filter"
                                         data-ui-title="订单"
                                         data-ui-has-head="false"
@@ -106,8 +105,9 @@
                                         data-ui-has-row-head="true"
                                         data-ui-multi="false"
                                         data-ui-mode="load">
-                                    </esui-table-rich-selector-with-filter>
-                                    <esui-table-rich-selector
+                                    </div>
+                                    <div
+                                        data-ui-type="TableRichSelector"
                                         data-ui-role="source"
                                         data-ui-title="广告"
                                         data-ui-mode="add"
@@ -115,10 +115,11 @@
                                         data-ui-has-row-head="false"
                                         data-ui-multi="false"
                                         data-ui-need-batch-action="false"
+                                        data-ui-states="no-hover-icon"
                                         data-ui-empty-text="请从左侧选择要订单">
-                                    </esui-table-rich-selector>
+                                    </div>
                                 </div>
-                            </section>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -132,8 +133,8 @@
                             data-ui-value-field="id"
                             data-ui-position="fixed">
                             <span>请选择</span>
-                            <section>
-                                <div class="no-move-richselector"
+                            <div>
+                                <div data-ui-states="no-hover-icon"
                                     data-ui-type="TreeRichSelector"
                                     data-ui-id="all-slots-oppucied"
                                     data-ui-multi="false"
@@ -141,11 +142,11 @@
                                     data-ui-has-head="false"
                                     data-ui-only-leaf-select="true">
                                 </div>
-                            </section>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
     <script>
@@ -272,6 +273,7 @@
 
                 }
         );
+        copyExample();
     </script>
 </body>
 </html>
