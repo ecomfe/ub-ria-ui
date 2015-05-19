@@ -11,7 +11,11 @@ define(
         var u = require('underscore');
         var lib = require('esui/lib');
         var Control = require('esui/Control');
-
+        /**
+         * @class Alert
+         * @extends ub-ria-ui.Alert
+         */
+         
         /**
          * Alert控件
          *
@@ -388,7 +392,12 @@ define(
             }
 
             // 插入节点，引起渲染
-            this.insertBefore(lib.g(this.container).firstChild);
+            if (lib.g(this.container).firstChild) {
+                this.insertBefore(lib.g(this.container).firstChild);
+            }
+            else {
+                this.appendTo(lib.g(this.container));
+            }
 
             // toggle效果实现
             this.helper.addPartClasses('toggle', 'container');

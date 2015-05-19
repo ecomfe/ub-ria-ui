@@ -15,6 +15,11 @@ define(
         require('esui/validator/MinRule');
         require('esui/validator/PatternRule');
 
+        /**
+         * @class Slider
+         * @extends ub-ria-ui.Slider
+         */
+         
         var esui = require('esui');
         var u = require('underscore');
         var lib = require('esui/lib');
