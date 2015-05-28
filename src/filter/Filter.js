@@ -1,5 +1,6 @@
 /**
  * 过滤器
+ * @ignore
  * @file: FilterItem.js
  * @author: yaofeifei@baidu.com; liwei47@baidu.com
  *
@@ -16,7 +17,7 @@ define(function (require) {
 
     /**
      * @class Filter
-     * @extends ub-ria-ui.Filter
+     * @extends ub-ria-ui
      */
 
     var exports = {};

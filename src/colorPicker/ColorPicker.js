@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * UB-RIA-UI
  * Copyright 2015 Baidu Inc. All rights reserved.
  *
@@ -25,7 +26,7 @@ define(
 
         /**
          * @class ColorPicker
-         * @extends ub-ria-ui.ColorPicker
+         * @extends ub-ria-ui
          */
 
         var exports = {};

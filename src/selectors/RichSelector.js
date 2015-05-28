@@ -41,7 +41,7 @@ define(
          * - 多选
          *
          * @class RichSelector
-         * @extends esui.InputControl
+         * @extends ub-ria-ui
          */
         var exports = {};
 

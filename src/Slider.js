@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @file 滑动杆控件
  * @author liyuqiang(liyuqiang@baidu.com)
  */
@@ -17,7 +18,7 @@ define(
 
         /**
          * @class Slider
-         * @extends ub-ria-ui.Slider
+         * @extends ub-ria-ui
          */
          
         var esui = require('esui');
@@ -29,16 +30,16 @@ define(
 
         /**
          * 控件的类型
-         * @override
          * @type {String}
+         * @override
          */
         exports.type = 'Slider';
 
         /**
          * 参数的初始化
+         * @param  {Object} options [初始化的参数]
          * @protected
          * @override
-         * @param  {Object} options [初始化的参数]
          */
         exports.initOptions = function (options) {
             /**
@@ -463,7 +464,7 @@ define(
                 lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
             }
 
-            /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
+            (/\d+/).test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
             this.createHead();
             this.createBody();
             this.createFoot();
@@ -997,9 +998,9 @@ define(
 
         /**
          * 重新渲染
+         * @type {Function} 重新渲染时要执行的函数
          * @protected
          * @override
-         * @type {Function} 重新渲染时要执行的函数
          */
         exports.repaint = require('esui/painters').createRepaint(
             InputControl.prototype.repaint,
