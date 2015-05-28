@@ -15,7 +15,7 @@ define(
         /**
          * 手风琴控件
          *
-         * @extends Control
+         * @extends ub-ria-ui
          * @constructor
          */
         function Accordion() {

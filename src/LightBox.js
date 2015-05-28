@@ -1,5 +1,6 @@
 /**
  * 弹层预览
+ * @ignore
  * @file LightBox.js
  * @author liwei
  */
@@ -15,7 +16,7 @@ define(function (require) {
 
     /**
      * @class LightBox
-     * @extends ub-ria-ui.LightBoxs
+     * @extends ub-ria-ui
      */
 
     var NOT_SUPPORT_MESSAGE = '暂不支持该格式预览';

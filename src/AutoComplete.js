@@ -1,5 +1,6 @@
 /**
  * 输入控件自动提示扩展
+ * @ignore
  * @file: AutoComplete.js
  * @author: liwei
  *
@@ -313,7 +314,9 @@ define(function (require) {
     var layerExports = {};
     /**
      * 自动提示层构造器
-     * @param {Object} [control] TextBox控件
+     * @param {Object} options [TextBox控件]
+     * @private
+     * @constructor
      */
     layerExports.constructor = function (control) {
         this.$super(arguments);
@@ -370,8 +373,8 @@ define(function (require) {
      *
      * 当输入控件加上此扩展后，其自动提示功能将由扩展自动提供
      *
-     * @class extension.AutoComplete
-     * @extends Extension
+     * @class AutoComplete
+     * @extends ub-ria-ui
      * @constructor
      */
     exports.constructor = function () {

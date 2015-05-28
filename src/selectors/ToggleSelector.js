@@ -2,6 +2,7 @@
  * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
+ * @ignore
  * @file 可将一个单选RichSelector展开收起的控件
  * @exports ToggleSelector
  * @author lixiang(lixiang05@baidu.com)
@@ -13,7 +14,7 @@ define(
 
         /**
          * @class ToggleSelector
-         * @extends ub-ria-ui.TogglePanel
+         * @extends ub-ria-ui
          */
         var exports = {};
 
