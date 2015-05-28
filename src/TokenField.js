@@ -17,7 +17,7 @@ define(
         
         /**
          * @class TokenField
-         * @extends ub-ria-ui.TokenField
+         * @extends ub-ria-ui
          */
 
         var flashToken = function (tokenElem) {

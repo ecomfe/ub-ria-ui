@@ -13,7 +13,7 @@ define(
         var Control = require('esui/Control');
         /**
          * @class Alert
-         * @extends ub-ria-ui.Alert
+         * @extends ub-ria-ui
          */
          
         /**

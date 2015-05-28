@@ -27,6 +27,11 @@ define(
          * @ignore
          * @constructor
          */
+
+         /**
+         * @class MultiCalendar
+         * @extends ub-ria-ui
+         */
         function MultiCalendarLayer() {
             Layer.apply(this, arguments);
         }

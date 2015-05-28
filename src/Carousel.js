@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @file Carousel控件类
  * @author yaofeifei(yaofeifei@baidu.com)
  */
@@ -11,7 +12,7 @@ define(function (require) {
     var eoo = require('eoo');
     /**
      * @class Carousel
-     * @extends ub-ria-ui.Carousel
+     * @extends ub-ria-ui
      */
 
     var MAIN_TPL = [
