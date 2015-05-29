@@ -16,7 +16,7 @@ define(function (require) {
 
     /**
      * @class LightBox
-     * @extends ub-ria-ui
+     * @extends Control
      */
 
     var NOT_SUPPORT_MESSAGE = '暂不支持该格式预览';

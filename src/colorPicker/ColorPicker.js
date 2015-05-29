@@ -26,7 +26,7 @@ define(
 
         /**
          * @class ColorPicker
-         * @extends ub-ria-ui
+         * @extends FullColorPicker
          */
 
         var exports = {};
@@ -127,7 +127,7 @@ define(
         /**
          * 颜色输入框输入事件处理
          *
-         * @param {mini-event.Event} e 事件参数
+         * @param {Object} e 事件参数
          */
         function onColorInput(e) {
             var colorInput = e.target;
@@ -150,7 +150,7 @@ define(
         /**
          * 透明度输入框输入事件处理
          *
-         * @param {mini-event.Event} e 事件参数
+         * @param {Object} e 事件参数
          */
         function onAlphaInput(e) {
             var alpha = e.target.getValue();

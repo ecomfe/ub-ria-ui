@@ -14,7 +14,7 @@ define(
 
         /**
          * @class ToggleSelector
-         * @extends ub-ria-ui
+         * @extends TogglePanel
          */
         var exports = {};
 
@@ -94,7 +94,7 @@ define(
          * 数据变化时如果没有阻止，则更新显示文字
          *
          * @event
-         * @param {mini-event.Event} e 事件对象
+         * @param {Object} e 事件对象
          */
         function changeHandler(e) {
             var event = this.fire('change');
@@ -107,7 +107,7 @@ define(
          * 添加数据时才控制展开收起
          *
          * @event
-         * @param {mini-event.Event} e 事件对象
+         * @param {Object} e 事件对象
          */
         function addHandler(e) {
             if (this.collapseAfterChange) {

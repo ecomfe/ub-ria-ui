@@ -15,7 +15,7 @@ define(
         /**
          * 手风琴控件
          *
-         * @extends ub-ria-ui
+         * @extends Control
          * @constructor
          */
         function Accordion() {
@@ -163,8 +163,8 @@ define(
         /**
          * 渲染panel元素
          *
-         * @param {accordion} accordion 控件实例
-         * @param {meta.panel} panel panel的配置数据项
+         * @param {Object} accordion 控件实例
+         * @param {Object} panel panel的配置数据项
          */
         function renderPanelEl(accordion, panel) {
 
@@ -303,9 +303,9 @@ define(
         };
 
         /**
-         * 获取当前激活的{@link meta.panel}对象
+         * 获取当前激活的panel对象
          *
-         * @return {meta.panel}
+         * @return {Object}
          */
         Accordion.prototype.getActivePanel = function () {
             var elements = lib.getChildren(this.main);

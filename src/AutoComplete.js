@@ -300,9 +300,10 @@ define(function (require) {
 
     var layerExports = {};
     /**
+     * @class AutoCompleteLayer
      * 自动提示层构造器
-     * @param {Object} options [TextBox控件]
-     * @private
+     * @param {Object} control [TextBox控件]
+     * @ignore
      * @constructor
      */
     layerExports.constructor = function (control) {
@@ -361,7 +362,7 @@ define(function (require) {
      * 当输入控件加上此扩展后，其自动提示功能将由扩展自动提供
      *
      * @class AutoComplete
-     * @extends ub-ria-ui
+     * @extends Esui.Extension
      * @constructor
      */
     exports.constructor = function () {

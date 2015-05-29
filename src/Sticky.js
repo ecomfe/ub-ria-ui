@@ -99,7 +99,7 @@ define(function (require) {
          * 粘连控件
          * 可以控制元素悬挂在页面中固定位置
          * @class Sticky
-         * @extends ub-ria-ui
+         * @extends Control
          * @constructor
          */
         initOptions: function (options) {
