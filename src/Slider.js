@@ -475,23 +475,31 @@ define(
 
             // 给滑块绑定事件
             if (body) {
-                var mouse = new Mouse(body);
-                mouse.on(
-                    'mousestart',
-                    mousedownHandler,
-                    this
-                );
+                // var mouse = new Mouse(body);
+                // mouse.on(
+                //     'mousestart',
+                //     mousedownHandler,
+                //     this
+                // );
 
-                mouse.on(
-                    'mousedrag',
-                    mousemoveHandler,
-                    this
-                );
+                // mouse.on(
+                //     'mousedrag',
+                //     mousemoveHandler,
+                //     this
+                // );
 
-                mouse.on(
-                    'mousestop',
-                    mouseupHandler,
-                    this
+                // mouse.on(
+                //     'mousestop',
+                //     mouseupHandler,
+                //     this
+                // );
+                //
+                $(body).mouse(
+                    {
+                        start: u.bind(mousedownHandler, this),
+                        drag: u.bind(mousemoveHandler, this),
+                        stop: u.bind(mouseupHandler, this)
+                    }
                 );
 
                 // 点在其他空白处，滑块也要移动到这里
@@ -683,12 +691,18 @@ define(
         /**
          * 鼠标移动的事件
          * @param {Event} e 事件对象
-         * @param {boolean} isMouseUp 是否是鼠标松开的触发 是为true 不是为false
+         * @param {boolean=} isMouseUp 是否是鼠标松开的触发 是为true 不是为false
+         * @param {Object} data 事件fire时的data
          * @return {number} 返回value 让mouseup用
          * @private
          */
-        function mousemoveHandler(e, isMouseUp) {
-            console.log('mousemove');
+        function mousemoveHandler(e, isMouseUp, data) {
+
+            if (!u.isBoolean(isMouseUp)) {
+                data = isMouseUp;
+                isMouseUp = false;
+            }
+
             var target = this.activeCursorElement;
             var cursorElement = this.cursorElement;
             var mousePos = lib.event.getMousePosition(e);
@@ -810,7 +824,6 @@ define(
          * @private
          */
         function mouseupHandler(e) {
-            console.log('mouseup')
             // 去掉active的样式
             lib.removeClass(
                 this.activeCursorElement,

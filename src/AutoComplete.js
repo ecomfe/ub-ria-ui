@@ -13,6 +13,7 @@ define(function (require) {
     var Extension = require('esui/Extension');
     var eoo = require('eoo');
     var cursorHelper = require('./helper/CursorPositionHelper');
+    var keyboard = require('esui/behavior/keyboard');
 
     var TEXT_LINE = 'TextLine';
     var TEXT_BOX = 'TextBox';
@@ -81,8 +82,6 @@ define(function (require) {
         ret ? showSuggest.call(this) : hideSuggest.call(this);
     }
 
-    var obj = {};
-
     function initMain() {
         var element = this.getElement();
         lib.addClass(element, this.control.helper.getPrefixClass('dropdown'));
@@ -102,7 +101,7 @@ define(function (require) {
             helper.getPart(target.type === TEXT_LINE ? TEXT : INPUT);
         inputElement = this.inputElement;
 
-        helper.addDOMEvent(layerElement, 'click', obj.selectItem = function (e) {
+        helper.addDOMEvent(layerElement, 'click', function (e) {
             var clickedTarget = e.target;
             if (clickedTarget.nodeName === 'I') {
                 clickedTarget = clickedTarget.parentNode;
@@ -116,28 +115,28 @@ define(function (require) {
             setTargetValue.call(me, text);
         });
 
-        helper.addDOMEvent(inputElement, 'keydown', obj.keyboard = function (e) {
+        helper.addDOMEvent(inputElement, 'keydown', function (e) {
             if (me.layer.isHidden()) {
                 return;
             }
 
             switch (e.keyCode) {
                 // up
-                case 38:
+                case keyboard.UP:
                     e.preventDefault();
                     moveTo.call(me, 'up');
                     break;
                 // down
-                case 40:
+                case keyboard.DOWN:
                     e.preventDefault();
                     moveTo.call(me, 'down');
                     break;
                 // esc
-                case 27:
+                case keyboard.ESC:
                     hideSuggest.call(me);
                     break;
                 // enter
-                case 13:
+                case keyboard.RETURN:
                     e.preventDefault();
                     var selectedItem = getSelectedItem.call(me);
                     if (!selectedItem) {
@@ -157,7 +156,7 @@ define(function (require) {
         var inputEventName = ('oninput' in inputElement)
             ? 'input'
             : 'propertychange';
-        helper.addDOMEvent(inputElement, inputEventName, obj.oninput = function (e) {
+        helper.addDOMEvent(inputElement, inputEventName, function (e) {
             var elementValue = inputElement.value;
 
             // 空格或逗号结尾都忽略
@@ -269,7 +268,7 @@ define(function (require) {
         }
         selectedItem = items[selectedItemIndex];
         selectedItem && lib.addClass(selectedItem, this.target.helper.getPrefixClass('autocomplete-item-hover'));
-        
+
         selectedItem && selectedItem.focus();
         this.inputElement.focus();
     }
@@ -412,11 +411,11 @@ define(function (require) {
         var helper = this.target.helper;
         var inputEle = this.inputElement;
 
-        helper.removeDOMEvent(inputEle, INPUT, obj.oninput);
+        helper.removeDOMEvent(inputEle, INPUT);
 
         var layerMain = this.layer.getElement(false);
-        helper.removeDOMEvent(inputEle, 'keydown', obj.keyboard);
-        helper.removeDOMEvent(layerMain, 'click', obj.selectItem);
+        helper.removeDOMEvent(inputEle, 'keydown');
+        helper.removeDOMEvent(layerMain, 'click');
         removemain.call(this);
 
         this.$super(arguments);
