@@ -362,7 +362,7 @@ define(function (require) {
      * 当输入控件加上此扩展后，其自动提示功能将由扩展自动提供
      *
      * @class AutoComplete
-     * @extends Esui.Extension
+     * @extends esui.Extension
      * @constructor
      */
     exports.constructor = function () {
