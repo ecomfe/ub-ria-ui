@@ -475,6 +475,13 @@ define(
 
             // 给滑块绑定事件
             if (body) {
+                $(body).mouse(
+                    {
+                        start: u.bind(mousedownHandler, this),
+                        drag: u.bind(mousemoveHandler, this),
+                        stop: u.bind(mouseupHandler, this)
+                    }
+                );
                 // var mouse = new Mouse(body);
                 // mouse.on(
                 //     'mousestart',
@@ -493,14 +500,6 @@ define(
                 //     mouseupHandler,
                 //     this
                 // );
-                //
-                $(body).mouse(
-                    {
-                        start: u.bind(mousedownHandler, this),
-                        drag: u.bind(mousemoveHandler, this),
-                        stop: u.bind(mouseupHandler, this)
-                    }
-                );
 
                 // 点在其他空白处，滑块也要移动到这里
                  this.helper.addDOMEvent(body, 'click', mousedownHandler);
