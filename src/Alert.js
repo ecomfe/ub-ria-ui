@@ -13,7 +13,7 @@ define(
         var Control = require('esui/Control');
         /**
          * @class Alert
-         * @extends ub-ria-ui.Alert
+         * @extends Control
          */
          
         /**
@@ -131,7 +131,7 @@ define(
         /**
          * 分页器构造
          *
-         * @param {ESUI.Alert} self 控件实例
+         * @param {Object} self 控件实例
          */
         function buildPager(self) {
 
@@ -392,12 +392,7 @@ define(
             }
 
             // 插入节点，引起渲染
-            if (lib.g(this.container).firstChild) {
-                this.insertBefore(lib.g(this.container).firstChild);
-            }
-            else {
-                this.appendTo(lib.g(this.container));
-            }
+            this.insertBefore(lib.g(this.container).firstChild);
 
             // toggle效果实现
             this.helper.addPartClasses('toggle', 'container');
