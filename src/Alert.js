@@ -13,7 +13,7 @@ define(
         var Control = require('esui/Control');
         /**
          * @class Alert
-         * @extends ub-ria-ui.Alert
+         * @extends Control
          */
          
         /**
@@ -131,7 +131,7 @@ define(
         /**
          * 分页器构造
          *
-         * @param {ESUI.Alert} self 控件实例
+         * @param {Object} self 控件实例
          */
         function buildPager(self) {
 

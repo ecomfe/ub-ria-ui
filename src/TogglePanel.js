@@ -18,8 +18,8 @@ define(
         /**
          * 折叠控件
          *
-         * @class ui.TogglePanel
-         * @extends.esui.Control
+         * @class TogglePanel
+         * @extends Control
          */
         var exports = {};
 
@@ -154,7 +154,7 @@ define(
         /**
          * 关闭layer层的事件处理句柄
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {Object} e 事件对象
          * @inner
          */
         function close(e) {

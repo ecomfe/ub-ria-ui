@@ -1,7 +1,7 @@
 /**
  * UB-RIA-UI
  * Copyright 2015 Baidu Inc. All rights reserved.
- *
+ * @ignore
  * @file 完整版拾色器
  * @exports FullColorPicker
  * @author lixiang(lixiang05@baidu.com)
@@ -16,7 +16,7 @@ define(
 
         /**
          * @class FullColorPicker
-         * @extends esui.InputControl
+         * @extends InputControl
          */
         var exports = {};
 
@@ -233,7 +233,7 @@ define(
         /**
          * 获取色值
          *
-         * @method FullColorPicker#getDisplayHex
+         * @method getDisplayHex
          * @return {string}
          * @public
          */
@@ -244,7 +244,7 @@ define(
         /**
          * 获取透明度
          *
-         * @method FullColorPicker#getDisplayAlpha
+         * @method getDisplayAlpha
          * @return {number}
          * @public
          */

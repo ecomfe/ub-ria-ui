@@ -41,7 +41,7 @@ define(
          * - 多选
          *
          * @class RichSelector
-         * @extends esui.InputControl
+         * @extends InputControl
          */
         var exports = {};
 
@@ -551,8 +551,6 @@ define(
         /**
          * 重新渲染视图
          * 仅当生命周期处于RENDER时，该方法才重新渲染
-         *
-         * @param {Array=} 变更过的属性的集合
          * @override
          */
         exports.repaint = painters.createRepaint(
@@ -587,12 +585,6 @@ define(
             return {};
         };
 
-        /**
-         * 批量更新状态
-         * @param {Array} items 需要更新的对象集合
-         * @param {boolean} toBeSelected 要选择还是取消选择
-         * @public
-         */
 
         /**
          * 批量更新选择状态

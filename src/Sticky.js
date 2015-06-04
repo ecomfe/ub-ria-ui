@@ -1,6 +1,7 @@
 /**
+ * 粘连控件
+ * @ignore
  * @file Sticky控件类
- * @exports Sticky
  */
 
 define(function (require) {
@@ -9,11 +10,6 @@ define(function (require) {
     var paint = require('esui/painters');
     var Control = require('esui/Control');
     var eoo = require('eoo');
-
-    /**
-     * @class Sticky
-     * @extends ub-ria-ui.Sticky
-     */
 
     var sticked = [];
     var bindScroll = false;
@@ -99,7 +95,13 @@ define(function (require) {
 
     var exports = {
         type : 'Sticky',
-
+        /**
+         * 粘连控件
+         * 可以控制元素悬挂在页面中固定位置
+         * @class Sticky
+         * @extends Control
+         * @constructor
+         */
         initOptions: function (options) {
             var properties = {
                 top: 0
@@ -108,6 +110,12 @@ define(function (require) {
             this.setProperties(properties);
         },
 
+        /**
+         * 初始化DOM结构
+         *
+         * @protected
+         * @override
+         */
         initStructure: function () {
             var placeHolder = document.createElement('div');
             var mainElement = this.main;
@@ -123,12 +131,22 @@ define(function (require) {
             this.initialTop = lib.getOffset(mainElement).top;
         },
 
+        /**
+         * 初始化事件交互
+         *
+         * @protected
+         * @override
+         */
         initEvents: function() {
             if (sticked.length === 0) {
                 lib.on(window, 'scroll', checkscrollposition);
             }
             sticked.push(this);
         },
+
+        /**
+         * 销毁sticky方法
+         */
 
         dispose: function () {
             var me = this;

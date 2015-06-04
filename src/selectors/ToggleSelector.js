@@ -2,6 +2,7 @@
  * UB-RIA-UI 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
+ * @ignore
  * @file 可将一个单选RichSelector展开收起的控件
  * @exports ToggleSelector
  * @author lixiang(lixiang05@baidu.com)
@@ -13,7 +14,7 @@ define(
 
         /**
          * @class ToggleSelector
-         * @extends ub-ria-ui.TogglePanel
+         * @extends TogglePanel
          */
         var exports = {};
 
@@ -93,7 +94,7 @@ define(
          * 数据变化时如果没有阻止，则更新显示文字
          *
          * @event
-         * @param {mini-event.Event} e 事件对象
+         * @param {Object} e 事件对象
          */
         function changeHandler(e) {
             var event = this.fire('change');
@@ -106,7 +107,7 @@ define(
          * 添加数据时才控制展开收起
          *
          * @event
-         * @param {mini-event.Event} e 事件对象
+         * @param {Object} e 事件对象
          */
         function addHandler(e) {
             if (this.collapseAfterChange) {

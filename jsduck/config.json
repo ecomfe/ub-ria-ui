@@ -1,7 +1,7 @@
 {
     "--title": "UB-UI",
     "--output": "doc",
-    "--external": "mini-event.EventTarget,etpl.Engine",
+    "--external": "mini-event.EventTarget,etpl.Engine,esui.Extension,HtmlElement,InputControl,Control,Panel",
     "--": [
         "../src/AutoComplete.js",
         "../src/colorPicker/colorPicker.js",
@@ -15,6 +15,8 @@
         "../src/filter/Filter.js",
         "../src/Alert.js",
         "../src/LightBox.js",
-        "../src/sticky.js"
+        "../src/sticky.js",
+        "../src/TogglePanel.js",
+        "../src/colorPicker/FullColorPicker.js"
     ]
 }
