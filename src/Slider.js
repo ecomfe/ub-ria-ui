@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @file 滑动杆控件
  * @author liyuqiang(liyuqiang@baidu.com)
  */
@@ -17,7 +18,7 @@ define(
 
         /**
          * @class Slider
-         * @extends ub-ria-ui.Slider
+         * @extends InputControl
          */
          
         var esui = require('esui');
@@ -29,40 +30,40 @@ define(
 
         /**
          * 控件的类型
-         * @override
          * @type {String}
+         * @override
          */
         exports.type = 'Slider';
 
         /**
          * 参数的初始化
+         * @param  {Object} options [初始化的参数]
          * @protected
          * @override
-         * @param  {Object} options [初始化的参数]
          */
         exports.initOptions = function (options) {
             /**
              * 默认的属性
-             * @type {Object}
-             * @type {string} defaults.orientation 滑块的形式 横着为'' 竖着为’vertical‘
-             * @type {number} defaults.start 起始值 默认是0
-             * @type {number} defaults.end 结束值 默认是10,
-             * @type {number} defaults.step 滑动杆值的步长默认是1
-             * @type {number | Arrary} defaults.value 滑动杆的值 默认为min或[min, max]
-             * @type {number} defaults.min 最小值 不能小于start, 无值时与start相同
-             * @type {number} defaults.max 最大值 不能大于end,无值时与end相同
-             * @type {string} defaults.unitText 滑动杆内数值后面的单位
-             * @type {boolean} defaults.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
-             * @type {boolean} defaults.hasHead 是否显示标题和头部 显示true 不显示false
-             * @type {string} defaults.title 滑动杆的头部标题
-             * @type {string} defaults.headType 默认label 还可以是textbox、select
-             * @type {string} defaults.pattern 文本框时验证的正则表达式
-             * @type {string} defaults.errorMessage 正则验证错误时的提示信息
-             * @type {Array} defaults.datasource 下拉框时的数据源
-             * @type {boolean} defaults.hasFoot 是否有脚 有true 无false 默认false
-             * @type {number} defaults.footStep 显示角标的间隔 默认为2
-             * @type {Number} defaults.footLiWidth 每个角标的宽度
-             * @type {boolean} defaults.range 滑动杆控件是否是选择区间 默认false 是true
+             * @param {Object} options
+             * @param {String} options.orientation 滑块的形式 横着为'' 竖着为’vertical‘
+             * @param {Number} options.start 起始值 默认是0
+             * @param {Number} options.end 结束值 默认是10,
+             * @param {Number} options.step 滑动杆值的步长默认是1
+             * @param {Mixed} options.value 滑动杆的值 默认为min或[min, max]
+             * @param {Number} options.min 最小值 不能小于start, 无值时与start相同
+             * @param {Number} options.max 最大值 不能大于end,无值时与end相同
+             * @param {String} options.unitText 滑动杆内数值后面的单位
+             * @param {Boolean} options.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
+             * @param {Boolean} options.hasHead 是否显示标题和头部 显示true 不显示false
+             * @param {String} options.title 滑动杆的头部标题
+             * @param {String} options.headproperty 默认label 还可以是textbox、select
+             * @param {String} options.pattern 文本框时验证的正则表达式
+             * @param {String} options.errorMessage 正则验证错误时的提示信息
+             * @param {Array} options.datasource 下拉框时的数据源
+             * @param {Boolean} options.hasFoot 是否有脚 有true 无false 默认false
+             * @param {Number} options.footStep 显示角标的间隔 默认为2
+             * @param {Number} options.footLiWidth 每个角标的宽度
+             * @param {Boolean} options.range 滑动杆控件是否是选择区间 默认false 是true
              */
             var defaults = {
                 orientation: '',
@@ -222,7 +223,7 @@ define(
          * 创建滑动杆的头部，
          * 有标题、显示值的label或输入框（文本框或者下拉框），
          * 放在原型里为了可以重写
-         * @return {Panel} 返回Panel的对象
+         * @return {Object} 返回Panel的对象
          * @protected
          */
         exports.createHead = function () {
@@ -334,7 +335,7 @@ define(
 
         /**
          * 获取头部的元素
-         * @return {[type]} [description]
+         * @return {HtmlElement} [description]
          */
         exports.getHeadTarget =  function () {
             if (!this.hasHead) {
@@ -463,7 +464,7 @@ define(
                 lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
             }
 
-            /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
+            (/\d+/).test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
             this.createHead();
             this.createBody();
             this.createFoot();
@@ -921,7 +922,7 @@ define(
         /**
          * 处理拖拽事件
          * @param  {Slider} slider  控件的实例
-         * @param  {Element} element  处理事件的dom元素
+         * @param  {HtmlElement} element  处理事件的dom元素
          * @param  {boolean} unbind  绑定为false 解绑为true
          * @private
          */
@@ -980,7 +981,7 @@ define(
 
         /**
          * 获取滑动杆的值
-         * @return {*} 滑动杆的值
+         * @return {Number} 滑动杆的值
          */
         exports.getValue = function () {
             var value;
@@ -997,9 +998,9 @@ define(
 
         /**
          * 重新渲染
+         * @type {Function} 重新渲染时要执行的函数
          * @protected
          * @override
-         * @type {Function} 重新渲染时要执行的函数
          */
         exports.repaint = require('esui/painters').createRepaint(
             InputControl.prototype.repaint,

@@ -1,5 +1,6 @@
 /**
  * 过滤器
+ * @ignore
  * @file: FilterItem.js
  * @author: yaofeifei@baidu.com; liwei47@baidu.com
  *
@@ -16,7 +17,7 @@ define(function (require) {
 
     /**
      * @class Filter
-     * @extends ub-ria-ui.Filter
+     * @extends Panel
      */
 
     var exports = {};
@@ -142,7 +143,7 @@ define(function (require) {
     /**
      * 根据选项数据生成选择项
      * @param {Object} item 选项数据
-     * @return {HtmlElement} 生成的选择项元素
+     * @return {HTMLElement} 生成的选择项元素
      * @private
      */
     exports.buildItem = function (item) {
@@ -177,7 +178,7 @@ define(function (require) {
 
     /**
      * 获取备选项Panel
-     * @return {Panel} 备选项Panel
+     * @return {Object} 备选项Panel
      * @private
      */
     exports.getItemsPanel = function () {
@@ -187,7 +188,7 @@ define(function (require) {
 
     /**
      * 获取备选项提示Label
-     * @return {Panel} 备选项提示Label
+     * @return {Object} 备选项提示Label
      * @private
      */
     exports.getItemsLabel = function () {
@@ -272,7 +273,7 @@ define(function (require) {
     };
     /**
      * 点击自定义保存时触发的事件接口
-     * @param {Object} 自定义的项
+     * @param {Object} item自定义的项
      * @param {Function} callback 回调
      */
     exports.onsave = function (item, callback) {
@@ -281,7 +282,7 @@ define(function (require) {
     /**
      * 检查在datasource中是否存在重复的选项
      * @param {Object} repeatItem 待检测的选项数据
-     * @return {bool} 是否存在重复项
+     * @return {Boolean} 是否存在重复项
      */
     exports.hasRepeatItemInDatasource = function (repeatItem) {
         var ret = false;
