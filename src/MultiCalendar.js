@@ -30,7 +30,7 @@ define(
 
          /**
          * @class MultiCalendar
-         * @extends ub-ria-ui
+         * @extends InputControl
          */
         function MultiCalendarLayer() {
             Layer.apply(this, arguments);
@@ -310,7 +310,7 @@ define(
             /**
              * 初始化参数
              *
-             * @param {Object=} options 构造函数传入的参数
+             * @param {Object} options 构造函数传入的参数
              * @override
              * @protected
              */
@@ -318,7 +318,7 @@ define(
                 var now = new Date();
                 var properties = {
                     /**
-                     * @property {Object}
+                     * @property {Object} range
                      *
                      * 双日历的日历可选范围
                      */
@@ -330,7 +330,7 @@ define(
                     /**
                      * @property {string} [dateFormat="YYYY-MM-DD"]
                      *
-                     * 输出的日期格式，用于{@link MultiCalendar#getValue}返回时格式化
+                     * 输出的日期格式，用于{@link MultiCalendar#stringifyValue}返回时格式化
                      *
                      * 具体的日期格式参考
                      * [moment文档](http://momentjs.com/docs/#/displaying/format/)
@@ -340,7 +340,7 @@ define(
                     /**
                      * @property {string} [paramFormat="YYYY-MM-DD"]
                      *
-                     * 输入的日期格式，用于{@link MultiCalendar#setValue}时格式化
+                     * 输入的日期格式，用于{@link MultiCalendar#parseValue}时格式化
                      *
                      * 具体的日期格式参考
                      * [moment文档](http://momentjs.com/docs/#/displaying/format/)
@@ -435,15 +435,13 @@ define(
             /**
              * 重新渲染视图
              * 仅当生命周期处于RENDER时，该方法才重新渲染
-             *
-             * @param {Array=} 变更过的属性的集合
              * @override
              */
             repaint: helper.createRepaint(
                 InputControl.prototype.repaint,
                 {
                     /**
-                     * @property {meta.DateRange} range
+                     * @param {Object} range
                      *
                      * 指定控件可选的时间段
                      */

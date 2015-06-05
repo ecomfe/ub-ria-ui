@@ -17,7 +17,7 @@ define(
         
         /**
          * @class TokenField
-         * @extends ub-ria-ui
+         * @extends InputControl
          */
 
         var flashToken = function (tokenElem) {
@@ -151,7 +151,7 @@ define(
                     /**
                      * 是否允许重复
                      *
-                     * @type {bool}
+                     * @type {Boolean}
                     */
                     repeat: false
                 };
@@ -262,7 +262,7 @@ define(
 
             /**
              * 获取真实输入框控件
-             * @return {TextBox}
+             * @return {Object}
              */
             getInput: function () {
                 var inputId = this.helper.getId('input');

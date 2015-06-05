@@ -12,7 +12,7 @@ define(function (require) {
     var eoo = require('eoo');
     /**
      * @class Carousel
-     * @extends ub-ria-ui
+     * @extends Control
      */
 
     var MAIN_TPL = [
@@ -277,16 +277,16 @@ define(function (require) {
         /**
          * 初始化参数
          *
-         * @param {Object} [options] 构造函数传入的参数
-         * @param {number} option.pageSize 每页显示的个数
-         * @param {number} option.spacing 每个图片的间隔
-         * @param {number} option.itemWidth 每项的宽度
-         * @param {number} option.itemHeight 每项的高度
-         * @param {Array} option.datasource 所有项的数据数组
-         * @param {number} option.value 选中的项的id值
-         * @param {number} option.selectedIndex 选中的项的序号
-         * @param {boolean} option.disabled 是否禁用
-         * @param {boolean} option.emphasizeSelectedItem 是否高亮被选择的
+         * @param {Object} options 构造函数传入的参数
+         * @param {number} options.pageSize 每页显示的个数
+         * @param {number} options.spacing 每个图片的间隔
+         * @param {number} options.itemWidth 每项的宽度
+         * @param {number} options.itemHeight 每项的高度
+         * @param {Array} options.datasource 所有项的数据数组
+         * @param {number} options.value 选中的项的id值
+         * @param {number} options.selectedIndex 选中的项的序号
+         * @param {boolean} options.disabled 是否禁用
+         * @param {boolean} options.emphasizeSelectedItem 是否高亮被选择的
          * @protected
          * @override
          */
@@ -322,7 +322,7 @@ define(function (require) {
          * 创建控件主元素，默认使用`div`元素
          *
          * 如果需要使用其它类型作为主元素，
-         * 需要在始终化时提供{@link Control#main}属性
+         * 需要在始终化时提供main属性
          *
          * @return {HTMLElement}
          * @protected
@@ -360,8 +360,6 @@ define(function (require) {
         /**
          * 重新渲染视图
          * 仅当生命周期处于RENDER时，该方法才重新渲染
-         *
-         * @param {Array=} 变更过的属性的集合
          * @override
          */
         repaint: paint.createRepaint(
@@ -411,6 +409,9 @@ define(function (require) {
                 return;
             }
             this.value = parseInt(value, 10);
+            /**
+             * @property {Number} [selectedIndex]
+             */
             this.selectedIndex = -1;
             u.each(this.datasource, function (item, index) {
                 if (item.id === this.value) {
