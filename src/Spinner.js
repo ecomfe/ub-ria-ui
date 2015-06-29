@@ -16,6 +16,8 @@ define(
         var u = require('underscore');
         var ui = require('esui/main');
 
+        require('esui/behavior/mousewheel')
+
         /**
          * 微调输入控件
          *
@@ -207,6 +209,16 @@ define(
         }
 
         /**
+         * 鼠标滚轮方法
+         * @param {Event} e
+         */
+        function mouseWheelHandler(e, direct) {
+            direct = direct === 1 ? Direct.UP : Direct.DOWN;
+            updateValue.call(this, direct);
+            e.preventDefault();
+        }
+
+        /**
          * 鼠标点击方法
          * @param {Event} e
          */
@@ -319,6 +331,24 @@ define(
             helper.addDOMEvent(down, 'mouseup',  mouseUpHandler);
             helper.addDOMEvent(up, 'mouseout',  mouseUpHandler);
             helper.addDOMEvent(down, 'mouseout',  mouseUpHandler);
+
+            // focus时支持鼠标滚轮
+            var input = this.getInput();
+            helper.addDOMEvent(
+                input,
+                'focus',
+                function () {
+                    helper.addDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                }
+            );
+
+            helper.addDOMEvent(
+                input,
+                'blur',
+                function () {
+                    helper.removeDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                }
+            );
         };
 
         /**
