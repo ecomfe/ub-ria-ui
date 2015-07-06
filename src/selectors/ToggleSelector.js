@@ -133,8 +133,8 @@ define(
         exports.getRawValue = function () {
             var target = this.viewContext.getSafely(this.targetControl);
             var rawValue = target.getRawValue();
-            if (rawValue.length > 0) {
-                return rawValue[0][this.valueField];
+            if (rawValue) {
+                return rawValue[this.valueField];
             }
         };
 
