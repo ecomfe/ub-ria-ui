@@ -1,8 +1,10 @@
 /**
- * 输入控件自动提示扩展
- * @file: AutoComplete.js
- * @author: liwei
+ * ESUI (Enterprise Simple UI)
+ * Copyright 2013 Baidu Inc. All rights reserved.
  *
+ * @ignore
+ * @file 输入控件自动提示扩展
+ * @author: maoquan(3610cn@gmail.com), liwei
  */
 
 define(

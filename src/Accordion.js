@@ -8,6 +8,8 @@
  */
 define(
     function (require) {
+        var esui = require('esui');
+        var eoo = require('eoo');
         var u = require('underscore');
         var lib = require('esui/lib');
         var Control = require('esui/Control');
@@ -18,123 +20,147 @@ define(
          * @extends Control
          * @constructor
          */
-        function Accordion() {
-            Control.apply(this, arguments);
-        }
-
-        /**
-         * 控件类型，始终为`"Accordion"`
-         *
-         * @type {string}
-         * @readonly
-         * @override
-         */
-        Accordion.prototype.type = 'Accordion';
-
-        /**
-         * 初始化参数
-         *
-         * 初始化从HTML生成的情况下，按以下规则从DOM中获取：
-         *
-         * 1. 获取主元素的所有子元素，每个子元素视为panel，保存到panelElements数组中
-         * 2. 将每个panel的第一个元素作为header
-         * 3. 将每个panel的第二个元素作为content
-         * 4. 支持自定义控件
-         *
-         * 初始化从JS生成的情况下，接收panels配置，后续生成DOM节点，不支持自定义控件
-         *
-         *
-         * @param {Object} [options] 构造函数传入的参数
-         * @protected
-         * @override
-         */
-        Accordion.prototype.initOptions = function (options) {
-            var properties = {
-                /**
-                 * @property {number} activeIndex
-                 *
-                 * 激活的panel下标
-                 * 如果为负数视为全部折叠
-                 */
-                activeIndex: 0,
-
-                /**
-                 * @property {boolean} hoverable
-                 *
-                 * 是否hover展开
-                 */
-                hoverable: false,
-
-                /**
-                 * @property {boolean} collapsible
-                 *
-                 * 折叠方式
-                 */
-                collapsible: false,
-
-                /**
-                 * @property {string} headerIcon
-                 *
-                 * 图标
-                 */
-                headerIcon: 'caret-right',
-
-                /**
-                 * @property {string} activeHeaderIcon
-                 *
-                 * 图标
-                 */
-                activeHeaderIcon: 'caret-down',
-
-                /**
-                 * @property {number} fixHeight
-                 *
-                 * 固定Panel高度
-                 */
-                fixHeight: null,
-            };
-
-            properties.headerIcon = this.helper.getIconClass(properties.headerIcon);
-            properties.activeHeaderIcon = this.helper.getIconClass(properties.activeHeaderIcon);
-            u.extend(properties, options);
-
-            if (typeof properties.activeIndex === 'string') {
-                properties.activeIndex = +properties.activeIndex;
-            }
-
-            // -1标记为所有元素折叠
-            if (properties.activeIndex < 0 || properties.activeIndex === null) {
-                properties.activeIndex = -1;
-            }
-
-            this.setProperties(properties);
-        };
-
-        /**
-         * 重渲染
-         *
-         * @method
-         * @protected
-         * @override
-         */
-        Accordion.prototype.repaint = require('esui/painters').createRepaint(
-            Control.prototype.repaint,
+        var Accordion = eoo.create(
+            Control,
             {
-                // 激活的panel下标
-                name: 'activeIndex',
-                paint: activateAccordion
+
+                /**
+                 * 控件类型，始终为`"Accordion"`
+                 *
+                 * @type {string}
+                 * @readonly
+                 * @override
+                 */
+                type: 'Accordion',
+
+                /**
+                 * 初始化参数
+                 *
+                 * 初始化从HTML生成的情况下，按以下规则从DOM中获取：
+                 *
+                 * 1. 获取主元素的所有子元素，每个子元素视为panel，保存到panelElements数组中
+                 * 2. 将每个panel的第一个元素作为header
+                 * 3. 将每个panel的第二个元素作为content
+                 * 4. 支持自定义控件
+                 *
+                 * 初始化从JS生成的情况下，接收panels配置，后续生成DOM节点，不支持自定义控件
+                 *
+                 *
+                 * @param {Object} [options] 构造函数传入的参数
+                 * @protected
+                 * @override
+                 */
+                initOptions: function (options) {
+                    var properties = {
+                        /**
+                         * @property {number} activeIndex
+                         *
+                         * 激活的panel下标
+                         * 如果为负数视为全部折叠
+                         */
+                        activeIndex: 0,
+
+                        /**
+                         * @property {boolean} hoverable
+                         *
+                         * 是否hover展开
+                         */
+                        hoverable: false,
+
+                        /**
+                         * @property {boolean} collapsible
+                         *
+                         * 折叠方式
+                         */
+                        collapsible: false,
+
+                        /**
+                         * @property {string} headerIcon
+                         *
+                         * 图标
+                         */
+                        headerIcon: 'caret-right',
+
+                        /**
+                         * @property {string} activeHeaderIcon
+                         *
+                         * 图标
+                         */
+                        activeHeaderIcon: 'caret-down',
+
+                        /**
+                         * @property {number} fixHeight
+                         *
+                         * 固定Panel高度
+                         */
+                        fixHeight: null
+                    };
+
+                    properties.headerIcon = this.helper.getIconClass(properties.headerIcon);
+                    properties.activeHeaderIcon = this.helper.getIconClass(properties.activeHeaderIcon);
+                    u.extend(properties, options);
+
+                    if (typeof properties.activeIndex === 'string') {
+                        properties.activeIndex = +properties.activeIndex;
+                    }
+
+                    // -1标记为所有元素折叠
+                    if (properties.activeIndex < 0 || properties.activeIndex === null) {
+                        properties.activeIndex = -1;
+                    }
+
+                    this.setProperties(properties);
+                },
+
+                /**
+                 * 重渲染
+                 *
+                 * @method
+                 * @protected
+                 * @override
+                 */
+                repaint: require('esui/painters').createRepaint(
+                    Control.prototype.repaint,
+                    {
+                        // 激活的panel下标
+                        name: 'activeIndex',
+                        paint: activateAccordion
+                    }
+                ),
+
+                /**
+                 * 骨架构造
+                 *
+                 * @protected
+                 * @override
+                 */
+                initStructure: function () {
+                    renderAccordionEl(this);
+                },
+
+                /**
+                 * 初始化事件类型
+                 *
+                 * @protected
+                 * @override
+                 */
+                initEvents: function () {
+                    var type = this.hoverable ? 'mouseover' : 'click';
+                    this.helper.addDOMEvent(this.main, type, clickAccordion);
+                },
+
+                /**
+                 * 获取当前激活的{@link meta.panel}对象
+                 *
+                 * @return {meta.panel}
+                 */
+                getActivePanel: function () {
+                    var elements = lib.getChildren(this.main);
+                    return elements[this.get('activeIndex')];
+                }
             }
         );
 
-        /**
-         * 骨架构造
-         *
-         * @protected
-         * @override
-         */
-        Accordion.prototype.initStructure = function () {
-            renderAccordionEl(this);
-        };
 
         /**
          * 渲染手风琴元素
@@ -257,11 +283,9 @@ define(
             for (var i = 0; i < len; i++) {
                 var panel = elements[i];
                 var header = lib.getChildren(panel)[0];
-                var content = lib.getChildren(panel)[1];
                 var icon = lib.dom.last(header);
                 var isCurrent = i === index;
-                methodName =
-                    isCurrent ? 'addPartClasses' : 'removePartClasses';
+                var methodName = isCurrent ? 'addPartClasses' : 'removePartClasses';
                 controlHelper[methodName]('panel-active', panel);
                 lib.removeClass(icon, activeIconClass);
                 lib.removeClass(icon, iconClass);
@@ -276,8 +300,6 @@ define(
 
         /**
          * 折叠处于激活状态的panel
-         *
-         *
          */
         function collapseAccordion() {
             var elements = lib.getChildren(this.main);
@@ -291,29 +313,7 @@ define(
             controlHelper.removePartClasses('panel-active', panel);
         }
 
-        /**
-         * 初始化事件类型
-         *
-         * @protected
-         * @override
-         */
-        Accordion.prototype.initEvents = function () {
-            var type = this.hoverable ? 'mouseover' : 'click';
-            this.helper.addDOMEvent(this.main, type, clickAccordion);
-        };
-
-        /**
-         * 获取当前激活的{@link meta.panel}对象
-         *
-         * @return {meta.panel}
-         */
-        Accordion.prototype.getActivePanel = function () {
-            var elements = lib.getChildren(this.main);
-            return elements[this.get('activeIndex')];
-        };
-
-        lib.inherits(Accordion, Control);
-        require('esui/main').register(Accordion);
+        esui.register(Accordion);
         return Accordion;
     }
 );

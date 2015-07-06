@@ -1,6 +1,7 @@
 /**
+ * @ignore
  * @file 滑动杆控件
- * @author liyuqiang(liyuqiang@baidu.com)
+ * @author maoquan(3610cn@gmail.com), liyuqiang(liyuqiang@baidu.com)
  */
 
 define(
@@ -9,18 +10,12 @@ define(
         require('esui/TextBox');
         require('esui/Select');
 
-        // 注册验证类
-        require('esui/validator/RequiredRule');
-        require('esui/validator/MaxRule');
-        require('esui/validator/MinRule');
-        require('esui/validator/PatternRule');
-
         var esui = require('esui');
         var u = require('underscore');
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
 
-        var Mouse = require('esui/behavior/Mouse');
+        require('esui/behavior/Mouse');
 
         var exports = {};
 
@@ -50,15 +45,9 @@ define(
              * @type {number} defaults.max 最大值 不能大于end,无值时与end相同
              * @type {string} defaults.unitText 滑动杆内数值后面的单位
              * @type {boolean} defaults.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
-             * @type {boolean} defaults.hasHead 是否显示标题和头部 显示true 不显示false
-             * @type {string} defaults.title 滑动杆的头部标题
-             * @type {string} defaults.headType 默认label 还可以是textbox、select
              * @type {string} defaults.pattern 文本框时验证的正则表达式
              * @type {string} defaults.errorMessage 正则验证错误时的提示信息
              * @type {Array} defaults.datasource 下拉框时的数据源
-             * @type {boolean} defaults.hasFoot 是否有脚 有true 无false 默认false
-             * @type {number} defaults.footStep 显示角标的间隔 默认为2
-             * @type {Number} defaults.footLiWidth 每个角标的宽度
              * @type {boolean} defaults.range 滑动杆控件是否是选择区间 默认false 是true
              */
             var defaults = {
@@ -70,15 +59,9 @@ define(
                 unitText: '',
                 isShowSelectedBG: true,
 
-                hasHead: false,
-                title: '标题',
-                headType: 'label',
                 pattern: '^-?[1-9]\d*|0$',
                 errorMessgae: '输入的值必须为数字',
                 datasource: [],
-
-                hasFoot: false,
-                footStep: 2,
 
                 range: false
             };
@@ -93,10 +76,8 @@ define(
             properties.step = +properties.step;
 
             // 处理min和max
-            properties.min =
-                typeof properties.min !== 'undefined' ? properties.min : properties.start;
-            properties.max =
-                typeof properties.max !== 'undefined' ? properties.max : properties.end;
+            properties.min = typeof properties.min !== 'undefined' ? properties.min : properties.start;
+            properties.max = typeof properties.max !== 'undefined' ? properties.max : properties.end;
 
             // min和max只能在start和end的中间
             properties.min = Math.max(properties.min, properties.start);
@@ -108,7 +89,6 @@ define(
                 properties.leftTop = 'top';
                 properties.rightBottom = 'bottom';
                 properties.widthHeight = 'height';
-                properties.cursorWH = 'height';
                 properties.pageXY = 'pageY';
             }
             else {
@@ -116,7 +96,6 @@ define(
                 properties.leftTop = 'left';
                 properties.rightBottom = 'right';
                 properties.widthHeight = 'width';
-                properties.cursorWH = 'width';
                 properties.pageXY = 'pageX';
             }
 
@@ -150,7 +129,7 @@ define(
          * @param  {Object} properties 参数
          * @return {Object}            适配后的参数
          */
-        function adaptValue (properties) {
+        function adaptValue(properties) {
 
             var value = properties.value;
             delete properties.value;
@@ -159,25 +138,20 @@ define(
                 properties.rawValue = this.parseValue(value, properties);
             }
 
-            properties.min =
-                typeof properties.min !== 'undefined' ? properties.min : this.min;
-            properties.max =
-                typeof properties.max !== 'undefined' ? properties.max : this.max;
+            properties.min = typeof properties.min !== 'undefined' ? properties.min : this.min;
+            properties.max = typeof properties.max !== 'undefined' ? properties.max : this.max;
 
             if (properties.range || this.range) {
                 // 值类型是区间时
-                properties.rawValue =
-                    typeof properties.rawValue === 'undefined'
-                        ? [properties.min, properties.max] : properties.rawValue;
+                properties.rawValue = typeof properties.rawValue === 'undefined'
+                    ? [properties.min, properties.max] : properties.rawValue;
 
                 // 结果是区间时
                 properties.minRangeValue = properties.rawValue[0];
                 properties.maxRangeValue = properties.rawValue[1];
 
-                properties.minRangeValue =
-                    Math.max(properties.minRangeValue, properties.min);
-                properties.maxRangeValue =
-                    Math.min(properties.maxRangeValue, properties.max);
+                properties.minRangeValue = Math.max(properties.minRangeValue, properties.min);
+                properties.maxRangeValue = Math.min(properties.maxRangeValue, properties.max);
 
                 // value只能在[min, max]之间
                 properties.rawValue = [
@@ -187,9 +161,8 @@ define(
             }
             else {
                 // 值类型是单个值时
-                properties.rawValue =
-                    typeof properties.rawValue === 'undefined'
-                        ? properties.min : properties.rawValue;
+                properties.rawValue = typeof properties.rawValue === 'undefined'
+                    ? properties.min : properties.rawValue;
 
                 // value只能在min 和 max中间
                 properties.rawValue = Math.max(properties.rawValue, properties.min);
@@ -216,143 +189,6 @@ define(
         };
 
         /**
-         * 创建滑动杆的头部，
-         * 有标题、显示值的label或输入框（文本框或者下拉框），
-         * 放在原型里为了可以重写
-         * @return {Panel} 返回Panel的对象
-         * @protected
-         */
-        exports.createHead = function () {
-            if (this.hasHead) {
-                // 有头
-                var headTpl = '<label for="${headValueDomId}" class="${headLabelClasses}">'
-                                + '${title}：'
-                            + '</label>';
-
-                var headData = {
-                    title: this.title,
-                    value: this.rawValue,
-                    headLabelClasses: this.helper.getPartClasses('head-label').join(),
-                    headValueClasses: this.helper.getPartClasses('head-value').join(),
-                    headValueDomId: this.helper.getId('head-value'),
-                    headValueId: this.id + '-head-value'
-                };
-
-                switch (this.headType) {
-                    case 'textbox':
-                        // textbox时
-
-                        headTpl += '<div class="${headValueClasses} ${headTextBoxClasses}"'
-                                    + 'data-ui="id:${headValueId};childName:headValue;type:TextBox;'
-                                    + 'required:required;value:${value};'
-                                    + '${max}${min}${pattern}${errorMessgae}">'
-                                + '</div>';
-
-                        headData.headTextBoxClasses =
-                            this.helper.getPartClasses('head-textbox').join();
-
-                        headData.max =
-                            typeof this.max !== 'undefined' ? ('max:' + this.max + ';') : '';
-                        headData.min =
-                            typeof this.min !== 'undefined' ? ('min:' + this.min + ';') : '';
-
-                        headData.pattern =
-                            this.pattern ? ('pattern:' + this.pattern + ';') : '';
-
-                        headData.errorMessgae = this.errorMessgae
-                            ? ('patternErrorMessage:' + this.errorMessgae + ';') : '';
-
-
-                        break;
-                    case 'select':
-                        // select时
-
-                        headTpl += '<div class="${headValueClasses} ${headSelectClasses}"'
-                                    + 'data-ui="id:${headValueId};childName:headValue;type:Select;'
-                                    + 'value:${value};">'
-                                + '</div>';
-
-                        headData.headSelectClasses = this.helper.getPartClasses('head-select').join();
-
-                        break;
-                    default:
-                        // 其它情况都当label处理
-
-                        headTpl += '<span class="${headValueClasses} ${headSpanClasses}"'
-                                    + 'id="${headValueDomId}">'
-                                    + '${value}'
-                                + '</span>';
-
-                        headData.headSpanClasses = this.helper.getPartClasses('head-span').join();
-
-                        break;
-                }
-
-                // 滑动杆的数值有单位
-                if (this.unitText) {
-                    headData.unitText = this.unitText;
-                    headData.headUnitClasses =
-                        this.helper.getPartClasses('head-unit').join();
-                    headTpl += '<span class="${headUnitClasses}">${unitText}</span>';
-                }
-
-                var headHtml = lib.format(headTpl, headData);
-                var headDom = this.helper.createPart('head');
-
-                headDom.innerHTML = headHtml;
-                this.main.appendChild(headDom);
-
-                var options = {
-                    main: headDom,
-                    renderOptions: this.renderOptions
-                };
-
-                // 创建个panel来做容器
-                var panel = esui.create('Panel', options);
-
-                panel.initChildren();
-                this.addChild(panel, 'head');
-
-                if (this.headType === 'select') {
-                    // select时 设置数据源
-                    var select = panel.getChild('headValue');
-
-                    select.setProperties(
-                        {
-                            datasource: this.datasource,
-                            value: this.value
-                        }
-                    );
-                }
-
-                return panel;
-            }
-        };
-
-        /**
-         * 获取头部的元素
-         * @return {[type]} [description]
-         */
-        exports.getHeadTarget =  function () {
-            if (!this.hasHead) {
-                return null;
-            }
-
-            var headTarget;
-
-            if (this.headType === 'label') {
-                // label
-                headTarget = this.helper.getPart('head-value');
-            }
-            else {
-                // textbox 或 select
-                headTarget = this.getChild('head').getChild('headValue');
-            }
-
-            return headTarget;
-        };
-
-        /**
          * 创建滑动杆体
          * 有滑块的范围和滑块，
          * 滑块的范围分为显示的范围、已选的范围
@@ -373,7 +209,7 @@ define(
                     = this.cursorElementTwo
                     = this.helper.createPart('body-cursortwo');
 
-                lib.addClass(this.cursorElementTwo, this.helper.getPartClasses('body-cursor'));
+                $(this.cursorElementTwo).addClass(this.helper.getPartClassName('body-cursor'));
 
                 bodyElement.appendChild(cursorElementTwo);
             }
@@ -390,63 +226,8 @@ define(
 
             this.main.appendChild(bodyElement);
 
-
             // 初始化body内元素的宽度和位置
             initBodyElements(this);
-        };
-
-        exports.footTemplate = '<li>${text}${unitText}</li>';
-
-        /**
-         * 创建滑动杆的脚
-         * 脚就是一些数值的标尺显示
-         * 放在原型上是为了可重写
-         * @protected
-         */
-        exports.createFoot = function () {
-            if (!this.hasFoot) {
-                return;
-            }
-
-            var footElement = this.helper.getPart('foot');
-
-            // 有就移除 重新创建
-            if (footElement) {
-                lib.removeNode(footElement);
-            }
-
-            footElement = this.helper.createPart('foot', 'ul');
-
-            var footHtml = '';
-            // 显示的角标个数为len+1
-            var len = (this.end - this.start) / this.footStep;
-            // 每个角标的宽度
-            var footStepWidth = this.width / len;
-            // 控件值后面显示的单位
-            var unitText = '';
-
-            if (this.unitText) {
-                unitText = this.unitText;
-            }
-
-            // 创建角标的元素
-            for (var i = 0; i <= len; i++) {
-                var data = {
-                    text: this.start + i * this.footStep,
-                    unitText: unitText
-                };
-                footHtml += lib.format(this.footTemplate, data);
-            }
-            footElement.innerHTML = footHtml;
-            this.main.appendChild(footElement);
-
-            u.each(
-                lib.getChildren(footElement),
-                function (elem, index) {
-                    elem.style.left = (index * footStepWidth - lib.getOffset(elem).width / 2) + 'px';
-                }
-            )
-
         };
 
         /**
@@ -461,9 +242,7 @@ define(
             }
 
             /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
-            this.createHead();
             this.createBody();
-            this.createFoot();
         };
 
         /**
@@ -482,32 +261,10 @@ define(
                         stop: u.bind(mouseupHandler, this)
                     }
                 );
-                // var mouse = new Mouse(body);
-                // mouse.on(
-                //     'mousestart',
-                //     mousedownHandler,
-                //     this
-                // );
-
-                // mouse.on(
-                //     'mousedrag',
-                //     mousemoveHandler,
-                //     this
-                // );
-
-                // mouse.on(
-                //     'mousestop',
-                //     mouseupHandler,
-                //     this
-                // );
 
                 // 点在其他空白处，滑块也要移动到这里
-                 this.helper.addDOMEvent(body, 'click', mousedownHandler);
+                this.helper.addDOMEvent(body, 'click', mousedownHandler);
             }
-        }
-
-        function returnFalse() {
-            return false;
         }
 
         /**
@@ -519,14 +276,11 @@ define(
         function getValueByLeftTop(cursorLeftTop) {
             var widthHeight = this.widthHeight;
 
-            // 滑块的宽度
-            var cursorWH = getCursorWH(this.cursorElement, widthHeight);
             // 滑块容器的宽度
             var tmpWidthHeight = this[widthHeight];
             // 选择的宽度
-            var selectedWidthHeight = cursorLeftTop + cursorWH / 2;
-            var similarValue =
-                (selectedWidthHeight / tmpWidthHeight) * (this.end - this.start);
+            var selectedWidthHeight = cursorLeftTop;
+            var similarValue = (selectedWidthHeight / tmpWidthHeight) * (this.end - this.start);
 
             // 根据步长算值
             similarValue = similarValue - similarValue % this.step;
@@ -544,14 +298,12 @@ define(
          */
         function getLeftTopByValue(value) {
             var widthHeight = this.widthHeight;
-            var cursorWH = getCursorWH(this.cursorElement, widthHeight);
 
             var tmpwidthHeight = this[widthHeight];
             var start = this.start;
             var end = this.end;
 
-            var cursorLeftTop =
-                (value - start) / (end - start) * tmpwidthHeight - cursorWH / 2;
+            var cursorLeftTop = (value - start) / (end - start) * tmpwidthHeight;
 
             return cursorLeftTop;
         }
@@ -561,9 +313,8 @@ define(
          * 为啥要微调位置，因为你不知道鼠标会停在哪，比如1，2之间跨度太大时 要落到值上
          * @param {Slider} slider 滑动杆控件
          * @param {number} value  滑动杆的值
-         * @param {boolean} isSyncValue 需要设置控件的值true 不需要false
          */
-        function setByValue(slider, value, isSyncValue) {
+        function setByValue(slider, value) {
             var cursorElement = slider.cursorElement;
             var cursorLeftTop;
 
@@ -599,90 +350,13 @@ define(
             // 已选择的部分加个背景色显示
             if (slider.isShowSelectedBG) {
 
-                var cursorWH = getCursorWH(slider.cursorElement, widthHeight);
                 if (slider.range) {
-                    slider.bodySelectedElement.style[leftTop] = cursorLeftTop + cursorWH / 2 + 'px';
+                    slider.bodySelectedElement.style[leftTop] = cursorLeftTop + 'px';
 
                     slider.bodySelectedElement.style[widthHeight] = cursorLeftTopTwo - cursorLeftTop + 'px';
                 }
                 else {
-                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTop + cursorWH / 2 + 'px';
-                }
-            }
-
-            // 内部文本框或者下拉框触发的此操作 不需要再同步它们的值了 别的都需要
-            if (isSyncValue) {
-                syncValue(slider, value);
-            }
-        }
-
-        /**
-         * 绑定头部的事件
-         * @param  {Slider} slider slider控件对象
-         */
-        function bindHeadEvents(slider) {
-            if (!slider.hasHead) {
-                return;
-            }
-
-            // 获取头元素
-            var headTarget = slider.getHeadTarget();
-
-            if (headTarget.type === 'TextBox') {
-                headTarget.on('blur', blurHandler, slider);
-            }
-            else if (headTarget.type === 'Select') {
-                headTarget.on('change', changeHandler, slider);
-            }
-        }
-
-        /**
-         * 解除头部事件的绑定
-         * @param  {Slider} slider slider控件对象
-         */
-        function unbindHeadEvents(slider) {
-            if (!slider.hasHead) {
-                return;
-            }
-
-            // 获取头部的元素
-            var headTarget = slider.getHeadTarget();
-
-            if (headTarget.type === 'TextBox') {
-                headTarget.un('blur');
-            }
-            else if (headTarget.type === 'Select') {
-                headTarget.un('change');
-            }
-        }
-
-        /**
-         * 同步控件内数值的显示
-         * @param {Slider} slider 滑杆对象
-         * @param {number} value  滑杆的值
-         */
-        function syncValue(slider, value) {
-            // 同步头部的值
-            if (slider.hasHead) {
-                // 获取头元素
-                var headTarget = slider.getHeadTarget();
-
-                if (headTarget instanceof InputControl) {
-                    // 先去掉绑定的事件 防止循环调用
-                    unbindHeadEvents(slider);
-
-                    headTarget.setProperties(
-                        {
-                            value: value
-                        }
-                    );
-
-                    // 再捆绑事件
-                    bindHeadEvents(slider);
-                }
-                else {
-                    // label时
-                    headTarget.innerHTML = value;
+                    slider.bodySelectedElement.style[widthHeight] = cursorLeftTop + 'px';
                 }
             }
         }
@@ -704,7 +378,6 @@ define(
 
             var target = this.activeCursorElement;
             var cursorElement = this.cursorElement;
-            var mousePos = lib.event.getMousePosition(e);
 
             var pageXY = this.pageXY;
             var leftTop = this.leftTop;
@@ -728,11 +401,10 @@ define(
                     otherValue = this.maxRangeValue;
                     isFirst = true;
 
-                    cursorLeftTop =
-                        Math.max(
-                            this.minStartPos - this.startPos,
-                            mousePos[pageXY] - this.startPos
-                        );
+                    cursorLeftTop = Math.max(
+                        this.minStartPos - this.startPos,
+                        e[pageXY] - this.startPos
+                    );
 
                     cursorLeftTop = Math.min(cursorLeftTop, otherLeftTop);
                 }
@@ -741,8 +413,7 @@ define(
                     otherLeftTop = getLeftTopByValue.call(this, this.minRangeValue);
                     otherValue = this.minRangeValue;
 
-                    cursorLeftTop =
-                        Math.max(otherLeftTop, mousePos[pageXY] - this.startPos);
+                    cursorLeftTop = Math.max(otherLeftTop, e[pageXY] - this.startPos);
 
                     cursorLeftTop = Math.min(cursorLeftTop, this.maxEndPos - this.startPos);
                 }
@@ -752,7 +423,7 @@ define(
 
                 cursorLeftTop = Math.max(
                     this.minStartPos - this.startPos,
-                    mousePos[pageXY] - this.startPos
+                    e[pageXY] - this.startPos
                 );
 
                 cursorLeftTop = Math.min(
@@ -801,18 +472,14 @@ define(
 
                     }
                     else {
-                        var cursorWH = getCursorWH(this.cursorElement, widthHeight);
                         this.bodySelectedElement.style[widthHeight]
-                            = cursorLeftTop + cursorWH / 2 + 'px';
+                            = cursorLeftTop + 'px';
                     }
                 }
 
                 // 滑动的时候触发move事件
                 this.fire('move', value);
             }
-
-            // 同步头部的数值显示
-            syncValue(this, value);
 
             return value;
         }
@@ -849,7 +516,6 @@ define(
          */
         function initBodyElements(slider) {
             var bodyElement = slider.bodyElement;
-            var cursorElement = slider.cursorElement;
             // 获取滑块容器的位置
             var bodyPos = lib.getOffset(bodyElement);
 
@@ -880,17 +546,17 @@ define(
 
         /**
          * 根据鼠标位置，寻找离鼠标位置最近的handle
-         * @param {Event} e 事件对象
          * @private
+         * @param {Event} e 事件对象
+         * @return {Element}
          */
         function findNearestCursorElement(e) {
-            var mousePos = lib.event.getMousePosition(e);
             var pageXY = this.pageXY;
             var leftTop = this.leftTop;
             var bodyElement = this.helper.getPart('body');
             var bodyPos = lib.getOffset(bodyElement);
 
-            var mouseLeftTop = mousePos[pageXY] - bodyPos[leftTop];
+            var mouseLeftTop = e[pageXY] - bodyPos[leftTop];
 
             // 有两个滑块
             if (this.range) {
@@ -905,18 +571,17 @@ define(
         }
 
         /**
-         * 获取滑块的宽高,由于页面加载过程中存在css抖动，这个值最好即时获取
-         */
-        function getCursorWH(elem, widthHeight) {
-            return parseInt(lib.getStyle(elem, widthHeight), 10);
-        }
-
-        /**
          * 鼠标的按下事件
-         * @param {Event} e 事件对象
          * @private
+         * @param {Event} e 事件对象
+         * @return {boolean}
          */
         function mousedownHandler(e) {
+
+            if (this.disabled === true) {
+                return false;
+            }
+
             var cursorElement = findNearestCursorElement.call(this, e);
 
             // 存住活动的对象
@@ -930,37 +595,8 @@ define(
 
             // 滑块首先移动到鼠标点击位置
             mousemoveHandler.call(this, e);
-        }
 
-        /**
-         * 头部文本框的blur处理事件
-         * @param  {Event} e 事件对象
-         * @private
-         */
-        function blurHandler(e) {
-            var target = e.target;
-            var isValid = target.validate();
-
-            if (isValid) {
-                // 验证通过
-                var value = target.getValue();
-
-                this.rawValue = +value;
-                setByValue(this, value);
-            }
-        }
-
-        /**
-         * 头部下拉框的change处理事件
-         * @param  {Event} e 事件对象
-         * @private
-         */
-        function changeHandler(e) {
-            var target = e.target;
-            var value = target.getValue();
-
-            this.value = +value;
-            setByValue(this, value);
+            return true;
         }
 
         /**
@@ -971,9 +607,6 @@ define(
         exports.initEvents = function () {
             // 绑定滑块的事件
             bindCursorEvents.call(this);
-
-            // 绑定头部的事件
-            bindHeadEvents(this);
         };
 
         /**
