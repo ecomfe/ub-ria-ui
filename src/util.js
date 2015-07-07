@@ -8,7 +8,6 @@
  */
 define(
     function (require) {
-        var EMPTY_OBJECT = {};
 
         /**
          * 工具模块

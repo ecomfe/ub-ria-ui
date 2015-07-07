@@ -50,9 +50,10 @@ define(
 
                 initStructure: function () {
                     var element = this.getElement();
-                    lib.addClass(element, this.control.helper.getPrefixClass('dropdown'));
+                    var helper = this.control.helper;
+                    $(element).addClass(helper.getPrefixClass('dropdown'));
 
-                    this.addCustomClasses([this.control.helper.getPrefixClass('autocomplete')]);
+                    this.addCustomClasses([helper.getPrefixClass('autocomplete')]);
                     this.control.main.appendChild(element);
                 },
 
@@ -273,14 +274,27 @@ define(
         }
 
         function renderSuggest(data, inputValue) {
-            var me = this;
+
+            var helper = this.control.helper;
+
+            /**
+             * 将text中匹配到的搜索词高亮
+             *
+             * @param {string} word 要高亮的关键字
+             * @return {string}
+             */
+            function highlightWord(word) {
+                return '<i class="'
+                    + helper.getPrefixClass('autocomplete-item-char-selected') + '">'
+                    + word + '</i>';
+            }
+
             var ret = [];
             if (data && data.length) {
                 for (var i = 0, len = data.length; i < len; i++) {
                     var item = data[i];
                     var text = u.isObject(item) && item.text || item;
                     var desc = u.isObject(item) && item.desc || undefined;
-                    var helper = this.control.helper;
                     var html = lib.format(
                         '<li tabindex="-1" ${dataId} class="${lineClasses}">'
                             + '<span class="${itemClasses}">${text}</span>${desc}</li>',
@@ -291,11 +305,7 @@ define(
                             itemClasses: helper.getPrefixClass('autocomplete-item-text'),
                             text: text.replace(
                                 new RegExp(escapeRegex(inputValue), 'i'),
-                                function (m, n, o) {
-                                    return '<i class="'
-                                        + helper.getPrefixClass('autocomplete-item-char-selected') + '">'
-                                        + m + '</i>';
-                                }
+                                highlightWord
                             ),
                             desc: desc ? '<span class="' + helper.getPrefixClass('autocomplete-item-desc')
                                 + '">' + item.desc + '</span>' : ''
@@ -382,7 +392,7 @@ define(
                 }
             }
             selectedItem = items[selectedItemIndex];
-            selectedItem && lib.addClass(selectedItem, this.control.helper.getPrefixClass('autocomplete-item-hover'));
+            $(selectedItem).addClass(this.control.helper.getPrefixClass('autocomplete-item-hover'));
 
             selectedItem && selectedItem.focus();
             this.inputElement.focus();

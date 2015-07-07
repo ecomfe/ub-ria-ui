@@ -9,14 +9,14 @@
 define(
     function (require) {
 
+        var eoo = require('eoo');
         var InputControl = require('esui/InputControl');
 
         var lib = require('esui/lib');
         var m = require('moment');
-        var u = require('underscore');
-        var ui = require('esui/main');
+        var ui = require('esui');
 
-        require('esui/behavior/mousewheel')
+        require('esui/behavior/mousewheel');
 
         /**
          * 微调输入控件
@@ -24,39 +24,231 @@ define(
          * @class ui.Spinner
          * @extends esui.InputControl
          */
-        var exports = {};
+        var Spinner = eoo.create(
+            InputControl,
+            {
 
-        /**
-         * 控件类型
-         *
-         * @type {string}
-         * @override
-         */
-        exports.type = 'Spinner';
+                /**
+                 * 控件类型
+                 *
+                 * @type {string}
+                 * @override
+                 */
+                type: 'Spinner',
 
+                /**
+                 * 微调输入控件
+                 *
+                 * @constructor
+                 */
+                constructor: function () {
+                    this.$super(arguments);
+                    // 短按计时器
+                    this.timer = 0;
+                    // 长按计时器
+                    this.longTimer = 0;
+                },
 
-        /**
-         * 微调输入控件
-         *
-         * @constructor
-         */
-        exports.constructor = function () {
-            this.$super(arguments);
-            // 短按计时器
-            this.timer = 0;
-            // 长按计时器
-            this.longTimer = 0;
-        };
+                initOptions: function (options) {
+                    var properties = { };
+                    lib.extend(properties, this.$self.defaultProperties, options);
 
+                    var format = properties.format;
+                    var max = properties.max;
+                    var min = properties.min;
+                    if (format === 'number') {
+                        max = max === 'indefinite' ? Number.MAX_VALUE : parseToNum(max);
+                        min = min === 'indefinite' ? -(Number.MAX_VALUE) : parseToNum(min);
+                    }
+                    else {
+                        max = max === 'indefinite' ? m().add(50, 'years') : m(max, format);
+                        min = min === 'indefinite' ? m().subtract(50, 'years') : m(min, format);
+                    }
+                    properties.max = max;
+                    properties.min = min;
+
+                    var scale = properties.scale;
+                    // 根据步长计算精度
+                    if (format === 'number') {
+                        var dotPosition = (scale + '').indexOf('.');
+                        if (dotPosition > -1) {
+                            properties.precision = scale.length - dotPosition - 1;
+                        }
+                        else {
+                            properties.precision = 0;
+                        }
+                    }
+
+                    // scale
+                    if (format !== 'number' && /^\s*\{/.test(scale)) {
+                        properties.scale = JSON.parse(scale);
+                    }
+
+                    this.setProperties(properties);
+                },
+
+                /**
+                 * 构建spinner
+                 */
+                initStructure: function () {
+                    var helper = this.helper;
+
+                    var spinnerTpl = [
+                        '<input id="${inputId}" type="text" />',
+                        '<span id="${upId}" class="${upClass} ${iconClass}"></span>',
+                        '<span id=${downId} class="${downClass} ${iconClass}"></span>'
+                    ].join('');
+
+                    var mainElement = this.main;
+
+                    mainElement.innerHTML = lib.format(
+                        spinnerTpl,
+                        {
+                            inputId: helper.getId('input'),
+                            upId: helper.getId('up'),
+                            upClass: helper.getPartClasses('up'),
+                            downId: helper.getId('down'),
+                            downClass: helper.getPartClasses('down'),
+                            iconClass: helper.getIconClass()
+                        }
+                    );
+
+                    lib.addClass(mainElement, helper.getPrefixClass('textbox'));
+
+                    ui.init(mainElement, {viewContext: this.viewContext});
+                },
+
+                /**
+                 * 初始化spinner事件
+                 */
+                initEvents: function () {
+                    var helper = this.helper;
+                    var up = helper.getPart('up');
+                    var down = helper.getPart('down');
+
+                    helper.addDOMEvent(up, 'mousedown', mouseDownHandler);
+                    helper.addDOMEvent(down, 'mousedown', mouseDownHandler);
+                    helper.addDOMEvent(up, 'mouseup',  mouseUpHandler);
+                    helper.addDOMEvent(down, 'mouseup',  mouseUpHandler);
+                    helper.addDOMEvent(up, 'mouseout',  mouseUpHandler);
+                    helper.addDOMEvent(down, 'mouseout',  mouseUpHandler);
+
+                    // focus时支持鼠标滚轮
+                    var input = this.getInput();
+                    helper.addDOMEvent(
+                        input,
+                        'focus',
+                        function () {
+                            helper.addDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                        }
+                    );
+
+                    helper.addDOMEvent(
+                        input,
+                        'blur',
+                        function () {
+                            helper.removeDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                        }
+                    );
+                },
+
+                /**
+                 * 渲染自身
+                 *
+                 * @override
+                 * @protected
+                 */
+                repaint: require('esui/painters').createRepaint(
+                    InputControl.prototype.repaint,
+                    {
+                        name: ['rawValue'],
+                        paint: function (spinner, rawValue) {
+                            var max = spinner.max;
+                            var min = spinner.min;
+                            var format = spinner.format;
+                            if (spinner.format === 'number') {
+                                rawValue = parseToNum(rawValue);
+                                rawValue = Math.max(rawValue, min);
+                                rawValue = Math.min(rawValue, max);
+                            }
+                            else {
+                                rawValue = m(rawValue, format);
+                                if (rawValue.isValid()) {
+                                    rawValue = m.max(rawValue, min);
+                                    rawValue = m.min(rawValue, max);
+                                }
+                                else {
+                                    rawValue = min;
+                                }
+                                rawValue = m(rawValue, format).format(format);
+                            }
+                            setInputValue.call(spinner, rawValue);
+                        }
+                    },
+                    {
+                        name: ['width'],
+                        paint: function (spinner, width) {
+                            width = parseInt(width, 10);
+                            spinner.main.style.width = width + 'px';
+                        }
+                    },
+                    {
+                        name: ['disabled', 'readOnly'],
+                        paint: function (spinner, disabled, readOnly) {
+                            var input = spinner.getInput();
+                            input.disabled = disabled;
+                            input.readOnly = readOnly;
+                        }
+                    }
+                ),
+
+                /**
+                 * 获取input元素
+                 *
+                 * @return {Element}
+                 */
+                getInput: function () {
+                    return lib.g(this.helper.getId('input'));
+                },
+
+                /**
+                 * 获取控件值
+                 *
+                 * @return {string}
+                 */
+                getValue: function () {
+                    var input = this.getInput();
+                    return input.value;
+                },
+
+                /**
+                 * 设置控件值
+                 * @param {string} value 控件值
+                 */
+                setValue: function (value) {
+                    setInputValue.call(this, value);
+                },
+
+                /**
+                 * 销毁控件
+                 *
+                 * @override
+                 */
+                dispose: function () {
+                    disposeSpinner.call(this);
+                    this.$super(arguments);
+                }
+            }
+        );
 
         /**
          * 解析数字类型方法
-         * @param value
-         * @returns {string}
+         * @param {string} value 要解析的值
+         * @return {string}
          */
         function parseToNum(value) {
             if (value) {
-                value = parseFloat(value)
+                value = parseFloat(value);
             }
             return isNaN(value) ? '' : value;
         }
@@ -68,25 +260,25 @@ define(
         var Direct = {
             UP: 'up',
             DOWN: 'down'
-        }
+        };
 
         /**
          * 更新日期类型方法
-         * @param {Direct} direct
+         * @param {Direct} direct up / down
          */
-        function updateDate (direct) {
+        function updateDate(direct) {
             var input = this.getInput();
-            var scale = typeof this.scale == 'object' ? this.scale : parseToNum(this.scale);
+            var scale = typeof this.scale === 'object' ? this.scale : parseToNum(this.scale);
             var timeFormat = this.format;
             var value = m(input.value, timeFormat);
             var max = this.max;
             var min = this.min;
 
-            //如果用户手动输入一个非法值，会默认显示最小值
+            // 如果用户手动输入一个非法值，会默认显示最小值
             value = value.isValid() ? value : min;
-            if (direct == Direct.UP) {
+            if (direct === Direct.UP) {
                 value = value.add(scale.value, scale.key);
-                if (m.max(value, max) == max) {
+                if (m.max(value, max) === max) {
                     value = m(value, timeFormat).format(timeFormat);
                 }
                 else {
@@ -100,7 +292,7 @@ define(
             }
             else {
                 value = value.subtract(scale.value, scale.key);
-                if (m.min(value, min) == min) {
+                if (m.min(value, min) === min) {
                     value = m(value, timeFormat).format(timeFormat);
                 }
                 else {
@@ -117,7 +309,7 @@ define(
 
         /**
          * 更新数值类型的方法
-         * @param {Direct} direct
+         * @param {Direct} direct up / down
          */
         function updateNumber(direct) {
             var input = this.getInput();
@@ -125,7 +317,7 @@ define(
             var value = parseToNum(input.value);
             var max = this.max;
             var min = this.min;
-            if (direct == Direct.UP) {
+            if (direct === Direct.UP) {
                 value += scale;
                 if (value > max) {
                     if (!!this.turn && this.turn !== 'false') {
@@ -152,10 +344,10 @@ define(
 
         /**
          * 更新值方法，用来判断值类型是数字类型还是时间类型
-         * @param {Direct} direct
+         * @param {Direct} direct 方向
          */
-        function updateValue (direct) {
-            if (this.format != 'number') {
+        function updateValue(direct) {
+            if (this.format !== 'number') {
                 updateDate.call(this, direct);
             }
             else {
@@ -166,13 +358,13 @@ define(
         /**
          * 改变value方法，该方法会触发 scrollValue 事件
          * 如果用户想自定义方法，可以通过preventDefault()阻止默认行为
-         * @param {Event} e
+         * @param {Event} e 事件对象
          */
-        function scrollValue (e) {
+        function scrollValue(e) {
             if (!this.disabled && !this.readOnly) {
-                var direct = (e.target.id == this.helper.getId('up')) ? Direct.UP : Direct.DOWN;
+                var direct = (e.target.id === this.helper.getId('up')) ? Direct.UP : Direct.DOWN;
                 var args = {
-                    'direct': direct
+                    direct: direct
                 };
                 var eventArgs = this.fire('scrollValue', args);
                 if (!eventArgs.isDefaultPrevented()) {
@@ -184,7 +376,7 @@ define(
         /**
          * 长按按钮自动更新方法
          * 长按3秒时，速度加倍
-         * @param {Event} e
+         * @param {Event} e 事件对象
          */
         function autoUpdate(e) {
             var me = this;
@@ -210,7 +402,8 @@ define(
 
         /**
          * 鼠标滚轮方法
-         * @param {Event} e
+         * @param {Event} e 事件对象
+         * @param {Direct} direct 方向
          */
         function mouseWheelHandler(e, direct) {
             direct = direct === 1 ? Direct.UP : Direct.DOWN;
@@ -220,7 +413,7 @@ define(
 
         /**
          * 鼠标点击方法
-         * @param {Event} e
+         * @param {Event} e 事件对象
          */
         function mouseDownHandler(e) {
             var delayTime = 1200 - this.timeInterval;
@@ -238,9 +431,9 @@ define(
 
         /**
          * 取消事件方法
-         * @param {Event} e
+         * @param {Event} e 事件对象
          */
-        function mouseUpHandler (e) {
+        function mouseUpHandler(e) {
             clearInterval(this.timer);
             clearTimeout(this.timer);
             clearTimeout(this.longTimer);
@@ -248,158 +441,6 @@ define(
             this.longTimer = 0;
         }
 
-        exports.initOptions = function (options) {
-            var properties = { };
-            lib.extend(properties, this.$self.defaultProperties, options);
-
-            var format = properties.format;
-            var max = properties.max;
-            var min = properties.min;
-            if (format === 'number') {
-                max = max === 'indefinite' ? Number.MAX_VALUE : parseToNum(max);
-                min = min === 'indefinite' ? -(Number.MAX_VALUE) : parseToNum(min);
-            }
-            else {
-                max = max == 'indefinite' ? m().add(50, 'years') : m(max, format);
-                min = min == 'indefinite' ? m().subtract(50, 'years'): m(min, format);
-            }
-            properties.max = max;
-            properties.min = min;
-
-            var scale = properties.scale;
-            // 根据步长计算精度
-            if (format === 'number') {
-                var dotPosition = (scale + '').indexOf('.');
-                if (dotPosition > -1) {
-                    properties.precision = scale.length - dotPosition - 1;
-                }
-                else {
-                    properties.precision = 0;
-                }
-            }
-
-            // scale
-            if (format !== 'number' && /^\s*\{/.test(scale)) {
-                properties.scale = JSON.parse(scale);
-            }
-
-            this.setProperties(properties);
-        };
-
-        /**
-         * 构建spinner
-         */
-        exports.initStructure = function () {
-            var helper = this.helper;
-
-            var spinnerTpl = [
-                '<input id="${inputId}" type="text" />',
-                '<span id="${upId}" class="${upClass} ${iconClass}"></span>',
-                '<span id=${downId} class="${downClass} ${iconClass}"></span>'
-            ].join('');
-
-            var mainElement = this.main;
-
-            mainElement.innerHTML = lib.format(
-                spinnerTpl,
-                {
-                    inputId: helper.getId('input'),
-                    upId: helper.getId('up'),
-                    upClass: helper.getPartClasses('up'),
-                    downId: helper.getId('down'),
-                    downClass: helper.getPartClasses('down'),
-                    iconClass: helper.getIconClass()
-                }
-            );
-
-            lib.addClass(mainElement, helper.getPrefixClass('textbox'));
-
-            ui.init(mainElement, {viewContext: this.viewContext});
-        };
-
-        /**
-         * 初始化spinner事件
-         */
-        exports.initEvents = function () {
-            var helper = this.helper;
-            var up = helper.getPart('up');
-            var down = helper.getPart('down');
-
-            helper.addDOMEvent(up, 'mousedown', mouseDownHandler);
-            helper.addDOMEvent(down, 'mousedown', mouseDownHandler);
-            helper.addDOMEvent(up, 'mouseup',  mouseUpHandler);
-            helper.addDOMEvent(down, 'mouseup',  mouseUpHandler);
-            helper.addDOMEvent(up, 'mouseout',  mouseUpHandler);
-            helper.addDOMEvent(down, 'mouseout',  mouseUpHandler);
-
-            // focus时支持鼠标滚轮
-            var input = this.getInput();
-            helper.addDOMEvent(
-                input,
-                'focus',
-                function () {
-                    helper.addDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
-                }
-            );
-
-            helper.addDOMEvent(
-                input,
-                'blur',
-                function () {
-                    helper.removeDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
-                }
-            );
-        };
-
-        /**
-         * 渲染自身
-         *
-         * @override
-         * @protected
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            InputControl.prototype.repaint,
-            {
-                name: ['rawValue'],
-                paint: function (spinner, rawValue) {
-                    var max = spinner.max;
-                    var min = spinner.min;
-                    var format = spinner.format;
-                    if (spinner.format === 'number') {
-                        rawValue = parseToNum(rawValue);
-                        rawValue = Math.max(rawValue, min);
-                        rawValue = Math.min(rawValue, max);
-                    }
-                    else {
-                        rawValue = m(rawValue, format);
-                        if (rawValue.isValid()) {
-                            rawValue = m.max(rawValue, min);
-                            rawValue = m.min(rawValue, max);
-                        }
-                        else {
-                            rawValue = min;
-                        }
-                        rawValue = m(rawValue, format).format(format);
-                    }
-                    setInputValue.call(spinner, rawValue);
-                }
-            },
-            {
-                name: ['width'],
-                paint: function (spinner, width) {
-                    width = parseInt(width, 10);
-                    spinner.main.style.width = width + 'px';
-                }
-            },
-            {
-                name: ['disabled', 'readOnly'],
-                paint: function (spinner, disabled, readOnly) {
-                    var input = spinner.getInput();
-                    input.disabled = disabled;
-                    input.readOnly = readOnly;
-                }
-            }
-        );
 
         function setInputValue(value) {
             if (this.precision) {
@@ -409,32 +450,6 @@ define(
             input.value = value;
         }
 
-        /**
-         * 获取input元素
-         *
-         * @return {Element}
-         */
-        exports.getInput = function () {
-            return lib.g(this.helper.getId('input'));
-        };
-
-        /**
-         * 获取控件值
-         *
-         * @return {string}
-         */
-        exports.getValue = function () {
-            var input = this.getInput();
-            return input.value;
-        };
-
-        /**
-         * 设置控件值
-         * @param {string} value
-         */
-        exports.setValue = function (value) {
-            setInputValue.call(this, value);
-        };
 
 
         /**
@@ -452,19 +467,6 @@ define(
             helper.removeDOMEvent(up, 'mouseout',  mouseUpHandler);
             helper.removeDOMEvent(down, 'mouseout',  mouseUpHandler);
         }
-
-        /**
-         * 销毁控件
-         *
-         * @override
-         */
-        exports.dispose = function () {
-            disposeSpinner.call(this);
-            this.$super(arguments);
-        };
-
-
-        var Spinner = require('eoo').create(InputControl, exports);
 
         /**
          * Spinner默认属性
@@ -491,7 +493,7 @@ define(
             timeInterval: 100
         };
 
-        require('esui').register(Spinner);
+        ui.register(Spinner);
 
         return Spinner;
     }

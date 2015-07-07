@@ -257,7 +257,7 @@ define(
                     var tokenLabel = lib.dom.first(tokenElem);
                     tokenLabel.innerHTML = token.label;
                     var closeButton = lib.dom.last(tokenElem);
-                    lib.addClass(closeButton, this.helper.getIconClass('remove'));
+                    $(closeButton).addClass(this.helper.getIconClass('remove'));
                     this.helper.addDOMEvent(tokenElem, 'click', this.remove);
 
                     lib.insertBefore(tokenElem, inputElem);
