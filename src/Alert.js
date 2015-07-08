@@ -354,6 +354,14 @@ define(
                     }
 
                     // 插入节点，引起渲染
+                    if (lib.g(this.container).firstChild) {
+                        this.insertBefore(lib.g(this.container).firstChild);
+                    }
+                    else {
+                        this.appendTo(lib.g(this.container));
+                    }
+
+                    // 插入节点，引起渲染
                     this.insertBefore(lib.g(this.container).firstChild);
 
                     // toggle效果实现
