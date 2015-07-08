@@ -17,106 +17,159 @@ define(
         var lib = require('esui/lib');
         var ui = require('esui/main');
         var InputControl = require('esui/InputControl');
+        var eoo = require('eoo');
+        var esui = require('esui');
+        var painters = require('esui/painters');
+        var u = require('underscore');
 
         require('./FullColorPicker');
         require('esui/Overlay');
         require('esui/TextBox');
         require('esui/Button');
 
-        var exports = {};
-        /**
-         * 控件类型
-         *
-         * @override
-         */
-        exports.type = 'ColorPicker';
+        var ColorPicker = eoo.create(
+            InputControl,
+            {
+                /**
+                 * 控件类型
+                 *
+                 * @override
+                 */
+                type: 'ColorPicker',
 
-        /**
-         * 初始化参数
-         *
-         * @override
-         * @protected
-         */
-        exports.initOptions = function (options) {
-            var properties = {
-                // 展示模式 'attached' | 'dialog'
-                displayMode: 'attached',
-                // 默认拾色器模式，支持 'simple' | 'advanced' | 'full'
-                featureMode: 'simple',
-                switchable: false,
-                hex: '000000',
-                alpha: 100,
-                hasAlpha: true
-            };
-            lib.extend(properties, options);
-            if (properties.hasAlpha === 'false') {
-                properties.hasAlpha = false;
-            }
-            this.setProperties(properties);
-        };
+                /**
+                 * 初始化参数
+                 *
+                 * @override
+                 * @protected
+                 */
+                initOptions: function (options) {
+                    var properties = {
+                        // 展示模式 'attached' | 'dialog'
+                        displayMode: 'attached',
+                        // 默认拾色器模式，支持 'simple' | 'advanced' | 'full'
+                        featureMode: 'simple',
+                        switchable: false,
+                        hex: '000000',
+                        alpha: 100,
+                        hasAlpha: true
+                    };
+                    u.extend(properties, options);
+                    this.setProperties(properties);
+                },
 
-        /**
-         * 初始化DOM结构
-         *
-         * @override
-         * @protected
-         */
-        exports.initStructure = function () {
-            var mainTpl = ''
-                + '<div class="${colorBlockFrameClass}" id="${colorBlockFrameId}">'
-                +     '<div class="${colorBlockClass}" id="${colorBlockId}"></div>'
-                + '</div>'
-                + '<div class="${colorInputClass}" id="${colorInputId}" data-ui-type="TextBox"'
-                +     'data-ui-child-name="colorInput" data-ui-hint="#" data-ui-hint-type="prefix"'
-                +     'data-ui-width="auto"></div>';
-            if (this.hasAlpha) {
-                mainTpl += ''
-                    + '<div class="${alphaInputClass}" id="${alphaInputId}" data-ui-type="TextBox"'
-                    +     'data-ui-child-name="alphaInput" data-ui-hint="%" data-ui-hint-type="suffix"'
-                    +     'data-ui-width="auto"></div>';
-            }
-            this.main.innerHTML = lib.format(
-                mainTpl,
-                {
-                    colorBlockFrameClass: this.helper.getPartClassName('color-block-frame'),
-                    colorBlockFrameId: this.helper.getId('color-block-frame'),
-                    colorBlockClass: this.helper.getPartClassName('color-block'),
-                    colorBlockId: this.helper.getId('color-block'),
-                    colorInputClass: this.helper.getPartClassName('color-input'),
-                    colorInputId: this.helper.getId('color-input'),
-                    alphaInputClass: this.helper.getPartClassName('alpha-input'),
-                    alphaInputId: this.helper.getId('alpha-input')
+                /**
+                 * 初始化DOM结构
+                 *
+                 * @override
+                 * @protected
+                 */
+                initStructure: function () {
+                    var mainTpl = ''
+                        + '<div class="${colorBlockFrameClass}" id="${colorBlockFrameId}">'
+                        +     '<div class="${colorBlockClass}" id="${colorBlockId}"></div>'
+                        + '</div>'
+                        + '<div class="${colorInputClass}" id="${colorInputId}" data-ui-type="TextBox"'
+                        +     'data-ui-child-name="colorInput" data-ui-hint="#" data-ui-hint-type="prefix"'
+                        +     'data-ui-width="auto"></div>';
+                    if (this.hasAlpha) {
+                        mainTpl += ''
+                            + '<div class="${alphaInputClass}" id="${alphaInputId}" data-ui-type="TextBox"'
+                            +     'data-ui-child-name="alphaInput" data-ui-hint="%" data-ui-hint-type="suffix"'
+                            +     'data-ui-width="auto"></div>';
+                    }
+                    this.main.innerHTML = lib.format(
+                        mainTpl,
+                        {
+                            colorBlockFrameClass: this.helper.getPartClassName('color-block-frame'),
+                            colorBlockFrameId: this.helper.getId('color-block-frame'),
+                            colorBlockClass: this.helper.getPartClassName('color-block'),
+                            colorBlockId: this.helper.getId('color-block'),
+                            colorInputClass: this.helper.getPartClassName('color-input'),
+                            colorInputId: this.helper.getId('color-input'),
+                            alphaInputClass: this.helper.getPartClassName('alpha-input'),
+                            alphaInputId: this.helper.getId('alpha-input')
+                        }
+                    );
+
+                    this.initChildren();
+                },
+
+                /**
+                 * @override
+                 */
+                initEvents: function () {
+                    this.$super(arguments);
+
+                    var colorBlock = this.helper.getPart('color-block');
+                    // 点色块走的是toggle，所以阻止冒泡到`document`
+                    this.helper.addDOMEvent(
+                        colorBlock,
+                        'mousedown',
+                        function (e) {
+                            e.stopPropagation();
+                        }
+                    );
+                    this.helper.addDOMEvent(colorBlock, 'mousedown', toggleLayer);
+
+                    var colorInput = this.getChild('colorInput');
+                    colorInput.on('input', onColorInput, this);
+
+                    var alphaInput = this.getChild('alphaInput');
+                    if (alphaInput) {
+                        alphaInput.on('input', onAlphaInput, this);
+                    }
+                },
+
+                /**
+                 * 渲染自身
+                 *
+                 * @override
+                 * @protected
+                 * @fires ColorPicker#change
+                 */
+                repaint: painters.createRepaint(
+                    InputControl.prototype.repaint,
+                    {
+                        name: ['hex', 'alpha'],
+                        paint: function (colorPicker, hex, alpha) {
+                            updateColorDisplay.call(colorPicker);
+                            syncValue.call(colorPicker);
+                            colorPicker.fire('change');
+                        }
+                    }
+                ),
+
+                /**
+                 * 批量更新属性并重绘
+                 *
+                 * @override
+                 * @fires ColorPicker#change
+                 */
+                setProperties: function (properties) {
+                    var changes = this.$super(arguments);
+
+                    if (changes.hasOwnProperty('rawValue')) {
+                        this.fire('change');
+                    }
+
+                    return changes;
+                },
+
+                /**
+                 * @override
+                 * @return {Object}
+                 */
+                getRawValue: function () {
+                    var result = {};
+                    result.hex = this.hex;
+                    if (this.hasAlpha) {
+                        result.alpha = this.alpha;
+                    }
+                    return result;
                 }
-            );
-
-            this.initChildren();
-        };
-
-        /**
-         * @override
-         */
-        exports.initEvents = function () {
-            this.$super(arguments);
-
-            var colorBlock = this.helper.getPart('color-block');
-            // 点色块走的是toggle，所以阻止冒泡到`document`
-            this.helper.addDOMEvent(
-                colorBlock,
-                'mousedown',
-                function (e) {
-                    e.stopPropagation();
-                }
-            );
-            this.helper.addDOMEvent(colorBlock, 'mousedown', toggleLayer);
-
-            var colorInput = this.getChild('colorInput');
-            colorInput.on('input', onColorInput, this);
-
-            var alphaInput = this.getChild('alphaInput');
-            if (alphaInput) {
-                alphaInput.on('input', onAlphaInput, this);
             }
-        };
+        );
 
         /**
          * 颜色输入框输入事件处理
@@ -312,57 +365,7 @@ define(
             }
         }
 
-        /**
-         * 渲染自身
-         *
-         * @override
-         * @protected
-         * @fires ColorPicker#change
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            InputControl.prototype.repaint,
-            {
-                name: ['hex', 'alpha'],
-                paint: function (colorPicker, hex, alpha) {
-                    updateColorDisplay.call(colorPicker);
-                    syncValue.call(colorPicker);
-                    colorPicker.fire('change');
-                }
-            }
-        );
-
-        /**
-         * 批量更新属性并重绘
-         *
-         * @override
-         * @fires ColorPicker#change
-         */
-        exports.setProperties = function (properties) {
-            var changes = this.$super(arguments);
-
-            if (changes.hasOwnProperty('rawValue')) {
-                this.fire('change');
-            }
-
-            return changes;
-        };
-
-        /**
-         * @override
-         * @return {Object}
-         */
-        exports.getRawValue = function () {
-            var result = {};
-            result.hex = this.hex;
-            if (this.hasAlpha) {
-                result.alpha = this.alpha;
-            }
-            return result;
-        };
-
-        var ColorPicker = require('eoo').create(InputControl, exports);
-
-        require('esui').register(ColorPicker);
+        esui.register(ColorPicker);
         return ColorPicker;
     }
 );

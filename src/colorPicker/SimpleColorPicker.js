@@ -11,6 +11,9 @@ define(
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
         var u = require('underscore');
+        var eoo = require('eoo');
+        var esui = require('esui');
+        var painters = require('esui/painters');
 
         /**
          * 简单版拾色器
@@ -18,141 +21,78 @@ define(
          * @class SimpleColorPicker
          * @extends esui.InputControl
          */
-        var exports = {};
-
-        /**
-         * 控件类型
-         *
-         * @override
-         */
-        exports.type = 'SimpleColorPicker';
-
-        /**
-         * 初始化参数
-         *
-         * @override
-         * @protected
-         */
-        exports.initOptions = function (options) {
-            var properties = {};
-            lib.extend(properties, this.$self.defaultProperties, options);
-            this.setProperties(properties);
-        };
-
-        function syncValue(colorPicker) {
-            var blocks = colorPicker.main.getElementsByTagName('span');
-            var blockClass = colorPicker.helper.getPartClasses('block')[0];
-
-            u.each(
-                blocks,
-                function (block) {
-                    if (lib.hasClass(block, blockClass)) {
-                        var color = lib.getAttribute(block, 'data-value');
-                        if (color === this.rawValue) {
-                            this.helper.addPartClasses('selected', block);
-                        }
-                        else {
-                            this.helper.removePartClasses('selected', block);
-                        }
-                    }
-                },
-                colorPicker
-            );
-        }
-
-        /**
-         * @override
-         */
-        exports.initStructure = function () {
-            this.main.innerHTML = createColorBlocks(this);
-        };
-
-        /**
-         * 创建候选颜色块
-         *
-         * @param {SimpleColorPicker} colorPicker 控件实例
-         */
-        function createColorBlocks(colorPicker) {
-            var blockTemplate = ''
-                + '<span class="' + colorPicker.helper.getPartClassName('block') + '" '
-                +     'title="${text}" '
-                +     'data-value="${value}" '
-                +     'style="background-color: ${diplayValue}">'
-                +     '${text}'
-                + '</span>';
-
-            var html = '';
-            u.each(
-                colorPicker.colors,
-                function (color, index) {
-                    color.diplayValue = color.value;
-                    if (color.value.indexOf('#') < 0) {
-                        color.diplayValue = '#' + color.value;
-                    }
-                    html += lib.format(blockTemplate, color);
-                }
-            );
-            html += '</div>';
-
-            return html;
-        }
-
-        /**
-         * @override
-         */
-        exports.initEvents = function () {
-            this.$super(arguments);
-
-            this.helper.addDOMEvent(this.main, 'click', chooseColor);
-        };
-
-        /**
-         * 选择颜色
-         *
-         * @param {Event} e DOM事件对象
-         */
-        function chooseColor(e) {
-            var blockClass = this.helper.getPartClasses('block')[0];
-            if (lib.hasClass(e.target, blockClass)) {
-                var color = lib.getAttribute(e.target, 'data-value');
-                this.setRawValue(color);
-            }
-        }
-
-        /**
-         * 渲染自身
-         *
-         * @override
-         * @protected
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            InputControl.prototype.repaint,
+        var SimpleColorPicker = eoo.create(
+            InputControl,
             {
-                name: 'rawValue',
-                paint: function (colorPicker, rawValue) {
-                    syncValue(colorPicker);
+                /**
+                 * 控件类型
+                 *
+                 * @override
+                 */
+                type: 'SimpleColorPicker',
+
+                /**
+                 * 初始化参数
+                 *
+                 * @override
+                 * @protected
+                 */
+                initOptions: function (options) {
+                    var properties = {};
+                    u.extend(properties, SimpleColorPicker.defaultProperties, options);
+                    this.setProperties(properties);
+                },
+
+                /**
+                 * @override
+                 */
+                initStructure: function () {
+                    this.main.innerHTML = createColorBlocks(this);
+                },
+
+                /**
+                 * @override
+                 */
+                initEvents: function () {
+                    this.$super(arguments);
+
+                    this.helper.addDOMEvent(this.main, 'click', chooseColor);
+                },
+
+                /**
+                 * 渲染自身
+                 *
+                 * @override
+                 * @protected
+                 */
+                repaint: painters.createRepaint(
+                    InputControl.prototype.repaint,
+                    {
+                        name: 'rawValue',
+                        paint: function (colorPicker, rawValue) {
+                            syncValue(colorPicker);
+                        }
+                    }
+                ),
+
+                /**
+                 * 批量更新属性并重绘
+                 *
+                 * @fires SimpleColorPicker#change
+                 * @override
+                 * @public
+                 */
+                setProperties: function (properties) {
+                    var changes = this.$super(arguments);
+
+                    if (changes.hasOwnProperty('rawValue')) {
+                        this.fire('change');
+                    }
+
+                    return changes;
                 }
             }
         );
-
-        /**
-         * 批量更新属性并重绘
-         *
-         * @fires SimpleColorPicker#change
-         * @override
-         * @public
-         */
-        exports.setProperties = function (properties) {
-            var changes = this.$super(arguments);
-
-            if (changes.hasOwnProperty('rawValue')) {
-                this.fire('change');
-            }
-
-            return changes;
-        };
-
-        var SimpleColorPicker = require('eoo').create(InputControl, exports);
 
         /**
          * 默认属性
@@ -219,7 +159,74 @@ define(
             mode: 'block'
         };
 
-        require('esui').register(SimpleColorPicker);
+        function syncValue(colorPicker) {
+            var blocks = colorPicker.main.getElementsByTagName('span');
+            var blockClass = colorPicker.helper.getPartClassName('block');
+
+            u.each(
+                blocks,
+                function (block) {
+                    var $block = $(block);
+                    if ($block.hasClass(blockClass)) {
+                        var color = $block.attr('data-value');
+                        if (color === this.rawValue) {
+                            this.helper.addPartClasses('selected', block);
+                        }
+                        else {
+                            this.helper.removePartClasses('selected', block);
+                        }
+                    }
+                },
+                colorPicker
+            );
+        }
+
+        /**
+         * 创建候选颜色块
+         *
+         * @param {SimpleColorPicker} colorPicker 控件实例
+         * @return {string} html
+         */
+        function createColorBlocks(colorPicker) {
+            var blockTemplate = ''
+                + '<span class="' + colorPicker.helper.getPartClassName('block') + '" '
+                +     'title="${text}" '
+                +     'data-value="${value}" '
+                +     'style="background-color: ${diplayValue}">'
+                +     '${text}'
+                + '</span>';
+
+            var html = '<div>';
+            u.each(
+                colorPicker.colors,
+                function (color, index) {
+                    color.diplayValue = color.value;
+                    if (color.value.indexOf('#') < 0) {
+                        color.diplayValue = '#' + color.value;
+                    }
+                    html += lib.format(blockTemplate, color);
+                }
+            );
+            html += '</div>';
+
+            return html;
+        }
+
+        /**
+         * 选择颜色
+         *
+         * @param {Event} e DOM事件对象
+         */
+        function chooseColor(e) {
+            var blockClass = this.helper.getPartClasses('block')[0];
+            var $t = $(e.target);
+            if ($t.hasClass(blockClass)) {
+                var color = $t.attr('data-value');
+                this.setRawValue(color);
+            }
+        }
+
+        esui.register(SimpleColorPicker);
         return SimpleColorPicker;
     }
 );
