@@ -11,8 +11,9 @@ define(
         var esui = require('esui');
         var eoo = require('eoo');
         var u = require('underscore');
-        var lib = require('esui/lib');
         var Control = require('esui/Control');
+        var painters = require('esui/painters');
+        var $ = require('jquery');
 
         /**
          * 手风琴控件
@@ -100,15 +101,6 @@ define(
                     properties.activeHeaderIcon = this.helper.getIconClass(properties.activeHeaderIcon);
                     u.extend(properties, options);
 
-                    if (typeof properties.activeIndex === 'string') {
-                        properties.activeIndex = +properties.activeIndex;
-                    }
-
-                    // -1标记为所有元素折叠
-                    if (properties.activeIndex < 0 || properties.activeIndex === null) {
-                        properties.activeIndex = -1;
-                    }
-
                     this.setProperties(properties);
                 },
 
@@ -119,8 +111,9 @@ define(
                  * @protected
                  * @override
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     Control.prototype.repaint,
+                    painters.style('width'),
                     {
                         // 激活的panel下标
                         name: 'activeIndex',
@@ -145,8 +138,9 @@ define(
                  * @override
                  */
                 initEvents: function () {
+                    var header = '.' + this.helper.getPartClassName('header');
                     var type = this.hoverable ? 'mouseover' : 'click';
-                    this.helper.addDOMEvent(this.main, type, clickAccordion);
+                    this.helper.addDOMEvent(this.main, type, header, clickAccordion);
                 },
 
                 /**
@@ -155,12 +149,11 @@ define(
                  * @return {meta.panel}
                  */
                 getActivePanel: function () {
-                    var elements = lib.getChildren(this.main);
+                    var elements = $(this.main).children().toArray();
                     return elements[this.get('activeIndex')];
                 }
             }
         );
-
 
         /**
          * 渲染手风琴元素
@@ -169,53 +162,42 @@ define(
          * @ignore
          */
         function renderAccordionEl(accordion) {
-            var elements = lib.getChildren(accordion.main);
-            var len = elements.length;
+            var $elements = $(accordion.main).children();
             var controlHelper = accordion.helper;
+            var activePanelClass = controlHelper.getPartClassName('panel-active');
+            var panelClass = controlHelper.getPartClassName('panel');
+            var panelHeaderClass = controlHelper.getPartClassName('header');
+            var panelContentClass = controlHelper.getPartClassName('content');
+            var panelHeaderIconClass = controlHelper.getPartClassName('header-icon');
 
-            for (var i = 0; i < len; i++) {
-                var panel = elements[i];
-                controlHelper.addPartClasses('panel', panel);
+            $elements.each(function (idx, panel) {
+                var $panel = $(panel);
+                $panel.addClass(panelClass);
 
-                var isActive = accordion.activeIndex === i;
-                if (isActive) {
-                    controlHelper.addPartClasses('panel-active', panel);
+                if (accordion.activeIndex === idx) {
+                    $panel.addClass(activePanelClass);
                 }
 
-                renderPanelEl(accordion, panel);
-            }
-        }
-
-        /**
-         * 渲染panel元素
-         *
-         * @param {accordion} accordion 控件实例
-         * @param {meta.panel} panel panel的配置数据项
-         */
-        function renderPanelEl(accordion, panel) {
-
-            var controlHelper = accordion.helper;
-            // 获取头部元素，增加样式属性
-            var header = lib.dom.first(panel);
-            if (header) {
-                controlHelper.addPartClasses('header', header);
+                var $header = $panel.children().eq(0);
+                if ($header.size() > 0) {
+                    $header.addClass(panelHeaderClass);
+                    var $icon = $('<span></span>');
+                    $icon.addClass(panelHeaderIconClass);
+                    $icon.addClass(accordion.headerIcon);
+                    $header.append($icon);
+                }
                 // 获取内容元素，增加样式属性
-                var content = lib.dom.next(header);
-                if (content) {
-                    controlHelper.addPartClasses('content', content);
+                var $content = $panel.children().eq(1);
+                if ($content.size() > 0) {
+                    $content.addClass(panelContentClass);
 
                     // 内容元素是否固定高度
                     if (accordion.fixHeight) {
-                        content.style.cssText = ''
-                            + 'height: ' + parseInt(accordion.fixHeight, 10) + 'px;'
-                            + 'overflow: auto';
+                        $content.css('height', accordion.fixHeight);
+                        $content.css('overflow', 'auto');
                     }
                 }
-                var icon = document.createElement('span');
-                lib.addClass(icon, controlHelper.getPartClassName('header-icon'));
-                lib.addClass(icon, accordion.headerIcon);
-                header.appendChild(icon);
-            }
+            });
         }
 
         /*
@@ -226,43 +208,33 @@ define(
          * @ignore
          */
         function clickAccordion(e) {
-            var target = e.target;
-            while (target && !this.helper.isPart(target, 'header')) {
-                target = target.parentNode;
-            }
-            if (this.helper.isPart(target, 'header')) {
-                var panel = target.parentNode;
+            var $target = $(e.currentTarget);
+            var $panel = $target.parent();
+            var $accordion = $panel.parent();
+            var me = this;
+            var activePanelClass = me.helper.getPartClassName('panel-active');
+            var activeIndex = $accordion.children().index($panel);
 
-                var accordion = panel.parentNode;
-                var activeIndex = 0;
-                for (var i = 0; i < accordion.children.length; i++) {
-                    if (accordion.children[i] === panel) {
-                        activeIndex = i;
-                        break;
-                    }
+            // 非互斥折叠
+            if (me.collapsible) {
+                // 该元素内容已展开，折叠收缩
+                if ($panel.hasClass(activePanelClass)) {
+                    collapseAccordion.call(me);
+                    me.activeIndex = -1;
                 }
-
-                // 非互斥折叠
-                if (this.collapsible) {
-                    // 该元素内容已展开，折叠收缩
-                    if (this.helper.isPart(panel, 'panel-active')) {
-                        collapseAccordion.call(this);
-                        this.activeIndex = -1;
-                    }
-                    else {
-                        // 只激活当前元素
-                        this.set('activeIndex', activeIndex);
-                    }
-                }
-                // 互斥折叠
                 else {
-                    // 该元素内容已展开，什么都不做
-                    if (this.helper.isPart(panel, 'panel-active')) {
-                        return;
-                    }
                     // 只激活当前元素
-                    this.set('activeIndex', activeIndex);
+                    me.set('activeIndex', activeIndex);
                 }
+            }
+            // 互斥折叠
+            else {
+                // 该元素内容已展开，什么都不做
+                if ($panel.hasClass(activePanelClass)) {
+                    return;
+                }
+                // 只激活当前元素
+                this.set('activeIndex', activeIndex);
             }
         }
 
@@ -274,43 +246,48 @@ define(
          * @ignore
          */
         function activateAccordion(accordion, index) {
-            var elements = lib.getChildren(accordion.main);
-            var len = elements.length;
-            var controlHelper = accordion.helper;
+            var $elements = $(accordion.main).children();
             var activeIconClass = accordion.activeHeaderIcon;
             var iconClass = accordion.headerIcon;
+            var controlHelper = accordion.helper;
+            var activePanelClass = controlHelper.getPartClassName('panel-active');
+            var panelHeaderClass = controlHelper.getPartClassName('header');
+            var panelHeaderIconClass = controlHelper.getPartClassName('header-icon');
 
-            for (var i = 0; i < len; i++) {
-                var panel = elements[i];
-                var header = lib.getChildren(panel)[0];
-                var icon = lib.dom.last(header);
-                var isCurrent = i === index;
-                var methodName = isCurrent ? 'addPartClasses' : 'removePartClasses';
-                controlHelper[methodName]('panel-active', panel);
-                lib.removeClass(icon, activeIconClass);
-                lib.removeClass(icon, iconClass);
-                if (isCurrent) {
-                    lib.addClass(icon, activeIconClass);
+            $elements.each(function (idx, ele) {
+                var $panel = $(ele);
+                var $header = $panel.children('.' + panelHeaderClass);
+                var $icon = $header.children('.' + panelHeaderIconClass);
+                $panel.removeClass(activePanelClass);
+                $icon.removeClass(activeIconClass);
+                $icon.removeClass(iconClass);
+                if (idx === index) {
+                    $panel.addClass(activePanelClass);
+                    $icon.addClass(activeIconClass);
                 }
                 else {
-                    lib.addClass(icon, iconClass);
+                    $icon.addClass(iconClass);
                 }
-            }
+            });
         }
 
         /**
          * 折叠处于激活状态的panel
          */
         function collapseAccordion() {
-            var elements = lib.getChildren(this.main);
+            var $elements = $(this.main).children();
+            var $panel = $elements.get(this.activeIndex);
             var controlHelper = this.helper;
-            var panel = elements[this.activeIndex];
-            var content = lib.getChildren(panel)[1];
+            var panelHeaderIconClass = controlHelper.getPartClassName('content');
+            var panelHiddenClass = controlHelper.getPartClassName('content-hidden');
+            var activePanelClass = controlHelper.getPartClassName('panel-active');
+            var $content = $panel.children('.' + panelHeaderIconClass);
 
-            if (content) {
-                controlHelper.addPartClasses('content-hidden', content);
+            if ($content.size() > 0) {
+                $content.addClass(panelHiddenClass);
             }
-            controlHelper.removePartClasses('panel-active', panel);
+
+            $panel.removeClass(activePanelClass);
         }
 
         esui.register(Accordion);
