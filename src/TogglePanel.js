@@ -47,7 +47,7 @@ define(
                         position: 'layer'
                     };
 
-                    var properties = lib.extend(defaults, options);
+                    var properties = u.extend(defaults, options);
 
                     this.setProperties(properties);
                 },

@@ -68,7 +68,7 @@ define(
 
             var properties = {};
 
-            lib.extend(properties, defaults, options);
+            u.extend(properties, defaults, options);
 
             // 字符串转数字
             properties.start = +properties.start;

@@ -67,7 +67,7 @@ define(
                         treeVariants: 'icon angle hoverable'
                     };
 
-                    lib.extend(properties, options);
+                    u.extend(properties, options);
 
                     u.parseBoolean(properties);
 

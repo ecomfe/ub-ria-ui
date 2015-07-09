@@ -35,7 +35,7 @@ define(
                         // 也就是允许某些符合条件的节点展开，某些不展开
                         orientExpand: false
                     };
-                    lib.extend(this, defaults, options);
+                    u.extend(this, defaults, options);
                 },
 
                 /**

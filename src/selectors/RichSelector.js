@@ -93,7 +93,7 @@ define(
                         allowUnselectNode: false
                     };
 
-                    lib.extend(properties, options);
+                    u.extend(properties, options);
 
                     u.parseBoolean(properties);
 

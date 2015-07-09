@@ -51,7 +51,7 @@ define(
 
                 initOptions: function (options) {
                     var properties = { };
-                    lib.extend(properties, this.$self.defaultProperties, options);
+                    u.extend(properties, this.$self.defaultProperties, options);
 
                     var format = properties.format;
                     var max = properties.max;

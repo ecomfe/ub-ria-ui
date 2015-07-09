@@ -82,7 +82,7 @@ define(
                     // 保存一份autoSlide，方便mouseout后恢复计时器使用
                     properties.oriAutoSlide = options.autoSlide;
 
-                    lib.extend(properties, options);
+                    u.extend(properties, options);
                     this.setProperties(properties);
                 },
 

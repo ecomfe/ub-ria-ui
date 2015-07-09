@@ -47,7 +47,7 @@ define(
                 alpha: 100,
                 displayAlpha: 100
             };
-            lib.extend(properties, options);
+            u.extend(properties, options);
             if (properties.noAlpha === 'false') {
                 properties.noAlpha = false;
             }
