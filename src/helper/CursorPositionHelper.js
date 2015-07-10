@@ -8,6 +8,8 @@ define(function (require) {
     var u = require('underscore');
     var eoo = require('eoo');
 
+    var sentinelChar = '吶';
+
     var DIV_PROPERTIES = {
         left: -9999,
         position: 'absolute',
@@ -23,72 +25,81 @@ define(function (require) {
         'margin-bottom', 'margin-left', 'border-style', 'box-sizing', 'tab-size'
     ];
 
-    function getStyles() {
+    function getStyles(element) {
         var styles = {};
-        var self = this;
-        $.each(COPY_PROPERTIES, function (i, property) {
-            styles[property] = self.$el.css(property);
-        });
+        $.each(
+            COPY_PROPERTIES,
+            function (index, property) {
+                styles[property] = $(element).css(property);
+            }
+        );
         return styles;
     }
 
     function copyCss() {
-        // Set 'scroll' if a scrollbar is being shown; otherwise 'auto'.
-        var overflow = this.el.scrollHeight > this.el.offsetHeight ? 'scroll' : 'auto';
+        var element = this.element;
+        var overflow = element.scrollHeight > element.offsetHeight ? 'scroll' : 'auto';
         return u.extend(
             {
                 overflow: overflow
             },
             DIV_PROPERTIES,
-            getStyles.call(this)
+            getStyles(this.element)
         );
     }
 
     function getTextFromHeadToCaret() {
-        return this.el.value.substring(0, this.el.selectionEnd);
+        return this.element.value.substring(0, this.element.selectionEnd);
     }
 
     function getTextFromHeadToCaretIE() {
-        this.el.focus();
+        this.element.focus();
         var range = document.selection.createRange();
-        range.moveStart('character', -this.el.value.length);
+        range.moveStart('character', -this.element.value.length);
         var arr = range.text.split(sentinelChar)
         return arr.length === 1 ? arr[0] : arr[1];
-    }
-
-    function getCaretRelativePosition() {
-        var notIE = typeof this.el.selectionEnd === 'number';
-        var getHeadText =
-            notIE ? getTextFromHeadToCaret : getTextFromHeadToCaretIE;
-
-        var $dummyDiv = $('<div></div>')
-                .css(copyCss.call(this))
-                .text(getHeadText.call(this));
-        var $span = $('<span></span>').text('.').appendTo($dummyDiv);
-        this.$el.before($dummyDiv);
-        var position = $span.position();
-        position.top += $span.height() - this.$el.scrollTop();
-        position.lineHeight = $span.height();
-        $dummyDiv.remove();
-        return position;
     }
 
     var TextAreaPositionHelper = eoo.create(
         {
             constructor: function (ele) {
-                this.$el = $(ele);
-                this.el = this.$el[0];
+                this.$element = $(ele);
+                this.element = this.$element[0];
             },
 
             getCaretPosition: function () {
-                var position = getCaretRelativePosition.call(this);
-                var offset = this.$el.offset();
-                position.top += offset.top;
-                position.left += offset.left;
+                var notIE = typeof this.element.selectionEnd === 'number';
+                var getHeadText =
+                    notIE ? getTextFromHeadToCaret : getTextFromHeadToCaretIE;
+
+                // 通过创建一个隐藏容器，将input value复制到div中，
+                // 以此推算光标位置
+                var $dummyDiv = $('<div></div>')
+                    .css(copyCss.call(this))
+                    .text(getHeadText.call(this));
+                var $span = $('<span></span>').text('.').appendTo($dummyDiv);
+                this.$element.before($dummyDiv);
+                var position = $span.position();
+                position.top += $span.height() - this.$element.scrollTop();
+                position.lineHeight = $span.height();
+                $dummyDiv.remove();
                 return position;
             }
         }
     );
 
+    /**
+     * 获取一个和element相关的实例
+     * @param {Element} element 要计算的元素
+     */
+    TextAreaPositionHelper.getInstance = function (element) {
+        var data = $(element).data();
+        var instance = data['corsorPositionHelper'];
+        if (!instance) {
+            instance = new TextAreaPositionHelper(element);
+            data['corsorPositionHelper'] = instance;
+        }
+        return instance;
+    };
     return TextAreaPositionHelper;
 });

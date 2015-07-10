@@ -90,7 +90,6 @@ define(
                     var me = this;
                     // 画布点击
                     var canvas = this.helper.getPart('canvas');
-                    // this.helper.addDOMEvent(canvas, 'click', synValueByCanvas);
                     $(canvas).mouse(
                         {
                             start: function (event) {

@@ -18,6 +18,7 @@ define(
         var eoo = require('eoo');
         var CursorPositionHelper = require('./helper/CursorPositionHelper');
         var keyboard = require('esui/behavior/keyboard');
+        require('esui/behavior/position');
 
         var TEXT_LINE = 'TextLine';
         var TEXT_BOX = 'TextBox';
@@ -67,18 +68,15 @@ define(
                     this.inputElement = helper.getPart(target.type === TEXT_LINE ? TEXT : INPUT);
                     inputElement = this.inputElement;
 
-                    helper.addDOMEvent(layerElement, 'click', function (e) {
-                        var clickedTarget = e.target;
-                        if (clickedTarget.nodeName === 'I') {
-                            clickedTarget = clickedTarget.parentNode;
-                        }
-                        clickedTarget = clickedTarget.parentNode.firstChild;
+                    helper.addDOMEvent(layerElement, 'click', 'li', function (e) {
+                        var clickedTarget = e.currentTarget;
                         me.hide();
-                        var text = lib.getText(clickedTarget);
-                        if (target.select && target.select(text, target) === false) {
+                        var text = $(clickedTarget.firstChild).text();
+                        var event = me.control.fire('select', text);
+                        if (event.isDefaultPrevented()) {
                             return;
                         }
-                        setTargetValue.call(me, text);
+                        me.control.setValue(text);
                     });
 
                     helper.addDOMEvent(inputElement, 'keydown', function (e) {
@@ -109,20 +107,17 @@ define(
                                     return;
                                 }
                                 me.hide();
-                                var text = lib.getText(selectedItem.firstChild);
-                                if (target.select
-                                    && target.select(text, target) === false) {
+                                var text = $(selectedItem.firstChild).text();
+                                var event = me.control.fire('select', text);
+                                if (event.isDefaultPrevented()) {
                                     return;
                                 }
-                                setTargetValue.call(me, text);
+                                me.control.setValue(text);
                                 break;
                         }
                     });
 
-                    var inputEventName = ('oninput' in inputElement)
-                        ? 'input'
-                        : 'propertychange';
-                    helper.addDOMEvent(inputElement, inputEventName, function (e) {
+                    helper.addDOMEvent(inputElement, 'keyup', function (e) {
                         var elementValue = inputElement.value;
 
                         // 空格或逗号结尾都忽略
@@ -187,14 +182,27 @@ define(
                     return selectedItem;
                 },
 
+                position: function () {
+                    var input = this.inputElement;
+                    if (input.nodeName.toLowerCase() !== 'textarea') {
+                        this.$super(arguments);
+                    }
+                },
+
                 show: function () {
                     this.$super(arguments);
                     var input = this.inputElement;
                     var $ele = $(this.getElement(false));
                     if (input.nodeName.toLowerCase() === 'textarea') {
-                        var pos = (new CursorPositionHelper(input)).getCaretPosition();
-                        $ele.css('left', pos.left);
-                        $ele.css('top', pos.top);
+                        var cursorInstance = CursorPositionHelper.getInstance(input);
+                        var pos = cursorInstance.getCaretPosition();
+                        $ele.position(
+                            {
+                                of: input,
+                                at: 'left+' + pos.left + ' top+' + pos.top,
+                                my: 'left top'
+                            }
+                        );
                     }
                 },
 
@@ -310,33 +318,6 @@ define(
             ret ? this.show() : this.hide();
         }
 
-
-        /**
-         * 将用户选中值回填到input输入框
-         * @param {string} value 用户选择值
-         */
-        function setTargetValue(value) {
-            var controlType = this.control.type === TEXT_LINE ? TEXT : INPUT;
-            // this.target.getValue() 做了去重的事，这里不需要去重后的结果
-            var targetValue = this.control.helper.getPart(controlType).value;
-            targetValue = lib.trim(targetValue);
-            var arr = [];
-            if (/\n/.test(targetValue)) {
-                arr = targetValue.split(/\n/);
-                targetValue = arr && arr.pop();
-            }
-
-            var words = targetValue.split(',');
-            words.pop();
-            words.push(value);
-
-            if (arr) {
-                arr.push(words.join(','));
-                value = arr.join('\n');
-            }
-            this.control.setValue(value);
-            this.hide();
-        }
 
         function extractMatchingWord(value) {
             var lines = value.split(/\n/);
