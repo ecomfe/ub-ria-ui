@@ -2796,6 +2796,17 @@ hr {
 .ui-calendar-layer .ui-monthview {
   vertical-align: top;
 }
+.ui-layer {
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin: 0;
+}
+.ui-layer-hidden {
+  display: none;
+}
 /**
  * ESUI (Enterprise Simple UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
@@ -3080,17 +3091,6 @@ hr {
  */
 .ui-commandmenu-layer {
   position: absolute;
-}
-.ui-layer {
-  position: absolute;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  margin: 0;
-}
-.ui-layer-hidden {
-  display: none;
 }
 /**
   * ESUI (Enterprise Simple UI)
@@ -6426,6 +6426,9 @@ i.ui-autocomplete-item-char-selected {
 .ui-carousel-pointer-active-l {
   left: 0;
 }
+.ui-carousel-pointer-active-l:before {
+  content: "\f053";
+}
 .ui-carousel-pointer-disable {
   opacity: 0.4;
   filter: alpha(opacity=40);
@@ -6433,6 +6436,9 @@ i.ui-autocomplete-item-char-selected {
 }
 .ui-carousel-pointer-active-r {
   right: 0;
+}
+.ui-carousel-pointer-active-r:before {
+  content: "\f054";
 }
 .ui-carouse-list-wrap {
   position: relative;
@@ -6473,6 +6479,9 @@ i.ui-autocomplete-item-char-selected {
   bottom: 0;
   background: #70ccc0;
   color: #ffffff;
+}
+.ui-carousel-item .ui-carousel-check:before {
+  content: "\f00c";
 }
 .ui-carousel-selected-item .ui-carousel-check {
   display: inline-block;

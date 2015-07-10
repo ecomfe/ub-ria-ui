@@ -60,7 +60,6 @@ define(function (require) {
              * @param {number} option.itemHeight 每项的高度
              * @param {Array} option.datasource 所有项的数据数组
              * @param {number} option.value 选中的项的id值
-             * @param {number} option.selectedIndex 选中的项的序号
              * @param {boolean} option.disabled 是否禁用
              * @param {boolean} option.emphasizeSelectedItem 是否高亮被选择的
              * @protected
@@ -74,38 +73,11 @@ define(function (require) {
                     itemHeight: 50,
                     datasource: [],
                     value: null,
-                    selectedIndex: -1,
                     disabled: false,
                     emphasizeSelectedItem: true
                 };
                 u.extend(properties, options);
-                if (properties.value) {
-                    properties.value = parseInt(properties.value, 10);
-                    u.each(properties.datasource, function (item, index) {
-                        if (item.id === properties.value) {
-                            properties.selectedIndex = index;
-                        }
-                    });
-                    properties.selectedItem = properties.datasource[properties.selectedIndex];
-                }
-                properties.itemWidth = parseFloat(properties.itemWidth, 10);
-                properties.itemHeight = parseFloat(properties.itemHeight, 10);
-                properties.pageSize = parseFloat(properties.pageSize, 10);
                 this.setProperties(properties);
-            },
-
-            /**
-             * 创建控件主元素，默认使用`div`元素
-             *
-             * 如果需要使用其它类型作为主元素，
-             * 需要在始终化时提供{@link Control#main}属性
-             *
-             * @return {HTMLElement}
-             * @protected
-             * @override
-             */
-            createMain: function () {
-                return document.createElement('div');
             },
 
             /**
@@ -128,9 +100,9 @@ define(function (require) {
                 this.helper.addDOMEvent('left-handler', 'click', u.bind(pointerClick, this, -1));
                 this.helper.addDOMEvent('right-handler', 'click', u.bind(pointerClick, this, 1));
                 // 列表项切换
-                this.helper.addDOMEvent('list', 'click', itemChangeHandler);
+                this.helper.addDOMEvent('list', 'click', 'li', itemChangeHandler);
                 // 最下面翻页
-                this.helper.addDOMEvent('toolbar', 'click', toolbarHandler);
+                this.helper.addDOMEvent('toolbar', 'click', 'li', toolbarHandler);
             },
 
             /**
@@ -181,30 +153,27 @@ define(function (require) {
              * @public
              */
             setValue: function (value) {
-                if (!value && value !== 0) {
+                if (u.isNull(value) || u.isUndefined(value)) {
                     this.setPage();
                     return;
                 }
-                this.value = parseInt(value, 10);
+                this.value = value;
                 this.selectedIndex = -1;
                 u.each(this.datasource, function (item, index) {
                     if (item.id === this.value) {
                         this.selectedIndex = index;
+                        return false;
                     }
                 }, this);
                 this.selectedItem = this.getSelectedItem();
 
-                if (this.selectedIndex !== -1) {
-                    if (this.emphasizeSelectedItem) {
-                        var selector = this.helper.getPart('list');
-                        var lis = selector.getElementsByTagName('li');
-                        var selectedClass = this.helper.getPrimaryClassName('selected-item');
-                        u.each(lis, function (dom, i) {
-                            lib.removeClass(dom, selectedClass);
-                        });
-                        var li = lis[this.selectedIndex];
-                        lib.addClass(li, selectedClass);
-                    }
+                if (this.selectedIndex !== -1 && this.emphasizeSelectedItem) {
+                    var selector = this.helper.getPart('list');
+                    var $lis = $(selector).children('li');
+                    var selectedClass = this.helper.getPrimaryClassName('selected-item');
+                    $lis.find('.' + selectedClass).removeClass(selectedClass);
+                    var $li = $lis.eq(this.selectedIndex);
+                    $li.addClass(selectedClass);
                 }
                 var page = getPageByIndex.call(this);
                 this.setPage(page);
@@ -225,12 +194,13 @@ define(function (require) {
                 if (this.currentPage !== page) {
                     this.currentPage = page;
                 }
-                var allDom = lib.getChildren(this.helper.getPart('toolbar'));
-                u.each(allDom, function (dom, i) {
-                    lib.removeClass(dom, currentPageClass);
-                    var index = parseInt(dom.getAttribute('index'), 10);
+                var $allDom = $(this.helper.getPart('toolbar')).children();
+                u.each($allDom, function (dom, i) {
+                    var $dom = $(dom);
+                    $dom.removeClass(currentPageClass);
+                    var index = +$dom.attr('index');
                     if (this.currentPage === index) {
-                        lib.addClass(dom, currentPageClass);
+                        $dom.addClass(currentPageClass);
                     }
                 }, this);
                 setPointerStyle.call(this);
@@ -254,17 +224,18 @@ define(function (require) {
      * @inner
      */
     function getMainHtml() {
+        var controlHelper = this.helper;
         return lib.format(
             MAIN_TPL,
             {
-                typeSelector: this.helper.getPrimaryClassName(),
-                contentId: this.helper.getId('main'),
-                leftId: this.helper.getId('left-handler'),
-                listId: this.helper.getId('list'),
-                rightId: this.helper.getId('right-handler'),
-                toolbarId: this.helper.getId('toolbar'),
-                iconLeftArrow: this.helper.getIconClass('chevron-left'),
-                iconRightArrow: this.helper.getIconClass('chevron-right')
+                typeSelector: controlHelper.getPrimaryClassName(),
+                contentId: controlHelper.getId('main'),
+                leftId: controlHelper.getId('left-handler'),
+                listId: controlHelper.getId('list'),
+                rightId: controlHelper.getId('right-handler'),
+                toolbarId: controlHelper.getId('toolbar'),
+                iconLeftArrow: controlHelper.getIconClass(),
+                iconRightArrow: controlHelper.getIconClass()
             }
         );
     }
@@ -297,7 +268,7 @@ define(function (require) {
                         index: index,
                         typeSelector: this.helper.getPrimaryClassName(),
                         itemSelector: this.isDisabled() ? this.helper.getPartClassName('disabled') : '',
-                        iconCheck: this.helper.getIconClass('check'),
+                        iconCheck: this.helper.getIconClass(),
                         spacing: (index1 > 0 && index1 % pageSize === 0) ? 0 : spacing
                     }
                 );
@@ -348,24 +319,19 @@ define(function (require) {
      * @inner
      */
     function setPointerStyle() {
-        var disableClass = this.helper.getPartClasses('pointer-disable')[0];
-        if (this.pageLength === 1) {
-            lib.addClass(this.helper.getId('left-handler'), disableClass);
-            lib.addClass(this.helper.getId('right-handler'), disableClass);
+        var controlHelper = this.helper;
+        var disableClass = controlHelper.getPartClassName('pointer-disable');
+        var $left = $(controlHelper.getPart('left-handler'));
+        var $right = $(controlHelper.getPart('right-handler'));
+        var currentPage = this.currentPage;
+
+        $left.removeClass(disableClass);
+        $right.removeClass(disableClass);
+        if (currentPage === 0) {
+            $left.addClass(disableClass);
         }
-        else {
-            if (this.currentPage === 0) {
-                lib.addClass(this.helper.getId('left-handler'), disableClass);
-                lib.removeClass(this.helper.getId('right-handler'), disableClass);
-            }
-            else if (this.currentPage === this.pageLength - 1) {
-                lib.removeClass(this.helper.getId('left-handler'), disableClass);
-                lib.addClass(this.helper.getId('right-handler'), disableClass);
-            }
-            else {
-                lib.removeClass(this.helper.getId('left-handler'), disableClass);
-                lib.removeClass(this.helper.getId('right-handler'), disableClass);
-            }
+        if (currentPage === this.pageLength - 1) {
+            $right.addClass(disableClass);
         }
     }
 
@@ -396,22 +362,18 @@ define(function (require) {
     /**
      * 单个选项处理handler
      * @param {number} index 选项的序号
-     * @param {HTMLElement} el dom对象
+     * @param {HTMLElement} $el dom对象
      * @inner
      */
-    function itemClick(index, el) {
-        if (this.isDisabled() || this.selectedIndex === index) {
+    function itemClick(index, $el) {
+        if (this.selectedIndex === index) {
             return;
         }
         if (this.emphasizeSelectedItem) {
+            var $selector = $(this.helper.getPart('list'));
             var selectedClass = this.helper.getPrimaryClassName('selected-item');
-            if (this.selectedIndex !== -1) {
-                var selector = this.helper.getPart('list');
-                var lis = selector.getElementsByTagName('li');
-                var li = lis[this.selectedIndex];
-                lib.removeClass(li, selectedClass);
-            }
-            lib.addClass(el, selectedClass);
+            $selector.children('.' + selectedClass).removeClass(selectedClass);
+            $el.addClass(selectedClass);
         }
         this.selectedIndex = index;
         this.selectedItem = this.getSelectedItem();
@@ -443,13 +405,9 @@ define(function (require) {
      * @inner
      */
     function itemChangeHandler(e) {
-        e = e || window.event;
-        var target = e.target || e.srcElement;
-        if (target.nodeName === 'IMG') {
-            var el = target.parentNode;
-            var index = parseInt(el.getAttribute('index'), 10);
-            itemClick.call(this, index, el);
-        }
+        var $target = $(e.currentTarget);
+
+        itemClick.call(this, +$target.attr('index'), $target);
     }
 
     /**
@@ -458,12 +416,9 @@ define(function (require) {
      * @inner
      */
     function toolbarHandler(e) {
-        e = e || window.event;
-        var target = e.target || e.srcElement;
-        if (target.nodeName === 'LI') {
-            var index = parseInt(target.getAttribute('index'), 10);
-            pageClick.call(this, index);
-        }
+        var $target = $(e.currentTarget);
+
+        pageClick.call(this, +$target.attr('index'));
     }
 
     esui.register(Carousel);

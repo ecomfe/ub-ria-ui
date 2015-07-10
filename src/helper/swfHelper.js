@@ -1,327 +1,241 @@
 define(function (require) {
-    var u = require('underscore');
+// jQuery SWFObject v1.1.1 MIT/GPL @jon_neal
+// http://jquery.thewikies.com/swfobject
 
-    var browser = (function () {
-        var ua = navigator.userAgent;
-        
-        var result = {
-            isStrict : document.compatMode == "CSS1Compat",
-            isGecko : /gecko/i.test(ua) && !/like gecko/i.test(ua),
-            isWebkit: /webkit/i.test(ua)
-        };
+    var jQuery = require('jquery');
 
-        try{/(\d+\.\d+)/.test(external.max_version) && (result.maxthon = + RegExp['\x241'])} catch (e){};
+    (function($, flash, Plugin) {
+        var OBJECT = 'object',
+            ENCODE = true;
 
-        // 蛋疼 你懂的
-        switch (true) {
-            case /msie (\d+\.\d+)/i.test(ua) :
-                result.ie = document.documentMode || + RegExp['\x241'];
-                break;
-            case /chrome\/(\d+\.\d+)/i.test(ua) :
-                result.chrome = + RegExp['\x241'];
-                break;
-            case /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i.test(ua) && !/chrome/i.test(ua) :
-                result.safari = + (RegExp['\x241'] || RegExp['\x242']);
-                break;
-            case /firefox\/(\d+\.\d+)/i.test(ua) : 
-                result.firefox = + RegExp['\x241'];
-                break;
-            
-            case /opera(?:\/| )(\d+(?:\.\d+)?)(.+?(version\/(\d+(?:\.\d+)?)))?/i.test(ua) :
-                result.opera = + ( RegExp["\x244"] || RegExp["\x241"] );
-                break;
+        function _compareArrayIntegers(a, b) {
+            var x = (a[0] || 0) - (b[0] || 0);
+
+            return x > 0 || (
+                !x &&
+                a.length > 0 &&
+                _compareArrayIntegers(a.slice(1), b.slice(1))
+            );
         }
 
-        return result;
-    })();
-
-    var swf = {};
-
-    swf.version = (function () {
-        var n = navigator;
-        if (n.plugins && n.mimeTypes.length) {
-            var plugin = n.plugins["Shockwave Flash"];
-            if (plugin && plugin.description) {
-                return plugin.description
-                        .replace(/([a-zA-Z]|\s)+/, "")
-                        .replace(/(\s)+r/, ".") + ".0";
+        function _objectToArguments(obj) {
+            if (typeof obj != OBJECT) {
+                return obj;
             }
-        } else if (window.ActiveXObject && !window.opera) {
-            for (var i = 12; i >= 2; i--) {
-                try {
-                    var c = new ActiveXObject('ShockwaveFlash.ShockwaveFlash.' + i);
-                    if (c) {
-                        var version = c.GetVariable("$version");
-                        return version.replace(/WIN/g,'').replace(/,/g,'.');
-                    }
-                } catch(e) {}
-            }
-        }
-    })();
 
-    swf.createHTML = function (options) {
-        options = options || {};
-        var version = swf.version, 
-            needVersion = options['ver'] || '6.0.0', 
-            vUnit1, vUnit2, i, k, len, item, tmpOpt = {};
-        
-        // 复制options，避免修改原对象
-        for (k in options) {
-            tmpOpt[k] = options[k];
+            var arr = [],
+                str = '';
+
+            for (var i in obj) {
+                if (typeof obj[i] == OBJECT) {
+                    str = _objectToArguments(obj[i]);
+                }
+                else {
+                    str = [i, (ENCODE) ? encodeURI(obj[i]) : obj[i]].join('=');
+                }
+
+                arr.push(str);
+            }
+
+            return arr.join('&');
         }
-        options = tmpOpt;
-        
-        // 浏览器支持的flash插件版本判断
-        if (version) {
-            version = version.split('.');
-            needVersion = needVersion.split('.');
-            for (i = 0; i < 3; i++) {
-                vUnit1 = parseInt(version[i], 10);
-                vUnit2 = parseInt(needVersion[i], 10);
-                if (vUnit2 < vUnit1) {
-                    break;
-                } else if (vUnit2 > vUnit1) {
-                    return ''; // 需要更高的版本号
+
+        function _objectFromObject(obj) {
+            var arr = [];
+
+            for (var i in obj) {
+                if (obj[i]) {
+                    arr.push([i, '="', obj[i], '"'].join(''));
                 }
             }
-        } else {
-            return ''; // 未安装flash插件
+
+            return arr.join(' ');
         }
-        
-        var vars = options['vars'],
-            objProperties = ['classid', 'codebase', 'id', 'width', 'height', 'align'];
-        
-        // 初始化object标签需要的classid、codebase属性值
-        options['align'] = options['align'] || 'middle';
-        options['classid'] = 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000';
-        options['codebase'] = 'http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0';
-        options['movie'] = options['url'] || '';
-        delete options['vars'];
-        delete options['url'];
-        
-        // 初始化flashvars参数的值
-        if ('string' == typeof vars) {
-            options['flashvars'] = vars;
-        } else {
-            var fvars = [];
-            for (k in vars) {
-                item = vars[k];
-                fvars.push(k + "=" + encodeURIComponent(item));
+
+        function _paramsFromObject(obj) {
+            var arr = [];
+
+            for (var i in obj) {
+                arr.push([
+                    '<param name="', i,
+                    '" value="', _objectToArguments(obj[i]), '" />'
+                ].join(''));
             }
-            options['flashvars'] = fvars.join('&');
-        }
-        
-        // 构建IE下支持的object字符串，包括属性和参数列表
-        var str = ['<object '];
-        for (i = 0, len = objProperties.length; i < len; i++) {
-            item = objProperties[i];
-            str.push(' ', item, '="', encodeHTML(options[item]), '"');
-        }
-        str.push('>');
-        var params = {
-            'wmode'             : 1,
-            'scale'             : 1,
-            'quality'           : 1,
-            'play'              : 1,
-            'loop'              : 1,
-            'menu'              : 1,
-            'salign'            : 1,
-            'bgcolor'           : 1,
-            'base'              : 1,
-            'allowscriptaccess' : 1,
-            'allownetworking'   : 1,
-            'allowfullscreen'   : 1,
-            'seamlesstabbing'   : 1,
-            'devicefont'        : 1,
-            'swliveconnect'     : 1,
-            'flashvars'         : 1,
-            'movie'             : 1
-        };
-        
-        for (k in options) {
-            item = options[k];
-            k = k.toLowerCase();
-            if (params[k] && (item || item === false || item === 0)) {
-                str.push('<param name="' + k + '" value="' + encodeHTML(item) + '" />');
-            }
-        }
-        
-        // 使用embed时，flash地址的属性名是src，并且要指定embed的type和pluginspage属性
-        options['src']  = options['movie'];
-        options['name'] = options['id'];
-        delete options['id'];
-        delete options['movie'];
-        delete options['classid'];
-        delete options['codebase'];
-        options['type'] = 'application/x-shockwave-flash';
-        options['pluginspage'] = 'http://www.macromedia.com/go/getflashplayer';
-        
-        
-        // 构建embed标签的字符串
-        str.push('<embed');
-        // 在firefox、opera、safari下，salign属性必须在scale属性之后，否则会失效
-        // 经过讨论，决定采用BT方法，把scale属性的值先保存下来，最后输出
-        var salign;
-        for (k in options) {
-            item = options[k];
-            if (item || item === false || item === 0) {
-                if ((new RegExp("^salign\x24", "i")).test(k)) {
-                    salign = item;
-                    continue;
-                }
-                
-                str.push(' ', k, '="', encodeHTML(item), '"');
-            }
-        }
-        
-        if (salign) {
-            str.push(' salign="', encodeHTML(salign), '"');
-        }
-        str.push('></embed></object>');
-        
-        return str.join('');
-    };
 
-    swf.create = function (options, target) {
-        options = options || {};
-        var html = swf.createHTML(options) 
-                   || options['errorMessage'] 
-                   || '';
-                    
-        if (target && 'string' == typeof target) {
-            target = document.getElementById(target);
+            return arr.join('');
         }
-        insertHTML( target || document.body ,'beforeEnd',html );
-    };
 
-    swf.getMovie = function (name) {
-        //ie9下, Object标签和embed标签嵌套的方式生成flash时,
-        //会导致document[name]多返回一个Object元素,而起作用的只有embed标签
-        var movie = document[name], ret;
-        return browser.ie == 9 ?
-            movie && movie.length ? 
-                (ret = removeFromArray(toArray(movie),function(item){
-                    return item.tagName.toLowerCase() != "embed";
-                })).length == 1 ? ret[0] : ret
-                : movie
-            : movie || window[name];
-    };
-
-    swf.Proxy = function(id, property, loadedHandler) {
-        
-        var me = this,
-            flash = this._flash = swf.getMovie(id),
-            timer;
-        if (! property) {
-            return this;
-        }
-        timer = setInterval(function() {
-            try {
-                
-                if (flash[property]) {
-                    me._initialized = true;
-                    clearInterval(timer);
-                    if (loadedHandler) {
-                        loadedHandler();
-                    }
-                }
-            } catch (e) {
-            }
-        }, 100);
-    };
-
-    swf.Proxy.prototype.getFlash = function() {
-        return this._flash;
-    };
-
-    swf.Proxy.prototype.isReady = function() {
-        return !! this._initialized;
-    };
-
-    swf.Proxy.prototype.call = function(methodName, var_args) {
         try {
-            var flash = this.getFlash(),
-                args = Array.prototype.slice.call(arguments);
+            var flashVersion = Plugin.description || (function () {
+                return (
+                    new Plugin('ShockwaveFlash.ShockwaveFlash')
+                ).GetVariable('$version');
+            }())
+        }
+        catch (e) {
+            flashVersion = 'Unavailable';
+        }
 
-            args.shift();
-            if (flash[methodName]) {
-                flash[methodName].apply(flash, args);
+        var flashVersionMatchVersionNumbers = flashVersion.match(/\d+/g) || [0];
+
+        $[flash] = {
+            available: flashVersionMatchVersionNumbers[0] > 0,
+
+            activeX: Plugin && !Plugin.name,
+
+            version: {
+                original: flashVersion,
+                array: flashVersionMatchVersionNumbers,
+                string: flashVersionMatchVersionNumbers.join('.'),
+                major: parseInt(flashVersionMatchVersionNumbers[0], 10) || 0,
+                minor: parseInt(flashVersionMatchVersionNumbers[1], 10) || 0,
+                release: parseInt(flashVersionMatchVersionNumbers[2], 10) || 0
+            },
+
+            hasVersion: function (version) {
+                var versionArray = (/string|number/.test(typeof version))
+                    ? version.toString().split('.')
+                    : (/object/.test(typeof version))
+                        ? [version.major, version.minor]
+                        : version || [0, 0];
+
+                return _compareArrayIntegers(
+                    flashVersionMatchVersionNumbers,
+                    versionArray
+                );
+            },
+
+            encodeParams: true,
+
+            expressInstall: 'expressInstall.swf',
+            expressInstallIsActive: false,
+
+            create: function (obj) {
+                var instance = this;
+
+                if (
+                    !obj.swf ||
+                    instance.expressInstallIsActive ||
+                    (!instance.available && !obj.hasVersionFail)
+                ) {
+                    return false;
+                }
+
+                if (!instance.hasVersion(obj.hasVersion || 1)) {
+                    instance.expressInstallIsActive = true;
+
+                    if (typeof obj.hasVersionFail == 'function') {
+                        if (!obj.hasVersionFail.apply(obj)) {
+                            return false;
+                        }
+                    }
+
+                    obj = {
+                        swf: obj.expressInstall || instance.expressInstall,
+                        height: 137,
+                        width: 214,
+                        flashvars: {
+                            MMredirectURL: location.href,
+                            MMplayerType: (instance.activeX)
+                                ? 'ActiveX' : 'PlugIn',
+                            MMdoctitle: document.title.slice(0, 47) +
+                                ' - Flash Player Installation'
+                        }
+                    };
+                }
+
+                attrs = {
+                    data: obj.swf,
+                    type: 'application/x-shockwave-flash',
+                    id: obj.id || 'flash_' + Math.floor(Math.random() * 999999999),
+                    width: obj.width || 320,
+                    height: obj.height || 180,
+                    style: obj.style || ''
+                };
+
+                ENCODE = typeof obj.useEncode !== 'undefined' ? obj.useEncode : instance.encodeParams;
+
+                obj.movie = obj.swf;
+                obj.wmode = obj.wmode || 'opaque';
+
+                delete obj.fallback;
+                delete obj.hasVersion;
+                delete obj.hasVersionFail;
+                delete obj.height;
+                delete obj.id;
+                delete obj.swf;
+                delete obj.useEncode;
+                delete obj.width;
+
+                var flashContainer = document.createElement('div');
+
+                flashContainer.innerHTML = [
+                    '<object ', _objectFromObject(attrs), '>',
+                    _paramsFromObject(obj),
+                    '</object>'
+                ].join('');
+
+                return flashContainer.firstChild;
             }
-        } catch (e) {
-        }
-    };
+        };
 
-    function encodeHTML (source) {
-        if (typeof source === 'number') {
-            source += '';
-        }
-        return source.replace(/&/g,'&amp;')
-                    .replace(/</g,'&lt;')
-                    .replace(/>/g,'&gt;')
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#39;");
-    }
+        $.fn[flash] = function (options) {
+            var $this = this.find(OBJECT).andSelf().filter(OBJECT);
 
-    function insertHTML (position, html) {
-        var range,begin,element = this[0];
-    
-        //在opera中insertAdjacentHTML方法实现不标准，如果DOMNodeInserted方法被监听则无法一次插入多element
-        //by lixiaopeng @ 2011-8-19
-        if (element.insertAdjacentHTML && !browser.opera) {
-            element.insertAdjacentHTML(position, html);
-        } else {
-            // 这里不做"undefined" != typeof(HTMLElement) && !window.opera判断，其它浏览器将出错？！
-            // 但是其实做了判断，其它浏览器下等于这个函数就不能执行了
-            range = element.ownerDocument.createRange();
-            // FF下range的位置设置错误可能导致创建出来的fragment在插入dom树之后html结构乱掉
-            // 改用range.insertNode来插入html, by wenyuxiang @ 2010-12-14.
-            position = position.toUpperCase();
-            if (position == 'AFTERBEGIN' || position == 'BEFOREEND') {
-                range.selectNodeContents(element);
-                range.collapse(position == 'AFTERBEGIN');
-            } else {
-                begin = position == 'BEFOREBEGIN';
-                range[begin ? 'setStartBefore' : 'setEndAfter'](element);
-                range.collapse(begin);
+            if (/string|object/.test(typeof options)) {
+                this.each(
+                    function () {
+                        var $this = $(this),
+                            flashObject;
+
+                        options = (typeof options == OBJECT) ? options : {
+                            swf: options
+                        };
+
+                        options.fallback = this;
+
+                        flashObject = $[flash].create(options);
+
+                        if (flashObject) {
+                            $this.children().remove();
+
+                            $this.html(flashObject);
+                        }
+                    }
+                );
             }
-            range.insertNode(range.createContextualFragment(html));
-        }
-        return element;
-    }
 
-    function removeFromArray (source, match) {
-        var n = source.length;
-            
-        while (n--) {
-            if (source[n] === match) {
-                source.splice(n, 1);
+            if (typeof options == 'function') {
+                $this.each(
+                    function () {
+                        var instance = this,
+                        jsInteractionTimeoutMs = 'jsInteractionTimeoutMs';
+
+                        instance[jsInteractionTimeoutMs] =
+                            instance[jsInteractionTimeoutMs] || 0;
+
+                        if (instance[jsInteractionTimeoutMs] < 660) {
+                            if (instance.clientWidth || instance.clientHeight) {
+                                options.call(instance);
+                            }
+                            else {
+                                setTimeout(
+                                    function () {
+                                        $(instance)[flash](options);
+                                    },
+                                    instance[jsInteractionTimeoutMs] + 66
+                                );
+                            }
+                        }
+                    }
+                );
             }
-        }
-        return source;
-    }
 
-    function toArray (source) {
-        if (source === null || source === undefined)
-            return [];
-        if (u.isArray(source))
-            return source;
-
-        // The strings and functions also have 'length'
-        if (typeof source.length !== 'number' || typeof source === 'string' || typeof source === 'function') {
-            return [source];
-        }
-
-        //nodeList, IE 下调用 [].slice.call(nodeList) 会报错
-        if (source.item) {
-            var l = source.length, array = new Array(l);
-            while (l--)
-                array[l] = source[l];
-            return array;
-        }
-
-        return [].slice.call(source);
-    }
-
-
-    return swf;
+            return $this;
+        };
+    }(
+        jQuery,
+        'flash',
+        navigator.plugins['Shockwave Flash'] || window.ActiveXObject
+    ));
 });

@@ -10,18 +10,11 @@ define(function (require) {
     var u = require('underscore');
     var eoo = require('eoo');
     var Control = require('esui/Control');
-    var swf = require('./helper/swfHelper');
+    var painters = require('esui/painters');
+    var $ = require('jquery');
+    require('./helper/swfHelper');
 
     require('esui/Dialog');
-
-    var NOT_SUPPORT_MESSAGE = '暂不支持该格式预览';
-    var VIDEO_TPL = [
-        '<video id="${id}" title="${title}" width="${width}" height="${height}" src="${src}" autoplay="autoplay">',
-        '该浏览器暂不支持此格式视频预览',
-        '</video>'
-    ].join('');
-
-    var LOADED_FAILTURE_TPL = '<div class="${loadedFailtureStyle}">加载图片失败</div>';
 
     var LightBox = eoo.create(
         Control,
@@ -53,7 +46,7 @@ define(function (require) {
                     loadingStyle: this.helper.getPartClassName('media-loading'),
                     loadedFailtureStyle: this.helper.getPartClassName('media-loaded-failture')
                 };
-                u.extend(properties, options);
+                u.extend(properties, LightBox.defaultProperties, options);
                 this.setProperties(properties);
             },
 
@@ -296,7 +289,7 @@ define(function (require) {
 
                 img.onerror = function () {
                     me.hideLoading();
-                    me.mediaContainer().innerHTML = lib.format(LOADED_FAILTURE_TPL, me);
+                    me.mediaContainer().innerHTML = lib.format(this.LOADED_FAILTURE_TPL, me);
                     img.onload = img.onerror = null;
                     me.dialog.show();
                 };
@@ -329,7 +322,7 @@ define(function (require) {
                     html = getFlvHtml(options, this.swfPath);
                 }
                 else if (/\.mp4|\.mov/.test(url)) {
-                    html = getVideoHtml(options);
+                    html = getVideoHtml(options, this);
                 }
                 this.hideLoading();
                 this.mediaContainer().innerHTML = html;
@@ -338,7 +331,7 @@ define(function (require) {
 
             previewNotSupported: function () {
                 this.hideLoading();
-                this.mediaContainer().innerHTML = NOT_SUPPORT_MESSAGE;
+                this.mediaContainer().innerHTML = this.NOT_SUPPORT_MESSAGE;
                 this.dialog.show();
             },
 
@@ -369,7 +362,7 @@ define(function (require) {
              * @protected
              * @override
              */
-            repaint: require('esui/painters').createRepaint(
+            repaint: painters.createRepaint(
                 Control.prototype.repaint,
                 {
                     name: ['title'],
@@ -381,6 +374,16 @@ define(function (require) {
         }
     );
 
+    LightBox.defaultProperties = {
+        NOT_SUPPORT_MESSAGE: '暂不支持该格式预览',
+        VIDEO_TPL: [
+            '<video id="${id}" title="${title}" width="${width}" height="${height}" src="${src}" autoplay="autoplay">',
+            '该浏览器暂不支持此格式视频预览',
+            '</video>'
+        ].join(''),
+        LOADED_FAILTURE_TPL: '<div class="${loadedFailtureStyle}">加载图片失败</div>'
+    };
+
     /**
      * 获取预览Flash
      * @param {Object} options flash数据
@@ -388,9 +391,9 @@ define(function (require) {
      * @return {string}
      */
     function getFlashHtml(options) {
-        return swf.createHTML({
+        return $.flash.create({
             id: options.id || 'preview-fla',
-            url: options.url,
+            swf: options.url,
             width: options.width,
             height: options.height,
             wmode: 'transparent'
@@ -419,11 +422,12 @@ define(function (require) {
     /**
      * 获取预览视频 - html5
      * @param {Object} options 视频数据
+     * @param {Object} me lightbox
      * @private
      * @return {string}
      */
-    function getVideoHtml(options) {
-        return lib.format(VIDEO_TPL, {
+    function getVideoHtml(options, me) {
+        return lib.format(me.VIDEO_TPL, {
             id: options.id || 'preview-video',
             title: options.title,
             src: options.url,
