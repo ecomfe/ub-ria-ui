@@ -42,6 +42,7 @@
                         </a>
                     </div>
 
+                    <button id="flash" class="button"></button>
                     <div data-ui-type="LightBox"
                         data-ui-id="box3"
                         data-ui-title="Hi Baby, this is multiple media."
@@ -63,6 +64,10 @@
             function (ui) {
 
                 ui.init();
+                var button = document.getElementById('flash');
+                button.onclick = function () {
+                    ui.get('box3')
+                };
         });
 
     </script>
