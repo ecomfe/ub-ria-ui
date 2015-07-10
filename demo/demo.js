@@ -3,11 +3,6 @@ require.config({
     'paths': {},
     'packages': [
         {
-            'name': 'mini-event',
-            'location': '../dep/mini-event/1.0.2/src',
-            'main': 'main'
-        },
-        {
             'name': 'underscore',
             'location': '../dep/underscore/1.5.2/src',
             'main': 'underscore'
@@ -30,30 +25,12 @@ require.config({
         {
             'name': 'eoo',
             'location': '../dep/eoo/0.1.4/src',
-            'main': 'src/main'
-        },
-        {
-            'name': 'er',
-            'location': '../dep/er/3.1.0-beta.6/src',
             'main': 'main'
         },
         {
-            'name': 'ef',
-            'location': '../dep/ef/3.1.0-beta.3/src',
-            'main': 'main'
-        },
-        {
-            'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-beta.1/src',
-            'main': 'main.less'
-        },
-        {
-            'name': 'esf',
-            'location': '../dep/esf/1.0.0-beta.2/src'
-        },
-        {
-            'name': 'est',
-            'location': '../dep/est/1.3.0/src'
+            'name': 'jquery',
+            'location': '../dep/jquery/1.9.1/src',
+            'main': 'jquery.min.js'
         }
     ]
 });

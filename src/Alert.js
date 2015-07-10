@@ -6,6 +6,7 @@
  * @file 警告框（Alert）
  * @author zhangyujie(zhangyujie@baidu.com)
  */
+
 define(
     function (require) {
         var eoo = require('eoo');
@@ -13,6 +14,8 @@ define(
         var esui = require('esui');
         var lib = require('esui/lib');
         var Control = require('esui/Control');
+        var $ = require('jquery');
+        var painters = require('esui/painters');
 
         // Alert类型
         var allType = ['success', 'info', 'warning', 'error'];
@@ -55,18 +58,22 @@ define(
                      *      `warning`：警告：黄
                      *      `error`  ：错误：红
                      * @cfg {string | Array} [defaultProperties.message] 数据源数组，可兼容单条string
-                     * @cfg {number} [defaultProperties.autoClose=false] 自动关闭延迟
+                     * @cfg {boolean} [defaultProperties.autoClose=false] 自动关闭延迟
+                     * @cfg {number} [defaultProperties.autoCloseDuration=1000] 自动关闭延迟
                      * @cfg {boolean} [defaultProperties.closeBtn=false] 是否带有关闭按钮
-                     * @cfg {number} [defaultProperties.autoSlide=4000] 多条消息自动滚动时间，Null表不自动滚动
+                     * @cfg {boolean} [defaultProperties.autoSlide=true] 是否滚动
+                     * @cfg {number} [defaultProperties.autoSlideInterval=4000] 多条消息自动滚动时间
                      * @cfg {boolean} [defaultProperties.icon=true] 是否使用系统默认图标
                      * @static
                      */
                     var properties = {
                         msgType: 'error',
                         autoClose: false,
+                        autoCloseDuration: 1000,
+                        autoSlide: true,
+                        autoSlideInterval: 4000,
                         closeBtn: true,
                         pageIndex: 1,
-                        autoSlide: 4000,
                         icon: ''
                     };
                     // 如果没有从html构造，则从js中构造时必须传入父容器
@@ -78,9 +85,6 @@ define(
                     if (typeof options.message === 'string') {
                         options.message = [options.message];
                     }
-
-                    // 保存一份autoSlide，方便mouseout后恢复计时器使用
-                    properties.oriAutoSlide = options.autoSlide;
 
                     u.extend(properties, options);
                     this.setProperties(properties);
@@ -124,7 +128,6 @@ define(
                  * @protected
                  */
                 bindPagerEvent: function () {
-
                     // 翻页至上一页
                     this.helper.addDOMEvent('prev', 'click', function () {
                         if (this.pageIndex > 1) {
@@ -154,11 +157,11 @@ define(
                     iconContainer.innerHTML = html;
                     var iconClass = controlerHelper.getPartClassName('has-icon');
                     if (html) {
-                        lib.addClass(mainElement, iconClass);
-                        lib.addClass(iconContainer.firstChild, icon);
+                        $(mainElement).addClass(iconClass);
+                        $(iconContainer.firstChild).addClass(icon);
                     }
                     else {
-                        lib.removeClass(mainElement, iconClass);
+                        $(mainElement).removeClass(iconClass);
                     }
                 },
 
@@ -168,7 +171,7 @@ define(
                  * @protected
                  * @override
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     Control.prototype.repaint,
                     {
                         /**
@@ -198,13 +201,15 @@ define(
                                 html += self.getInjectedPartHTML('item', 'span', item);
                             });
                             self.helper.getPart('text').innerHTML = html;
+
                             var pagerClass = self.helper.getPartClassName('has-pager');
+                            var $main = $(self.main);
                             if (message.length > 1) {
-                                lib.addClass(self.main, pagerClass);
+                                $main.addClass(pagerClass);
                                 buildPager(self);
                             }
                             else {
-                                lib.removeClass(self.main, pagerClass);
+                                $main.removeClass(pagerClass);
                             }
                         }
                     },
@@ -232,24 +237,22 @@ define(
                         name: 'pageIndex',
                         paint: function (self, pageIndex) {
                             var controlHelper = self.helper;
-                            var messages = lib.getChildren(controlHelper.getPart('text'));
+                            var $messages = $(controlHelper.getPart('text')).children();
                             var activeClassName = controlHelper.getPartClassName('item-active');
-                            var newMessage = messages[pageIndex - 1];
+                            var $newMessage = $messages.eq(pageIndex - 1);
                             if (self.message.length === 1) {
-                                lib.addClass(newMessage, activeClassName);
+                                $newMessage.addClass(activeClassName);
                                 return;
                             }
 
-                            var oldMessage = u.filter(messages, function (item) {
-                                return lib.hasClass(item, activeClassName);
-                            })[0];
+                            var $oldMessage = $messages.filter('.' + activeClassName);
 
                             // 如果是初始的第一条，则不用切换任何渐进效果相关的class
-                            if (oldMessage) {
-                                lib.removeClass(oldMessage, activeClassName);
+                            if ($oldMessage.size() > 0) {
+                                $oldMessage.removeClass(activeClassName);
                             }
 
-                            lib.addClass(newMessage, activeClassName);
+                            $newMessage.addClass(activeClassName);
                             controlHelper.getPart('page').innerHTML = pageIndex;
 
                             // 分页器边界逻辑
@@ -275,10 +278,9 @@ define(
                          */
                         name: 'closeBtn',
                         paint: function (self, closeBtn) {
-
                             var controlHelper = self.helper;
                             // 默认为true的属性兼容从html构造传入false覆盖的情况
-                            if (!lib.trim(closeBtn) || closeBtn === 'false') {
+                            if (closeBtn === false) {
                                 controlHelper.getPart('button') && controlHelper.removeDOMEvent('button');
                                 controlHelper.getPart('close').innerHTML = '';
                                 return;
@@ -289,7 +291,7 @@ define(
                                     'div',
                                     controlHelper.getPartHTML('icon-content', 'span')
                                 );
-                            lib.addClass(controlHelper.getPart('button').firstChild, controlHelper.getIconClass());
+                            $(controlHelper.getPart('button').firstChild).addClass(controlHelper.getIconClass());
                             controlHelper.addDOMEvent('button', 'click', function (e) {
                                 this.hide();
                             });
@@ -303,18 +305,11 @@ define(
                          */
                         name: 'autoSlide',
                         paint: function (self, autoSlide) {
-                            if (autoSlide === true) {
-                                autoSlide = 4000;
-                            }
-                            if (parseInt(autoSlide, 10) > 0) {
-                                autoSlide = parseInt(autoSlide, 10);
-                            }
-
                             clearInterval(self.autoSlideTimer);
-                            if (self.message.length === 1 || !lib.trim(autoSlide) || autoSlide === 'false') {
+                            if (self.message.length === 1 || !autoSlide) {
                                 return;
                             }
-                            self.autoSlideTimer = setInterval(lib.bind(slide, self), autoSlide);
+                            self.autoSlideTimer = setInterval(u.bind(slide, self), self.autoSlideInterval);
                         }
                     },
                     {
@@ -325,19 +320,12 @@ define(
                          */
                         name: 'autoClose',
                         paint: function (self, autoClose) {
-                            if (autoClose === true) {
-                                autoClose = 4000;
-                            }
-                            if (parseInt(autoClose, 10) > 0) {
-                                autoClose = parseInt(autoClose, 10);
-                            }
-
                             // 自动关闭定时器
                             clearTimeout(self.autoCloseTimer);
-                            if (!lib.trim(autoClose) || autoClose === 'false') {
+                            if (!autoClose) {
                                 return;
                             }
-                            self.autoCloseTimer = setTimeout(lib.bind(self.hide, self), autoClose);
+                            self.autoCloseTimer = setTimeout(u.bind(self.hide, self), self.autoCloseDuration);
                         }
                     }
                 ),
@@ -349,34 +337,37 @@ define(
                  * @override
                  */
                 show: function () {
-                    if (this.helper.isInStage('DISPOSED')) {
+                    var me = this;
+                    var controlHelper = me.helper;
+                    if (controlHelper.isInStage('DISPOSED')) {
                         return;
                     }
 
+                    var ref = lib.g(me.container).firstChild;
                     // 插入节点，引起渲染
-                    if (lib.g(this.container).firstChild) {
-                        this.insertBefore(lib.g(this.container).firstChild);
+                    if (ref) {
+                        me.insertBefore(ref);
                     }
                     else {
-                        this.appendTo(lib.g(this.container));
+                        me.appendTo(lib.g(me.container));
                     }
 
                     // 插入节点，引起渲染
-                    this.insertBefore(lib.g(this.container).firstChild);
+                    me.insertBefore(ref);
 
                     // toggle效果实现
-                    this.helper.addPartClasses('toggle', 'container');
+                    controlHelper.addPartClasses('toggle', 'container');
 
-                    Control.prototype.show.apply(this, arguments);
-                    this.fire('show');
+                    me.$super(arguments);
+                    me.fire('show');
 
                     // 自动轮换功能暂停重启逻辑
-                    this.helper.addDOMEvent(this.main, 'mouseover', lib.bind(function () {
-                        this.setProperties({autoSlide: false});
-                    }, this));
-                    this.helper.addDOMEvent(this.main, 'mouseout', lib.bind(function () {
-                        this.setProperties({autoSlide: this.oriAutoSlide});
-                    }, this));
+                    controlHelper.addDOMEvent(me.main, 'mouseenter', function () {
+                        me.setProperties({autoSlide: false});
+                    });
+                    controlHelper.addDOMEvent(me.main, 'mouseleave', function () {
+                        me.setProperties({autoSlide: this.autoSlide});
+                    });
                 },
 
                 /**
@@ -386,9 +377,7 @@ define(
                  * @override
                  */
                 hide: function () {
-                    Control.prototype.hide.apply(this, arguments);
-                    clearTimeout(this.autoCloseTimer);
-                    clearInterval(this.autoSlideTimer);
+                    this.$super(arguments);
                     this.fire('hide');
                     this.dispose();
                 },
@@ -405,12 +394,11 @@ define(
                     if (this.helper.isInStage('DISPOSED')) {
                         return;
                     }
-                    lib.removeNode(this.main);
-                    Control.prototype.dispose.apply(this, arguments);
+                    $(this.main).remove();
+                    this.$super(arguments);
                 }
             }
         );
-
 
         // 快捷方式注册
         u.each(allType, function (type) {
@@ -447,8 +435,8 @@ define(
             controlHelper.getPart('pager').innerHTML = prev + index + next;
             controlHelper.getPart('page').innerHTML = self.pageIndex;
             var iconClass = controlHelper.getIconClass();
-            lib.addClass(controlHelper.getPart('prev'), iconClass);
-            lib.addClass(controlHelper.getPart('next'), iconClass);
+            $(controlHelper.getPart('prev')).addClass(iconClass);
+            $(controlHelper.getPart('next')).addClass(iconClass);
             // 绑事件
             self.bindPagerEvent();
         }

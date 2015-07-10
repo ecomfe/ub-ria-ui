@@ -16,13 +16,14 @@ define(
         var Layer = require('esui/Layer');
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
-        var cursorHelper = require('./helper/CursorPositionHelper');
+        var CursorPositionHelper = require('./helper/CursorPositionHelper');
         var keyboard = require('esui/behavior/keyboard');
 
         var TEXT_LINE = 'TextLine';
         var TEXT_BOX = 'TextBox';
         var INPUT = 'input';
         var TEXT = 'text';
+        var $ = require('jquery');
 
         var AutoCompleteLayer = eoo.create(
             Layer,
@@ -51,10 +52,9 @@ define(
                 initStructure: function () {
                     var element = this.getElement();
                     var helper = this.control.helper;
-                    $(element).addClass(helper.getPrefixClass('dropdown'));
 
-                    this.addCustomClasses([helper.getPrefixClass('autocomplete')]);
-                    this.control.main.appendChild(element);
+                    this.addCustomClasses([helper.getPrefixClass('autocomplete'), helper.getPrefixClass('dropdown')]);
+                    $(this.control.main).after(element);
                 },
 
                 initEvents: function () {
@@ -190,20 +190,11 @@ define(
                 show: function () {
                     this.$super(arguments);
                     var input = this.inputElement;
-                    var style = this.getElement(false).style;
-                    var offset = lib.getOffset(this.control.main);
+                    var $ele = $(this.getElement(false));
                     if (input.nodeName.toLowerCase() === 'textarea') {
-                        // TODO: 这里计算光标的像素坐标还是没有非常精确
-                        var pos = cursorHelper.getInputPositon(input);
-                        var scrollTop = input.scrollTop;
-                        var scrollLeft = input.scrollLeft;
-                        style.left = pos.left - offset.left - scrollLeft + 'px';
-                        style.top = pos.top - offset.top - scrollTop
-                            + parseInt(lib.getStyle(input, 'fontSize'), 10) + 'px';
-                    }
-                    else {
-                        style.left = 0;
-                        style.top = offset.height + 'px';
+                        var pos = (new CursorPositionHelper(input)).getCaretPosition();
+                        $ele.css('left', pos.left);
+                        $ele.css('top', pos.top);
                     }
                 },
 

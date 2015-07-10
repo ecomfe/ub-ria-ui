@@ -63,19 +63,27 @@
                             </td>
                         </tr>
                         <tr>
-                            <td align="right">自动关闭时间<br />不填或false表示不自动关闭</td>
+                            <td align="right">自动关闭时间</td>
                             <td>
+                                <div class="ui-checkbox-custom">
+                                    <input type="checkbox" id="autoClose" />
+                                    <label for="autoClose"></label>
+                                </div>
                                 <div class="ui-textbox">
-                                    <input id="autoClose" />
+                                    <input id="autoCloseDuration" value="1000" />
                                 </div>
                                 ms
                             </td>
                         </tr>
                         <tr>
-                            <td align="right">自动轮换时间间隔<br />不填或false表示不自动轮播</td>
+                            <td align="right">自动轮换时间间隔</td>
                             <td>
+                                <div class="ui-checkbox-custom">
+                                    <input type="checkbox" id="autoSlide" />
+                                    <label for="autoSlide"></label>
+                                </div>
                                 <div class="ui-textbox">
-                                    <input id="autoSlide" value="4000" />
+                                    <input id="autoSlideInterval" value="4000" />
                                 </div>
                                 ms
                             </td>
@@ -121,8 +129,10 @@
                             options.message.push(messages[i].value);
                         }
                     }
-                    options.autoClose = lib.g('autoClose').value;
+                    options.autoClose = lib.g('autoClose').checked;
+                    options.autoCloseDuration = +lib.g('autoCloseDuration').value;
                     options.autoSlide = lib.g('autoSlide').value;
+                    options.autoSlideInterval = +lib.g('autoSlideInterval').value;
                     options.closeBtn = lib.g('closeBtn').checked;
                     options.icon = lib.g('icon').value;
                     options.container = 'main';
