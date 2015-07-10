@@ -133,7 +133,7 @@ define(
 
                     var switchButton = this.getChild('switch');
                     if (switchButton) {
-                        switchButton.on('click', switchState, this);
+                        switchButton.on('click', u.bind(switchState, this));
                     }
                 },
 

@@ -22,7 +22,8 @@
             "etpl": "~3.0.0",
             "mini-event": "~1.0.2",
             "moment": "~2.7.0",
-            "underscore": "~1.5.2"
+            "underscore": "~1.5.2",
+            "jquery": "~1.9.1"
         }
     }
 }

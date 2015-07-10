@@ -29,8 +29,7 @@ require.config({
         },
         {
             'name': 'eoo',
-            'location': '../dep/eoo/0.1.4/src',
-            'main': 'src/main'
+            'location': '../dep/eoo/0.1.4/src'
         },
         {
             'name': 'er',
@@ -54,6 +53,11 @@ require.config({
         {
             'name': 'est',
             'location': '../dep/est/1.3.0/src'
+        },
+        {
+            'name': 'jquery',
+            'location': '../dep/jquery/1.9.1/src',
+            'main': 'jquery.min'
         }
     ]
 });
