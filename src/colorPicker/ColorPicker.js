@@ -113,11 +113,11 @@ define(
                     this.helper.addDOMEvent(colorBlock, 'mousedown', toggleLayer);
 
                     var colorInput = this.getChild('colorInput');
-                    colorInput.on('input', onColorInput, this);
+                    colorInput.on('input', u.bind(onColorInput, this));
 
                     var alphaInput = this.getChild('alphaInput');
                     if (alphaInput) {
-                        alphaInput.on('input', onAlphaInput, this);
+                        alphaInput.on('input', u.bind(onAlphaInput, this));
                     }
                 },
 
@@ -300,8 +300,8 @@ define(
                 var btnOk = colorPickerOverLay.getChild('btnOk');
                 var btnCancel = colorPickerOverLay.getChild('btnCancel');
 
-                btnOk.on('click', submit, this);
-                btnCancel.on('click', hideOverlay, this);
+                btnOk.on('click', u.bind(submit, this));
+                btnCancel.on('click', u.bind(hideOverlay, this));
             }
 
             return this.getChild('layer');
