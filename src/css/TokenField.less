@@ -20,6 +20,7 @@
     .esf-transition(@esf-tokenfield-transition);
     padding: @esui-tokenfield-padding;
     position: relative;
+    display: inline-block;
     .user-select(none);
 
     .esui-tokenfield-theme();
@@ -52,6 +53,7 @@
 .@{ui-class-prefix}-tokenfield-close {
     display: inline-block;
     margin-left: @esui-tokenfield-item-remove-icon-left-margin;
+    .eicons-icon(close);
 }
 
 // 要保证input和item的定位一致

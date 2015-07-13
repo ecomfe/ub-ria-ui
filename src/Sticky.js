@@ -157,7 +157,7 @@ define(function (require) {
                             width: width + 'px',
                             position: 'fixed',
                             top: parseInt(newTop, 10) + 'px',
-                            left: lib.getOffset(main).left + 'px'
+                            left: $(main).offset().left + 'px'
                         }
                     );
                     sticky.currentTop = newTop;
@@ -165,6 +165,7 @@ define(function (require) {
             }
         }
     }
+
     esui.register(Sticky);
     return Sticky;
 });
