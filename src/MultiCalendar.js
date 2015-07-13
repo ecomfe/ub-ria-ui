@@ -19,6 +19,8 @@ define(
         var ui = require('esui/main');
         var moment = require('moment');
         var u = require('underscore');
+        var $ = require('jquery');
+        var painters = require('esui/painters');
 
         /**
          * 双日历浮层
@@ -30,6 +32,12 @@ define(
         var MultiCalendarLayer = eoo.create(
             Layer,
             {
+                create: function () {
+                    var ele = this.$super(arguments);
+                    $(this.control.main).after(ele);
+                    $(ele).addClass(this.control.helper.getPrefixClass('multicalendar-layer'));
+                    return ele;
+                },
 
                 /**
                  * 渲染双日历浮层
@@ -38,20 +46,19 @@ define(
                  * @inner
                  */
                 render: function (element) {
-                    document.body.appendChild(element);
-
                     var multiCalendar = this.control;
-                    lib.addClass(element, this.control.helper.getPrefixClass('multicalendar-layer'));
+                    var controlHelper = multiCalendar.helper;
+
                     var tpl = ''
                         + '<div data-ui="type: MonthView; childName: prevMonthView" class="${prevClass}"></div>'
                         + '<div data-ui="type: MonthView; childName: nextMonthView" class="${nextClass}"></div>';
 
                     element.innerHTML = lib.format(tpl, {
-                        prevClass: multiCalendar.helper.getPartClassName('prev-month'),
-                        nextClass: multiCalendar.helper.getPartClassName('next-month')
+                        prevClass: controlHelper.getPartClassName('prev-month'),
+                        nextClass: controlHelper.getPartClassName('next-month')
                     });
 
-                    multiCalendar.helper.initChildren(element);
+                    controlHelper.initChildren(element);
                     paintLayer(multiCalendar, multiCalendar.rawValue, 'render');
                 },
 
@@ -118,35 +125,6 @@ define(
                 initOptions: function (options) {
                     var now = new Date();
                     var properties = {
-                        /**
-                         * @property {Object}
-                         *
-                         * 双日历的日历可选范围
-                         */
-                        range: {
-                            begin: new Date(1983, 8, 3),
-                            end: new Date(2046, 10, 4)
-                        },
-
-                        /**
-                         * @property {string} [dateFormat="YYYY-MM-DD"]
-                         *
-                         * 输出的日期格式，用于{@link MultiCalendar#getValue}返回时格式化
-                         *
-                         * 具体的日期格式参考
-                         * [moment文档](http://momentjs.com/docs/#/displaying/format/)
-                         */
-                        dateFormat: 'YYYY-MM-DD',
-
-                        /**
-                         * @property {string} [paramFormat="YYYY-MM-DD"]
-                         *
-                         * 输入的日期格式，用于{@link MultiCalendar#setValue}时格式化
-                         *
-                         * 具体的日期格式参考
-                         * [moment文档](http://momentjs.com/docs/#/displaying/format/)
-                         */
-                        paramFormat: 'YYYY-MM-DD',
 
                         /**
                          * @property {Date} [rawValue]
@@ -165,11 +143,7 @@ define(
                         autoHideLayer: false
                     };
 
-                    if (options.autoHideLayer === 'false') {
-                        options.autoHideLayer = false;
-                    }
-
-                    u.extend(properties, options);
+                    u.extend(properties, MultiCalendar.defaultProperties, options);
 
                     if (lib.isInput(this.main)) {
                         this.helper.extractOptionsFromInput(this.main, properties);
@@ -182,11 +156,6 @@ define(
                         properties.rawValue = this.parseValue(properties.value);
                     }
 
-                    // 类型如果是string
-                    var range = properties.range;
-                    if (typeof range === 'string') {
-                        properties.range = this.convertToRaw(range);
-                    }
                     this.setProperties(properties);
                 },
 
@@ -211,7 +180,7 @@ define(
                         + '<div class="${classes}" id="${id}">${value}</div>'
                         + '<div class="${arrow}"><span class="${icon}"></span></div>';
 
-                    lib.addClass(mainElement, controlHelper.getPrefixClass(calendar));
+                    $(mainElement).addClass(controlHelper.getPrefixClass(calendar));
                     mainElement.innerHTML = lib.format(
                         template,
                         {
@@ -221,6 +190,7 @@ define(
                             icon: controlHelper.getIconClass(calendar)
                         }
                     );
+                    this.layer.autoCloseExcludeElements = [mainElement];
                 },
 
                 /**
@@ -240,7 +210,7 @@ define(
                  * @param {Array=} 变更过的属性的集合
                  * @override
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
                     {
                         /**
@@ -252,32 +222,11 @@ define(
                         paint: function (multiCalendar, rawValue, range) {
 
                             if (range) {
-                                if (typeof range === 'string') {
-                                    range = multiCalendar.convertToRaw(range);
-                                }
-
-                                // 还要支持只设置begin或只设置end的情况
-                                if (!range.begin) {
-                                    // 设置一个特别远古的年
-                                    range.begin = new Date(1983, 8, 3);
-                                }
-                                else if (!range.end) {
-                                    // 设置一个特别未来的年
-                                    range.end = new Date(2046, 10, 4);
-                                }
-
+                                range = multiCalendar.convertToRaw(range, multiCalendar.range);
                                 multiCalendar.range = range;
                             }
 
                             if (rawValue) {
-                                if (rawValue < range.begin) {
-                                    rawValue = range.begin;
-                                }
-
-                                if (rawValue > range.end) {
-                                    rawValue = range.end;
-                                }
-
                                 multiCalendar.rawValue = rawValue;
                                 updateDisplayText(multiCalendar);
                             }
@@ -327,25 +276,21 @@ define(
                  *
                  * @inner
                  * @param {string} value 目标日期字符串 ‘YYYY-MM-DD,YYYY-MM-DD’
+                 * @param {Object} defaultRange 默认标准化range
                  * @return {Object} {begin:Date,end:Date}
                  */
-                convertToRaw: function (value) {
-                    var strDates = value.split(',');
-                    // 可能会只输入一个，默认当做begin，再塞一个默认的end
-                    if (strDates.length === 1) {
-                        strDates.push('2046-11-04');
-                    }
-                    // 第一个是空的
-                    else if (strDates[0] === '') {
-                        strDates[0] = '1983-09-03';
-                    }
-                    // 第二个是空的
-                    else if (strDates[1] === '') {
-                        strDates[1] = '2046-11-04';
+                convertToRaw: function (value, defaultRange) {
+                    var format = this.paramFormat;
+                    if (u.isString(value)) {
+                        var strDates = value.split(',');
+                        return {
+                            begin: strDates[0] ? moment(strDates[0], format).toDate() : defaultRange.begin,
+                            end: strDates[1] ? moment(strDates[1], format).toDate() : defaultRange.end
+                        };
                     }
                     return {
-                        begin: moment(strDates[0], 'YYYY-MM-DD').toDate(),
-                        end: moment(strDates[1], 'YYYY-MM-DD').toDate()
+                        begin: value.begin ? value.begin : defaultRange.begin,
+                        end: value.end ? value.end : defaultRange.end
                     };
                 },
 
@@ -365,10 +310,52 @@ define(
                         this.layer = null;
                     }
 
-                    InputControl.prototype.dispose.apply(this, arguments);
+                    this.$super(arguments);
                 }
             }
         );
+
+        MultiCalendar.defaultProperties = {
+            /**
+             * @property {Object}
+             *
+             * 双日历的日历可选范围
+             */
+            range: {
+                begin: new Date(1983, 8, 3),
+                end: new Date(2046, 10, 4)
+            },
+
+            /**
+             * @property {string} [dateFormat="YYYY-MM-DD"]
+             *
+             * 输出的日期格式，用于{@link MultiCalendar#getValue}返回时格式化
+             *
+             * 具体的日期格式参考
+             * [moment文档](http://momentjs.com/docs/#/displaying/format/)
+             */
+            dateFormat: 'YYYY-MM-DD',
+
+            /**
+             * @property {string} [paramFormat="YYYY-MM-DD"]
+             *
+             * 输入的日期格式，用于{@link MultiCalendar#setValue}时格式化
+             *
+             * 具体的日期格式参考
+             * [moment文档](http://momentjs.com/docs/#/displaying/format/)
+             */
+            paramFormat: 'YYYY-MM-DD',
+
+            /**
+             * @property {string} [displayFormat="YYYY-MM-DD"]
+             *
+             * 展示使用的日期格式，用于updateDisplayText时格式化
+             *
+             * 具体的日期格式参考
+             * [moment文档](http://momentjs.com/docs/#/displaying/format/)
+             */
+            displayFormat: 'YYYY-MM-DD'
+        };
 
         /**
          * 重绘双日历浮层
@@ -427,8 +414,8 @@ define(
                 // 移除左侧日历的右向箭头和右侧日历的左向箭头
                 var rightArrow = prevMonthView.getChild('monthForward').main;
                 var leftArrow = nextMonthView.getChild('monthBack').main;
-                rightArrow && lib.removeNode(rightArrow);
-                leftArrow && lib.removeNode(leftArrow);
+                $(rightArrow).remove();
+                $(leftArrow).remove();
 
                 prevMonthView.on('change', u.bind(syncMonthView, multiCalendar));
                 prevMonthView.on('changemonth', u.bind(changePrevMonth, multiCalendar));
@@ -564,7 +551,9 @@ define(
          */
         function updateDisplayText(multiCalendar) {
             var textHolder = multiCalendar.helper.getPart('text');
-            textHolder.innerHTML = u.escape(multiCalendar.getValue());
+            textHolder.innerHTML = u.escape(
+                moment(multiCalendar.getRawValue()).format(multiCalendar.displayFormat)
+            );
         }
 
         ui.register(MultiCalendar);
