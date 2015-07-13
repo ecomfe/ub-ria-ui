@@ -15,6 +15,9 @@ define(
         var lib = require('esui/lib');
         var m = require('moment');
         var ui = require('esui');
+        var u = require('underscore');
+        var painters = require('esui/painters');
+        var $ = require('jquery');
 
         require('esui/behavior/mousewheel');
 
@@ -50,8 +53,8 @@ define(
                 },
 
                 initOptions: function (options) {
-                    var properties = { };
-                    u.extend(properties, this.$self.defaultProperties, options);
+                    var properties = {};
+                    u.extend(properties, Spinner.defaultProperties, options);
 
                     var format = properties.format;
                     var max = properties.max;
@@ -113,9 +116,7 @@ define(
                         }
                     );
 
-                    lib.addClass(mainElement, helper.getPrefixClass('textbox'));
-
-                    ui.init(mainElement, {viewContext: this.viewContext});
+                    $(mainElement).addClass(helper.getPrefixClass('textbox'));
                 },
 
                 /**
@@ -139,7 +140,7 @@ define(
                         input,
                         'focus',
                         function () {
-                            helper.addDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                            helper.addDOMEvent(this.main, 'mousewheel', mouseWheelHandler);
                         }
                     );
 
@@ -147,7 +148,7 @@ define(
                         input,
                         'blur',
                         function () {
-                            helper.removeDOMEvent(this.main, 'mousewheel',  mouseWheelHandler);
+                            helper.removeDOMEvent(this.main, 'mousewheel', mouseWheelHandler);
                         }
                     );
                 },
@@ -158,7 +159,7 @@ define(
                  * @override
                  * @protected
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
                     {
                         name: ['rawValue'],
@@ -227,16 +228,6 @@ define(
                  */
                 setValue: function (value) {
                     setInputValue.call(this, value);
-                },
-
-                /**
-                 * 销毁控件
-                 *
-                 * @override
-                 */
-                dispose: function () {
-                    disposeSpinner.call(this);
-                    this.$super(arguments);
                 }
             }
         );
@@ -448,24 +439,6 @@ define(
             }
             var input = this.getInput();
             input.value = value;
-        }
-
-
-
-        /**
-         * 销毁spinner方法
-         */
-        function disposeSpinner() {
-            var helper = this.helper;
-            var up = helper.getPart('up');
-            var down = helper.getPart('down');
-
-            helper.removeDOMEvent(up, 'mousedown', mouseDownHandler);
-            helper.removeDOMEvent(down, 'mousedown', mouseDownHandler);
-            helper.removeDOMEvent(up, 'mouseup',  mouseUpHandler);
-            helper.removeDOMEvent(down, 'mouseup',  mouseUpHandler);
-            helper.removeDOMEvent(up, 'mouseout',  mouseUpHandler);
-            helper.removeDOMEvent(down, 'mouseout',  mouseUpHandler);
         }
 
         /**
