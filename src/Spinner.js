@@ -84,7 +84,7 @@ define(
 
                     // scale
                     if (format !== 'number' && /^\s*\{/.test(scale)) {
-                        properties.scale = JSON.parse(scale);
+                        properties.scale = $.parseJSON(scale);
                     }
 
                     this.setProperties(properties);
