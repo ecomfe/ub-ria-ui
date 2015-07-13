@@ -44,7 +44,9 @@ define(function (require) {
                     height: 'auto',
                     dialogVariants: 'lightbox',
                     loadingStyle: this.helper.getPartClassName('media-loading'),
-                    loadedFailtureStyle: this.helper.getPartClassName('media-loaded-failture')
+                    loadFailedStyle: this.helper.getPartClassName('media-load-failed'),
+                    group: null,
+                    groupContainerId: null
                 };
                 u.extend(properties, LightBox.defaultProperties, options);
                 this.setProperties(properties);
@@ -58,8 +60,6 @@ define(function (require) {
              */
             initStructure: function () {
                 var properties = {
-                    id: lib.getGUID('dialog-lightbox-foot'),
-                    type: 'warning',
                     content: '',
                     closeButton: true,
                     mask: true,
@@ -75,7 +75,7 @@ define(function (require) {
                     needFoot: this.needFoot || false,
                     variants: this.dialogVariants
                 });
-                var dialog = require('esui').create('Dialog', properties);
+                var dialog = esui.create('Dialog', properties);
                 dialog.appendTo(document.body);
                 this.dialog = dialog;
             },
@@ -103,36 +103,27 @@ define(function (require) {
                 if (this.group) {
                     var container = this.groupContainerId ? lib.g(this.groupContainerId) : document.body;
 
-                    me.helper.addDOMEvent(container, 'click', function (e) {
-                        var target = e.target;
-                        while (target !== document.body && !lib.hasAttribute(target, 'data-lightbox-group')) {
-                            target = target.parentNode;
-                        }
-                        if (!lib.hasAttribute(target, 'data-lightbox-group')) {
-                            return;
-                        }
+                    me.helper.addDOMEvent(container, 'click', '[data-lightbox-group]', function (e) {
+                        var target = e.currentTarget;
                         e.preventDefault();
 
-                        var groupElements = document.querySelectorAll('[data-lightbox-group="' + me.group + '"]');
-                        for (var i = 0; i < groupElements.length; i++) {
-                            if (groupElements[i] === target) {
-                                break;
-                            }
-                        }
+                        var $groupElements = $(container).find('[data-lightbox-group="' + me.group + '"]');
+                        var i = $groupElements.index(target);
                         var datasource = [];
-                        u.each(groupElements, function (element, i) {
+                        $groupElements.each(function (i, element) {
+                            var $el = $(element);
                             var item = {
-                                url: lib.getAttribute(element, 'href')
+                                url: $el.attr('href')
                             };
 
-                            var dataType = lib.getAttribute(element, 'data-lightbox-type');
+                            var dataType = $el.attr('data-lightbox-type');
+                            item.width = $el.attr('data-lightbox-width');
+                            item.height = $el.attr('data-lightbox-height');
                             dataType && (item.type = dataType);
 
                             datasource.push(item);
                         });
-
                         me.datasource = datasource;
-
                         me.show({
                             currentIndex: i
                         });
@@ -228,7 +219,7 @@ define(function (require) {
                     else if (/\.swf$/i.test(data.url)) {
                         data.type = 'flash';
                     }
-                    else if (/\.(?:mp4|flv|mov|mkv|mpg|avi|rmvb|rm|ogg|wmv|mp3|wma|mid)$/i.test(data.url)) {
+                    else if (/\.(?:mp4|flv|mov|mkv|mpg|avi|rmvb|rm|ogg|wmv|mp3|wma|mid)/i.test(data.url)) {
                         data.type = 'video';
                     }
                 }
@@ -289,7 +280,7 @@ define(function (require) {
 
                 img.onerror = function () {
                     me.hideLoading();
-                    me.mediaContainer().innerHTML = lib.format(this.LOADED_FAILTURE_TPL, me);
+                    me.mediaContainer().innerHTML = lib.format(this.LOAD_FAILED_TPL, me);
                     img.onload = img.onerror = null;
                     me.dialog.show();
                 };
@@ -306,7 +297,8 @@ define(function (require) {
             previewFlash: function (options) {
                 var html = getFlashHtml(options);
                 this.hideLoading();
-                this.mediaContainer.innerHTML = html;
+                this.mediaContainer().innerHTML = '';
+                this.mediaContainer().appendChild(html);
                 this.dialog.show();
             },
 
@@ -318,14 +310,16 @@ define(function (require) {
             previewVideo: function (options) {
                 var url = options.url;
                 var html = '';
-                if (/\.flv$/.test(url)) {
+                if (/\.flv/.test(url)) {
                     html = getFlvHtml(options, this.swfPath);
                 }
                 else if (/\.mp4|\.mov/.test(url)) {
                     html = getVideoHtml(options, this);
                 }
+                var $container = $(this.mediaContainer());
                 this.hideLoading();
-                this.mediaContainer().innerHTML = html;
+                $container.html('');
+                $container.append($(html));
                 this.dialog.show();
             },
 
@@ -381,7 +375,7 @@ define(function (require) {
             '该浏览器暂不支持此格式视频预览',
             '</video>'
         ].join(''),
-        LOADED_FAILTURE_TPL: '<div class="${loadedFailtureStyle}">加载图片失败</div>'
+        LOAD_FAILED_TPL: '<div class="${loadFailedStyle}">加载图片失败</div>'
     };
 
     /**
@@ -409,9 +403,9 @@ define(function (require) {
      * @return {string}
      */
     function getFlvHtml(options, swfPath) {
-        return swf.createHTML({
+        return $.flash.create({
             id: options.id || 'preview-flv',
-            url: swfPath,
+            swf: swfPath,
             width: options.width,
             height: options.height,
             wmode: 'transparent',
