@@ -18,6 +18,7 @@ define(
         var u = require('../util');
         var eoo = require('eoo');
         var painters = require('esui/painters');
+        var esui = require('esui');
 
         /**
          * 控件类
@@ -94,9 +95,6 @@ define(
                     };
 
                     u.extend(properties, options);
-
-                    u.parseBoolean(properties);
-
                     this.$super([properties]);
                 },
 
@@ -657,7 +655,7 @@ define(
             }
         }
 
-        require('esui').register(RichSelector);
+        esui.register(RichSelector);
         return RichSelector;
     }
 );

@@ -16,7 +16,6 @@ define(
 
         var RichSelector = require('./RichSelector');
 
-
         /**
          * 控件类
          *
@@ -66,9 +65,6 @@ define(
                     };
 
                     u.extend(properties, options);
-
-                    u.parseBoolean(properties);
-
                     this.$super([properties]);
                 },
 

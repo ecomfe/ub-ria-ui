@@ -12,8 +12,6 @@ define(
         require('esui/Tree');
 
         var esui = require('esui');
-        var ui = require('esui/main');
-        var lib = require('esui/lib');
         var eoo = require('eoo');
 
         var u = require('../util');
@@ -68,9 +66,6 @@ define(
                     };
 
                     u.extend(properties, options);
-
-                    u.parseBoolean(properties);
-
                     this.$super([properties]);
                 },
 
@@ -235,7 +230,7 @@ define(
                         if (this.itemTemplate) {
                             options.itemTemplate = this.itemTemplate;
                         }
-                        tree = ui.create('Tree', options);
+                        tree = esui.create('Tree', options);
                         queryList.addChild(tree);
                         tree.appendTo(queryList.main);
 

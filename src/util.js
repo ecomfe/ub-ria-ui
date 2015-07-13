@@ -43,14 +43,6 @@ define(
             return clone;
         };
 
-        util.parseBoolean = function (properties) {
-            util.each(properties, function (property, key) {
-                if (property === 'false') {
-                    properties[key] = false;
-                }
-            });
-        };
-
         return util;
     }
 );
