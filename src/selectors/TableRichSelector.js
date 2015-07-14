@@ -10,12 +10,11 @@ define(
     function (require) {
         var esui = require('esui');
         var lib = require('esui/lib');
-        var u = require('../util');
+        var u = require('underscore');
         var eoo = require('eoo');
         var painters = require('esui/painters');
 
         var RichSelector = require('./RichSelector');
-
 
         /**
          * 控件类
@@ -66,9 +65,6 @@ define(
                     };
 
                     u.extend(properties, options);
-
-                    u.parseBoolean(properties);
-
                     this.$super([properties]);
                 },
 

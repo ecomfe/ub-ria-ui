@@ -12,11 +12,10 @@ define(
         require('esui/Tree');
 
         var esui = require('esui');
-        var ui = require('esui/main');
-        var lib = require('esui/lib');
         var eoo = require('eoo');
 
-        var u = require('../util');
+        var u = require('underscore');
+        var util = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
         var painters = require('esui/painters');
@@ -68,9 +67,6 @@ define(
                     };
 
                     u.extend(properties, options);
-
-                    u.parseBoolean(properties);
-
                     this.$super([properties]);
                 },
 
@@ -151,7 +147,7 @@ define(
                      *     ]
                      * }
                      */
-                    this.allData = u.deepClone(this.datasource);
+                    this.allData = util.deepClone(this.datasource);
                     // 一个扁平化的索引
                     // 其中包含父节点信息，以及节点选择状态
                     var indexData = {};
@@ -235,7 +231,7 @@ define(
                         if (this.itemTemplate) {
                             options.itemTemplate = this.itemTemplate;
                         }
-                        tree = ui.create('Tree', options);
+                        tree = esui.create('Tree', options);
                         queryList.addChild(tree);
                         tree.appendTo(queryList.main);
 
@@ -259,7 +255,7 @@ define(
                     else {
                         tree.setProperties(
                             {
-                                datasource: u.deepClone(treeData),
+                                datasource: util.deepClone(treeData),
                                 keyword: this.getKeyword()
                             }
                         );
@@ -286,7 +282,7 @@ define(
                 },
 
                 getDatasourceWithState: function () {
-                    var datasource = u.deepClone(this.datasource);
+                    var datasource = util.deepClone(this.datasource);
                     var indexData = this.indexData;
                     this.walkTree(datasource, datasource.children, function (parent, child) {
                         child.isSelected = indexData[child.id].isSelected;
@@ -529,7 +525,7 @@ define(
                 getSelectedTree: function () {
                     var control = this;
                     // clone完整数据，这个数据是原始的，不带最新选择状态的
-                    var copyData = u.deepClone(this.allData);
+                    var copyData = util.deepClone(this.allData);
                     // 遍历树，把各个节点的children更新成只包含已选状态节点的
                     this.walkTree(
                         copyData,

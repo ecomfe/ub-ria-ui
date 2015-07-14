@@ -13,6 +13,7 @@ define(
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
         var eoo = require('eoo');
+        var painters = require('esui/painters');
 
         require('esui/TextBox');
 
@@ -39,17 +40,6 @@ define(
                  * @override
                  */
                 type: 'TokenField',
-
-                /**
-                 * 创建控件主元素，默认使用`<label>`属性
-                 *
-                 * @return {HTMLElement}
-                 * @protected
-                 * @override
-                 */
-                // createMain: function () {
-                //     return document.createElement('div');
-                // },
 
                 /**
                  * 初始化配置
@@ -103,39 +93,6 @@ define(
                         repeat: false
                     };
                     u.extend(properties, options);
-
-                    if (this.repeat === 'false' || this.repeat === '') {
-                        this.repeat = false;
-                    }
-
-                    // delimiters, token分隔符，可一次生成多个token
-                    this.delimiters = (typeof properties.delimiter === 'string')
-                        ? properties.delimiter.split('') : properties.delimiter;
-                    this.triggerKeys = u.map(this.delimiters, function (delimiter) {
-                        return delimiter.charCodeAt(0);
-                    });
-                    // 作为rawValue的分隔符
-                    this.delimiter = this.delimiters[0];
-
-                    // 特殊分隔符处理
-                    var whitespace = u.indexOf(this.delimiters, ' ');
-                    if (whitespace >= 0) {
-                        this.delimiters[whitespace] = '\\s';
-                    }
-                    var dash = u.indexOf(this.delimiters, '-');
-                    if (dash >= 0) {
-                        delete this.delimiters[dash];
-                        this.delimiters.unshift('-');
-                    }
-
-                    var me = this;
-                    var specialCharacters = ['\\', '$', '[', '{', '^', '.', '|', '?', '*', '+', '(', ')'];
-                    u.each(this.delimiters, function (character, index) {
-                        var pos = u.indexOf(specialCharacters, character);
-                        if (pos >= 0) {
-                            me.delimiters[index] = '\\' + character;
-                        }
-                    });
 
                     properties.name = properties.name || this.main.getAttribute('name');
 
@@ -192,14 +149,19 @@ define(
                         'click',
                         this.focusInput
                     );
-
+                    var itemClass = this.helper.getPartClassName('item');
+                    controlHelper.addDOMEvent(
+                        this.main,
+                        'click',
+                        '.' + itemClass,
+                        this.remove
+                    );
                     var input = this.getInput();
                     var inputElem = input.getFocusTarget();
 
                     input.on('focus', u.bind(this.focus, this));
                     input.on('blur', u.bind(this.blur, this));
                     input.on('enter', u.bind(this.enter, this));
-                    input.on('keypress', u.bind(this.keypress, this));
 
                     // TODO: TextBox不提供keydown / keyup事件
                     controlHelper.addDOMEvent(inputElem, 'keydown', this.keydown);
@@ -243,30 +205,30 @@ define(
 
                     this.fire('beforecreate', {token: token});
 
-                    var tokenElem = document.createElement('div');
-                    tokenElem.className = this.helper.getPartClasses('item');
-                    tokenElem.innerHTML = this.helper.getPartHTML('label', 'span')
-                        + this.helper.getPartHTML('close', 'span');
+                    var $tokenElem = $('<div></div>');
+                    $tokenElem.addClass(this.helper.getPartClassName('item'));
+                    $tokenElem.html(
+                        this.helper.getPartHTML('label', 'span')
+                        + this.helper.getPartHTML('close', 'span')
+                    );
                     var guid = lib.getGUID();
-                    lib.setAttribute(tokenElem, 'data-id', guid);
+                    $tokenElem.attr('data-id', guid);
                     this.data[guid] = token;
 
                     var input = this.getInput();
                     var inputElem = input.main;
 
-                    var tokenLabel = lib.dom.first(tokenElem);
-                    tokenLabel.innerHTML = token.label;
-                    var closeButton = lib.dom.last(tokenElem);
-                    $(closeButton).addClass(this.helper.getIconClass('remove'));
-                    this.helper.addDOMEvent(tokenElem, 'click', this.remove);
+                    var $tokenLabel = $tokenElem.children(':first-child');
+                    $tokenLabel.html(token.label);
+                    var $closeButton = $tokenElem.children(':last-child');
+                    $closeButton.addClass(this.helper.getIconClass());
 
-                    lib.insertBefore(tokenElem, inputElem);
+                    $tokenElem.insertBefore(inputElem);
 
                     this.fire(
                         'aftercreate',
                         {
-                            token: token,
-                            relatedTarget: tokenElem
+                            token: token
                         }
                     );
                 },
@@ -318,20 +280,6 @@ define(
                 },
 
                 /**
-                 * 响应keypress
-                 * @param {Event} e 事件对象
-                 */
-                keypress: function (e) {
-                    var input = e.target;
-                    if (u.indexOf(this.triggerKeys, e.keyCode) > -1
-                        && input.getFocusTarget() === document.activeElement) {
-                        this.enter(e);
-                        // 最后触发的字符不再作为输入内容
-                        e.preventDefault();
-                    }
-                },
-
-                /**
                  * 响应keyup
                  * @param {Event} e 事件对象
                  */
@@ -373,20 +321,18 @@ define(
                  * @param {Event=} e 事件对象
                  */
                 remove: function (e) {
-                    var target = e && e.target;
-                    if (target) {
-                        var tokenClassName = this.helper.getPartClassName('item');
-                        while (target && !lib.hasClass(target, tokenClassName)) {
-                            target = target.parentNode;
-                        }
-                    }
-                    else {
-                        target = lib.dom.previous(this.getInput().main);
+                    var me = this;
+                    var target = e && e.currentTarget;
+                    if (!target) {
+                        target = $(me.getInput().main).prev();
                     }
 
-                    var dataId = lib.getAttribute(target, 'data-id');
-                    target.parentNode.removeChild(target);
-                    delete this.data[dataId];
+                    var $t = $(target);
+                    if ($t.size() > 0) {
+                        var dataId = $(target).attr('data-id');
+                        $t.remove();
+                        delete me.data[dataId];
+                    }
                 },
 
                 /**
@@ -399,30 +345,24 @@ define(
                         return;
                     }
 
+                    var itemClass = this.helper.getPartClassName('item');
                     var me = this;
                     if (!isAdd) {
-                        u.each(
-                            lib.getChildren(this.main),
-                            function (tokenElem) {
-                                if (lib.hasClass(tokenElem, 'item')) {
+                        $(this.main).children().each(
+                            function (idx, tokenElem) {
+                                var $ele = $(tokenElem);
+                                if ($ele.hasClass(itemClass)) {
                                     // 先删除关联数据
-                                    var dataId = lib.getAttribute(tokenElem, 'data-id');
+                                    var dataId = $ele.attr('data-id');
                                     delete me.data[dataId];
-                                    tokenElem.parentNode.removeChild(tokenElem);
+                                    $ele.remove();
                                 }
                             }
                         );
                     }
 
                     if (typeof tokens === 'string') {
-                        if (this.delimiters.length) {
-                            tokens = tokens.split(
-                                new RegExp('[' + this.delimiters.join('') + ']')
-                            );
-                        }
-                        else {
-                            tokens = [tokens];
-                        }
+                        tokens = tokens.split(this.delimiter);
                     }
 
                     u.each(
@@ -440,11 +380,11 @@ define(
                 getTokens: function () {
                     var tokens = [];
                     var me = this;
-                    u.each(
-                        lib.getChildren(this.main),
-                        function (tokenElem) {
-                            if (lib.hasAttribute(tokenElem, 'data-id')) {
-                                var dataId = lib.getAttribute(tokenElem, 'data-id');
+                    $(this.main).children().each(
+                        function (idx, tokenElem) {
+                            var $ele = $(tokenElem);
+                            var dataId = $ele.attr('data-id');
+                            if (dataId) {
                                 var token = me.data[dataId];
                                 if (token) {
                                     tokens.push(token);
@@ -457,11 +397,10 @@ define(
 
                 /**
                  * 获取控件表单值
-                 * @param {string=} separator token join分隔符
                  * @return {string} 组件的值
                  */
-                getRawValue: function (separator) {
-                    separator = separator || this.delimiter;
+                getRawValue: function () {
+                    var separator = this.delimiter;
                     return u.map(
                         this.getTokens(),
                         function (token) {
@@ -477,17 +416,9 @@ define(
                  * @protected
                  * @override
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
-                    {
-                        name: ['width'],
-                        paint: function (tokenField, width) {
-                            if (isNaN(width)) {
-                                return;
-                            }
-                            tokenField.main.style.width = parseInt(width, 10) + 'px';
-                        }
-                    },
+                    painters.style('width'),
                     {
                         name: ['disabled', 'readOnly'],
                         paint: function (textbox, disabled, readOnly) {
@@ -526,7 +457,7 @@ define(
             });
 
             if (repeatToken.dataId) {
-                repeatToken.tokenElement = document.querySelector('div[data-id=' + repeatToken.dataId + ']');
+                repeatToken.tokenElement = $(this.main).find('div[data-id=' + repeatToken.dataId + ']')[0];
             }
             return repeatToken;
         }

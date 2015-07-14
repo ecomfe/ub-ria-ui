@@ -9,13 +9,14 @@
 define(
     function (require) {
 
+        var u = require('underscore');
         /**
          * 工具模块
          *
          * @class util
          * @singleton
          */
-        var util = require('eoo').static(require('underscore'));
+        var util = {};
 
         /**
          * 深度复制一个对象
@@ -25,30 +26,22 @@ define(
          */
         util.deepClone = function (obj) {
             // 非对象以及函数就直接返回
-            if (!util.isObject(obj) || util.isFunction(obj) || util.isRegExp(obj)) {
+            if (!u.isObject(obj) || u.isFunction(obj) || u.isRegExp(obj)) {
                 return obj;
             }
 
-            if (util.isArray(obj)) {
-                return util.map(obj, util.deepClone);
+            if (u.isArray(obj)) {
+                return u.map(obj, util.deepClone);
             }
 
             var clone = {};
-            util.each(
+            u.each(
                 obj,
                 function (value, key) {
                     clone[key] = util.deepClone(value);
                 }
             );
             return clone;
-        };
-
-        util.parseBoolean = function (properties) {
-            util.each(properties, function (property, key) {
-                if (property === 'false') {
-                    properties[key] = false;
-                }
-            });
         };
 
         return util;
