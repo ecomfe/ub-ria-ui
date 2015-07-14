@@ -14,115 +14,242 @@ define(
         var u = require('underscore');
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
+        var eoo = require('eoo');
+        var painters = require('esui/painters');
 
         require('esui/behavior/Mouse');
+        var $ = require('jquery');
 
-        var exports = {};
+        var Slider = eoo.create(
+            InputControl,
+            {
+                /**
+                 * 控件的类型
+                 * @override
+                 * @type {String}
+                 */
+                type: 'Slider',
 
-        /**
-         * 控件的类型
-         * @override
-         * @type {String}
-         */
-        exports.type = 'Slider';
+                /**
+                 * 参数的初始化
+                 * @protected
+                 * @override
+                 * @param  {Object} options [初始化的参数]
+                 */
+                initOptions: function (options) {
+                    /**
+                     * 默认的属性
+                     * @type {Object}
+                     * @type {string} defaults.orientation 滑块的形式 横着为'' 竖着为’vertical‘
+                     * @type {number} defaults.start 起始值 默认是0
+                     * @type {number} defaults.end 结束值 默认是10,
+                     * @type {number} defaults.step 滑动杆值的步长默认是1
+                     * @type {number | Arrary} defaults.value 滑动杆的值 默认为min或[min, max]
+                     * @type {number} defaults.min 最小值 不能小于start, 无值时与start相同
+                     * @type {number} defaults.max 最大值 不能大于end,无值时与end相同
+                     * @type {boolean} defaults.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
+                     * @type {boolean} defaults.range 滑动杆控件是否是选择区间 默认false 是true
+                     */
+                    var defaults = {
+                        orientation: '',
+                        start: 0,
+                        end: 10,
+                        step: 1,
+                        min: null,
+                        max: null,
+                        isShowSelectedBG: true,
+                        range: false
+                    };
 
-        /**
-         * 参数的初始化
-         * @protected
-         * @override
-         * @param  {Object} options [初始化的参数]
-         */
-        exports.initOptions = function (options) {
-            /**
-             * 默认的属性
-             * @type {Object}
-             * @type {string} defaults.orientation 滑块的形式 横着为'' 竖着为’vertical‘
-             * @type {number} defaults.start 起始值 默认是0
-             * @type {number} defaults.end 结束值 默认是10,
-             * @type {number} defaults.step 滑动杆值的步长默认是1
-             * @type {number | Arrary} defaults.value 滑动杆的值 默认为min或[min, max]
-             * @type {number} defaults.min 最小值 不能小于start, 无值时与start相同
-             * @type {number} defaults.max 最大值 不能大于end,无值时与end相同
-             * @type {string} defaults.unitText 滑动杆内数值后面的单位
-             * @type {boolean} defaults.isShowSelectedBG 滑杆已选择的部分是否加背景色显示 显示true 不显示false 默认true
-             * @type {string} defaults.pattern 文本框时验证的正则表达式
-             * @type {string} defaults.errorMessage 正则验证错误时的提示信息
-             * @type {Array} defaults.datasource 下拉框时的数据源
-             * @type {boolean} defaults.range 滑动杆控件是否是选择区间 默认false 是true
-             */
-            var defaults = {
-                orientation: '',
-                start: 0,
-                end: 10,
-                step: 1,
+                    var properties = {};
 
-                unitText: '',
-                isShowSelectedBG: true,
+                    u.extend(properties, defaults, options);
 
-                pattern: '^-?[1-9]\d*|0$',
-                errorMessgae: '输入的值必须为数字',
-                datasource: [],
+                    // 处理min和max
+                    properties.min = properties.min || properties.start;
+                    properties.max = properties.max || properties.end;
 
-                range: false
-            };
+                    // min和max只能在start和end的中间
+                    properties.min = Math.max(properties.min, properties.start);
+                    properties.max = Math.min(properties.max, properties.end);
 
-            var properties = {};
+                    // 水平、竖直滑动杆时的设置
+                    if (properties.orientation === 'vertical') {
+                        // 竖直滑动杆时参数的设置
+                        properties.leftTop = 'top';
+                        properties.rightBottom = 'bottom';
+                        properties.widthHeight = 'height';
+                        properties.pageXY = 'pageY';
+                    }
+                    else {
+                        // 水平时参数的设置
+                        properties.leftTop = 'left';
+                        properties.rightBottom = 'right';
+                        properties.widthHeight = 'width';
+                        properties.pageXY = 'pageX';
+                    }
 
-            u.extend(properties, defaults, options);
+                    // 适配value的数据
+                    properties = adaptValue.call(this, properties);
 
-            // 字符串转数字
-            properties.start = +properties.start;
-            properties.end = +properties.end;
-            properties.step = +properties.step;
+                    this.$super([properties]);
+                },
 
-            // 处理min和max
-            properties.min = typeof properties.min !== 'undefined' ? properties.min : properties.start;
-            properties.max = typeof properties.max !== 'undefined' ? properties.max : properties.end;
+                /**
+                 * 将字符串类型的值转换成原始格式，复杂类型的输入控件需要重写此接口
+                 *
+                 * @param {string} value 要转换的string
+                 * @param {Object} properties 参数对象
+                 * @return {Mixed}
+                 * @protected
+                 */
+                parseValue: function (value, properties) {
+                    if ((properties && properties.range) || this.range) {
+                        if (typeof value === 'string') {
+                            var arr = value.split(',');
+                            return [+arr[0], +arr[1]];
+                        }
+                    }
 
-            // min和max只能在start和end的中间
-            properties.min = Math.max(properties.min, properties.start);
-            properties.max = Math.min(properties.max, properties.end);
+                    return value;
+                },
 
-            // 水平、竖直滑动杆时的设置
-            if (properties.orientation === 'vertical') {
-                // 竖直滑动杆时参数的设置
-                properties.leftTop = 'top';
-                properties.rightBottom = 'bottom';
-                properties.widthHeight = 'height';
-                properties.pageXY = 'pageY';
-            }
-            else {
-                // 水平时参数的设置
-                properties.leftTop = 'left';
-                properties.rightBottom = 'right';
-                properties.widthHeight = 'width';
-                properties.pageXY = 'pageX';
-            }
+                /**
+                 * 批量设置控件的属性值
+                 * @param {Object} properties 属性值集合
+                 * @override
+                 */
+                setProperties: function (properties) {
 
-            // 适配value的数据
-            properties = adaptValue.call(this, properties);
+                    // 给控件设值的时候适配数据用
+                    if (properties.hasOwnProperty('rawValue')) {
+                        properties = adaptValue.call(this, properties);
 
-            this.$super([properties]);
-        };
+                    }
 
-        /**
-         * 将字符串类型的值转换成原始格式，复杂类型的输入控件需要重写此接口
-         *
-         * @param {string} value 要转换的string
-         * @param {Object} properties 参数对象
-         * @return {Mixed}
-         * @protected
-         */
-        exports.parseValue = function (value, properties) {
-            if ((properties && properties.range) || this.range) {
-                if (typeof value === 'string') {
-                    var arr = value.split(',');
-                    return [+arr[0], +arr[1]];
+                    this.$super([properties]);
+                },
+
+                /**
+                 * 创建滑动杆体
+                 * 有滑块的范围和滑块，
+                 * 滑块的范围分为显示的范围、已选的范围
+                 * 滑动杆可能有一个滑块或两个滑块，类型是区间时可能有两个滑块，最大值和最小值
+                 * 任意一个是显示的起始值时显示一个滑块
+                 * 放在原型里是为了可重写
+                 * @protected
+                 */
+                createBody: function () {
+                    var bodyElement = this.bodyElement = this.helper.createPart('body');
+                    var cursorElement = this.cursorElement = this.helper.createPart('body-cursor');
+
+                    bodyElement.appendChild(cursorElement);
+
+                    // 区间时需要两个滑块
+                    if (this.range) {
+                        var cursorElementTwo
+                            = this.cursorElementTwo
+                            = this.helper.createPart('body-cursortwo');
+
+                        $(this.cursorElementTwo).addClass(this.helper.getPartClassName('body-cursor'));
+
+                        bodyElement.appendChild(cursorElementTwo);
+                    }
+
+                    // 已选择的范围加个背景色
+                    if (this.isShowSelectedBG) {
+                        // 已选择的区间元素
+                        var bodySelectedElement
+                            = this.bodySelectedElement
+                            = this.helper.createPart('body-selected');
+
+                        bodyElement.appendChild(bodySelectedElement);
+                    }
+
+                    this.main.appendChild(bodyElement);
+
+                    // 初始化body内元素的宽度和位置
+                    initBodyElements(this);
+                },
+
+                /**
+                 * 初始化dom结构，仅在第一次渲染的时候使用
+                 * @protected
+                 * @override
+                 */
+                initStructure: function () {
+                    // 竖直滑动杆时增加样式
+                    if (this.orientation === 'vertical') {
+                        lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
+                    }
+
+                    /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
+                    this.createBody();
+                },
+
+                /**
+                 * 初始化事件的交互
+                 * @protected
+                 * @override
+                 */
+                initEvents: function () {
+                    // 绑定滑块的事件
+                    bindCursorEvents.call(this);
+                },
+
+                /**
+                 * 获取滑动杆的值
+                 * @return {*} 滑动杆的值
+                 */
+                getValue: function () {
+                    var value;
+
+                    if (this.range) {
+                        value = [this.minRangeValue, this.maxRangeValue];
+                    }
+                    else {
+                        value = this.getRawValue();
+                    }
+
+                    return value;
+                },
+
+                /**
+                 * 重新渲染
+                 * @protected
+                 * @override
+                 * @type {Function} 重新渲染时要执行的函数
+                 */
+                repaint: painters.createRepaint(
+                    InputControl.prototype.repaint,
+                    {
+                        name: 'rawValue',
+                        paint: function (slider, value) {
+                            setByValue(slider, value, true);
+                        }
+                    }
+                ),
+
+                /**
+                 * 销毁控件
+                 * @protected
+                 * @override
+                 */
+                dispose: function () {
+                    this.bodyElement = null;
+                    this.cursorElement = null;
+                    this.bodySelectedElement = null;
+                    this.activeCursorElement = null;
+
+                    if (this.range) {
+                        this.cursorElementTwo = null;
+                    }
+
+
+                    this.$super(arguments);
                 }
             }
-
-            return value;
-        };
+        );
 
         /**
          * 适配控件的value
@@ -171,79 +298,6 @@ define(
 
             return properties;
         }
-
-        /**
-         * 批量设置控件的属性值
-         * @param {Object} properties 属性值集合
-         * @override
-         */
-        exports.setProperties = function (properties) {
-
-            // 给控件设值的时候适配数据用
-            if (properties.hasOwnProperty('rawValue')) {
-                properties = adaptValue.call(this, properties);
-
-            }
-
-            this.$super([properties]);
-        };
-
-        /**
-         * 创建滑动杆体
-         * 有滑块的范围和滑块，
-         * 滑块的范围分为显示的范围、已选的范围
-         * 滑动杆可能有一个滑块或两个滑块，类型是区间时可能有两个滑块，最大值和最小值
-         * 任意一个是显示的起始值时显示一个滑块
-         * 放在原型里是为了可重写
-         * @protected
-         */
-        exports.createBody = function () {
-            var bodyElement = this.bodyElement = this.helper.createPart('body');
-            var cursorElement = this.cursorElement = this.helper.createPart('body-cursor');
-
-            bodyElement.appendChild(cursorElement);
-
-            // 区间时需要两个滑块
-            if (this.range) {
-                var cursorElementTwo
-                    = this.cursorElementTwo
-                    = this.helper.createPart('body-cursortwo');
-
-                $(this.cursorElementTwo).addClass(this.helper.getPartClassName('body-cursor'));
-
-                bodyElement.appendChild(cursorElementTwo);
-            }
-
-            // 已选择的范围加个背景色
-            if (this.isShowSelectedBG) {
-                // 已选择的区间元素
-                var bodySelectedElement
-                    = this.bodySelectedElement
-                    = this.helper.createPart('body-selected');
-
-                bodyElement.appendChild(bodySelectedElement);
-            }
-
-            this.main.appendChild(bodyElement);
-
-            // 初始化body内元素的宽度和位置
-            initBodyElements(this);
-        };
-
-        /**
-         * 初始化dom结构，仅在第一次渲染的时候使用
-         * @protected
-         * @override
-         */
-        exports.initStructure = function () {
-            // 竖直滑动杆时增加样式
-            if (this.orientation === 'vertical') {
-                lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
-            }
-
-            /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
-            this.createBody();
-        };
 
         /**
          * 绑定滑块拖拽的事件
@@ -588,7 +642,7 @@ define(
             this.activeCursorElement = cursorElement;
 
             // 增加active的样式
-            lib.addClass(cursorElement, this.helper.getPartClasses('body-cursor-active')[0]);
+            $(cursorElement).addClass(this.helper.getPartClassName('body-cursor-active'));
 
             // 点击的时候再初始化各种坐标 为了一些初始化时不在屏幕内的控件
             initBodyElements(this);
@@ -599,72 +653,7 @@ define(
             return true;
         }
 
-        /**
-         * 初始化事件的交互
-         * @protected
-         * @override
-         */
-        exports.initEvents = function () {
-            // 绑定滑块的事件
-            bindCursorEvents.call(this);
-        };
-
-        /**
-         * 获取滑动杆的值
-         * @return {*} 滑动杆的值
-         */
-        exports.getValue = function () {
-            var value;
-
-            if (this.range) {
-                value = [this.minRangeValue, this.maxRangeValue];
-            }
-            else {
-                value = this.getRawValue();
-            }
-
-            return value;
-        };
-
-        /**
-         * 重新渲染
-         * @protected
-         * @override
-         * @type {Function} 重新渲染时要执行的函数
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            InputControl.prototype.repaint,
-            {
-                name: 'rawValue',
-                paint: function (slider, value) {
-                    setByValue(slider, value, true);
-                }
-            }
-        );
-
-        /**
-         * 销毁控件
-         * @protected
-         * @override
-         */
-        exports.dispose = function () {
-            this.bodyElement = null;
-            this.cursorElement = null;
-            this.bodySelectedElement = null;
-            this.activeCursorElement = null;
-
-            if (this.range) {
-                this.cursorElementTwo = null;
-            }
-
-
-            this.$super(arguments);
-        };
-
-
-        var Slider = require('eoo').create(InputControl, exports);
         esui.register(Slider);
-
         return Slider;
     }
 );
