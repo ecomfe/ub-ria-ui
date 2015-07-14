@@ -9,7 +9,7 @@
  * 如果你只需要一个拾色器效果，
  * 请使用{@link FullColorPicker}控件
  *
- * @exports FullColorPicker
+ * @exports ColorPicker
  * @author dbear
  */
 define(

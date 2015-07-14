@@ -13,6 +13,7 @@ define(
         var InputControl = require('esui/InputControl');
 
         var lib = require('esui/lib');
+        var u = require('underscore');
         var m = require('moment');
         var ui = require('esui');
 
@@ -70,7 +71,8 @@ define(
                     var scale = properties.scale;
                     // 根据步长计算精度
                     if (format === 'number') {
-                        var dotPosition = (scale + '').indexOf('.');
+                        scale = scale + '';
+                        var dotPosition = scale.indexOf('.');
                         if (dotPosition > -1) {
                             properties.precision = scale.length - dotPosition - 1;
                         }

@@ -51,10 +51,16 @@ define(
                 type: 'AutoCompleteLayer',
 
                 initStructure: function () {
-                    var element = this.getElement();
                     var helper = this.control.helper;
 
-                    this.addCustomClasses([helper.getPrefixClass('autocomplete'), helper.getPrefixClass('dropdown')]);
+                    this.addCustomClasses(
+                        [
+                            helper.getPrefixClass('autocomplete'),
+                            helper.getPrefixClass('dropdown')
+                        ]
+                    );
+
+                    var element = this.getElement();
                     $(this.control.main).after(element);
                 },
 
@@ -68,82 +74,99 @@ define(
                     this.inputElement = helper.getPart(target.type === TEXT_LINE ? TEXT : INPUT);
                     inputElement = this.inputElement;
 
-                    helper.addDOMEvent(layerElement, 'click', 'li', function (e) {
-                        var clickedTarget = e.currentTarget;
-                        me.hide();
-                        var text = $(clickedTarget.firstChild).text();
-                        var event = me.control.fire('select', text);
-                        if (event.isDefaultPrevented()) {
-                            return;
-                        }
-                        me.control.setValue(text);
-                    });
-
-                    helper.addDOMEvent(inputElement, 'keydown', function (e) {
-                        if (me.isHidden()) {
-                            return;
-                        }
-
-                        switch (e.keyCode) {
-                            // up
-                            case keyboard.UP:
-                                e.preventDefault();
-                                moveTo.call(me, 'up');
-                                break;
-                            // down
-                            case keyboard.DOWN:
-                                e.preventDefault();
-                                moveTo.call(me, 'down');
-                                break;
-                            // esc
-                            case keyboard.ESC:
-                                me.hide();
-                                break;
-                            // enter
-                            case keyboard.RETURN:
-                                e.preventDefault();
-                                var selectedItem = me.getSelectedItem();
-                                if (!selectedItem) {
-                                    return;
-                                }
-                                me.hide();
-                                var text = $(selectedItem.firstChild).text();
-                                var event = me.control.fire('select', text);
-                                if (event.isDefaultPrevented()) {
-                                    return;
-                                }
-                                me.control.setValue(text);
-                                break;
-                        }
-                    });
-
-                    helper.addDOMEvent(inputElement, 'keyup', function (e) {
-                        var elementValue = inputElement.value;
-
-                        // 空格或逗号结尾都忽略
-                        if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
-                            repaintSuggest.call(me, '');
+                    helper.addDOMEvent(
+                        layerElement,
+                        'click',
+                        'li',
+                        function (e) {
+                            var clickedTarget = e.currentTarget;
                             me.hide();
-                            return;
+                            var text = $(clickedTarget.firstChild).text();
+                            var event = me.control.fire('select', text);
+                            if (event.isDefaultPrevented()) {
+                                return;
+                            }
+                            me.control.setValue(text);
                         }
+                    );
 
-                        if (u.isFunction(target.extractWord)) {
-                            elementValue = target.extractWord(elementValue);
-                        }
-                        else {
-                            elementValue = extractMatchingWord(elementValue);
-                        }
+                    helper.addDOMEvent(
+                        inputElement,
+                        'keydown',
+                        function (e) {
+                            if (me.isHidden()) {
+                                return;
+                            }
 
-                        if (!elementValue) {
-                            return;
+                            switch (e.keyCode) {
+                                // up
+                                case keyboard.UP:
+                                    e.preventDefault();
+                                    moveTo.call(me, 'up');
+                                    break;
+                                // down
+                                case keyboard.DOWN:
+                                    e.preventDefault();
+                                    moveTo.call(me, 'down');
+                                    break;
+                                // esc
+                                case keyboard.ESC:
+                                    me.hide();
+                                    break;
+                                // enter
+                                case keyboard.RETURN:
+                                    e.preventDefault();
+                                    var selectedItem = me.getSelectedItem();
+                                    if (!selectedItem) {
+                                        return;
+                                    }
+                                    me.hide();
+                                    var text = $(selectedItem.firstChild).text();
+                                    var event = me.control.fire('select', text);
+                                    if (event.isDefaultPrevented()) {
+                                        return;
+                                    }
+                                    setTimeout(
+                                        function () {
+                                            me.control.setValue(text);
+                                        },
+                                        0
+                                    );
+                                    break;
+                            }
                         }
+                    );
 
-                        if (target.search && target.search(elementValue) === false) {
-                            return;
+                    this.control.on(
+                        'input',
+                        function (e) {
+                            var elementValue = inputElement.value;
+
+                            // 空格或逗号结尾都忽略
+                            if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
+                                repaintSuggest.call(me, '');
+                                me.hide();
+                                return;
+                            }
+
+                            if (u.isFunction(target.extractWord)) {
+                                elementValue = target.extractWord(elementValue);
+                            }
+                            else {
+                                elementValue = extractMatchingWord(elementValue);
+                            }
+
+                            if (!elementValue) {
+                                return;
+                            }
+
+                            if (target.search && target.search(elementValue) === false) {
+                                return;
+                            }
+
+                            repaintSuggest.call(me, elementValue);
                         }
-
-                        repaintSuggest.call(me, elementValue);
-                    });
+                    );
                 },
 
                 repaint: function (value) {
@@ -164,7 +187,9 @@ define(
                     var items = element.children;
                     var selectedItemIndex = -1;
                     for (var i = 0, len = items.length; i < len; i++) {
-                        if (lib.hasClass(items[i], this.control.helper.getPrefixClass('autocomplete-item-hover'))) {
+                        if ($(items[i]).hasClass(
+                            this.control.helper.getPrefixClass('autocomplete-item-hover')
+                        )) {
                             selectedItemIndex = i;
                             break;
                         }

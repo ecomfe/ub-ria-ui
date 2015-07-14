@@ -111,7 +111,6 @@ define(
                                 var alpha = this.getDisplayAlpha();
                                 control.displayHex = hex;
                                 control.displayAlpha = alpha;
-                                updateSimpleColorPicker.call(control);
                                 control.fire('change');
                             }
                         );
@@ -158,11 +157,6 @@ define(
                             var advanced = colorPicker.getChild('advanced');
                             if (advanced) {
                                 advanced.setProperties({hex: hex, alpha: alpha});
-                            }
-                            // 更新简单模式
-                            var simple = colorPicker.getChild('simple');
-                            if (simple) {
-                                simple.setProperties({rawValue: hex});
                             }
                         }
                     }
@@ -247,14 +241,6 @@ define(
                 colorPicker.updateHex(color);
                 var alpha = this.displayAlpha;
                 colorPicker.updateAlpha(alpha);
-            }
-        }
-
-        function updateSimpleColorPicker() {
-            // 更新色盘
-            var colorPicker = this.getChild('simple');
-            if (colorPicker) {
-                colorPicker.setProperties({rawValue: this.displayHex});
             }
         }
 

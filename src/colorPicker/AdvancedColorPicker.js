@@ -93,10 +93,10 @@ define(
                     $(canvas).mouse(
                         {
                             start: function (event) {
-                                synValueByCanvas.call(me, event);
+                                syncValueByCanvas.call(me, event);
                                 return true;
                             },
-                            drag: u.bind(synValueByCanvas, this),
+                            drag: u.bind(syncValueByCanvas, this),
                             distance: 0
                         }
                     );
@@ -134,12 +134,22 @@ define(
                             var hex = this.getValue();
                             control.displayHex = hex;
                             syncValueByHex.call(control);
+                            updateHueSliderPointerPosition.call(control);
                         }
                     );
 
                     // Alpha滑动器改变
                     var alphaSlider = this.helper.getPart('alpha');
-                    this.helper.addDOMEvent(alphaSlider, 'click', syncValueByAlpha);
+                    $(alphaSlider).mouse(
+                        {
+                            start: function (event) {
+                                syncValueByAlpha.call(me, event);
+                                return true;
+                            },
+                            drag: u.bind(syncValueByAlpha, this),
+                            distance: 0
+                        }
+                    );
 
                     // Alpha输入
                     var alphaInput = this.getChild('alphaInput');
@@ -214,6 +224,7 @@ define(
                 updateAlpha: function (alpha) {
                     this.displayAlpha = alpha;
                     updateAlphaInput.call(this);
+                    updateAlphaColor.call(this);
                     updateAlphaPointerPosition.call(this);
                 },
 
@@ -397,7 +408,7 @@ define(
             // 更新历史
             updateColorHistory.call(this, 'new', this.displayHex);
             // 更新hue
-            updateHueSliderPointerPosition.call(this);
+            // updateHueSliderPointerPosition.call(this);
             // 更新canvas
             updateCanvasColor.call(this);
             updateCanvasPointerPosition.call(this);
@@ -415,11 +426,9 @@ define(
          *
          * @param {mini-event.Event} e 事件参数
          */
-        function synValueByCanvas(e) {
-            var target = e.target;
-
+        function syncValueByCanvas(e) {
             // 如果点的是pointer，不做处理
-            if (lib.hasClass(target, this.helper.getPartClassName('canvas-pointer'))) {
+            if (lib.hasClass(e.target, this.helper.getPartClassName('canvas-pointer'))) {
                 return;
             }
 
@@ -437,10 +446,10 @@ define(
             offsetX = Math.max(offsetX, 0);
 
             // 画布（自上向下）为Bright值从1到0平均分布
-            this.bright = Math.min(1 - offsetY / target.offsetHeight, 1);
+            this.bright = Math.min(1 - offsetY / $mask.height(), 1);
 
             // 画布（自左向右）为Saturation值从0到1平均分布
-            this.saturation = offsetX / target.offsetWidth;
+            this.saturation = offsetX / $mask.width();
 
             // 更新hex
             syncHBSToHex.call(this);
@@ -498,6 +507,23 @@ define(
         }
 
         /**
+         * 更新透明度颜色值
+         */
+        function updateAlphaColor() {
+            var slider = this.helper.getPart('alpha-slider');
+            // 渐变处理，兼容IE9-
+            var css3Tpl = 'linear-gradient(to top, rgba(${red}, ${green}, ${blue}, 0), rgb(${red}, ${green}, ${blue}))';
+            var ieTpl = 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF${hex}, endColorstr=#00${hex})';
+            if (lib.ie && lib.ie <= 9) {
+                slider.style.filter = lib.format(ieTpl, {hex: this.displayHex});
+            }
+            else {
+                var rgb = colorUtil.hexToRGB(this.displayHex);
+                slider.style.backgroundImage = lib.format(css3Tpl, rgb);
+            }
+        }
+
+        /**
          * 更新透明度输入框
          */
         function updateAlphaInput() {
@@ -516,12 +542,18 @@ define(
             if (lib.hasClass(e.target, this.helper.getPartClassName('alpha-pointer'))) {
                 return;
             }
-            var offsetY = e.offsetY;
-            if (offsetY === undefined) {
-                offsetY = e.layerY;
-            }
+
+            var slider = this.helper.getPart('alpha-slider');
+            var $slider = $(slider);
+
+            // 计算鼠标位移值，同时不能超出slider范围
+            var sliderPos = $slider.offset();
+            var offsetY = e.pageY - sliderPos.top;
+            offsetY = Math.min(offsetY, $slider.height());
+            offsetY = Math.max(offsetY, 0);
+
             // 光柱纵向（自上向下）为Hue值从0到360平均分布
-            this.displayAlpha = 100 - Math.round(offsetY / e.target.offsetHeight * 100);
+            this.displayAlpha = 100 - Math.round(offsetY / $slider.height() * 100);
             updateAlphaPointerPosition.call(this);
             updateAlphaInput.call(this);
 
@@ -598,6 +630,8 @@ define(
             var baseColor = colorUtil.hsbToHex(this.hue, 1, 1);
             var canvas = this.helper.getPart('canvas');
             canvas.style.backgroundColor = '#' + baseColor;
+            // 更新透明度底色
+            updateAlphaColor.call(this);
         }
 
         /**

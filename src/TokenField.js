@@ -47,9 +47,9 @@ define(
                  * @protected
                  * @override
                  */
-                createMain: function () {
-                    return document.createElement('div');
-                },
+                // createMain: function () {
+                //     return document.createElement('div');
+                // },
 
                 /**
                  * 初始化配置

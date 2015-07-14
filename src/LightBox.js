@@ -68,13 +68,16 @@ define(function (require) {
                     width: 'auto'
                 };
 
-                u.extend(properties, {
-                    title: this.title || '',
-                    foot: this.foot || '',
-                    draggable: this.draggable || false,
-                    needFoot: this.needFoot || false,
-                    variants: this.dialogVariants
-                });
+                u.extend(
+                    properties,
+                    {
+                        title: this.title || '',
+                        foot: this.foot || '',
+                        draggable: this.draggable || false,
+                        needfoot: this.needfoot || false,
+                        variants: this.dialogvariants
+                    }
+                );
                 var dialog = esui.create('Dialog', properties);
                 dialog.appendTo(document.body);
                 this.dialog = dialog;
@@ -93,41 +96,54 @@ define(function (require) {
 
                 var me = this;
 
-                this.dialog.helper.addDOMEvent(leftLink, 'click', function (e) {
-                    me.showPreviousMedia();
-                });
-                this.dialog.helper.addDOMEvent(rightLink, 'click', function (e) {
-                    me.showNextMedia();
-                });
+                this.dialog.helper.addDOMEvent(
+                    leftLink,
+                    'click',
+                    function (e) {
+                        me.showPreviousMedia();
+                    }
+                );
+                this.dialog.helper.addDOMEvent(
+                    rightLink,
+                    'click',
+                    function (e) {
+                        me.showNextMedia();
+                    }
+                );
 
                 if (this.group) {
                     var container = this.groupContainerId ? lib.g(this.groupContainerId) : document.body;
 
-                    me.helper.addDOMEvent(container, 'click', '[data-lightbox-group]', function (e) {
-                        var target = e.currentTarget;
-                        e.preventDefault();
+                    me.helper.addDOMEvent(
+                        container,
+                        'click',
+                        '[data-lightbox-group]',
+                        function (e) {
+                            var target = e.currentTarget;
+                            e.preventDefault();
 
-                        var $groupElements = $(container).find('[data-lightbox-group="' + me.group + '"]');
-                        var i = $groupElements.index(target);
-                        var datasource = [];
-                        $groupElements.each(function (i, element) {
-                            var $el = $(element);
-                            var item = {
-                                url: $el.attr('href')
-                            };
+                            var $groupElements = $(container).find('[data-lightbox-group="' + me.group + '"]');
+                            var i = $groupElements.index(target);
+                            var datasource = [];
+                            $groupElements.each(function (i, element) {
+                                var $el = $(element);
+                                var item = {
+                                    url: $el.attr('href')
+                                };
 
-                            var dataType = $el.attr('data-lightbox-type');
-                            item.width = $el.attr('data-lightbox-width');
-                            item.height = $el.attr('data-lightbox-height');
-                            dataType && (item.type = dataType);
+                                var dataType = $el.attr('data-lightbox-type');
+                                item.width = $el.attr('data-lightbox-width');
+                                item.height = $el.attr('data-lightbox-height');
+                                dataType && (item.type = dataType);
 
-                            datasource.push(item);
-                        });
-                        me.datasource = datasource;
-                        me.show({
-                            currentIndex: i
-                        });
-                    });
+                                datasource.push(item);
+                            });
+                            me.datasource = datasource;
+                            me.show({
+                                currentIndex: i
+                            });
+                        }
+                    );
                 }
             },
 
@@ -153,16 +169,19 @@ define(function (require) {
                     + ' '
                     + dialogHelper.getIconClass();
                 body.setContent(
-                    lib.format(tpl, {
-                        mediaId: dialogHelper.getId('media'),
-                        mediaStyle: dialogHelper.getPartClassName('lightbox-content-media'),
-                        linkId: dialogHelper.getId('link'),
-                        linkStyle: dialogHelper.getPartClassName('lightbox-content-link'),
-                        leftLinkId: dialogHelper.getId('link-left'),
-                        leftLinkStyle: leftIcon,
-                        rightLinkId: dialogHelper.getId('link-right'),
-                        rightLinkStyle: rightIcon
-                    })
+                    lib.format(
+                        tpl,
+                        {
+                            mediaId: dialogHelper.getId('media'),
+                            mediaStyle: dialogHelper.getPartClassName('lightbox-content-media'),
+                            linkId: dialogHelper.getId('link'),
+                            linkStyle: dialogHelper.getPartClassName('lightbox-content-link'),
+                            leftLinkId: dialogHelper.getId('link-left'),
+                            leftLinkStyle: leftIcon,
+                            rightLinkId: dialogHelper.getId('link-right'),
+                            rightLinkStyle: rightIcon
+                        }
+                    )
                 );
             },
 
@@ -197,9 +216,11 @@ define(function (require) {
              * @protected
              */
             setContent: function (list) {
-                this.setProperties({
-                    datasource: list
-                });
+                this.setProperties(
+                    {
+                        datasource: list
+                    }
+                );
             },
 
             /**
@@ -211,12 +232,11 @@ define(function (require) {
                 var data = this.datasource[this.currentIndex];
                 this.showLoading();
 
-                // 这个是否要保留呢 ?
                 if (!data.type) {
                     if (/\.(?:jpg|png|gif|jpeg|bmp)$/i.test(data.url)) {
                         data.type = 'image';
                     }
-                    else if (/\.swf$/i.test(data.url)) {
+                    else if (/\.swf/i.test(data.url)) {
                         data.type = 'flash';
                     }
                     else if (/\.(?:mp4|flv|mov|mkv|mpg|avi|rmvb|rm|ogg|wmv|mp3|wma|mid)/i.test(data.url)) {
@@ -232,7 +252,7 @@ define(function (require) {
              * @protected
              */
             showLoading: function () {
-                lib.addClass(this.dialog.main, this.helper.getPartClassName('loading'));
+                $(this.dialog.main).addClass(this.helper.getPartClassName('loading'));
             },
 
             /**
@@ -241,7 +261,7 @@ define(function (require) {
              * @protected
              */
             hideLoading: function () {
-                lib.removeClass(this.dialog.main, this.helper.getPartClassName('loading'));
+                $(this.dialog.main).removeClass(this.helper.getPartClassName('loading'));
             },
 
             /**
@@ -257,8 +277,8 @@ define(function (require) {
                     options.width = options.width || this.width;
                     options.height = options.height || this.height;
 
-                    var s = type.charAt(0).toUpperCase() + type.substring(1).toLowerCase();
-                    (this['preview' + s] || this.previewNotSupported).call(this, options);
+                    type = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+                    (this['preview' + type] || this.previewNotSupported).call(this, options);
                 }
             },
 
@@ -285,8 +305,12 @@ define(function (require) {
                     me.dialog.show();
                 };
                 img.src = options.url;
-                /\d+/.test(options.width) && (img.style.width = options.width + 'px');
-                /\d+/.test(options.height) && (img.style.height = options.height + 'px');
+                if (options.width) {
+                    img.style.width = options.width + 'px';
+                }
+                if (options.height) {
+                    img.style.height = options.height + 'px';
+                }
             },
 
             /**
@@ -385,13 +409,15 @@ define(function (require) {
      * @return {string}
      */
     function getFlashHtml(options) {
-        return $.flash.create({
-            id: options.id || 'preview-fla',
-            swf: options.url,
-            width: options.width,
-            height: options.height,
-            wmode: 'transparent'
-        });
+        return $.flash.create(
+            {
+                id: options.id || 'preview-fla',
+                swf: options.url,
+                width: options.width,
+                height: options.height,
+                wmode: 'transparent'
+            }
+        );
     }
 
     /**
@@ -403,14 +429,16 @@ define(function (require) {
      * @return {string}
      */
     function getFlvHtml(options, swfPath) {
-        return $.flash.create({
-            id: options.id || 'preview-flv',
-            swf: swfPath,
-            width: options.width,
-            height: options.height,
-            wmode: 'transparent',
-            vars: 'play_url=' + options.url
-        });
+        return $.flash.create(
+            {
+                id: options.id || 'preview-flv',
+                swf: swfPath,
+                width: options.width,
+                height: options.height,
+                wmode: 'transparent',
+                flashvars: 'play_url=' + options.url
+            }
+        );
     }
 
     /**
@@ -421,13 +449,16 @@ define(function (require) {
      * @return {string}
      */
     function getVideoHtml(options, me) {
-        return lib.format(me.VIDEO_TPL, {
-            id: options.id || 'preview-video',
-            title: options.title,
-            src: options.url,
-            width: options.width,
-            height: options.height
-        });
+        return lib.format(
+            me.VIDEO_TPL,
+            {
+                id: options.id || 'preview-video',
+                title: options.title,
+                src: options.url,
+                width: options.width,
+                height: options.height
+            }
+        );
     }
 
     esui.register(LightBox);
