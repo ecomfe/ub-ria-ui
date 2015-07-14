@@ -9,7 +9,6 @@
 define(
     function (require) {
         var Control = require('esui/Control');
-        var lib = require('esui/lib');
         var esui = require('esui');
         var eoo = require('eoo');
         var painters = require('esui/painters');
