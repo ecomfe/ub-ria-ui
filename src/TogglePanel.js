@@ -10,12 +10,14 @@ define(
     function (require) {
         var Control = require('esui/Control');
         var lib = require('esui/lib');
-        var ui = require('esui');
+        var esui = require('esui');
         var eoo = require('eoo');
         var painters = require('esui/painters');
+        var u = require('underscore');
+        var Layer = require('esui/Layer');
+        var $ = require('jquery');
 
         require('esui/Panel');
-        require('esui/Overlay');
 
         /**
          * 折叠控件
@@ -59,22 +61,18 @@ define(
                  * @protected
                  */
                 initStructure: function () {
-                    var children = lib.getChildren(this.main);
-                    var titleElem = children[0];
-                    var contentElem = children[1];
+                    var $children = $(this.main).children();
+                    var titleElem = $children[0];
+                    var contentElem = $children[1];
 
                     // 初始化Title部分的DOM结构
                     initTitle.call(this, titleElem);
 
                     // 初始化content部分的DOM结构
                     var position = this.position;
-                    if (position === 'fixed') {
-                        // 占位
-                        initContentPanel.call(this, contentElem);
-                    }
-                    else {
-                        // 不占位
-                        initContentOverlay.call(this, contentElem);
+                    initContentPanel.call(this, contentElem);
+                    if (position === 'layer') {
+                        initContentLayer.call(this, contentElem, titleElem);
                     }
                 },
 
@@ -89,35 +87,16 @@ define(
                 },
 
                 toggleStates: function () {
-                    var position = this.position;
-
-                    if (position === 'fixed') {
-                        // 占位模式
-                        this.toggleState('expanded');
-                        this.toggleState('active');
-                    }
-                    else {
-                        // 浮层模式
-                        var contentLayer = this.getChild('content');
-
-                        if (this.isExpanded()) {
-                            this.removeState('expanded');
-                            this.removeState('active');
-                            contentLayer.hide();
-                        }
-                        else {
-                            this.addState('expanded');
-                            this.addState('active');
-                            contentLayer.show();
-                        }
-                    }
+                    this.setProperties({
+                        expanded: !this.expanded
+                    });
                 },
 
                 initEvents: function () {
                     var me = this;
                     me.$super(arguments);
                     var titlePanel = me.getChild('title');
-                    me.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, me));
+                    me.helper.addDOMEvent(titlePanel.main, 'click', u.bind(onToggle, me));
                 },
 
                 /**
@@ -128,7 +107,6 @@ define(
                  */
                 repaint: painters.createRepaint(
                     Control.prototype.repaint,
-                    painters.state('expanded'),
                     {
                         name: 'title',
                         paint: function (panel, title) {
@@ -141,12 +119,38 @@ define(
                             panel.getChild('content').set('content', content);
                         }
                     },
+                    {
+                        name: 'expanded',
+                        paint: function (panel, expanded) {
+                            var layerMode = panel.position === 'layer';
+                            var method = expanded ?
+                                'addState' : 'removeState';
+
+                            panel[method]('expanded');
+                            panel[method]('active');
+
+                            method = expanded ?
+                                'show' : 'hide';
+                            if (layerMode) {
+                                panel.layer[method]();
+                            }
+                            else {
+                                panel.getChild('content')[method]();
+                            }
+                        }
+                    },
                     /**
                      * @property {number} width
                      *
                      * 宽度
                      */
-                    painters.style('width')
+                    painters.style('height'),
+                    /**
+                     * @property {number} width
+                     *
+                     * 宽度
+                     */
+                    painters.style('height')
                 ),
 
                 isExpanded: function () {
@@ -162,11 +166,9 @@ define(
          * @param {Object} titleElem Title的DOM对象
          */
         function initTitle(titleElem) {
-            var titlePanel = ui.create('Panel', {main: titleElem});
+            var titlePanel = esui.create('Panel', {main: titleElem});
             this.helper.addPartClasses('title', titlePanel.main);
             this.addChild(titlePanel, 'title');
-            titlePanel.render();
-            this.set('title', titleElem && titleElem.innerHTML);
         }
 
         /**
@@ -183,10 +185,9 @@ define(
                 renderOptions: this.renderOptions
             };
 
-            var contentPanel = ui.create('Panel', options);
+            var contentPanel = esui.create('Panel', options);
             this.helper.addPartClasses('content', contentPanel.main);
             this.addChild(contentPanel, 'content');
-            contentPanel.render();
         }
 
         /**
@@ -194,72 +195,23 @@ define(
          *
          * @inner
          * @param {Object} contentElem content的DOM对象
+         * @param {Object} titleElem title的DOM对象
          */
-        function initContentOverlay(contentElem) {
-            var overlayMain = this.helper.createPart('layer', 'div');
-            lib.addClass(overlayMain, this.helper.getPartClassName('layer'));
-
-            var options = {
-                main: contentElem,
-                childName: 'content',
-                attachedDOM: this.main,
-                attachedLayout: 'bottom,left',
-                autoClose: false,
-                viewContext: this.viewContext,
-                renderOptions: this.renderOptions
-            };
-            var contentLayer = ui.create('Overlay', options);
-
-            this.helper.addPartClasses('content', contentLayer.main);
-            this.addChild(contentLayer, 'content');
-            contentLayer.render();
-
-            var globalEvent = lib.bind(close, this);
-
-            contentLayer.on(
-                'show',
-                function () {
-                    this.helper.addDOMEvent(document, 'mousedown', globalEvent);
-                }
-            );
-
-            contentLayer.on(
-                'hide',
-                function () {
-                    this.helper.removeDOMEvent(document, 'mousedown', globalEvent);
-                }
-            );
-        }
-
-        /**
-         * 关闭layer层的事件处理句柄
-         *
-         * @param {mini-event.Event} e 事件对象
-         * @inner
-         */
-        function close(e) {
-            var target = e.target;
-            var layer = this.getChild('content');
-
-            if (!layer) {
-                return;
-            }
-
-            var isChild = lib.dom.contains(layer.main, target);
-
-            if (!isChild) {
-                layer.hide();
-
-                // 如果是点击attachedTarget的话，需要保持expanded状态.
-                // 如果是点击其他空白区域的话，直接去掉expanded就行。
-                var attachedTarget = layer.attachedTarget;
-                var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
-
-                if (!isAttachedTarget) {
-                    this.removeState('expanded');
-                    this.removeState('active');
-                }
-            }
+        function initContentLayer(contentElem, titleElem) {
+            var me = this;
+            contentElem.id = me.helper.getId('layer');
+            var layer = new Layer(me);
+            me.layer = layer;
+            layer.prepareLayer(contentElem);
+            layer.on('hide', function () {
+                // 重复设置同样值不会触发repaint因此不用担心死循环
+                me.setProperties(
+                    {
+                        expanded: false
+                    }
+                );
+            });
+            layer.autoCloseExcludeElements = [titleElem];
         }
 
         /**
@@ -271,8 +223,7 @@ define(
             this.toggleContent();
         }
 
-        ui.register(TogglePanel);
-
+        esui.register(TogglePanel);
         return TogglePanel;
     }
 );

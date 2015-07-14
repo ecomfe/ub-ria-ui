@@ -23,6 +23,11 @@ require.config({
             'main': 'main'
         },
         {
+            'name': 'ub-ria-ui',
+            'location': '../src',
+            'main': 'main'
+        },
+        {
             'name': 'eoo',
             'location': '../dep/eoo/0.1.4/src',
             'main': 'main'

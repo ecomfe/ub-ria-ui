@@ -2798,10 +2798,6 @@ hr {
 }
 .ui-layer {
   position: absolute;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   margin: 0;
 }
 .ui-layer-hidden {
@@ -6648,12 +6644,6 @@ i.ui-autocomplete-item-char-selected {
   margin-left: 0.2em;
 }
 .ui-togglepanel {
-  display: block;
-}
-.ui-togglepanel .ui-togglepanel-content {
-  display: none;
-}
-.ui-togglepanel-expanded .ui-togglepanel-content {
   display: block;
 }
 /* 滑动杆控件开始 */
