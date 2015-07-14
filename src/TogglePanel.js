@@ -169,6 +169,8 @@ define(
             var titlePanel = esui.create('Panel', {main: titleElem});
             this.helper.addPartClasses('title', titlePanel.main);
             this.addChild(titlePanel, 'title');
+            titlePanel.render();
+            this.set('title', titleElem && titleElem.innerHTML);
         }
 
         /**
@@ -188,6 +190,7 @@ define(
             var contentPanel = esui.create('Panel', options);
             this.helper.addPartClasses('content', contentPanel.main);
             this.addChild(contentPanel, 'content');
+            contentPanel.render();
         }
 
         /**
