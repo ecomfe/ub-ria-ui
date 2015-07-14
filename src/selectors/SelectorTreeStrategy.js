@@ -12,6 +12,7 @@ define(
         var lib = require('esui/lib');
         var TreeStrategy = require('esui/TreeStrategy');
         var eoo = require('eoo');
+        var u = require('underscore');
 
         /**
          * 树的数据交互策略

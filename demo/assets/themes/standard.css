@@ -2800,9 +2800,6 @@ hr {
   position: absolute;
   margin: 0;
 }
-.ui-layer-hidden {
-  display: none;
-}
 /**
  * ESUI (Enterprise Simple UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
@@ -6955,6 +6952,9 @@ i.ui-autocomplete-item-char-selected {
   padding: 0 0.75em;
   background: #f6f6f6;
   color: #666666;
+}
+.ui-richselectorgroup {
+  white-space: nowrap;
 }
 .ui-treerichselector .ui-tree-content-wrapper {
   position: relative;
