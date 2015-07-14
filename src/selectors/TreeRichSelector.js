@@ -14,7 +14,8 @@ define(
         var esui = require('esui');
         var eoo = require('eoo');
 
-        var u = require('../util');
+        var u = require('underscore');
+        var util = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
         var painters = require('esui/painters');
@@ -146,7 +147,7 @@ define(
                      *     ]
                      * }
                      */
-                    this.allData = u.deepClone(this.datasource);
+                    this.allData = util.deepClone(this.datasource);
                     // 一个扁平化的索引
                     // 其中包含父节点信息，以及节点选择状态
                     var indexData = {};

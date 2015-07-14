@@ -10,7 +10,7 @@ define(
     function (require) {
         var esui = require('esui');
         var lib = require('esui/lib');
-        var u = require('../util');
+        var u = require('underscore');
         var TogglePanel = require('../TogglePanel');
         var eoo = require('eoo');
 

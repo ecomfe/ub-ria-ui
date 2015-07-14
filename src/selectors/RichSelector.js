@@ -15,7 +15,7 @@ define(
 
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
-        var u = require('../util');
+        var u = require('underscore');
         var eoo = require('eoo');
         var painters = require('esui/painters');
         var esui = require('esui');
