@@ -255,7 +255,7 @@ define(
                     else {
                         tree.setProperties(
                             {
-                                datasource: u.deepClone(treeData),
+                                datasource: util.deepClone(treeData),
                                 keyword: this.getKeyword()
                             }
                         );
@@ -282,7 +282,7 @@ define(
                 },
 
                 getDatasourceWithState: function () {
-                    var datasource = u.deepClone(this.datasource);
+                    var datasource = util.deepClone(this.datasource);
                     var indexData = this.indexData;
                     this.walkTree(datasource, datasource.children, function (parent, child) {
                         child.isSelected = indexData[child.id].isSelected;
@@ -525,7 +525,7 @@ define(
                 getSelectedTree: function () {
                     var control = this;
                     // clone完整数据，这个数据是原始的，不带最新选择状态的
-                    var copyData = u.deepClone(this.allData);
+                    var copyData = util.deepClone(this.allData);
                     // 遍历树，把各个节点的children更新成只包含已选状态节点的
                     this.walkTree(
                         copyData,
