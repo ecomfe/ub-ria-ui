@@ -87,31 +87,19 @@ define(function (require) {
             repaint: painters.createRepaint(
                 InputControl.prototype.repaint,
                 {
-                    name: ['datasource', 'value'],
-                    paint: function (filter, datasource, value) {
-                        if (u.isString(value)) {
-                            value = [value];
+                    name: ['datasource', 'rawValue'],
+                    paint: function (filter, datasource, rawValue) {
+                        if (!u.isArray(rawValue)) {
+                            rawValue = [rawValue];
                         }
-                        filter.lastSelectedItem = null;
-                        u.each(datasource, function (item, index) {
-                            u.each(value, function (single, i) {
-                                if (item.value === single) {
-                                    item.selected = true;
-                                    if (!filter.multiple) {
-                                        filter.lastSelectedItem = item;
-                                    }
-                                }
-                            });
+
+                        u.each(filter.datasource, function (item, index) {
+                            if (u.indexOf(rawValue, item.value) > -1) {
+                                item.selected = true;
+                            }
                         });
-                        // 单选时， 如果没有设置默认值，则默认选择第一个
-                        if (!filter.multiple
-                            && !filter.lastSelectedItem
-                            && datasource
-                            && datasource[0]) {
-                            datasource[0].selected = true;
-                            filter.lastSelectedItem = datasource[0];
-                        }
-                        filter.buildItems(datasource);
+
+                        filter.buildItems();
                     }
                 },
                 {
@@ -139,19 +127,18 @@ define(function (require) {
                     function (e) {
                         var itemClass = controlHelper.getPartClassName('item');
                         var cmdItemClass = controlHelper.getPartClassName('item-cmd');
-                        var target = e.currentTarget;
-                        var $t = $(target);
+                        var $t = $(e.target);
 
                         e.preventDefault();
                         if ($t.hasClass(itemClass)) {
-                            var value = $t.attr( 'data-value');
+                            var value = $t.attr('data-value');
                             var text = $t.text();
                             var item = {
                                 value: value,
                                 text: text
                             };
 
-                            me.selectItem(item, target);
+                            me.selectItem(item);
                         }
                         else if ($t.hasClass(cmdItemClass)) {
                             me.fire('custom-link-click');
@@ -165,17 +152,22 @@ define(function (require) {
              * @param {Array} datasource 选项列表数据源
              * @private
              */
-            buildItems: function (datasource) {
+            buildItems: function () {
                 var s = '';
                 var helper = this.helper;
 
-                u.forEach(datasource, function (item) {
+                u.forEach(this.datasource, function (item) {
                     var active = item.selected ? helper.getPartClassName('item-active') : '';
                     s += buildItem.call(this, item, active);
                 }, this);
                 var itemsPanel = helper.getPart('items-panel');
                 itemsPanel.innerHTML = s;
                 this.custom && this.buildCustomItem();
+            },
+
+            addItem: function (item) {
+                this.datasource.push(item);
+                this.buildItems();
             },
 
             /**
@@ -204,16 +196,13 @@ define(function (require) {
              * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @public
              */
-            removeItem: function (item) {
+            unselectItem: function (item) {
                 if (!item || !this.getItemByValue(item.value)) {
                     return;
                 }
-                var datasource = lib.deepClone(this.datasource);
-                var targetItem = this.getItemByValue(item.value, datasource);
+                var targetItem = this.getItemByValue(item.value);
                 targetItem.selected = false;
-                this.setProperties({
-                    datasource: datasource
-                });
+                this.buildItems();
             },
 
             /**
@@ -222,42 +211,21 @@ define(function (require) {
              * @param {HtmlElement} target 选中的元素
              * @private
              */
-            selectItem: function (item, target) {
+            selectItem: function (item) {
                 var selectedItem = this.getItemByValue(item.value);
-                // 是否之前被选中过
-                var isChecked = false;
-                if (selectedItem.selected) {
-                    selectedItem.selected = false;
-                    isChecked = true;
-                }
-                else {
-                    selectedItem.selected = true;
-                }
-                var helper = this.helper;
-                // 对单选的特殊处理
-                if (!this.multiple) {
-                    if (selectedItem === this.lastSelectedItem) {
-                        selectedItem.selected = false;
-                        this.lastSelectedItem = null;
+                var lastItem;
+                var oldSelected = selectedItem.selected;
+
+                // 需要移除前一个单选
+                if (!this.multiple && !oldSelected) {
+                    var selectedItems = this.getSelectedItems();
+                    if (selectedItems.length > 0) {
+                        lastItem = selectedItems[0];
+                        lastItem.selected = false;
                     }
-                    else {
-                        this.lastSelectedItem && (this.lastSelectedItem.selected = false);
-                    }
-                    var cls = helper.getPartClassName('item-active');
-                    var itemLinks = target.parentNode.childNodes;
-                    u.each(itemLinks, function (itemLink) {
-                        if (lib.hasClass(itemLink, cls)) {
-                            helper.removePartClasses('item-active', itemLink);
-                            return false;
-                        }
-                    });
                 }
-                if (isChecked) {
-                    helper.removePartClasses('item-active', target);
-                }
-                else {
-                    helper.addPartClasses('item-active', target);
-                }
+
+                selectedItem.selected = !selectedItem.selected;
 
                 /**
                  * @event select
@@ -266,12 +234,10 @@ define(function (require) {
                  */
                 this.fire('change', {
                     item: item,
-                    lastItem: this.lastSelectedItem,
-                    action: isChecked ? 'remove' : 'add'
+                    lastItem: lastItem,
+                    action: oldSelected ? 'unselect' : 'select'
                 });
-                if (this.multiple || !isChecked) {
-                    this.lastSelectedItem = selectedItem;
-                }
+                this.buildItems();
             },
 
             /**

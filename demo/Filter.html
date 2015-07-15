@@ -33,7 +33,8 @@
                     <div data-ui-type="Filter"
                          data-ui-id="test1"
                          data-ui-custom="true"
-                         data-ui-label="单选：">
+                         data-ui-label="单选："
+                         data-ui-value="SHANGHAI0">
                     </div>
                     <div data-ui-type="Filter"
                          data-ui-id="test2"
@@ -117,7 +118,7 @@
                 var filter2 = controls[1];
                 var result = controls[2];
                 filter1.on('change', function (e) {
-                    if (e.action === 'add') {
+                    if (e.action === 'select') {
                         result.addItem(e.item);
                         result.removeItem(e.lastItem);
                     }
@@ -126,13 +127,11 @@
                     }
                 });
                 // 保存自定义时监听
-                filter1.onsave = function (item, callback) {
-                    console.log(item);
-                    // some code
-                    callback();
-                };
+                filter1.on('custom-link-click', function () {
+                    this.addItem({text: 'text', value: 'value'});
+                });
                 filter2.on('change', function (e) {
-                    if (e.action === 'add') {
+                    if (e.action === 'select') {
                         result.addItem(e.item);
                     }
                     else {
@@ -140,8 +139,8 @@
                     }
                 });
                 result.on('change', function (e) {
-                    filter1.removeItem(e.item);
-                    filter2.removeItem(e.item);
+                    filter1.unselectItem(e.item);
+                    filter2.unselectItem(e.item);
                 });
                 // 获取值
                 var submit = controls[3];
