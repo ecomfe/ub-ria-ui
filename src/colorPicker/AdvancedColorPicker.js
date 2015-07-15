@@ -15,6 +15,7 @@ define(
         var colorUtil = require('./Color');
         var eoo = require('eoo');
         var $ = require('jquery');
+        var painters = require('esui/painters');
 
         require('esui/TextBox');
         require('esui/Label');
@@ -53,10 +54,7 @@ define(
                         alpha: 100,
                         displayAlpha: 100
                     };
-                    u.extend(properties, options);
-                    if (properties.noAlpha === 'false') {
-                        properties.noAlpha = false;
-                    }
+                    u.extend(properties, AdvancedColorPicker.defaultProperties, options);
                     this.setProperties(properties);
                 },
 
@@ -169,7 +167,7 @@ define(
                  *
                  * @override
                  */
-                repaint: require('esui/painters').createRepaint(
+                repaint: painters.createRepaint(
                     Control.prototype.repaint,
                     {
                         name: 'hex',
@@ -252,6 +250,13 @@ define(
             }
         );
 
+        AdvancedColorPicker.defaultProperties = {
+            hexText: '色值',
+            beforeText: '改前',
+            afterText: '改后',
+            alphaText: '透明度'
+        };
+
         function getMainCanvasHTML() {
             return [
                 this.helper.getPartBeginTag('pallete', 'div'),
@@ -284,14 +289,14 @@ define(
             return [
                 this.helper.getPartBeginTag('compare', 'div'),
                 this.helper.getPartBeginTag('compare-title', 'div'),
-                '改前',
+                this.beforeText,
                 this.helper.getPartEndTag('compare-title', 'div'),
                 this.helper.getPartBeginTag('compare-color-old', 'div'),
                 this.helper.getPartEndTag('compare-color-old', 'div'),
                 this.helper.getPartBeginTag('compare-color-new', 'div'),
                 this.helper.getPartEndTag('compare-color-new', 'div'),
                 this.helper.getPartBeginTag('compare-title', 'div'),
-                '改后',
+                this.afterText,
                 this.helper.getPartEndTag('compare-title', 'div'),
                 this.helper.getPartEndTag('compare', 'div')
             ].join('');
@@ -300,12 +305,12 @@ define(
         function getColorInputHTML() {
             return [
                 this.helper.getPartBeginTag('input', 'div'),
-                getColorFieldHTML(this, 'hex', '色值'),
+                getColorFieldHTML(this, 'hex', this.hexText),
                 this.helper.getPartBeginTag('input-rgba', 'div'),
                 getColorFieldHTML(this, 'red', 'R'),
                 getColorFieldHTML(this, 'green', 'G'),
                 getColorFieldHTML(this, 'blue', 'B'),
-                getColorFieldHTML(this, 'alpha', '透明度'),
+                getColorFieldHTML(this, 'alpha', this.alphaText),
                 this.helper.getPartEndTag('input-rgba', 'div'),
                 this.helper.getPartEndTag('input', 'div')
             ].join('');
@@ -590,7 +595,7 @@ define(
          * @param {mini-event.Event} e 事件参数
          */
         function syncValueByHue(e) {
-            if (lib.hasClass(e.target, this.helper.getPartClassName('hue-pointer'))) {
+            if ($(e.target).hasClass(this.helper.getPartClassName('hue-pointer'))) {
                 return;
             }
 

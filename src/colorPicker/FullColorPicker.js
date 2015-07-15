@@ -85,7 +85,7 @@ define(
                     if (this.switchable) {
                         var switchClass = this.helper.getPartClassName('mode-switch');
                         html.push('<div data-ui-type="Button" data-ui-child-name="switch" ');
-                        html.push('class="' + switchClass + '">完整模式</div>');
+                        html.push('class="' + switchClass + '">' + this.fullModeText + '</div>');
                     }
 
                     this.main.innerHTML = html.join('');
@@ -187,7 +187,9 @@ define(
         );
 
         FullColorPicker.defaultProperties = {
-            fullModeText: '完整模式'
+            fullModeText: '完整模式',
+            advancedModeText: '高级模式',
+            simpleModeText: '简单模式'
         };
 
         function generateAdvancedHTML() {
@@ -216,15 +218,15 @@ define(
             // 如果当前处于full模式，切换回默认模式
             if (this.currentMode === 'full') {
                 newMode = this.defaultMode;
-                switchButton.setContent('完整模式');
+                switchButton.setContent(this.fullModeText);
             }
             else {
                 newMode = 'full';
                 if (this.currentMode === 'simple') {
-                    switchButton.setContent('简单模式');
+                    switchButton.setContent(this.simpleModeText);
                 }
                 else {
-                    switchButton.setContent('高级模式');
+                    switchButton.setContent(this.advancedModeText);
                 }
             }
 

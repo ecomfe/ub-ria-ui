@@ -218,7 +218,7 @@ define(
          * @param {Event} e DOM事件对象
          */
         function chooseColor(e) {
-            var blockClass = this.helper.getPartClasses('block')[0];
+            var blockClass = this.helper.getPartClassName('block');
             var $t = $(e.target);
             if ($t.hasClass(blockClass)) {
                 var color = $t.attr('data-value');
