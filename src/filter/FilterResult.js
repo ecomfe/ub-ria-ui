@@ -8,12 +8,11 @@
 define(function (require) {
     var lib = require('esui/lib');
     var u = require('underscore');
-    var Panel = require('esui/Panel');
+    var InputControl = require('esui/InputControl');
     var eoo = require('eoo');
     var esui = require('esui/main');
     var painters = require('esui/painters');
 
-    require('esui/Panel');
     require('esui/Label');
 
     /**
@@ -23,11 +22,9 @@ define(function (require) {
      * @constructor
      */
     var FilterResult = eoo.create(
-        Panel,
+        InputControl,
         {
             type: 'FilterResult',
-
-            datasource: [],
 
             /**
              * 初始化配置
@@ -36,7 +33,12 @@ define(function (require) {
              * @override
              */
             initOptions: function (options) {
-                this.setProperties(options);
+                var properties = {
+                    datasource: []
+                };
+                u.extend(properties, options);
+
+                this.setProperties(properties);
             },
 
             /**
@@ -46,23 +48,26 @@ define(function (require) {
              * @override
              */
             initStructure: function () {
-                var html = '<div data-ui-type="Panel" data-ui-id="${filterPanelId}" class="${filterPanelStyle}">'
-                        + '<label data-ui-type="Label" data-ui-id="${labelId}"></label>'
-                        + '<div data-ui-type="Panel" data-ui-id="${contentPanelId}" '
-                        + ' class="${contentPanelStyle}"></div></div>';
-                this.main.innerHTML = lib.format(
+                var controlHelper = this.helper;
+                var mainEle = this.main;
+                var html
+                        = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
+                        + '<label id="${labelId}"></label>'
+                        + '<div id="${contentPanelId}" class="${contentPanelStyle}"></div>'
+                        + '</div>';
+                mainEle.innerHTML = lib.format(
                     html,
                     {
-                        filterPanelStyle: this.helper.getPartClassName('panel'),
-                        filterPanelId: this.helper.getId('items-wrapper-panel'),
-                        labelId: this.helper.getId('items-label'),
-                        contentPanelId: this.helper.getId('items-panel'),
-                        contentPanelStyle: this.helper.getPartClassName('items-panel')
+                        filterPanelStyle: controlHelper.getPartClassName('panel'),
+                        filterPanelId: controlHelper.getId('items-wrapper-panel'),
+                        labelId: controlHelper.getId('items-label'),
+                        contentPanelId: controlHelper.getId('items-panel'),
+                        contentPanelStyle: controlHelper.getPartClassName('items-panel')
                     }
                 );
 
                 // 创建控件树
-                this.initChildren(this.main);
+                this.initChildren(mainEle);
             },
 
             /**
@@ -74,29 +79,8 @@ define(function (require) {
                 if (this.getItemByValue(item.value)) {
                     return;
                 }
-                var datasource = lib.deepClone(this.datasource);
-                item.selected = true;
-                datasource.push(item);
-                this.setProperties({
-                    datasource: datasource
-                });
-            },
-
-            /**
-             * 删除项
-             * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
-             * @public
-             */
-            removeItem: function (item) {
-                if (!item || !this.getItemByValue(item.value)) {
-                    return;
-                }
-                var datasource = lib.deepClone(this.datasource);
-                var targetItem = this.getItemByValue(item.value, datasource);
-                datasource = u.without(datasource, targetItem);
-                this.setProperties({
-                    datasource: datasource
-                });
+                this.datasource.push(item);
+                this.buildItems();
             },
 
             /**
@@ -110,42 +94,28 @@ define(function (require) {
             },
 
             /**
-             * 获取提示已选项提示Label
-             * @return {Panel} 提示已选项提示Label
-             * @private
-             */
-            getSelectedItemsLabel: function () {
-                var selectedLabelId = this.helper.getId('items-label');
-                return this.viewContext.get(selectedLabelId);
-            },
-
-            /**
              * 初始化事件交互
              *
              * @protected
              * @override
              */
             initEvents: function () {
-                var selectedItemsPanel = this.getSelectedItemsPanel();
                 var me = this;
                 this.helper.addDOMEvent(
-                    selectedItemsPanel.main,
+                    me.main,
                     'click',
+                    'a',
                     function (e) {
-                        var target = e.target;
-                        if (!/^(?:A|I|SPAN)$/.test(target.nodeName)) {
-                            return;
-                        }
-                        target = /^A$/.test(target.nodeName) ? target : target.parentNode;
-                        var value = lib.getAttribute(target, 'data-value');
-                        var text = lib.getText(lib.dom.first(target));
+                        var $target = $(e.currentTarget);
+
+                        var value = $target.attr('data-value');
+                        var text = $target.children(':first-child').text();
                         var item = {
                             value: value,
-                            text: text,
-                            selected: false
+                            text: text
                         };
 
-                        me.unselectItem(item, target);
+                        me.removeItem(item);
                     }
                 );
             },
@@ -156,8 +126,7 @@ define(function (require) {
              * @param {HtmlElement} target 取消选中的元素
              * @private
              */
-            unselectItem: function (item, target) {
-                lib.removeNode(target);
+            removeItem: function (item) {
                 var selectedItem = this.getItemByValue(item.value);
                 this.datasource = u.without(this.datasource, selectedItem);
                 /**
@@ -168,6 +137,7 @@ define(function (require) {
                 this.fire('change', {
                     item: item
                 });
+                this.buildItems();
             },
 
             /**
@@ -177,10 +147,10 @@ define(function (require) {
              * @return {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @public
              */
-            getItemByValue: function (value, datasource) {
+            getItemByValue: function (value) {
                 var item;
-                datasource = datasource || this.datasource;
-                u.each(datasource, function (single, index) {
+
+                u.each(this.datasource, function (single, index) {
                     if (single.value === value) {
                         item = single;
                     }
@@ -196,27 +166,17 @@ define(function (require) {
              * @override
              */
             repaint: painters.createRepaint(
-                Panel.prototype.repaint,
+                InputControl.prototype.repaint,
                 {
-                    name: ['datasource', 'value'],
-                    paint: function (resultPanel, datasource, value) {
-                        if (u.isString(value)) {
-                            value = [value];
-                        }
-                        u.each(datasource, function (item, index) {
-                            u.each(value, function (single, i) {
-                                if (item.value === single) {
-                                    item.selected = true;
-                                }
-                            });
-                        });
-                        resultPanel.buildItems(datasource);
+                    name: ['datasource'],
+                    paint: function (resultPanel, datasource) {
+                        resultPanel.buildItems();
                     }
                 },
                 {
                     name: ['label'],
                     paint: function (resultPanel, selectedLabel) {
-                        resultPanel.getSelectedItemsLabel().setText(selectedLabel);
+                        $(resultPanel.helper.getPart('items-label')).text(selectedLabel);
                     }
                 }
             ),
@@ -226,12 +186,16 @@ define(function (require) {
              * @param {Array} datasource 选项列表数据源
              * @private
              */
-            buildItems: function (datasource) {
-                var html = '<a href="javascript:;" class="${style}" data-value="${value}">'
-                         + '<span>${text}</span><span class="${iconClass} ${removeClass}"></span></a>';
+            buildItems: function () {
+                var html
+                    = '<a href="#" class="${style}" data-value="${value}">'
+                    + '<span>${text}</span>'
+                    + '<span class="${iconClass} ${removeClass}"></span>'
+                    + '</a>';
                 var s = '';
                 var helper = this.helper;
-                u.forEach(datasource, function (item) {
+
+                u.forEach(this.datasource, function (item) {
                     s += lib.format(
                         html,
                         {
@@ -243,8 +207,8 @@ define(function (require) {
                         }
                     );
                 });
-                var selectedItemsPanel = this.getSelectedItemsPanel();
-                selectedItemsPanel.setContent(s);
+                var selectedItemsPanel = helper.getPart('items-panel');
+                $(selectedItemsPanel).html(s);
             },
 
             /**

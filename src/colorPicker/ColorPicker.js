@@ -54,7 +54,7 @@ define(
                         alpha: 100,
                         hasAlpha: true
                     };
-                    u.extend(properties, options);
+                    u.extend(properties, ColorPicker.defaultProperties, options);
                     this.setProperties(properties);
                 },
 
@@ -65,6 +65,7 @@ define(
                  * @protected
                  */
                 initStructure: function () {
+                    var controlHelper = this.helper;
                     var mainTpl = ''
                         + '<div class="${colorBlockFrameClass}" id="${colorBlockFrameId}">'
                         +     '<div class="${colorBlockClass}" id="${colorBlockId}"></div>'
@@ -81,14 +82,14 @@ define(
                     this.main.innerHTML = lib.format(
                         mainTpl,
                         {
-                            colorBlockFrameClass: this.helper.getPartClassName('color-block-frame'),
-                            colorBlockFrameId: this.helper.getId('color-block-frame'),
-                            colorBlockClass: this.helper.getPartClassName('color-block'),
-                            colorBlockId: this.helper.getId('color-block'),
-                            colorInputClass: this.helper.getPartClassName('color-input'),
-                            colorInputId: this.helper.getId('color-input'),
-                            alphaInputClass: this.helper.getPartClassName('alpha-input'),
-                            alphaInputId: this.helper.getId('alpha-input')
+                            colorBlockFrameClass: controlHelper.getPartClassName('color-block-frame'),
+                            colorBlockFrameId: controlHelper.getId('color-block-frame'),
+                            colorBlockClass: controlHelper.getPartClassName('color-block'),
+                            colorBlockId: controlHelper.getId('color-block'),
+                            colorInputClass: controlHelper.getPartClassName('color-input'),
+                            colorInputId: controlHelper.getId('color-input'),
+                            alphaInputClass: controlHelper.getPartClassName('alpha-input'),
+                            alphaInputId: controlHelper.getId('alpha-input')
                         }
                     );
 
@@ -171,6 +172,13 @@ define(
             }
         );
 
+        ColorPicker.defaultProperties = {
+            chooseColorText: '颜色选择',
+            closeText: '关闭',
+            okText: '确定',
+            cancelText: '取消'
+        }
+
         /**
          * 颜色输入框输入事件处理
          *
@@ -241,8 +249,8 @@ define(
 
             var pickerContent = ''
                 + this.helper.getPartBeginTag('head', 'div')
-                +     this.helper.getPartBeginTag('title', 'div') + '颜色选择' + this.helper.getPartEndTag('title', 'div')
-                +     this.helper.getPartBeginTag('close-btn', 'div') + '关闭'
+                +     this.helper.getPartBeginTag('title', 'div') + this.chooseColorText + this.helper.getPartEndTag('title', 'div')
+                +     this.helper.getPartBeginTag('close-btn', 'div') + this.closeText
                 +     this.helper.getPartEndTag('close-btn', 'div')
                 + this.helper.getPartEndTag('head', 'div')
                 + '<div data-ui-type="FullColorPicker" data-ui-child-name="colorPicker"'
@@ -253,9 +261,9 @@ define(
                 + this.helper.getPartBeginTag('foot-frame', 'div')
                 +     this.helper.getPartBeginTag('foot', 'div')
                 +         '<div class="' + this.helper.getPartClassName('ok-btn') + '"'
-                +             'data-ui="type:Button;childName:btnOk;variants:primary">确定</div>'
+                +             'data-ui="type:Button;childName:btnOk;variants:primary">' + this.okText + '</div>'
                 +         '<div class="' + this.helper.getPartClassName('cancel-btn') + '"'
-                +             'data-ui="type:Button;childName:btnCancel;variants:link">取消</div>'
+                +             'data-ui="type:Button;childName:btnCancel;variants:link">' + this.cancelText + '</div>'
                 +     this.helper.getPartEndTag('foot', 'div')
                 + this.helper.getPartEndTag('foot-frame', 'div');
 

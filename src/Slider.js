@@ -180,7 +180,7 @@ define(
                 initStructure: function () {
                     // 竖直滑动杆时增加样式
                     if (this.orientation === 'vertical') {
-                        lib.addClass(this.main, this.helper.getPartClasses('vertical')[0]);
+                        $(this.main).addClass(this.helper.getPartClassName('vertical'));
                     }
 
                     /\d+/.test(this.size) && (this.main.style[this.widthHeight] = this.size + 'px');
@@ -545,9 +545,8 @@ define(
          */
         function mouseupHandler(e) {
             // 去掉active的样式
-            lib.removeClass(
-                this.activeCursorElement,
-                this.helper.getPartClasses('body-cursor-active')[0]
+            $(this.activeCursorElement).removeClass(
+                this.helper.getPartClassName('body-cursor-active')
             );
 
             // 放开和mousemove时做得事是一样的，再做一遍
