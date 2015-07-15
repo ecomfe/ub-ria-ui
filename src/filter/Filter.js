@@ -8,27 +8,23 @@
 define(function (require) {
     var lib = require('esui/lib');
     var u = require('underscore');
-    var Panel = require('esui/Panel');
+    var InputControl = require('esui/InputControl');
     var eoo = require('eoo');
     var painters = require('esui/painters');
     var esui = require('esui');
-
-    require('esui/Panel');
-    require('esui/Label');
+    var $ = require('jquery');
 
     /**
      * Filter
      *
-     * @extends Panel
+     * @extends InputControl
      * @constructor
      */
     var Filter = eoo.create(
-        Panel,
+        InputControl,
         {
 
             type: 'Filter',
-
-            datasource: [],
 
             /**
              * 初始化配置
@@ -40,17 +36,15 @@ define(function (require) {
                 var properties = {
                     // 默认单选
                     multiple: false,
-                    // 单选时 默认选择第一个
-                    defaultFirst: false,
                     // 是否支持自定义
                     custom: false,
                     // 自定义按钮Label
-                    customBtnLabel: '自定义'
+                    customBtnLabel: '自定义',
+                    datasource: [],
+                    value: null
                 };
                 u.extend(properties, options);
-
                 this.setProperties(properties);
-                this.customElements = [];
             },
 
             /**
@@ -60,229 +54,73 @@ define(function (require) {
              * @override
              */
             initStructure: function () {
-                if (this.custom) {
-                    var me = this;
-                    u.forEach(this.main.childNodes, function (node) {
-                        if (node.nodeType === 1) {
-                            me.customElements.push(node);
-                        }
-                    });
-                    if (!this.customElements.length) {
-                        var customTpl
-                            = '<div style="display:inline-block"><input type="text" style="width:50px"/>'
-                            + '<input type="button" data-role="ok" value="确定"/>'
-                            + '<input type="button" data-role="cancel" value="取消"/></div>';
-                        var div = document.createElement('div');
-                        div.innerHTML = customTpl;
-                        u.forEach(div.childNodes, function (node) {
-                            if (node.nodeType === 1) {
-                                me.customElements.push(node);
-                            }
-                        });
-                    }
-                }
+                var controlHelper = this.helper;
+                var mainEle = this.main;
+                var html
+                        = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
+                        + '<label id="${labelId}"></label>'
+                        + '<div id="${contentPanelId}" class="${contentPanelStyle}"></div>'
+                        + '</div>';
 
-                var html = '<div data-ui-type="Panel" data-ui-id="${filterPanelId}" class="${filterPanelStyle}">'
-                        + '<label data-ui-type="Label" data-ui-id="${labelId}"></label>'
-                        + '<div data-ui-type="Panel" data-ui-id="${contentPanelId}" '
-                        + 'class="${contentPanelStyle}"></div></div>';
-                this.main.innerHTML = lib.format(
+                mainEle.innerHTML = lib.format(
                     html,
                     {
-                        filterPanelStyle: this.helper.getPartClassName('panel'),
-                        filterPanelId: this.helper.getId('items-wrapper-panel'),
-                        labelId: this.helper.getId('items-label'),
-                        contentPanelId: this.helper.getId('items-panel'),
-                        contentPanelStyle: this.helper.getPartClassName('items-panel')
+                        filterPanelStyle: controlHelper.getPartClassName('panel'),
+                        filterPanelId: controlHelper.getId('items-wrapper-panel'),
+                        labelId: controlHelper.getId('items-label'),
+                        contentPanelId: controlHelper.getId('items-panel'),
+                        contentPanelStyle: controlHelper.getPartClassName('items-panel')
                     }
                 );
 
                 // 创建控件树
-                this.initChildren(this.main);
+                this.initChildren(mainEle);
             },
 
             /**
-             * 根据datasource生成选择项
-             * @param {Array} datasource 选项列表数据源
-             * @private
+             * 重渲染
+             *
+             * @method
+             * @protected
+             * @override
              */
-            buildItems: function (datasource) {
-                var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a> ';
-                var s = '';
-                var helper = this.helper;
-
-                u.forEach(datasource, function (item) {
-                    var active = item.selected ? helper.getPartClassName('item-active') : '';
-                    s += lib.format(
-                        html,
-                        {
-                            value: item.value,
-                            text: item.text,
-                            style: helper.getPartClassName('item') + ' ' + active
+            repaint: painters.createRepaint(
+                InputControl.prototype.repaint,
+                {
+                    name: ['datasource', 'value'],
+                    paint: function (filter, datasource, value) {
+                        if (u.isString(value)) {
+                            value = [value];
                         }
-                    );
-                }, this);
-                var itemsPanel = this.getItemsPanel();
-                itemsPanel.main.innerHTML = s;
-                this.custom && this.buildCustomItem();
-            },
-
-            /**
-             * 根据选项数据生成选择项
-             * @param {Object} item 选项数据
-             * @return {HtmlElement} 生成的选择项元素
-             * @private
-             */
-            buildItem: function (item) {
-                var html = '<a href="javascript:;" class="${style}" data-value="${value}">${text}</a>';
-                var div = document.createElement('div');
-                div.innerHTML = lib.format(
-                    html,
-                    {
-                        value: item.value,
-                        text: item.text,
-                        style: this.helper.getPartClassName('item')
+                        filter.lastSelectedItem = null;
+                        u.each(datasource, function (item, index) {
+                            u.each(value, function (single, i) {
+                                if (item.value === single) {
+                                    item.selected = true;
+                                    if (!filter.multiple) {
+                                        filter.lastSelectedItem = item;
+                                    }
+                                }
+                            });
+                        });
+                        // 单选时， 如果没有设置默认值，则默认选择第一个
+                        if (!filter.multiple
+                            && !filter.lastSelectedItem
+                            && datasource
+                            && datasource[0]) {
+                            datasource[0].selected = true;
+                            filter.lastSelectedItem = datasource[0];
+                        }
+                        filter.buildItems(datasource);
                     }
-                );
-                var itemElement = div.firstChild;
-                lib.insertBefore(itemElement, this.customBtn);
-                return itemElement;
-            },
-
-            /**
-             * 生成自定义项
-             * @private
-             */
-            buildCustomItem: function () {
-                var html = '<a href="javascript:;" class="${style}">${text}</a>';
-                var itemsPanel = this.getItemsPanel();
-                itemsPanel.appendContent(lib.format(html, {
-                    style: this.helper.getPartClassName('item-cmd'),
-                    text: this.customBtnLabel
-                }));
-                this.customBtn = itemsPanel.main.lastChild;
-            },
-
-            /**
-             * 获取备选项Panel
-             * @return {Panel} 备选项Panel
-             * @private
-             */
-            getItemsPanel: function () {
-                var itemsPanelId = this.helper.getId('items-panel');
-                return this.viewContext.get(itemsPanelId);
-            },
-
-            /**
-             * 获取备选项提示Label
-             * @return {Panel} 备选项提示Label
-             * @private
-             */
-            getItemsLabel: function () {
-                var itemsLabelId = this.helper.getId('items-label');
-                return this.viewContext.get(itemsLabelId);
-            },
-
-            /**
-             * 添加自定义输入控件
-             * @param {HtmlElement} target 自定义输入控件插入位置参考元素
-             * @private
-             */
-            addCustomInput: function (target) {
-                var me = this;
-                this.customInputs = [];
-                u.forEach(this.customElements, function (node) {
-                    walkDomTree(node, function (node) {
-                        var role = lib.getAttribute(node, 'data-role');
-                        if (!me.customOkBtn && role === 'ok') {
-                            me.customOkBtn = node;
-                        }
-                        else if (!me.customCancelBtn && role === 'cancel') {
-                            me.customCancelBtn = node;
-                        }
-                        else if (node.nodeName === 'INPUT' && node.type === 'text') {
-                            me.customInputs.push(node);
-                        }
-                    });
-                    lib.insertBefore(node, target);
-                });
-                target.style.display = 'none';
-            },
-
-            /**
-             * 移除自定义输入控件
-             * @private
-             */
-            removeCustemInput: function () {
-                u.forEach(this.customElements, function (node) {
-                    lib.removeNode(node);
-                });
-                this.customBtn.style.display = '';
-                // 置空输入控件
-                u.each(this.customInputs, function (input) {
-                    input.value && (input.value = '');
-                });
-            },
-
-            /**
-             * 保存自定义条件选项
-             * @private
-             */
-            saveCustomItem: function () {
-                var itemsText = [];
-                var me = this;
-                var hasBlank = false;
-                u.each(this.customInputs, function (input) {
-                    if (!input.value) {
-                        hasBlank = true;
-                        return false;
+                },
+                {
+                    name: ['label'],
+                    paint: function (filter, label) {
+                        $(filter.helper.getPart('items-label')).text(label);
                     }
-                    itemsText.push(input.value);
-                });
-                if (hasBlank) {
-                    alert('不允许输入为空，请输入完整！');
-                    return;
                 }
-                var item = {
-                    text: itemsText.join('-'),
-                    value: itemsText.join('-')
-                };
-                if (me.hasRepeatItemInDatasource(item)) {
-                    alert('存在重复的选择项，请重新输入！');
-                    return;
-                }
-                this.onsave(item, function () {
-                    me.datasource.push(item);
-                    var element = me.buildItem(item);
-                    me.removeCustemInput();
-                    me.selectItem(item, element);
-                });
-            },
-
-            /**
-             * 点击自定义保存时触发的事件接口
-             * @param {Object} item 自定义的项
-             * @param {Function} callback 回调
-             */
-            onsave: function (item, callback) {
-                callback();
-            },
-
-            /**
-             * 检查在datasource中是否存在重复的选项
-             * @param {Object} repeatItem 待检测的选项数据
-             * @return {bool} 是否存在重复项
-             */
-            hasRepeatItemInDatasource: function (repeatItem) {
-                var ret = false;
-                u.each(this.datasource, function (item) {
-                    if (item.value === repeatItem.value || item.text === repeatItem.text) {
-                        ret = true;
-                        return false;
-                    }
-                });
-                return ret;
-            },
+            ),
 
             /**
              * 初始化事件交互
@@ -291,41 +129,73 @@ define(function (require) {
              * @override
              */
             initEvents: function () {
-                var itemsPanel = this.getItemsPanel();
                 var me = this;
-                this.helper.addDOMEvent(
-                    itemsPanel.main,
+                var controlHelper = me.helper;
+
+                controlHelper.addDOMEvent(
+                    me.main,
                     'click',
+                    'a',
                     function (e) {
-                        var target = e.target;
+                        var itemClass = controlHelper.getPartClassName('item');
+                        var cmdItemClass = controlHelper.getPartClassName('item-cmd');
+                        var target = e.currentTarget;
+                        var $t = $(target);
 
-                        if (target === me.customOkBtn) {
-                            me.saveCustomItem();
-                            return;
+                        e.preventDefault();
+                        if ($t.hasClass(itemClass)) {
+                            var value = $t.attr( 'data-value');
+                            var text = $t.text();
+                            var item = {
+                                value: value,
+                                text: text
+                            };
+
+                            me.selectItem(item, target);
                         }
-
-                        if (target === me.customCancelBtn) {
-                            me.removeCustemInput();
-                            return;
+                        else if ($t.hasClass(cmdItemClass)) {
+                            me.fire('custom-link-click');
                         }
-
-                        if (target.nodeName !== 'A') {
-                            return;
-                        }
-
-                        if (me.custom && target === me.customBtn) {
-                            me.addCustomInput(target);
-                            return;
-                        }
-                        var value = lib.getAttribute(target, 'data-value');
-                        var text = lib.getText(target);
-                        var item = {
-                            value: value,
-                            text: text
-                        };
-
-                        me.selectItem(item, target);
                     }
+                );
+            },
+
+            /**
+             * 根据datasource生成选择项
+             * @param {Array} datasource 选项列表数据源
+             * @private
+             */
+            buildItems: function (datasource) {
+                var s = '';
+                var helper = this.helper;
+
+                u.forEach(datasource, function (item) {
+                    var active = item.selected ? helper.getPartClassName('item-active') : '';
+                    s += buildItem.call(this, item, active);
+                }, this);
+                var itemsPanel = helper.getPart('items-panel');
+                itemsPanel.innerHTML = s;
+                this.custom && this.buildCustomItem();
+            },
+
+            /**
+             * 生成自定义项
+             * @private
+             */
+            buildCustomItem: function () {
+                var html = '<a href="#" id="${customLinkId}" class="${style}">${text}</a>';
+                var controlHelper = this.helper;
+                var itemsPanel = controlHelper.getPart('items-panel');
+
+                $(itemsPanel).append(
+                    lib.format(
+                        html,
+                        {
+                            customLinkId: controlHelper.getId('custom-link'),
+                            style: controlHelper.getPartClassName('item-cmd'),
+                            text: this.customBtnLabel
+                        }
+                    )
                 );
             },
 
@@ -423,53 +293,6 @@ define(function (require) {
             },
 
             /**
-             * 重渲染
-             *
-             * @method
-             * @protected
-             * @override
-             */
-            repaint: painters.createRepaint(
-                Panel.prototype.repaint,
-                {
-                    name: ['datasource', 'value'],
-                    paint: function (filterPanel, datasource, value) {
-                        if (u.isString(value)) {
-                            value = [value];
-                        }
-                        filterPanel.lastSelectedItem = null;
-                        u.each(datasource, function (item, index) {
-                            u.each(value, function (single, i) {
-                                if (item.value === single) {
-                                    item.selected = true;
-                                    if (!filterPanel.multiple) {
-                                        filterPanel.lastSelectedItem = item;
-                                    }
-                                }
-                            });
-                        });
-                        // 单选时， 如果没有设置默认值，则默认选择第一个
-                        if (!filterPanel.multiple
-                            && !filterPanel.lastSelectedItem
-                            && filterPanel.defaultFirst
-                            && datasource
-                            && datasource[0]) {
-                            datasource[0].selected = true;
-                            filterPanel.lastSelectedItem = datasource[0];
-                        }
-                        filterPanel.buildItems(datasource);
-                    }
-                },
-                {
-                    name: ['itemsLabel'],
-                    paint: function (filterPanel, label) {
-                        label = label || filterPanel.label;
-                        filterPanel.getItemsLabel().setText(label);
-                    }
-                }
-            ),
-
-            /**
              * 获取选中的项
              * @return {Object} 选中项
              */
@@ -498,16 +321,25 @@ define(function (require) {
         }
     );
 
-    function walkDomTree(root, callback) {
-        if (root.nodeType !== 1) {
-            return;
-        }
-        callback(root);
-        if (root.childNodes) {
-            u.forEach(root.childNodes, function (node) {
-                walkDomTree(node, callback);
-            });
-        }
+    /**
+     * 根据选项数据生成选择项
+     * @param {Object} item 选项数据
+     * @param {string} style 额外的样式
+     * @return {HtmlElement} 生成的选择项元素
+     * @private
+     */
+    function buildItem(item, style) {
+        var html = '<a href="#" class="${style}" data-value="${value}">${text}</a>';
+        style = style || '';
+
+        return lib.format(
+            html,
+            {
+                style: this.helper.getPartClassName('item') + ' ' + style,
+                value: item.value,
+                text: item.text
+            }
+        );
     }
 
     esui.register(Filter);

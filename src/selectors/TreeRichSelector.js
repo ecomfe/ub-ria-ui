@@ -15,7 +15,7 @@ define(
         var eoo = require('eoo');
 
         var u = require('underscore');
-        var util = require('../util');
+        var lib = require('esui/lib');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
         var painters = require('esui/painters');
@@ -147,7 +147,7 @@ define(
                      *     ]
                      * }
                      */
-                    this.allData = util.deepClone(this.datasource);
+                    this.allData = lib.deepClone(this.datasource);
                     // 一个扁平化的索引
                     // 其中包含父节点信息，以及节点选择状态
                     var indexData = {};
@@ -255,7 +255,7 @@ define(
                     else {
                         tree.setProperties(
                             {
-                                datasource: util.deepClone(treeData),
+                                datasource: lib.deepClone(treeData),
                                 keyword: this.getKeyword()
                             }
                         );
@@ -282,7 +282,7 @@ define(
                 },
 
                 getDatasourceWithState: function () {
-                    var datasource = util.deepClone(this.datasource);
+                    var datasource = lib.deepClone(this.datasource);
                     var indexData = this.indexData;
                     this.walkTree(datasource, datasource.children, function (parent, child) {
                         child.isSelected = indexData[child.id].isSelected;
@@ -525,7 +525,7 @@ define(
                 getSelectedTree: function () {
                     var control = this;
                     // clone完整数据，这个数据是原始的，不带最新选择状态的
-                    var copyData = util.deepClone(this.allData);
+                    var copyData = lib.deepClone(this.allData);
                     // 遍历树，把各个节点的children更新成只包含已选状态节点的
                     this.walkTree(
                         copyData,
