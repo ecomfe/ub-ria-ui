@@ -75,7 +75,7 @@ define(function (require) {
                         foot: this.foot || '',
                         draggable: this.draggable || false,
                         needfoot: this.needfoot || false,
-                        variants: this.dialogvariants
+                        variants: this.dialogVariants
                     }
                 );
                 var dialog = esui.create('Dialog', properties);
