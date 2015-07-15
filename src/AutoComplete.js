@@ -85,7 +85,7 @@ define(
                             if (event.isDefaultPrevented()) {
                                 return;
                             }
-                            me.control.setValue(text);
+                            setTargetValue.call(me, text);
                         }
                     );
 
@@ -127,7 +127,7 @@ define(
                                     }
                                     setTimeout(
                                         function () {
-                                            me.control.setValue(text);
+                                            setTargetValue.call(me, text);
                                         },
                                         0
                                     );
@@ -241,14 +241,7 @@ define(
 
                 isHidden: function () {
                     var element = this.getElement();
-                    var ret;
-                    if (!element || this.control.helper.isPart(element, 'layer-hidden')) {
-                        ret = true;
-                    }
-                    else {
-                        ret = false;
-                    }
-                    return ret;
+                    return $(element).is(':hidden');
                 },
 
                 /**
@@ -366,6 +359,32 @@ define(
             ret ? this.show() : this.hide();
         }
 
+
+        /**
+         * 将用户选中值回填到input输入框
+         *
+         * @param {string} value 用户选择值
+         */
+        function setTargetValue(value) {
+            var input = this.getInput();
+            var targetValue = input.value;
+            targetValue = lib.trim(targetValue);
+            var items = [];
+            if (/\n/.test(targetValue)) {
+                items = targetValue.split(/\n/);
+                targetValue = items && items.pop();
+            }
+
+            var words = targetValue.split(',');
+            words.pop();
+            words.push(value);
+
+            if (items) {
+                items.push(words.join(','));
+                value = items.join('\n');
+            }
+            this.control.setValue(value);
+        }
 
         function extractMatchingWord(value) {
             var lines = value.split(/\n/);
