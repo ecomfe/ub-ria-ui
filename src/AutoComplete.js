@@ -23,7 +23,6 @@ define(
         var TEXT_LINE = 'TextLine';
         var TEXT_BOX = 'TextBox';
         var INPUT = 'input';
-        var TEXT = 'text';
         var $ = require('jquery');
 
         var AutoCompleteLayer = eoo.create(
@@ -36,13 +35,15 @@ define(
                  */
                 constructor: function (control) {
                     this.$super(arguments);
-                    var helper = control.helper;
-                    var controlType = control.type === TEXT_LINE ? TEXT : INPUT;
-                    var ele = helper.getPart(controlType);
-                    if (ele.tagName.toLowerCase() === INPUT) {
-                        this.dock = {
-                            strictWidth: true
-                        };
+                    // 对于input单行，要求layer宽度不大于input宽度
+                    var controlType = control.type;
+                    if (controlType === TEXT_BOX) {
+                        var ele = lib.g(control.inputId);
+                        if (ele.tagName.toLowerCase() === INPUT) {
+                            this.dock = {
+                                strictWidth: true
+                            };
+                        }
                     }
                     this.initStructure();
                     this.initEvents();
@@ -66,14 +67,12 @@ define(
 
                 initEvents: function () {
                     var me = this;
-                    var layerElement = me.getElement(false);
                     var target = me.control;
                     var helper = target.helper;
-                    var inputElement;
 
-                    this.inputElement = helper.getPart(target.type === TEXT_LINE ? TEXT : INPUT);
-                    inputElement = this.inputElement;
+                    var inputElement = this.inputElement = this.getInput();
 
+                    var layerElement = me.getElement(false);
                     helper.addDOMEvent(
                         layerElement,
                         'click',
@@ -137,36 +136,41 @@ define(
                         }
                     );
 
-                    this.control.on(
-                        'input',
-                        function (e) {
-                            var elementValue = inputElement.value;
+                    this.control.on('input', onInput);
 
-                            // 空格或逗号结尾都忽略
-                            if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
-                                repaintSuggest.call(me, '');
-                                me.hide();
-                                return;
-                            }
+                    /**
+                     * 用户输入时触发，根据输入下拉提示
+                     *
+                     * @param {Event} event 事件对象
+                     */
+                    function onInput(event) {
+                        var elementValue = inputElement.value;
 
-                            if (u.isFunction(target.extractWord)) {
-                                elementValue = target.extractWord(elementValue);
-                            }
-                            else {
-                                elementValue = extractMatchingWord(elementValue);
-                            }
-
-                            if (!elementValue) {
-                                return;
-                            }
-
-                            if (target.search && target.search(elementValue) === false) {
-                                return;
-                            }
-
-                            repaintSuggest.call(me, elementValue);
+                        // 空格或逗号结尾都忽略
+                        if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
+                            repaintSuggest.call(me, '');
+                            me.hide();
+                            return;
                         }
-                    );
+
+                        if (u.isFunction(target.extractWord)) {
+                            elementValue = target.extractWord(elementValue);
+                        }
+                        else {
+                            elementValue = extractMatchingWord(elementValue);
+                        }
+
+                        if (!elementValue) {
+                            return;
+                        }
+
+                        if (target.search && target.search(elementValue) === false) {
+                            return;
+                        }
+
+                        repaintSuggest.call(me, elementValue);
+                    }
+
                 },
 
                 repaint: function (value) {
@@ -207,6 +211,10 @@ define(
                     return selectedItem;
                 },
 
+                /**
+                 * @override
+                 * 对textarea自行实现position
+                 */
                 position: function () {
                     var input = this.inputElement;
                     if (input.nodeName.toLowerCase() !== 'textarea') {
@@ -241,6 +249,21 @@ define(
                         ret = false;
                     }
                     return ret;
+                },
+
+                /**
+                 * 获取内部输入元素
+                 * @return {Element}
+                 */
+                getInput: function () {
+                    var control = this.control;
+                    if (control.type === TEXT_BOX) {
+                        return lib.g(control.inputId);
+                    }
+                    else if (control.type === TEXT_LINE) {
+                        return control.getTextArea();
+                    }
+                    return null;
                 },
 
                 nodeName: 'ol'
