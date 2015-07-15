@@ -107,7 +107,7 @@
         height: @advanced-color-picker-canvas-height;
         border: 1px solid @advanced-color-picker-canvas-border-color;
         background-repeat: repeat;
-        background-image: url('@{advanced-color-resource-path}/color-picker-opacity.png');
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==');
         cursor: pointer;
     }
 
@@ -185,6 +185,9 @@
 
     .@{ui-class-prefix}-textbox {
         margin-bottom: .5em;
+        input {
+            text-align: center;
+        }
     }
 }
 
