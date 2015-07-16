@@ -106,6 +106,7 @@ define(
                     var helper = this.helper;
                     var actionLink = '';
                     var headCount = '';
+
                     if (this.needBatchAction) {
                         var linkClassName = helper.getPartClassName('batch-action-link');
                         var linkId = this.helper.getId('batch-action');
@@ -612,7 +613,6 @@ define(
                     return selectedItems;
                 },
 
-
                 /**
                  * 将value从原始格式转换成string
                  *
@@ -633,7 +633,6 @@ define(
                 }
             }
         );
-
 
         /**
          * 根据关键词搜索结果

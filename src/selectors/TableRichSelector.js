@@ -635,7 +635,6 @@ define(
          *  下面的方法专属delete型table
          *
          */
-
         function actionForDelete(control, row, item) {
             deleteItem(control, item.id);
             // 外部需要知道什么数据被删除了

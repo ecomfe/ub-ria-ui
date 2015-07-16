@@ -56,7 +56,7 @@ define(function (require) {
         this.element.focus();
         var range = document.selection.createRange();
         range.moveStart('character', -this.element.value.length);
-        var arr = range.text.split(sentinelChar)
+        var arr = range.text.split(sentinelChar);
         return arr.length === 1 ? arr[0] : arr[1];
     }
 
@@ -69,8 +69,8 @@ define(function (require) {
 
             getCaretPosition: function () {
                 var notIE = typeof this.element.selectionEnd === 'number';
-                var getHeadText =
-                    notIE ? getTextFromHeadToCaret : getTextFromHeadToCaretIE;
+                var getHeadText
+                    = notIE ? getTextFromHeadToCaret : getTextFromHeadToCaretIE;
 
                 // 通过创建一个隐藏容器，将input value复制到div中，
                 // 以此推算光标位置
@@ -91,15 +91,18 @@ define(function (require) {
     /**
      * 获取一个和element相关的实例
      * @param {Element} element 要计算的元素
+     * @return {Object} 返回实例
      */
     TextAreaPositionHelper.getInstance = function (element) {
-        var data = $(element).data();
-        var instance = data['corsorPositionHelper'];
+        var cursorHelper = 'corsorPositionHelper';
+        var instance = $(element).data(cursorHelper);
+
         if (!instance) {
             instance = new TextAreaPositionHelper(element);
-            data['corsorPositionHelper'] = instance;
+            $(element).data(cursorHelper, instance);
         }
         return instance;
     };
+
     return TextAreaPositionHelper;
 });

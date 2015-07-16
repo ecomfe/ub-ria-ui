@@ -1,34 +1,38 @@
-define(function (require) {
-// jQuery SWFObject v1.1.1 MIT/GPL @jon_neal
-// http://jquery.thewikies.com/swfobject
+/**
+ * @file 生成flash html
+ * @author jon_neal
+ * jQuery SWFObject v1.1.1 MIT/GPL @jon_neal
+ * http://jquery.thewikies.com/swfobject
+ */
 
+define(function (require) {
     var jQuery = require('jquery');
 
-    (function($, flash, Plugin) {
-        var OBJECT = 'object',
-            ENCODE = true;
+    (function ($, flash, Plugin) {
+        var OBJECT = 'object';
+        var ENCODE = true;
 
-        function _compareArrayIntegers(a, b) {
+        function compareArrayIntegers(a, b) {
             var x = (a[0] || 0) - (b[0] || 0);
 
             return x > 0 || (
-                !x &&
-                a.length > 0 &&
-                _compareArrayIntegers(a.slice(1), b.slice(1))
+                !x
+                && a.length > 0
+                && compareArrayIntegers(a.slice(1), b.slice(1))
             );
         }
 
-        function _objectToArguments(obj) {
-            if (typeof obj != OBJECT) {
+        function objectToArguments(obj) {
+            if (typeof obj !== OBJECT) {
                 return obj;
             }
 
-            var arr = [],
-                str = '';
+            var arr = [];
+            var str = '';
 
             for (var i in obj) {
-                if (typeof obj[i] == OBJECT) {
-                    str = _objectToArguments(obj[i]);
+                if (typeof obj[i] === OBJECT) {
+                    str = objectToArguments(obj[i]);
                 }
                 else {
                     str = [i, (ENCODE) ? encodeURI(obj[i]) : obj[i]].join('=');
@@ -40,7 +44,7 @@ define(function (require) {
             return arr.join('&');
         }
 
-        function _objectFromObject(obj) {
+        function objectFromObject(obj) {
             var arr = [];
 
             for (var i in obj) {
@@ -52,14 +56,16 @@ define(function (require) {
             return arr.join(' ');
         }
 
-        function _paramsFromObject(obj) {
+        function paramsFromObject(obj) {
             var arr = [];
 
             for (var i in obj) {
-                arr.push([
-                    '<param name="', i,
-                    '" value="', _objectToArguments(obj[i]), '" />'
-                ].join(''));
+                if (obj.hasOwnProperty(i)) {
+                    arr.push([
+                        '<param name="', i,
+                        '" value="', objectToArguments(obj[i]), '" />'
+                    ].join(''));
+                }
             }
 
             return arr.join('');
@@ -67,10 +73,11 @@ define(function (require) {
 
         try {
             var flashVersion = Plugin.description || (function () {
-                return (
-                    new Plugin('ShockwaveFlash.ShockwaveFlash')
-                ).GetVariable('$version');
-            }())
+                var newPlugin = new Plugin('ShockwaveFlash.ShockwaveFlash');
+                /*eslint-disable */
+                return newPlugin.GetVariable('$version');
+                /*eslint-enable */
+            }());
         }
         catch (e) {
             flashVersion = 'Unavailable';
@@ -99,7 +106,7 @@ define(function (require) {
                         ? [version.major, version.minor]
                         : version || [0, 0];
 
-                return _compareArrayIntegers(
+                return compareArrayIntegers(
                     flashVersionMatchVersionNumbers,
                     versionArray
                 );
@@ -114,9 +121,9 @@ define(function (require) {
                 var instance = this;
 
                 if (
-                    !obj.swf ||
-                    instance.expressInstallIsActive ||
-                    (!instance.available && !obj.hasVersionFail)
+                    !obj.swf
+                    || instance.expressInstallIsActive
+                    || (!instance.available && !obj.hasVersionFail)
                 ) {
                     return false;
                 }
@@ -124,7 +131,7 @@ define(function (require) {
                 if (!instance.hasVersion(obj.hasVersion || 1)) {
                     instance.expressInstallIsActive = true;
 
-                    if (typeof obj.hasVersionFail == 'function') {
+                    if (typeof obj.hasVersionFail === 'function') {
                         if (!obj.hasVersionFail.apply(obj)) {
                             return false;
                         }
@@ -138,13 +145,13 @@ define(function (require) {
                             MMredirectURL: location.href,
                             MMplayerType: (instance.activeX)
                                 ? 'ActiveX' : 'PlugIn',
-                            MMdoctitle: document.title.slice(0, 47) +
-                                ' - Flash Player Installation'
+                            MMdoctitle: document.title.slice(0, 47)
+                                + ' - Flash Player Installation'
                         }
                     };
                 }
 
-                attrs = {
+                var attrs = {
                     data: obj.swf,
                     type: 'application/x-shockwave-flash',
                     id: obj.id || 'flash_' + Math.floor(Math.random() * 999999999),
@@ -170,8 +177,8 @@ define(function (require) {
                 var flashContainer = document.createElement('div');
 
                 flashContainer.innerHTML = [
-                    '<object ', _objectFromObject(attrs), '>',
-                    _paramsFromObject(obj),
+                    '<object ', objectFromObject(attrs), '>',
+                    paramsFromObject(obj),
                     '</object>'
                 ].join('');
 
@@ -185,10 +192,10 @@ define(function (require) {
             if (/string|object/.test(typeof options)) {
                 this.each(
                     function () {
-                        var $this = $(this),
-                            flashObject;
+                        var $this = $(this);
+                        var flashObject;
 
-                        options = (typeof options == OBJECT) ? options : {
+                        options = (typeof options === OBJECT) ? options : {
                             swf: options
                         };
 
@@ -205,14 +212,14 @@ define(function (require) {
                 );
             }
 
-            if (typeof options == 'function') {
+            if (typeof options === 'function') {
                 $this.each(
                     function () {
-                        var instance = this,
-                        jsInteractionTimeoutMs = 'jsInteractionTimeoutMs';
+                        var instance = this;
+                        var jsInteractionTimeoutMs = 'jsInteractionTimeoutMs';
 
-                        instance[jsInteractionTimeoutMs] =
-                            instance[jsInteractionTimeoutMs] || 0;
+                        instance[jsInteractionTimeoutMs]
+                            = instance[jsInteractionTimeoutMs] || 0;
 
                         if (instance[jsInteractionTimeoutMs] < 660) {
                             if (instance.clientWidth || instance.clientHeight) {
