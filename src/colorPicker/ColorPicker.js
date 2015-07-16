@@ -106,12 +106,12 @@ define(
                     // 点色块走的是toggle，所以阻止冒泡到`document`
                     this.helper.addDOMEvent(
                         colorBlock,
-                        'mousedown',
+                        'click',
                         function (e) {
                             e.stopPropagation();
                         }
                     );
-                    this.helper.addDOMEvent(colorBlock, 'mousedown', toggleLayer);
+                    this.helper.addDOMEvent(colorBlock, 'click', toggleLayer);
 
                     var colorInput = this.getChild('colorInput');
                     colorInput.on('input', u.bind(onColorInput, this));
@@ -301,7 +301,7 @@ define(
                 // 初始化关闭按钮
                 var closeBtn = this.helper.getPart('close-btn');
                 if (closeBtn) {
-                    this.helper.addDOMEvent(closeBtn, 'mousedown', hideOverlay);
+                    this.helper.addDOMEvent(closeBtn, 'click', hideOverlay);
                 }
 
                 // 初始化提交和取消按钮
