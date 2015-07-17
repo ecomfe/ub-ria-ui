@@ -12,6 +12,7 @@ define(function (require) {
     var eoo = require('eoo');
     var esui = require('esui/main');
     var painters = require('esui/painters');
+    var $ = require('jquery');
 
     require('esui/Label');
 
@@ -127,6 +128,9 @@ define(function (require) {
              * @private
              */
             removeItem: function (item) {
+                if (!item) {
+                    return;
+                }
                 var selectedItem = this.getItemByValue(item.value);
                 this.datasource = u.without(this.datasource, selectedItem);
                 /**

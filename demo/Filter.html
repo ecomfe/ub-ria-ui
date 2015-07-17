@@ -1,66 +1,67 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <title>Filter - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
-    <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
-    <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
-    <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
-    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-
-    <script src="demo.js"></script>
-</head>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8" />
+        <title>Filter - ESUI Demo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="assets/themes/standard.css" />
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <![endif]-->
+    </head>
 <body>
-    <h1 id="branding">Filter</h1>
-    <div id="page">
-        <ul id="navigator">
-        </ul>
-        <div id="main">
+    <div class="header">
+        <h1 id="branding">ESUI Filter</h1>
+    </div>
+    <div class="ui-g main-container">
+        <div id="side-bar" class="ui-u-1-5">
+            <ul id="navigator" class="ui-nav">
+            </ul>
+        </div>
+        <div id="main" class="ui-u-4-5">
             <h2>FilterGroup</h2>
-            <section class="intro">
-                <p>FilterGroup</p>
-            </section>
-            <section class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage" id="container">
-                    <div data-ui-type="Filter"
-                         data-ui-id="test1"
-                         data-ui-custom="true"
-                         data-ui-label="单选："
-                         data-ui-value="SHANGHAI0">
-                    </div>
-                    <div data-ui-type="Filter"
-                         data-ui-id="test2"
-                         data-ui-label="多选："
-                         data-ui-custom="true"
-                         data-ui-multiple="true">
-                    </div>
-                    <div data-ui-type="FilterResult"
-                         data-ui-id="result"
-                         data-ui-label="已选择：">
-                    </div>
+            <p>FilterGroup</p>
+            <div class="example" id="container">
+                <div data-ui-type="Filter"
+                     data-ui-id="test1"
+                     data-ui-custom="true"
+                     data-ui-label="单选："
+                     data-ui-value="SHANGHAI0">
                 </div>
-            </section>
-            <div data-ui-type="Button" data-ui-id="submit" data-ui-variants="success" style="margin-top:20px;">获取值</div>
+                <div data-ui-type="Filter"
+                     data-ui-id="test2"
+                     data-ui-label="多选："
+                     data-ui-custom="true"
+                     data-ui-multiple="true">
+                </div>
+                <div data-ui-type="FilterResult"
+                     data-ui-id="result"
+                     data-ui-label="已选择：">
+                </div>
+                <div data-ui-type="Button" data-ui-id="submit" data-ui-variants="success" style="margin-top:20px;">获取值</div>
+            </div>
+            <script type="text/sample" data-refid="main-js">
+            </script>
         </div>
     </div>
-    <script>
-
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/loader/esl.js"></script>
+    <script src="config.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
+    <script id="main-js">
         require(
             [
+                'jquery', 
                 'esui',
                 'filter/Filter',
                 'filter/FilterResult',
-                'esui/Button'
+                'esui/Button',
+                'demo',
+                'esui/Tab'
             ],
-            function (ui) {
+            function ($, ui) {
                 window.ui = ui;
                 var citys = [
                     {
@@ -151,5 +152,6 @@
             }
         );
     </script>
+    <script src="sitemap.js"></script>
 </body>
 </html>

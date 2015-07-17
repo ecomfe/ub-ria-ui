@@ -10,6 +10,7 @@ define(function (require) {
     var paint = require('esui/painters');
     var Control = require('esui/Control');
     var eoo = require('eoo');
+    var $ = require('jquery');
 
     var MAIN_TPL = [
         '<div class="${typeSelector}-main" id="${contentId}">',

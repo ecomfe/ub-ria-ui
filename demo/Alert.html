@@ -1,124 +1,127 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <title>Alert - ESUI Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
-    <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <script src="assets/loader/esl.js"></script>
-
-    <!--[if lt IE 9]>
-    <script src="http://xy3.baidu.com/js/html5.js"></script>
-    <![endif]-->
-    <script src="assets/third-party/prism.js"></script>
-    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-    <script src="demo.js"></script>
-</head>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8" />
+        <title>Alert - ESUI Demo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="assets/themes/standard.css" />
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <![endif]-->
+    </head>
 <body>
-    <h1 id="branding">ESUI Alert</h1>
-    <div id="page">
-        <ul id="navigator">
-        </ul>
-        <div id="main">
+    <div class="header">
+        <h1 id="branding">ESUI Alert</h1>
+    </div>
+    <div class="ui-g main-container">
+        <div id="side-bar" class="ui-u-1-5">
+            <ul id="navigator" class="ui-nav">
+            </ul>
+        </div>
+        <div id="main" class="ui-u-4-5">
             <h2>Alert</h2>
-            <section class="intro">
-                <p>利用Alert可以在页面上显示提示信息。</p>
-            </section>
-            <section class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage">
-                    <table id="table" class="ui-raw-table ui-raw-table-bordered">
-                        <tr>
-                            <td align="right">类型</td>
-                            <td>
-                                <label class="ui-select-custom">
-                                    <select id="type">
-                                        <option value="success">Success</option>
-                                        <option value="warning">Warning</option>
-                                        <option value="info">Info</option>
-                                        <option value="error">Error</option>
-                                    </select>
-                                </label>
+            <p>利用Alert可以在页面上显示提示信息。</p>
+            <div class="example">
+                <table id="table" class="ui-raw-table ui-raw-table-bordered">
+                    <tr>
+                        <td align="right">类型</td>
+                        <td>
+                            <label class="ui-select-custom">
+                                <select id="type">
+                                    <option value="success">Success</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="info">Info</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </label>
 
-                                <button id="show" class="ui-button ui-button-primary">Show an Alert!</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">信息</td>
-                            <td>
-                                <div class="ui-textbox">
-                                    <input class="message" value="白日依山尽" />
-                                </div><br /><br />
-                                <div class="ui-textbox">
-                                    <input class="message" value="黄河入海流" />
-                                </div><br /><br />
-                                <div class="ui-textbox">
-                                    <input class="message" value="欲穷千里目" />
-                                </div><br /><br />
-                                <div class="ui-textbox">
-                                <input class="message" value="更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼" />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">自动关闭时间</td>
-                            <td>
-                                <div class="ui-checkbox-custom">
-                                    <input type="checkbox" id="autoClose" />
-                                    <label for="autoClose"></label>
-                                </div>
-                                <div class="ui-textbox">
-                                    <input id="autoCloseDuration" value="1000" />
-                                </div>
-                                ms
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">自动轮换时间间隔</td>
-                            <td>
-                                <div class="ui-checkbox-custom">
-                                    <input type="checkbox" id="autoSlide" />
-                                    <label for="autoSlide"></label>
-                                </div>
-                                <div class="ui-textbox">
-                                    <input id="autoSlideInterval" value="4000" />
-                                </div>
-                                ms
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">是否带有关闭按钮</td>
-                            <td>
-                                <div class="ui-checkbox-custom">
-                                    <input type="checkbox" id="closeBtn" checked="checked" />
-                                    <label for="closeBtn"></label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="right">是否带有Icon</td>
-                            <td>
-                                <div class="ui-textbox">
-                                    <input type="input" value="ui-icon-exclamation-circle" id="icon">
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </section>
+                            <button id="show" class="ui-button ui-button-primary">Show an Alert!</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">信息</td>
+                        <td>
+                            <div class="ui-textbox">
+                                <input class="message" value="白日依山尽" />
+                            </div><br /><br />
+                            <div class="ui-textbox">
+                                <input class="message" value="黄河入海流" />
+                            </div><br /><br />
+                            <div class="ui-textbox">
+                                <input class="message" value="欲穷千里目" />
+                            </div><br /><br />
+                            <div class="ui-textbox">
+                            <input class="message" value="更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼,更上一层楼" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">自动关闭时间</td>
+                        <td>
+                            <div class="ui-checkbox-custom">
+                                <input type="checkbox" id="autoClose" />
+                                <label for="autoClose"></label>
+                            </div>
+                            <div class="ui-textbox">
+                                <input id="autoCloseDuration" value="1000" />
+                            </div>
+                            ms
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">自动轮换时间间隔</td>
+                        <td>
+                            <div class="ui-checkbox-custom">
+                                <input type="checkbox" id="autoSlide" />
+                                <label for="autoSlide"></label>
+                            </div>
+                            <div class="ui-textbox">
+                                <input id="autoSlideInterval" value="4000" />
+                            </div>
+                            ms
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">是否带有关闭按钮</td>
+                        <td>
+                            <div class="ui-checkbox-custom">
+                                <input type="checkbox" id="closeBtn" checked="checked" />
+                                <label for="closeBtn"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">是否带有Icon</td>
+                        <td>
+                            <div class="ui-textbox">
+                                <input type="input" value="ui-icon-exclamation-circle" id="icon">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <script type="text/sample" data-refid="main-js">
+            </script>
         </div>
     </div>
-    <script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/loader/esl.js"></script>
+    <script src="config.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
+    <script id="main-js">
         require(
             [
                 'esui',
                 'Alert',
-                'esui/lib'
+                'esui/lib',
+                'demo',
+                'esui/Tab'
             ],
             function (ui, alert, lib) {
-                //ui.init();
+                ui.init();
+
                 lib.g('show').onclick = function() {
                     var options = {};
                     var msgType = lib.g('type').value;
@@ -142,5 +145,6 @@
             }
         );
     </script>
+    <script src="sitemap.js"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ define(
         var eoo = require('eoo');
         var esui = require('esui');
         var painters = require('esui/painters');
+        var $ = require('jquery');
 
         /**
          * 简单版拾色器

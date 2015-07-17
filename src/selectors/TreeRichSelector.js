@@ -19,6 +19,7 @@ define(
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
         var painters = require('esui/painters');
+        var $ = require('jquery');
 
         /**
          * 控件类
