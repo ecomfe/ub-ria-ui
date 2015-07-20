@@ -1,215 +1,131 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <title>AutoComplete Extension - ESUI Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
-    <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <!--[if lt IE 9]>
-    <link rel="stylesheet" href="assets/ie8.css" />
-    <![endif]-->
-    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
-    <script src="assets/loader/esl.js"></script>
-    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-    <script src="assets/google-code-prettify/prettify.js"></script>
-    <script src="demo.js"></script>
-</head>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8" />
+        <title>AutoComplete - ESUI Demo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
+        <link rel="stylesheet" href="assets/themes/standard.css" />
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
+        <![endif]-->
+    </head>
 <body>
-    <h1 id="branding">ESUI - AutoComplete Extension</h1>
-    <div id="page">
-        <ul id="navigator">
-        </ul>
-        <div id="main">
+    <div class="header">
+        <h1 id="branding">ESUI AutoComplete</h1>
+    </div>
+    <div class="ui-g main-container">
+        <div id="side-bar" class="ui-u-1-5">
+            <ul id="navigator" class="ui-nav">
+            </ul>
+        </div>
+        <div id="main" class="ui-u-4-5">
             <h2>Input</h2>
-            <div class="intro">
-                <p>AutoComplete绑定到一个Input。</p>
+            <p>AutoComplete绑定到一个Input。</p>
+            <div class="example">
+                <input data-ui-type="TextBox"
+                       data-ui-mode="text"
+                       data-ui-id="test"
+                       data-ui-extension-autocomplete-type="AutoComplete" />
             </div>
-            <div class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage">
-                    <input data-ui-type="TextBox"
-                           data-ui-mode="text"
-                           data-ui-id="test"
-                           data-ui-extension-autocomplete-type="AutoComplete"
-                    />
-                </div>
-            </div>
+
             <h2>TextLine</h2>
-            <div class="intro">
-                <p>AutoComplete 绑定到TextLine。</p>
-            </div>
-            <div class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage">
-                    <textarea data-ui-type="TextLine"
-                           data-ui-id="test1"
-                           data-ui-name="test1"
-                           data-ui-extension-autocomplete-type="AutoComplete"
-                    /></textarea>
-                </div>
-            </div>
-            <h2>TextArea</h2>
-            <div class="intro">
-                <p>TextArea AutoComplete。</p>
-            </div>
-            <div class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example ui-demo-light-stage">
-                    <textarea data-ui-type="TextBox"
-                           data-ui-mode="text"
-                           data-ui-id="test2"
-                           data-ui-extension-autocomplete-type="AutoComplete"
-                           style="height:200px"
-                    ></textarea>
-                </div>
-            </div>
-            <h2>分割字符</h2>
-            <div class="intro">
-                <p>TextArea AutoComplete(split by ' ')。</p>
-            </div>
-            <div class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example" id="container">
-                    <textarea data-ui-type="TextBox"
-                           data-ui-mode="text"
-                           data-ui-id="test3"
-                           data-ui-extension-autocomplete-type="AutoComplete"
-                           style="height:200px"
-                    ></textarea>
-                </div>
-            </div>
-            <h2>触发器</h2>
-            <div class="intro">
-                <p>TextArea AutoComplete with mock ajax(split by ',', fire by '{')。</p>
-            </div>
-            <div class="view">
-                <ul class="viewer">
-                    <li class="view-markup">结构</li>
-                </ul>
-                <div class="example" id="container">
-                    <textarea data-ui-type="TextBox"
-                           data-ui-mode="text"
-                           data-ui-id="test4"
-                           data-ui-extension-autocomplete-type="AutoComplete"
-                           style="height:200px"
-                    ></textarea>
-                </div>
+            <p>AutoComplete 绑定到TextLine。</p>
+            <div class="example ui-demo-light-stage">
+                <textarea data-ui-type="TextLine"
+                       data-ui-id="test1"
+                       data-ui-name="test1"
+                       data-ui-extension-autocomplete-type="AutoComplete"
+                /></textarea>
             </div>
         </div>
     </div>
-    <script>
-        require(
-            [
-                'esui',
-                'AutoComplete',
-                'esui/TextLine',
-                'esui/TextBox'
-            ],
-            function (ui, AutoComplete) {
-                window.ui = ui;
-                var controls = ui.init();
-                var data = [
-                    "actionScript",
-                    "AppleScript",
-                    "Asp",
-                    "BASIC",
-                    "C",
-                    "C++",
-                    "Clojure",
-                    "COBOL",
-                    "ColdFusion",
-                    "Erlang",
-                    "Fortran",
-                    "Groovy",
-                    "Haskell",
-                    "Java",
-                    "JavaScript",
-                    "Lisp",
-                    "Perl",
-                    "PHP",
-                    "Python",
-                    "Ruby",
-                    "Scala",
-                    "Scheme"
-                ];
-                var data1 = [
-                    {
-                        text: 'actionScript',
-                        desc: 'It is actionScript'
-                    },
-                    {
-                        text: 'AppleScript',
-                        desc: 'It is AppleScript'
-                    },
-                    {
-                        text: 'Asp',
-                        desc: 'It is Asp'
-                    },
-                    {
-                        text: 'BASIC',
-                        desc: 'It is BASIC'
-                    },
-                    {
-                        text: 'Clojure',
-                        desc: 'It is Clojure'
-                    },
-                    {
-                        text: 'ColdFusion',
-                        desc: 'It is ColdFusion'
-                    }
-                ];
-
-                var control;
-                var datasource;
-                for (var i = 0; i < controls.length; i++) {
-                    control = controls[i];
-                    if (control.id === 'test4') {
-                        datasource = function (req, res) {
-                            setTimeout(function(){
-                                res(data);
-                            }, 800);
-                        };
-                    }
-                    else if (control.id === 'test1') {
-                        datasource = data1;
-                    } 
-                    else {
-                        datasource = data;
-                    }
-                    controls[i].setProperties({
-                        'datasource': datasource,
-                        /*
-                        search: function (v) {
-                            if (v.length < 2) {
-                                return false;
-                            }
-                        },
-                        */
-                        select: function (value, target) {
-                            //target.setValue('你好');
-                            //return false;
-
-                        },
-                        /*extractWord: function (s) {
-
-                        },*/
-                        preProcessResponseData: function (data) {
-                            data = ['你好', 'Hello'];
-                            return data;
-                        }
-                    });
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/loader/esl.js"></script>
+    <script src="config.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
+    <script id="main-js">
+    require(
+        [
+            'esui',
+            'AutoComplete',
+            'esui/TextLine',
+            'esui/TextBox',
+            'demo',
+            'esui/Tab'
+        ],
+        function (ui, AutoComplete) {
+            window.ui = ui;
+            var controls = ui.init();
+            var data = [
+                'actionScript',
+                'AppleScript',
+                'Asp',
+                'BASIC',
+                'C',
+                'C++',
+                'Clojure',
+                'COBOL',
+                'ColdFusion',
+                'Erlang',
+                'Fortran',
+                'Groovy',
+                'Haskell',
+                'Java',
+                'JavaScript',
+                'Lisp',
+                'Perl',
+                'PHP',
+                'Python',
+                'Ruby',
+                'Scala',
+                'Scheme'
+            ];
+            var data1 = [
+                {
+                    text: 'actionScript',
+                    desc: 'It is actionScript'
+                },
+                {
+                    text: 'AppleScript',
+                    desc: 'It is AppleScript'
+                },
+                {
+                    text: 'Asp',
+                    desc: 'It is Asp'
+                },
+                {
+                    text: 'BASIC',
+                    desc: 'It is BASIC'
+                },
+                {
+                    text: 'Clojure',
+                    desc: 'It is Clojure'
+                },
+                {
+                    text: 'ColdFusion',
+                    desc: 'It is ColdFusion'
                 }
+            ];
+
+            var control;
+            var datasource;
+            for (var i = 0; i < controls.length; i++) {
+                control = controls[i];
+                if (control.id === 'test1') {
+                    datasource = data1;
+                }
+                else {
+                    datasource = data;
+                }
+                controls[i].setProperties({
+                    datasource: datasource
+                });
             }
-        );
-        copyExample();
+        }
+    );
     </script>
+    <script src="sitemap.js"></script>
 </body>
 </html>

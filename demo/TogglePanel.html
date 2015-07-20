@@ -2,7 +2,7 @@
 <html lang="zh-cn">
     <head>
         <meta charset="utf-8" />
-        <title>Token Fiel - ESUI Demo</title>
+        <title>TogglePanel - Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
@@ -13,7 +13,7 @@
     </head>
 <body>
     <div class="header">
-        <h1 id="branding">Token Field</h1>
+        <h1 id="branding">Toggle Panel</h1>
     </div>
     <div class="ui-g main-container">
         <div id="side-bar" class="ui-u-1-5">
@@ -21,29 +21,29 @@
             </ul>
         </div>
         <div id="main" class="ui-u-4-5">
-            <h2>输入多个</h2>
+            <h2>下拉选择控件</h2>
             <section class="intro">
-                <p>输入多个字段。</p>
+                <p>下拉选择</p>
             </section>
-            <div class="example ui-demo-light-stage" id="container1">
-                <input data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan+liwei" data-ui-limit="30" data-ui-delimiter="," data-ui-width="600" />
-            </div>
-            <h2>状态</h2>
-            <section class="intro">
-                <p>输入多个字段。</p>
-            </section>
-            <div class="example ui-demo-light-stage" id="container2">
-                <h3>不可用</h3>
+            <div class="example ui-demo-light-stage" id="container">
                 <div class="row">
-                    <input data-ui-disabled="1" data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan" data-ui-limit="30" data-ui-delimiter="," data-ui-width="600" />
+                    <div
+                        data-ui-type="TogglePanel"
+                        data-ui-position="fixed">
+                        <button type="button" class="ui-button">Panel</button>
+                        <div>
+                            test
+                        </div>
+                    </div>
                 </div>
-                <h3>只读</h3>
                 <div class="row">
-                    <input data-ui-read-only="1" data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan" data-ui-limit="30" data-ui-delimiter="," data-ui-width="600" />
-                </div>
-                <h3>错误</h3>
-                <div class="row">
-                    <input data-ui-states="validity-invalid" data-ui-type="TokenField" data-ui-tokens="yankun01,lisijin,maoquan" data-ui-limit="30" data-ui-delimiter="," data-ui-width="600" />
+                    <div
+                        data-ui-type="TogglePanel">
+                        <button type="button" class="ui-button">Panel</button>
+                        <div>
+                            test
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,12 +56,12 @@
     require(
         [
             'esui',
-            'TokenField',
+            'ub-ria-ui/TogglePanel',
             'demo',
             'esui/Tab'
         ],
         function (ui) {
-            ui.init();
+            ui.init(document.body);
         }
     );
     </script>

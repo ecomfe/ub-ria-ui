@@ -3,18 +3,24 @@
  * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 高级版拾色器
- * @epxorts AdvancedColorPicker
+ * @exports AdvancedColorPicker
  * @author lixiang(lixiang05@baidu.com)
  */
 define(
     function (require) {
+        var esui = require('esui');
         var lib = require('esui/lib');
         var Control = require('esui/Control');
         var u = require('underscore');
         var colorUtil = require('./Color');
+        var eoo = require('eoo');
+        var $ = require('jquery');
+        var painters = require('esui/painters');
 
         require('esui/TextBox');
         require('esui/Label');
+
+        require('esui/behavior/Mouse');
 
         /**
          * 高级版拾色器
@@ -22,58 +28,233 @@ define(
          * @class AdvancedColorPicker
          * @extends esui.Control
          */
-        var exports = {};
+        var AdvancedColorPicker = eoo.create(
+            Control,
+            {
+                /**
+                 * 控件类型
+                 *
+                 * @override
+                 */
+                type: 'AdvancedColorPicker',
 
-        /**
-         * 控件类型
-         *
-         * @override
-         */
-        exports.type = 'AdvancedColorPicker';
+                /**
+                 * 初始化参数
+                 *
+                 * @override
+                 * @protected
+                 */
+                initOptions: function (options) {
+                    var properties = {
+                        // 文字的话因为多数是链接，默认来个蓝色
+                        hex: '0000ff',
+                        displayHex: '0000ff',
+                        // alpha选择开关
+                        noAlpha: false,
+                        alpha: 100,
+                        displayAlpha: 100
+                    };
+                    u.extend(properties, AdvancedColorPicker.defaultProperties, options);
+                    this.setProperties(properties);
+                },
 
-        /**
-         * 初始化参数
-         *
-         * @override
-         * @protected
-         */
-        exports.initOptions = function (options) {
-            var properties = {
-                // 文字的话因为多数是链接，默认来个蓝色
-                hex: '0000ff',
-                displayHex: '0000ff',
-                // alpha选择开关
-                noAlpha: false,
-                alpha: 100,
-                displayAlpha: 100
-            };
-            lib.extend(properties, options);
-            if (properties.noAlpha === 'false') {
-                properties.noAlpha = false;
+                /**
+                 * 初始化DOM结构
+                 *
+                 * @override
+                 */
+                initStructure: function () {
+                    var html = [
+                        // 拾色器主面板
+                        getMainCanvasHTML.call(this),
+                        // 拾色器历史对比面板
+                        getHistoryCompareHTML.call(this),
+                        // 颜色输入
+                        getColorInputHTML.call(this)
+                    ];
+
+                    this.main.innerHTML = html.join('');
+                    this.initChildren();
+                    if (this.noAlpha) {
+                        this.addState('no-alpha');
+                    }
+                },
+
+                /**
+                 * @override
+                 * @fires AdvancedColorPicker#change
+                 */
+                initEvents: function () {
+                    var me = this;
+                    // 画布点击
+                    var canvas = this.helper.getPart('canvas');
+                    $(canvas).mouse(
+                        {
+                            start: function (event) {
+                                syncValueByCanvas.call(me, event);
+                                return true;
+                            },
+                            drag: u.bind(syncValueByCanvas, this),
+                            distance: 0
+                        }
+                    );
+
+                    // 色相改变
+                    var hueSlider = this.helper.getPart('hue');
+
+                    $(hueSlider).mouse(
+                        {
+                            start: function (event) {
+                                syncValueByHue.call(me, event);
+                                return true;
+                            },
+                            drag: u.bind(syncValueByHue, this),
+                            distance: 0
+                        }
+                    );
+
+                    // RGB输入
+                    var colorTypes = ['red', 'green', 'blue'];
+                    var control = this;
+                    u.each(
+                        colorTypes,
+                        function (colorType) {
+                            var colorInput = control.getChild(colorType + 'Input');
+                            colorInput.on('input', u.bind(syncValueByRGB, control));
+                        }
+                    );
+
+                    // HEX输入
+                    var hexInput = this.getChild('hexInput');
+                    hexInput.on(
+                        'input',
+                        function () {
+                            var hex = this.getValue();
+                            control.displayHex = hex;
+                            syncValueByHex.call(control);
+                            updateHueSliderPointerPosition.call(control);
+                        }
+                    );
+
+                    // Alpha滑动器改变
+                    var alphaSlider = this.helper.getPart('alpha');
+                    $(alphaSlider).mouse(
+                        {
+                            start: function (event) {
+                                syncValueByAlpha.call(me, event);
+                                return true;
+                            },
+                            drag: u.bind(syncValueByAlpha, this),
+                            distance: 0
+                        }
+                    );
+
+                    // Alpha输入
+                    var alphaInput = this.getChild('alphaInput');
+                    alphaInput.on(
+                        'input',
+                        function () {
+                            var alpha = this.getValue();
+                            control.displayAlpha = alpha;
+                            updateAlphaPointerPosition.call(control);
+                            control.fire('change');
+                        }
+                    );
+                },
+
+                /**
+                 * 渲染自身
+                 *
+                 * @override
+                 */
+                repaint: painters.createRepaint(
+                    Control.prototype.repaint,
+                    {
+                        name: 'hex',
+                        paint: function (picker, hex) {
+                            if (hex == null) {
+                                return;
+                            }
+                            // 更新显示值
+                            picker.displayHex = hex;
+                            // 先更新hexInput
+                            updateHexInput.call(picker);
+                            // 然后更新其余的
+                            syncValueByHex.call(picker);
+                            // 更新原始历史数据
+                            updateColorHistory.call(picker, 'old', picker.hex);
+                        }
+                    },
+                    {
+                        name: 'alpha',
+                        paint: function (picker, alpha) {
+                            if (alpha == null) {
+                                return;
+                            }
+                            // 更新显示值
+                            picker.displayAlpha = alpha;
+                            updateAlphaPointerPosition.call(picker);
+                            updateAlphaInput.call(picker);
+                        }
+                    }
+                ),
+
+                /**
+                 * 更新hex值
+                 *
+                 * @method AdvancedColorPicker#updateHex
+                 * @param {string} hex 更新后的值
+                 * @public
+                 */
+                updateHex: function (hex) {
+                    this.displayHex = hex;
+                    updateHexInput.call(this);
+                    syncValueByHex.call(this);
+                },
+
+                /**
+                 * 更新hex透明度
+                 *
+                 * @method AdvancedColorPicker#updateAlpha
+                 * @param {number} alpha 更新后的透明度
+                 * @public
+                 */
+                updateAlpha: function (alpha) {
+                    this.displayAlpha = alpha;
+                    updateAlphaInput.call(this);
+                    updateAlphaColor.call(this);
+                    updateAlphaPointerPosition.call(this);
+                },
+
+                /**
+                 * 获取显示的hex值
+                 *
+                 * @method AdvancedColorPicker#getDisplayHex
+                 * @return {string}
+                 * @public
+                 */
+                getDisplayHex: function () {
+                    return this.displayHex;
+                },
+
+                /**
+                 * 获取显示的透明度值
+                 *
+                 * @method AdvancedColorPicker#getDisplayAlpha
+                 * @return {number}
+                 * @public
+                 */
+                getDisplayAlpha: function () {
+                    return this.displayAlpha;
+                }
             }
-            this.setProperties(properties);
-        };
+        );
 
-        /**
-         * 初始化DOM结构
-         *
-         * @override
-         */
-        exports.initStructure = function () {
-            var html = [
-                // 拾色器主面板
-                getMainCanvasHTML.call(this),
-                // 拾色器历史对比面板
-                getHistoryCompareHTML.call(this),
-                // 颜色输入
-                getColorInputHTML.call(this)
-            ];
-
-            this.main.innerHTML = html.join('');
-            this.initChildren();
-            if (this.noAlpha) {
-                this.addState('no-alpha');
-            }
+        AdvancedColorPicker.defaultProperties = {
+            hexText: '色值',
+            beforeText: '改前',
+            afterText: '改后',
+            alphaText: '透明度'
         };
 
         function getMainCanvasHTML() {
@@ -108,14 +289,14 @@ define(
             return [
                 this.helper.getPartBeginTag('compare', 'div'),
                 this.helper.getPartBeginTag('compare-title', 'div'),
-                '改前',
+                this.beforeText,
                 this.helper.getPartEndTag('compare-title', 'div'),
                 this.helper.getPartBeginTag('compare-color-old', 'div'),
                 this.helper.getPartEndTag('compare-color-old', 'div'),
                 this.helper.getPartBeginTag('compare-color-new', 'div'),
                 this.helper.getPartEndTag('compare-color-new', 'div'),
                 this.helper.getPartBeginTag('compare-title', 'div'),
-                '改后',
+                this.afterText,
                 this.helper.getPartEndTag('compare-title', 'div'),
                 this.helper.getPartEndTag('compare', 'div')
             ].join('');
@@ -124,12 +305,12 @@ define(
         function getColorInputHTML() {
             return [
                 this.helper.getPartBeginTag('input', 'div'),
-                getColorFieldHTML(this, 'hex', '色值'),
+                getColorFieldHTML(this, 'hex', this.hexText),
                 this.helper.getPartBeginTag('input-rgba', 'div'),
                 getColorFieldHTML(this, 'red', 'R'),
                 getColorFieldHTML(this, 'green', 'G'),
                 getColorFieldHTML(this, 'blue', 'B'),
-                getColorFieldHTML(this, 'alpha', '透明度'),
+                getColorFieldHTML(this, 'alpha', this.alphaText),
                 this.helper.getPartEndTag('input-rgba', 'div'),
                 this.helper.getPartEndTag('input', 'div')
             ].join('');
@@ -158,58 +339,6 @@ define(
                 + '</div>';
             return html;
         }
-
-        /**
-         * @override
-         * @fires AdvancedColorPicker#change
-         */
-        exports.initEvents = function () {
-            // 画布点击
-            var canvas = this.helper.getPart('canvas');
-            this.helper.addDOMEvent(canvas, 'click', synValueByCanvas);
-
-            // 色相改变
-            var hueSlider = this.helper.getPart('hue');
-            this.helper.addDOMEvent(hueSlider, 'click', syncValueByHue);
-
-            // RGB输入
-            var colorTypes = ['red', 'green', 'blue'];
-            var control = this;
-            u.each(
-                colorTypes,
-                function (colorType) {
-                    var colorInput = control.getChild(colorType + 'Input');
-                    colorInput.on('input', syncValueByRGB, control);
-                }
-            );
-
-            // HEX输入
-            var hexInput = this.getChild('hexInput');
-            hexInput.on(
-                'input',
-                function () {
-                    var hex = this.getValue();
-                    control.displayHex = hex;
-                    syncValueByHex.call(control);
-                }
-            );
-
-            // Alpha滑动器改变
-            var alphaSlider = this.helper.getPart('alpha');
-            this.helper.addDOMEvent(alphaSlider, 'click', syncValueByAlpha);
-
-            // Alpha输入
-            var alphaInput = this.getChild('alphaInput');
-            alphaInput.on(
-                'input',
-                function () {
-                    var alpha = this.getValue();
-                    control.displayAlpha = alpha;
-                    updateAlphaPointerPosition.call(control);
-                    control.fire('change');
-                }
-            );
-        };
 
         /**
          * 更新色值
@@ -284,7 +413,7 @@ define(
             // 更新历史
             updateColorHistory.call(this, 'new', this.displayHex);
             // 更新hue
-            updateHueSliderPointerPosition.call(this);
+            // updateHueSliderPointerPosition.call(this);
             // 更新canvas
             updateCanvasColor.call(this);
             updateCanvasPointerPosition.call(this);
@@ -302,26 +431,30 @@ define(
          *
          * @param {mini-event.Event} e 事件参数
          */
-        function synValueByCanvas(e) {
+        function syncValueByCanvas(e) {
             // 如果点的是pointer，不做处理
             if (lib.hasClass(e.target, this.helper.getPartClassName('canvas-pointer'))) {
                 return;
             }
 
-            var offsetY = e.offsetY;
-            if (offsetY === undefined) {
-                offsetY = e.layerY;
-            }
-            var offsetX = e.offsetX;
-            if (offsetX === undefined) {
-                offsetX = e.layerX;
-            }
+            var mask = this.helper.getPart('canvas-mask');
+            var $mask = $(mask);
+
+            // 计算鼠标位移值，同时不能超出mask范围
+            var canvasPos = $(mask).offset();
+            var offsetY = e.pageY - canvasPos.top;
+            offsetY = Math.min(offsetY, $mask.height());
+            offsetY = Math.max(offsetY, 0);
+
+            var offsetX = e.pageX - canvasPos.left;
+            offsetX = Math.min(offsetX, $mask.width());
+            offsetX = Math.max(offsetX, 0);
 
             // 画布（自上向下）为Bright值从1到0平均分布
-            this.bright = Math.min(1 - offsetY / e.target.offsetHeight, 1);
+            this.bright = Math.min(1 - offsetY / $mask.height(), 1);
 
             // 画布（自左向右）为Saturation值从0到1平均分布
-            this.saturation = offsetX / e.target.offsetWidth;
+            this.saturation = offsetX / $mask.width();
 
             // 更新hex
             syncHBSToHex.call(this);
@@ -379,6 +512,23 @@ define(
         }
 
         /**
+         * 更新透明度颜色值
+         */
+        function updateAlphaColor() {
+            var slider = this.helper.getPart('alpha-slider');
+            // 渐变处理，兼容IE9-
+            var css3Tpl = 'linear-gradient(to top, rgba(${red}, ${green}, ${blue}, 0), rgb(${red}, ${green}, ${blue}))';
+            var ieTpl = 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#FF${hex}, endColorstr=#00${hex})';
+            if (lib.ie && lib.ie <= 9) {
+                slider.style.filter = lib.format(ieTpl, {hex: this.displayHex});
+            }
+            else {
+                var rgb = colorUtil.hexToRGB(this.displayHex);
+                slider.style.backgroundImage = lib.format(css3Tpl, rgb);
+            }
+        }
+
+        /**
          * 更新透明度输入框
          */
         function updateAlphaInput() {
@@ -397,12 +547,18 @@ define(
             if (lib.hasClass(e.target, this.helper.getPartClassName('alpha-pointer'))) {
                 return;
             }
-            var offsetY = e.offsetY;
-            if (offsetY === undefined) {
-                offsetY = e.layerY;
-            }
+
+            var slider = this.helper.getPart('alpha-slider');
+            var $slider = $(slider);
+
+            // 计算鼠标位移值，同时不能超出slider范围
+            var sliderPos = $slider.offset();
+            var offsetY = e.pageY - sliderPos.top;
+            offsetY = Math.min(offsetY, $slider.height());
+            offsetY = Math.max(offsetY, 0);
+
             // 光柱纵向（自上向下）为Hue值从0到360平均分布
-            this.displayAlpha = 100 - Math.round(offsetY / e.target.offsetHeight * 100);
+            this.displayAlpha = 100 - Math.round(offsetY / $slider.height() * 100);
             updateAlphaPointerPosition.call(this);
             updateAlphaInput.call(this);
 
@@ -439,14 +595,19 @@ define(
          * @param {mini-event.Event} e 事件参数
          */
         function syncValueByHue(e) {
-            if (lib.hasClass(e.target, this.helper.getPartClassName('hue-pointer'))) {
+            if ($(e.target).hasClass(this.helper.getPartClassName('hue-pointer'))) {
                 return;
             }
 
-            var offsetY = e.offsetY;
-            if (offsetY === undefined) {
-                offsetY = e.layerY;
-            }
+            var slider = this.helper.getPart('hue-slider');
+            var $slider = $(slider);
+
+            // 计算鼠标位移值，同时不能超出slider范围
+            var sliderPos = $slider.offset();
+            var offsetY = e.pageY - sliderPos.top;
+            offsetY = Math.min(offsetY, $slider.height());
+            offsetY = Math.max(offsetY, 0);
+
             // 光柱纵向（自上向下）为Hue值从0到360平均分布
             this.hue = offsetY / e.target.offsetHeight * 360;
 
@@ -474,6 +635,8 @@ define(
             var baseColor = colorUtil.hsbToHex(this.hue, 1, 1);
             var canvas = this.helper.getPart('canvas');
             canvas.style.backgroundColor = '#' + baseColor;
+            // 更新透明度底色
+            updateAlphaColor.call(this);
         }
 
         /**
@@ -519,94 +682,7 @@ define(
             canvasPointer.style.top = Math.round(canvasY) + 'px';
         }
 
-        /**
-         * 渲染自身
-         *
-         * @override
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            Control.prototype.repaint,
-            {
-                name: 'hex',
-                paint: function (picker, hex) {
-                    if (hex == null) {
-                        return;
-                    }
-                    // 更新显示值
-                    picker.displayHex = hex;
-                    // 先更新hexInput
-                    updateHexInput.call(picker);
-                    // 然后更新其余的
-                    syncValueByHex.call(picker);
-                    // 更新原始历史数据
-                    updateColorHistory.call(picker, 'old', picker.hex);
-                }
-            },
-            {
-                name: 'alpha',
-                paint: function (picker, alpha) {
-                    if (alpha == null) {
-                        return;
-                    }
-                    // 更新显示值
-                    picker.displayAlpha = alpha;
-                    updateAlphaPointerPosition.call(picker);
-                    updateAlphaInput.call(picker);
-                }
-            }
-        );
-
-        /**
-         * 更新hex值
-         *
-         * @method AdvancedColorPicker#updateHex
-         * @param {string} hex 更新后的值
-         * @public
-         */
-        exports.updateHex = function (hex) {
-            this.displayHex = hex;
-            updateHexInput.call(this);
-            syncValueByHex.call(this);
-        };
-
-        /**
-         * 更新hex透明度
-         *
-         * @method AdvancedColorPicker#updateAlpha
-         * @param {number} alpha 更新后的透明度
-         * @public
-         */
-        exports.updateAlpha = function (alpha) {
-            this.displayAlpha = alpha;
-            updateAlphaInput.call(this);
-            updateAlphaPointerPosition.call(this);
-        };
-
-        /**
-         * 获取显示的hex值
-         *
-         * @method AdvancedColorPicker#getDisplayHex
-         * @return {string}
-         * @public
-         */
-        exports.getDisplayHex = function () {
-            return this.displayHex;
-        };
-
-        /**
-         * 获取显示的透明度值
-         *
-         * @method AdvancedColorPicker#getDisplayAlpha
-         * @return {number}
-         * @public
-         */
-        exports.getDisplayAlpha = function () {
-            return this.displayAlpha;
-        };
-
-        var AdvancedColorPicker = require('eoo').create(Control, exports);
-
-        require('esui').register(AdvancedColorPicker);
+        esui.register(AdvancedColorPicker);
         return AdvancedColorPicker;
     }
 );

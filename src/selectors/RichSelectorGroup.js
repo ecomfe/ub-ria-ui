@@ -8,7 +8,12 @@
  */
 define(
     function (require) {
-        var u = require('../util');
+
+        var eoo = require('eoo');
+        var Panel = require('esui/Panel');
+        var esui = require('esui');
+        var u = require('underscore');
+
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选
          *
@@ -16,11 +21,11 @@ define(
          *
          * ```
          * <div
-         *   data-ui-type="RichSelectorGroup"
+         *   data-ui-type="CascadingRichSelector"
          *   data-ui-id="cas-slots"
          *   data-ui-name="cas-slots">
          *   <esui-table-rich-selector
-         *       data-ui-role="source"
+         *       data-ui-child-name="source"
          *       data-ui-title="全部有效代码位"
          *       data-ui-has-head="true"
          *       data-ui-has-search-box="true"
@@ -28,7 +33,7 @@ define(
          *      data-ui-batch-action-label="选择全部">
          *   </esui-table-rich-selector>
          *   <esui-table-rich-selector
-         *       data-ui-role="target"
+         *       data-ui-child-name="target"
          *       data-ui-title="已选择代码位"
          *       data-ui-mode="delete"
          *       data-ui-need-batch-action="true"
@@ -38,93 +43,102 @@ define(
          * </div>
          *
          * ```
-         * 选择控件必须配置data-ui-role，'source'代表源选择器，'target'代表目标选择器
+         * 选择控件必须配置childName，'source'代表源选择器，'target'代表目标选择器
          *
          * @class RichSelectorGroup
          * @extends esui.Panel
          */
-        var exports = {};
+        var RichSelectorGroup = eoo.create(
+            Panel,
+            {
 
-        /**
-         * @override
-         */
-        exports.type = 'RichSelectorGroup';
+                /**
+                 * @override
+                 */
+                type: 'RichSelectorGroup',
 
-        exports.getCategory = function () {
-            return 'input';
-        };
+                getCategory: function () {
+                    return 'input';
+                },
 
-        /**
-         * @override
-         */
-        exports.initStructure = function () {
-            this.helper.initChildren();
+                /**
+                 * @override
+                 */
+                initStructure: function () {
+                    this.helper.initChildren();
+                },
 
-            // 获取children
-            var selectors = this.children;
-            u.each(
-                selectors,
-                function (selector) {
-                    var main = selector.main;
-                    var role = selector.main.getAttribute('data-ui-role');
-                    if (role) {
-                        this[role] = selector;
+                /**
+                 * @override
+                 */
+                initEvents: function () {
+
+                    var filter = this.getChild('filter');
+                    var source = this.getChild('source');
+                    var target = this.getChild('target');
+
+                    // 绑事件
+                    filter && filter.on('load', this.fire.bind(this, 'load'));
+
+                    source && source.on(
+                        'add',
+                        u.bind(
+                            function (e) {
+                                var newdata = e.target.getSelectedItemsFullStructure();
+                                target && target.setProperties({datasource: newdata});
+                                this.fire('add');
+                                this.fire('change');
+                            },
+                            this
+                        )
+                    );
+
+                    target && target.on(
+                        'delete',
+                        u.bind(
+                            function (event, data) {
+                                source && source.selectItems(data.items, false);
+                                this.fire('delete');
+                                this.fire('change');
+                            },
+                            this
+                        )
+                    );
+                },
+
+                getRealTargetSelector: function () {
+                    var source = this.getChild('source');
+                    var target = this.getChild('target');
+                    if (target) {
+                        return target;
                     }
+                    return source;
                 },
-                this
-            );
 
-            this.source && this.source.on(
-                'add',
-                function (e) {
-                    var newdata = e.target.getSelectedItemsFullStructure();
-                    this.target && this.target.setProperties({datasource: newdata});
-                    this.fire('add');
-                    this.fire('change');
+                getValue: function () {
+                    return this.getRealTargetSelector().getValue();
                 },
-                this
-            );
 
-            this.target && this.target.on(
-                'delete',
-                function (arg) {
-                    var items = arg.items;
-                    this.source && this.source.selectItems(items, false);
-                    this.fire('delete');
-                    this.fire('change');
+                getRawValue: function () {
+                    return this.getRealTargetSelector().getRawValue();
                 },
-                this
-            );
-        };
 
-        exports.getRealTargetSelector = function () {
-            return this.targret || this.source;
-        };
+                /**
+                 * 进行验证
+                 *
+                 * @return {boolean}
+                 */
+                validate: function () {
+                    var target = this.getRealTargetSelector();
 
-        exports.getValue = function () {
-            return this.getRealTargetSelector().getValue();
-        };
-
-        exports.getRawValue = function () {
-            return this.getRealTargetSelector().getRawValue();
-        };
-
-        /**
-         * 进行验证
-         *
-         * @return {boolean}
-         */
-        exports.validate = function () {
-            var target = this.getRealTargetSelector();
-
-            if (typeof target.validate === 'function') {
-                return target.validate();
+                    if (typeof target.validate === 'function') {
+                        return target.validate();
+                    }
+                }
             }
-        };
+        );
 
-        var RichSelectorGroup = require('eoo').create(require('esui/Panel'), exports);
-        require('esui').register(RichSelectorGroup);
-
+        esui.register(RichSelectorGroup);
         return RichSelectorGroup;
     }
 );

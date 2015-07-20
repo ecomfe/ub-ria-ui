@@ -42,6 +42,7 @@
     width: @esui-slider-body-cursor-width;
     height: @esui-slider-body-cursor-height;
     z-index: 2;
+    margin-left: -@esui-slider-body-cursor-width / 2;
     .esui-slider-cursor-theme();
 }
 
@@ -106,6 +107,8 @@
 
     .@{ui-class-prefix}-slider-body-cursor {
         left: -(@esui-slider-body-cursor-height - @esui-slider-body-height)/2;
+        margin-top: -@esui-slider-body-cursor-height / 2;
+        margin-left: 0;
     }
 
     .@{ui-class-prefix}-slider-body-selected {
