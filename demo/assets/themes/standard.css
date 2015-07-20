@@ -5895,9 +5895,9 @@ span.ui-crumb-node {
   z-index: 1002;
   position: absolute;
   display: block;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   border: 1px solid #bfeff3;
   color: #999999;
   background: #e3f6f3;
@@ -6377,8 +6377,9 @@ i.ui-autocomplete-item-char-selected {
   padding: 0em 1em;
   font-style: italic;
 }
-/*@import "Uploader.less";*/
-/*@import "UploaderPro.less";*/
+.ui-carousel {
+  display: block;
+}
 .ui-carousel-content {
   position: relative;
   padding: 0 2em;
@@ -6577,6 +6578,7 @@ i.ui-autocomplete-item-char-selected {
 .ui-filter,
 .ui-filterresult {
   line-height: 2;
+  display: block;
 }
 .ui-filter-items-panel,
 .ui-filterresult-items-panel {
@@ -6635,6 +6637,7 @@ i.ui-autocomplete-item-char-selected {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  display: block;
 }
 .ui-slider-body {
   position: relative;
@@ -6968,8 +6971,11 @@ i.ui-autocomplete-item-char-selected {
   display: inline-block;
   color: #f16c6c;
 }
-.ui-treerichselector.state-no-hover-icon .ui-tree-content-wrapper:not( .ui-tree-content-wrapper-selected):hover:before {
-  display: none !important;
+.ui-treerichselector.state-no-hover-icon .ui-tree-content-wrapper:hover:before {
+  display: none;
+}
+.ui-treerichselector.state-no-hover-icon .ui-tree-content-wrapper-selected:hover:before {
+  display: inline-block;
 }
 .ui-tablerichselector .ui-richselector-query-list table {
   border-collapse: collapse;
@@ -7032,8 +7038,11 @@ i.ui-autocomplete-item-char-selected {
 .ui-tablerichselector.state-delete .ui-richselector-row:hover .ui-richselector-row-action-icon:before {
   content: "\f00d";
 }
-.ui-tablerichselector.state-no-hover-icon .ui-richselector-row:not( .ui-richselector-row-selected):hover .ui-richselector-row-action-icon {
-  display: none !important;
+.ui-tablerichselector.state-no-hover-icon .ui-richselector-row:hover .ui-richselector-row-action-icon {
+  display: none;
+}
+.ui-tablerichselector.state-no-hover-icon .ui-richselector-row-selected:hover .ui-richselector-row-action-icon {
+  display: block;
 }
 .ui-richselector-with-filter .ui-richselector-content-wrapper {
   height: 18.5em;
