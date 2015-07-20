@@ -21,6 +21,7 @@
             </ul>
         </div>
         <div id="main" class="ui-u-4-5">
+            <div id="alert-container"></div>
             <h2>Alert</h2>
             <p>利用Alert可以在页面上显示提示信息。</p>
             <div class="example">
@@ -138,7 +139,7 @@
                 options.autoSlideInterval = +lib.g('auto-slide-interval').value;
                 options.closeBtn = lib.g('close-btn').checked;
                 options.icon = lib.g('icon').value;
-                options.container = 'main';
+                options.container = 'alert-container';
 
                 alert[msgType](options);
             };
