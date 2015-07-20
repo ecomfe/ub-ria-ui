@@ -5,10 +5,10 @@
         <title>Lightbox - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
         <![endif]-->
     </head>
 <body>
@@ -26,13 +26,13 @@
             <div class="example">
                 <div id="image-container">
                     <a href="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" data-lightbox-group="group-1" data-lightbox-width="200" data-lightbox-height="200">
-                        <img src="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" width="100" height="100"/>
+                        <img alt="demoImg" src="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" width="100" height="100"/>
                     </a>
                     <a href="http://getuikit.com/docs/images/placeholder_800x600_1.jpg" data-lightbox-group="group-1">
-                        <img src="http://getuikit.com/docs/images/placeholder_800x600_1.jpg" width="100" height="100"/>
+                        <img alt="demoImg" src="http://getuikit.com/docs/images/placeholder_800x600_1.jpg" width="100" height="100"/>
                     </a>
                     <a href="http://file.ynet.com/2/1503/23/9928834.jpg" data-lightbox-group="group-1">
-                        <img src="http://file.ynet.com/2/1503/23/9928834.jpg" width="100" height="100"/>
+                        <img alt="demoImg" src="http://file.ynet.com/2/1503/23/9928834.jpg" width="100" height="100"/>
                     </a>
                     <a data-lightbox-width="500" data-lightbox-height="500" href="assets/coco_tree.swf" data-lightbox-group="group-1">
                         Flash
@@ -56,16 +56,17 @@
     <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
     <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
-        require(
-            [
-                'esui',
-                'LightBox',
-                'demo',
-                'esui/Tab'
-            ],
-            function (ui) {
-                ui.init();
-        });
+    require(
+        [
+            'esui',
+            'LightBox',
+            'demo',
+            'esui/Tab'
+        ],
+        function (ui) {
+            ui.init();
+        }
+    );
     </script>
     <script src="sitemap.js"></script>
 </body>

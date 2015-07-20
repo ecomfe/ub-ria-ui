@@ -9,6 +9,7 @@
 define(
     function (require) {
         var esui = require('esui');
+        var $ = require('jquery');
         var u = require('underscore');
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');

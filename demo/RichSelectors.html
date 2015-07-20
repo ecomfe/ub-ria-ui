@@ -5,10 +5,10 @@
         <title>RichSelector - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
         <![endif]-->
     </head>
 <body>
@@ -36,7 +36,7 @@
                             data-ui-has-search-box="true"
                             data-ui-need-batch-action="true"
                             data-ui-allow-unselect-node="true"
-                            data-ui-states='no-hover-icon'
+                            data-ui-states="no-hover-icon"
                             data-ui-batch-action-label="选择全部">
                         </esui-table-rich-selector>
                     </div>
@@ -121,147 +121,147 @@
     <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
     <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
-        require(
-            [
-                'esui',
-                'selectors/RichSelectorGroup',
-                'selectors/TableRichSelector',
-                'selectors/TreeRichSelector',
-                'esui/Tab',
-                'demo'
-            ],
-            function (ui) {
-                ui.init();
-                var arrayDatasource = [];
-                for (var i = 0; i < 20; i++) {
-                    arrayDatasource.push({
-                        text: '选项' + (i + 1),
-                        name: '选项' + (i + 1),
-                        prop: '属性' + (i + 1),
-                        id: i + 1
-                    })
-                }
-
-                var single = ui.get('single-slots');
-                var singleSource = single.getChild('source');
-                singleSource.setProperties({
-                    datasource: arrayDatasource,
-                    fields: [
-                        {
-                            field: 'name',
-                            content: function (item) {
-                                return item.name;
-                            },
-                            searchScope: 'partial',
-                            width: 200,
-                            isDefaultSearchField: true,
-                            title: '名称'
-                        }
-                    ]
-                });
-
-                ui.get('get-single-slots').on('click', function () {
-                    ui.get('single-slots-result').setText(single.getValue());
-                });
-
-                var cascading = ui.get('cas-slots');
-                var casSource = cascading.getChild('source');
-                var casTarget = cascading.getChild('target');
-
-                casSource.setProperties({
-                    datasource: arrayDatasource,
-                    fields: [
-                        {
-                            field: 'name',
-                            content: function (item) {
-                                return item.name;
-                            },
-                            searchScope: 'partial',
-                            width: 100,
-                            isDefaultSearchField: true,
-                            title: '名称'
-                        },
-                        {
-                            field: 'value',
-                            content: function (item) {
-                                return item.prop;
-                            },
-                            width: 35,
-                            title: '值'
-                        }
-                    ]
-                });
-                casTarget.setProperties({
-                    fields: [
-                        {
-                            field: 'name',
-                            content: function (item) {
-                                return item.name;
-                            },
-                            isDefaultSearchField: true,
-                            searchScope: 'partial',
-                            width: 120,
-                            title: '名称'
-                        },
-                        {
-                            field: 'value',
-                            content: function (item) {
-                                return item.prop;
-                            },
-                            width: 35,
-                            title: '值'
-                        }
-                    ]
-                });
-
-                ui.get('get-cas-slots').on('click', function () {
-                    ui.get('cas-slots-result').setText(cascading.getValue());
-                });
-
-                var treeDatasource = {
-                    id: '0',
-                    text: '所有选项',
-                    children: []
-                };
-                var children = treeDatasource.children;
-                for (var i = 0; i < 2; i++) {
-                    children.push({
-                        text: '选项' + (i + 1),
-                        name: '选项' + (i + 1),
-                        id: i + 1
-                    })
-                }
-
-                for (i = 0; i < children.length; i++) {
-                    var node = children[i];
-                    node.children = [
-                        {
-                            text: '子节点' + i + 1,
-                            name: '子节点' + i + 1,
-                            id: (i + 1) * 100 + 1,
-                            isSelected: true
-                        },
-                        {
-                            text: '子节点' + i + 2,
-                            name: '子节点' + i + 2,
-                            id: (i + 1) * 100 + 2
-                        }
-                    ]
-                }
-
-                var appTree = ui.get('cas-apps');
-                var leftTree = appTree.getChild('source');
-                var rightTree = appTree.getChild('target');
-                leftTree.setProperties({datasource: treeDatasource});
-                var treeData = leftTree.getSelectedTree();
-                rightTree.setProperties({datasource: treeData});
-
-
-                ui.get('get-cas-apps').on('click', function () {
-                    ui.get('cas-apps-result').setText(appTree.getValue());
+    require(
+        [
+            'esui',
+            'selectors/RichSelectorGroup',
+            'selectors/TableRichSelector',
+            'selectors/TreeRichSelector',
+            'esui/Tab',
+            'demo'
+        ],
+        function (ui) {
+            ui.init();
+            var arrayDatasource = [];
+            for (var i = 0; i < 20; i++) {
+                arrayDatasource.push({
+                    text: '选项' + (i + 1),
+                    name: '选项' + (i + 1),
+                    prop: '属性' + (i + 1),
+                    id: i + 1
                 });
             }
-        );
+
+            var single = ui.get('single-slots');
+            var singleSource = single.getChild('source');
+            singleSource.setProperties({
+                datasource: arrayDatasource,
+                fields: [
+                    {
+                        field: 'name',
+                        content: function (item) {
+                            return item.name;
+                        },
+                        searchScope: 'partial',
+                        width: 200,
+                        isDefaultSearchField: true,
+                        title: '名称'
+                    }
+                ]
+            });
+
+            ui.get('get-single-slots').on('click', function () {
+                ui.get('single-slots-result').setText(single.getValue());
+            });
+
+            var cascading = ui.get('cas-slots');
+            var casSource = cascading.getChild('source');
+            var casTarget = cascading.getChild('target');
+
+            casSource.setProperties({
+                datasource: arrayDatasource,
+                fields: [
+                    {
+                        field: 'name',
+                        content: function (item) {
+                            return item.name;
+                        },
+                        searchScope: 'partial',
+                        width: 100,
+                        isDefaultSearchField: true,
+                        title: '名称'
+                    },
+                    {
+                        field: 'value',
+                        content: function (item) {
+                            return item.prop;
+                        },
+                        width: 35,
+                        title: '值'
+                    }
+                ]
+            });
+            casTarget.setProperties({
+                fields: [
+                    {
+                        field: 'name',
+                        content: function (item) {
+                            return item.name;
+                        },
+                        isDefaultSearchField: true,
+                        searchScope: 'partial',
+                        width: 120,
+                        title: '名称'
+                    },
+                    {
+                        field: 'value',
+                        content: function (item) {
+                            return item.prop;
+                        },
+                        width: 35,
+                        title: '值'
+                    }
+                ]
+            });
+
+            ui.get('get-cas-slots').on('click', function () {
+                ui.get('cas-slots-result').setText(cascading.getValue());
+            });
+
+            var treeDatasource = {
+                id: '0',
+                text: '所有选项',
+                children: []
+            };
+            var children = treeDatasource.children;
+            for (var j = 0; j < 2; j++) {
+                children.push({
+                    text: '选项' + (j + 1),
+                    name: '选项' + (j + 1),
+                    id: j + 1
+                });
+            }
+
+            for (i = 0; i < children.length; i++) {
+                var node = children[i];
+                node.children = [
+                    {
+                        text: '子节点' + i + 1,
+                        name: '子节点' + i + 1,
+                        id: (i + 1) * 100 + 1,
+                        isSelected: true
+                    },
+                    {
+                        text: '子节点' + i + 2,
+                        name: '子节点' + i + 2,
+                        id: (i + 1) * 100 + 2
+                    }
+                ];
+            }
+
+            var appTree = ui.get('cas-apps');
+            var leftTree = appTree.getChild('source');
+            var rightTree = appTree.getChild('target');
+            leftTree.setProperties({datasource: treeDatasource});
+            var treeData = leftTree.getSelectedTree();
+            rightTree.setProperties({datasource: treeData});
+
+
+            ui.get('get-cas-apps').on('click', function () {
+                ui.get('cas-apps-result').setText(appTree.getValue());
+            });
+        }
+    );
     </script>
     <script src="sitemap.js"></script>
 </body>

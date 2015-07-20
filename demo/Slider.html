@@ -5,15 +5,15 @@
         <title>Slider - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
         <![endif]-->
     </head>
 <body>
     <div class="header">
-        <h1 id="branding">ESUI Slider</h1>
+        <h1 id="branding">Slider</h1>
     </div>
     <div class="ui-g main-container">
         <div id="side-bar" class="ui-u-1-5">
@@ -24,12 +24,11 @@
             <h2>Slider的实例</h2>
             <p>光秃秃的只有一个滑杆</p>
             <div class="example">
-               <div data-ui="size:200;id:slider1;type:Slider;start:0;end:10;"></div>
+                <div data-ui="size:200;id:slider1;type:Slider;start:0;end:10;"></div>
             </div>
 
             <h2>Slider Max Min</h2>
             <p>0-10 最小值3 最大值7</p>
-
             <div class="example">
                 <div data-ui="id:slider2-2;type:Slider;start:0;end:10;value:4;min:3;max:7;">
                 </div>
@@ -64,94 +63,94 @@
     <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
     <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
-        require(
-            [
-                'esui',
-                'esui/lib',
-                'Slider',
-                'esui/Tab',
-                'demo'
-            ],
-            function (ui, lib) {
-                var childrens  = ui.init(document.body);
+    require(
+        [
+            'esui',
+            'esui/lib',
+            'Slider',
+            'esui/Tab',
+            'demo'
+        ],
+        function (ui, lib) {
+            ui.init(document.body);
 
-                var options = {
-                    id: 'slider4',
-                    type: 'Slider',
-                    start: 0,
-                    end: 10,
-                    hasHead: true,
-                    headType: 'select',
-                    datasource: [
-                        {
-                            text: '0',
-                            value: 0
-                        },
-                        {
-                            text: '1',
-                            value: 1
-                        },
-                        {
-                            text: '2',
-                            value: 2
-                        },
-                        {
-                            text: '3',
-                            value: 3
-                        },
-                        {
-                            text: '4',
-                            value: 4
-                        },
-                        {
-                            text: '5',
-                            value: 5
-                        },
-                        {
-                            text: '6',
-                            value: 6
-                        },
-                        {
-                            text: '7',
-                            value: 7
-                        },
-                        {
-                            text: '8',
-                            value: 8
-                        },
-                        {
-                            text: '9',
-                            value: 9
-                        },
-                        {
-                            text: '10',
-                            value: 10
-                        }
-                    ],
-                    value: 0
-                };
+            var options = {
+                id: 'slider4',
+                type: 'Slider',
+                start: 0,
+                end: 10,
+                hasHead: true,
+                headType: 'select',
+                datasource: [
+                    {
+                        text: '0',
+                        value: 0
+                    },
+                    {
+                        text: '1',
+                        value: 1
+                    },
+                    {
+                        text: '2',
+                        value: 2
+                    },
+                    {
+                        text: '3',
+                        value: 3
+                    },
+                    {
+                        text: '4',
+                        value: 4
+                    },
+                    {
+                        text: '5',
+                        value: 5
+                    },
+                    {
+                        text: '6',
+                        value: 6
+                    },
+                    {
+                        text: '7',
+                        value: 7
+                    },
+                    {
+                        text: '8',
+                        value: 8
+                    },
+                    {
+                        text: '9',
+                        value: 9
+                    },
+                    {
+                        text: '10',
+                        value: 10
+                    }
+                ],
+                value: 0
+            };
 
-                var select2 = ui.create('Slider', options);
+            var select2 = ui.create('Slider', options);
 
-                select2.appendTo(document.getElementById('container4'));
+            select2.appendTo(document.getElementById('container4'));
 
-                lib.on(lib.g('btn-set-2-3'), 'click', function () {
-                    ui.get('slider2-3').setValue(30);
-                });
+            lib.on(lib.g('btn-set-2-3'), 'click', function () {
+                ui.get('slider2-3').setValue(30);
+            });
 
-                lib.on(lib.g('btn-get-2-3'), 'click', function () {
-                    alert(ui.get('slider2-3').getValue());
-                });
+            lib.on(lib.g('btn-get-2-3'), 'click', function () {
+                alert(ui.get('slider2-3').getValue());
+            });
 
-                lib.on(lib.g('btn-set-7'), 'click', function () {
-                    ui.get('slider7').setValue([4,6]);
-                });
+            lib.on(lib.g('btn-set-7'), 'click', function () {
+                ui.get('slider7').setValue([4, 6]);
+            });
 
-                lib.on(lib.g('btn-get-7'), 'click', function () {
-                    alert(ui.get('slider7').getValue());
-                });
-            }
-        );
+            lib.on(lib.g('btn-get-7'), 'click', function () {
+                alert(ui.get('slider7').getValue());
+            });
+        }
+    );
     </script>
     <script src="sitemap.js"></script>
 </body>

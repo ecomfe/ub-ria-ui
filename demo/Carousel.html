@@ -5,10 +5,10 @@
         <title>Carousel - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css" />
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
         <![endif]-->
     </head>
 <body>
@@ -35,50 +35,50 @@
     <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
     <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
-        require(
-            [
-                'esui',
-                'Carousel',
-                'jquery',
-                'demo',
-                'esui/Tab'
-            ],
-            function (ui, Carousel, $) {
-                var item = {
-                    //模板id
-                    "id": 1,
-                    //模板缩略图
-                    "url": "http://pic1.5442.com/2013/0808/07/01.jpg"
-                };
-                var datasource = [];
-                for (var i = 1; i < 21; i++) {
-                    newItem = $.extend(true, {}, item);
-                    newItem.id = i;
-                    datasource.push(newItem);
-                }
-                var model = {
-                    "datasource": datasource,
-                    'disabled': false,
-                    'itemWidth': 150,
-                    'itemHeight': 93,
-                    'pageSize': 5
-                };
-                window.ui = ui;
-                var controls = ui.init();
-                var car1 = ui.get('car');
-                car1.setProperties({
-                    'datasource': datasource,
-                    'value': 5,
-                    'disabled': true
-                });
-                
-                var car2 = new Carousel(model);
-                car2.on('change', function (e) {
-                    console.log(e.target.value, e.target.selectedItem, e.target.selectedIndex); 
-                });
-                car2.appendTo(document.getElementById('container'));
+    require(
+        [
+            'esui',
+            'Carousel',
+            'jquery',
+            'demo',
+            'esui/Tab'
+        ],
+        function (ui, Carousel, $) {
+            var item = {
+                // 模板id
+                id: 1,
+                // 模板缩略图
+                url: 'http://pic1.5442.com/2013/0808/07/01.jpg'
+            };
+            var datasource = [];
+            for (var i = 1; i < 21; i++) {
+                var newItem = $.extend(true, {}, item);
+                newItem.id = i;
+                datasource.push(newItem);
             }
-        );
+            var model = {
+                datasource: datasource,
+                disabled: false,
+                itemWidth: 150,
+                itemHeight: 93,
+                pageSize: 5
+            };
+            window.ui = ui;
+            ui.init();
+            var car1 = ui.get('car');
+            car1.setProperties({
+                datasource: datasource,
+                value: 5,
+                disabled: true
+            });
+
+            var car2 = new Carousel(model);
+            car2.on('change', function (e) {
+                // console.log(e.target.value, e.target.selectedItem, e.target.selectedIndex);
+            });
+            car2.appendTo(document.getElementById('container'));
+        }
+    );
     </script>
     <script src="sitemap.js"></script>
 </body>
