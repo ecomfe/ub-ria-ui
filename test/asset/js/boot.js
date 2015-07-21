@@ -10,7 +10,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.1.0-beta.6/src',
+            'location': '../dep/esui/3.2.0-beta.1/src',
             'main': 'main'
         },
         {
