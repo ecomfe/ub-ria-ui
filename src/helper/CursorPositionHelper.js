@@ -4,174 +4,105 @@
  */
 
 define(function (require) {
-    var _style = {};
-    var lib = require('esui/lib');
+    var $ = require('jquery');
+    var u = require('underscore');
+    var eoo = require('eoo');
 
-    var helper = {
-        /**
-         * 获取输入光标在页面中的坐标
-         * @param   {HTMLElement}   [elem] 输入框元素
-         * @return  {Object}   返回left和top,bottom
-         */
-        getInputPositon: function (elem) {
-            var ret;
-            // IE Support
-            if (document.selection) {
-                elem.focus();
-                var Sel = document.selection.createRange();
-                var doc = elem.ownerDocument;
-                var body = doc.body;
-                var docElem = doc.documentElement;
-                var clientTop = docElem.clientTop || body.clientTop || 0;
-                var top = Sel.boundingTop + (self.pageYOffset || docElem.scrollTop) - clientTop;
-                
-                ret = {
-                    left: Sel.boundingLeft,
-                    top: top,
-                    bottom: Sel.boundingTop + Sel.boundingHeight
-                };
-            }
-            else {
-                var cloneDiv = '{$clone_div}';
-                var cloneLeft = '{$cloneLeft}';
-                var cloneFocus = '{$cloneFocus}';
-                var none = '<span style="white-space:pre-wrap;"> </span>';
-                var div = elem[cloneDiv] || document.createElement('div');
-                var focus = elem[cloneFocus] || document.createElement('span');
-                var text = elem[cloneLeft] || document.createElement('span');
-                var offset = _offset(elem);
-                var index = _getFocus(elem);
-                var focusOffset = {
-                    left: 0,
-                    top: 0
-                };
+    var sentinelChar = '吶';
 
-                if (!elem[cloneDiv]) {
-                    elem[cloneDiv] = div, elem[cloneFocus] = focus;
-                    elem[cloneLeft] = text;
-                    div.appendChild(text);
-                    div.appendChild(focus);
-                    document.body.appendChild(div);
-                    focus.innerHTML = '|';
-                    focus.style.cssText = 'display:inline-block;width:0px;overflow:hidden;z-index:-100;';
-                    div.className = _cloneStyle(elem);
-                    div.style.cssText = 'visibility:hidden;display:inline-block;'
-                        + 'position:absolute;z-index:-100;overflow:hidden;';
-                }
-                div.style.left = offset.left + 'px';
-                div.style.top = offset.top + 'px';
-                var strTmp = elem.value.substring(0, index).replace(/</g, '<')
-                    .replace(/>/g, '>').replace(/\n/g, '<br/>').replace(/\s/g, none);
-                text.innerHTML = strTmp;
-
-                focus.style.display = 'inline-block';
-                try {
-                    focusOffset = _offset(focus);
-                }
-                catch (e) {}
-                focus.style.display = 'none';
-                ret = {
-                    left: focusOffset.left,
-                    top: focusOffset.top,
-                    bottom: focusOffset.bottom
-                };
-            }
-
-            return ret;
-        }
+    var DIV_PROPERTIES = {
+        left: -9999,
+        position: 'absolute',
+        top: 0,
+        whiteSpace: 'pre-wrap'
     };
 
-    // 克隆元素样式并返回类
-    function _cloneStyle(elem, cache) {
-        if (!cache && elem['${cloneName}']) {
-            return elem['${cloneName}'];
-        }
-        var className;
-        var name;
-        var rstyle = /^(number|string)$/;
-        // Opera: content; IE8:outline && outlineWidth
-        var rname = /^(content|outline|outlineWidth)$/;
-        var cssText = [];
-        var sStyle = elem.style;
-        var val;
+    var COPY_PROPERTIES = [
+        'border-width', 'font-family', 'font-size', 'font-style', 'font-variant',
+        'font-weight', 'height', 'letter-spacing', 'word-spacing', 'line-height',
+        'text-decoration', 'text-align', 'width', 'padding-top', 'padding-right',
+        'padding-bottom', 'padding-left', 'margin-top', 'margin-right',
+        'margin-bottom', 'margin-left', 'border-style', 'box-sizing', 'tab-size'
+    ];
 
-        for (name in sStyle) {
-            if (!rname.test(name)) {
-                val = lib.getComputedStyle(elem, name);
-                // Firefox 4
-                if (val !== '' && rstyle.test(typeof val)) {
-                    name = name.replace(/([A-Z])/g, '-$1').toLowerCase();
-                    cssText.push(name);
-                    cssText.push(':');
-                    cssText.push(val);
-                    cssText.push(';');
-                }
+    function getStyles(element) {
+        var styles = {};
+        $.each(
+            COPY_PROPERTIES,
+            function (index, property) {
+                styles[property] = $(element).css(property);
+            }
+        );
+        return styles;
+    }
+
+    function copyCss() {
+        var element = this.element;
+        var overflow = element.scrollHeight > element.offsetHeight ? 'scroll' : 'auto';
+        return u.extend(
+            {
+                overflow: overflow
+            },
+            DIV_PROPERTIES,
+            getStyles(this.element)
+        );
+    }
+
+    function getTextFromHeadToCaret() {
+        return this.element.value.substring(0, this.element.selectionEnd);
+    }
+
+    function getTextFromHeadToCaretIE() {
+        this.element.focus();
+        var range = document.selection.createRange();
+        range.moveStart('character', -this.element.value.length);
+        var arr = range.text.split(sentinelChar);
+        return arr.length === 1 ? arr[0] : arr[1];
+    }
+
+    var TextAreaPositionHelper = eoo.create(
+        {
+            constructor: function (ele) {
+                this.$element = $(ele);
+                this.element = this.$element[0];
+            },
+
+            getCaretPosition: function () {
+                var notIE = typeof this.element.selectionEnd === 'number';
+                var getHeadText
+                    = notIE ? getTextFromHeadToCaret : getTextFromHeadToCaretIE;
+
+                // 通过创建一个隐藏容器，将input value复制到div中，
+                // 以此推算光标位置
+                var $dummyDiv = $('<div></div>')
+                    .css(copyCss.call(this))
+                    .text(getHeadText.call(this));
+                var $span = $('<span></span>').text('.').appendTo($dummyDiv);
+                this.$element.before($dummyDiv);
+                var position = $span.position();
+                position.top += $span.height() - this.$element.scrollTop();
+                position.lineHeight = $span.height();
+                $dummyDiv.remove();
+                return position;
             }
         }
-        cssText = cssText.join('');
-        elem['${cloneName}'] = className = 'clone' + (new Date()).getTime();
-        _addHeadStyle('.' + className + '{' + cssText + '}');
-        return className;
-    }
+    );
 
-    // 向页头插入样式
-    function _addHeadStyle(content) {
-        var style = _style[document];
-        if (!style) {
-            style = _style[document] = document.createElement('style');
-            document.getElementsByTagName('head')[0].appendChild(style);
+    /**
+     * 获取一个和element相关的实例
+     * @param {Element} element 要计算的元素
+     * @return {Object} 返回实例
+     */
+    TextAreaPositionHelper.getInstance = function (element) {
+        var cursorHelper = 'corsorPositionHelper';
+        var instance = $(element).data(cursorHelper);
+
+        if (!instance) {
+            instance = new TextAreaPositionHelper(element);
+            $(element).data(cursorHelper, instance);
         }
-        style.styleSheet && (style.styleSheet.cssText += content)
-            || style.appendChild(document.createTextNode(content));
-    }
+        return instance;
+    };
 
-    // 获取光标在文本框的位置
-    function _getFocus(elem) {
-        var index = 0;
-        // IE Support
-        if (document.selection) {
-            elem.focus();
-            var Sel = document.selection.createRange();
-            // textarea
-            if (elem.nodeName === 'TEXTAREA') {
-                var Sel2 = Sel.duplicate();
-                Sel2.moveToElementText(elem);
-                index = -1;
-                while (Sel2.inRange(Sel)) {
-                    Sel2.moveStart('character');
-                    index++;
-                }
-            }
-            // input
-            else if (elem.nodeName === 'INPUT') {
-                Sel.moveStart('character', -elem.value.length);
-                index = Sel.text.length;
-            }
-        }
-        // Firefox support
-        else if (elem.selectionStart || +elem.selectionStart === 0) {
-            index = elem.selectionStart;
-        }
-        return (index);
-    }
-
-    // 获取元素在页面中位置
-    function _offset(elem) {
-        var box = elem.getBoundingClientRect();
-        var doc = elem.ownerDocument;
-        var body = doc.body;
-        var docElem = doc.documentElement;
-        var clientTop = docElem.clientTop || body.clientTop || 0;
-        var clientLeft = docElem.clientLeft || body.clientLeft || 0;
-        var top = box.top + (self.pageYOffset || docElem.scrollTop) - clientTop;
-        var left = box.left + (self.pageXOffset || docElem.scrollLeft) - clientLeft;
-        return {
-            left: left,
-            top: top,
-            right: left + box.width,
-            bottom: top + box.height
-        };
-    }
-
-    return helper;
+    return TextAreaPositionHelper;
 });

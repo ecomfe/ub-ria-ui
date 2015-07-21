@@ -6,7 +6,7 @@
 @esui-color-picker-color-block-border: 1px solid #DDD;
 @esui-color-picker-color-block-width: @esui-color-picker-main-height;
 @esui-color-picker-color-block-height: @esui-color-picker-main-height;
-@esui-color-picker-color-block-border-radius: 5px;
+@esui-color-picker-color-block-border-radius: 0;
 @esui-color-picker-color-block-margin: 0 .5em 0 0;
 
 @esui-color-picker-color-input-width: 5em;
@@ -29,7 +29,10 @@
 }
 
 .@{ui-class-prefix}-colorpicker-color-block {
-    .border-radius(@esui-color-picker-color-block-border-radius);
+    .esui-border-radius(
+        @esui-color-picker-color-block-border-radius,
+        @esui-color-picker-color-block-border-radius
+    );
     border: @esui-color-picker-color-block-border;
     width: @esui-color-picker-color-block-width;
     height: @esui-color-picker-color-block-height;

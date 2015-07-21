@@ -1,36 +1,29 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8"/>
-    <title>Spinner - Demo</title>
-    <link rel="stylesheet" href="assets/themes/standard.css" />
-    <link href="assets/third-party/prism.css" rel="stylesheet" />
-    <!--[if lt IE 9]>
-    <link rel="stylesheet" href="assets/ie8.css" />
-    <![endif]-->
-    <link rel="stylesheet" href="assets/google-code-prettify/prettify.css" />
-    <script src="assets/loader/esl.js"></script>
-    <script src="assets/third-party/jquery-1.9.1.min.js"></script>
-    <script src="assets/google-code-prettify/prettify.js"></script>
-    <script src="demo.js"></script>
-</head>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8" />
+        <title>Accordion - ESUI Demo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.css"/>
+        <link rel="stylesheet" href="assets/themes/standard.css" />
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.1/demo/assets/ie8.css"/>
+        <![endif]-->
+    </head>
 <body>
-<h1 id="branding">ESUI - Spinner</h1>
-<div id="page">
-    <ul id="navigator">
-    </ul>
-    <div id="main">
-        <h2>Spinner的实例</h2>
-        <div class="intro">
-            <p>
-                1. 日期微调
-            </p>
-        </div>
-        <div class="view">
-            <ul class="viewer">
-                <li class="view-markup">结构</li>
+    <div class="header">
+        <h1 id="branding">ESUI Accordion</h1>
+    </div>
+    <div class="ui-g main-container">
+        <div id="side-bar" class="ui-u-1-5">
+            <ul id="navigator" class="ui-nav">
             </ul>
-            <div class="example" id="container">
+        </div>
+        <div id="main" class="ui-u-4-5">
+            <h2>Spinner 日期</h2>
+            <p>日期微调</p>
+            <div class="example">
                 <div data-ui-type="Spinner" data-ui-id="dateSpinner"
                      data-ui-width="160"
                      data-ui-format="YYYY-MM-DD"
@@ -38,42 +31,27 @@
                      data-ui-max="20150630"
                      data-ui-min="20150101"
                      data-ui-value="20150402"
-                     data-ui-scale='{"key": "day", "value": 1}'
-                     ></div>
+                     data-ui-scale="{&quot;key&quot;: &quot;day&quot;, &quot;value&quot;: 1}"></div>
             </div>
-        </div>
-        
-        <div class="intro">
-            <p>
-                2. 日期微调(循环)
-            </p>
-        </div>
-        <div class="view">
-            <ul class="viewer">
-                <li class="view-markup">结构</li>
-            </ul>
-            <div class="example" id="container">
+
+            <section class="intro">
+                <p>日期微调(循环)</p>
+            </section>
+            <div class="example">
                 <div data-ui-type="Spinner" data-ui-id="dateTurnSpinner"
                      data-ui-width="160"
                      data-ui-format="YYYY-MM-DD"
                      data-ui-interval="100"
                      data-ui-max="20150107"
                      data-ui-min="20150101"
-                     data-ui-value="20150402"
-                     ></div>
+                     data-ui-value="20150102">
+                </div>
             </div>
-        </div>
-        
-        <div class="intro">
-            <p>
-                3. 数字微调
-            </p>
-        </div>
-        <div class="view">
-            <ul class="viewer">
-                <li class="view-markup">结构</li>
-            </ul>
-            <div class="example" id="container">
+            
+            <section class="intro">
+                <p>数字微调</p>
+            </section>
+            <div class="example">
                 <div data-ui-type="Spinner" data-ui-id="numberSpinner"
                      data-ui-width="100"
                      data-ui-format="number"
@@ -83,18 +61,11 @@
                      data-ui-value="1000"
                      ></div>
             </div>
-        </div>
-        
-        <div class="intro">
-            <p>
-                4. 小数微调
-            </p>
-        </div>
-        <div class="view">
-            <ul class="viewer">
-                <li class="view-markup">结构</li>
-            </ul>
-            <div class="example" id="container">
+            
+            <section class="intro">
+                <p>小数微调</p>
+            </section>
+            <div class="example">
                 <div data-ui-type="Spinner" data-ui-id="floatSpinner"
                      data-ui-width="100"
                      data-ui-format="number"
@@ -107,18 +78,29 @@
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    require(['esui', 'Spinner', 'esui/TextBox'], function (ui) {
-        var lib = require('esui/lib');
-        var u = require('underscore');
-        ui.init();
-
-        mySpinner = ui.get('dateTurnSpinner');
-        mySpinner.scale = {key: "day", value: 1};
-    });
-    copyExample();
-</script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/loader/esl.js"></script>
+    <script src="config.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.1/demo/assets/google-code-prettify/prettify.js"></script>
+    <script id="main-js">
+    require(
+        [
+            'esui',
+            'ub-ria-ui/Spinner',
+            'esui/TextBox'
+        ],
+        function (ui) {
+            // var lib = require('esui/lib');
+            // var u = require('underscore');
+            ui.init();
+            var mySpinner = ui.get('dateTurnSpinner');
+            mySpinner.scale = {
+                key: 'day',
+                value: 1
+            };
+        }
+    );
+    </script>
+    <script src="sitemap.js"></script>
 </body>
 </html>
