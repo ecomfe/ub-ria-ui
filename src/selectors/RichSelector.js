@@ -171,7 +171,7 @@ define(
                         '<div data-ui="type:Panel;childName:searchBoxArea"',
                         ' class="' + this.helper.getPartClassName('search-wrapper') + '">',
                         '    <div data-ui="type:SearchBox;childName:itemSearch;" ',
-                        '      data-ui-button-variants="text-border icon"></div>',
+                        '      data-ui-button-variants="bordered icon"></div>',
                         '</div>'
                     ].join('');
                 },

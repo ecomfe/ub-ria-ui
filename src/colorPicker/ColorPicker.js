@@ -15,7 +15,6 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var ui = require('esui/main');
         var InputControl = require('esui/InputControl');
         var eoo = require('eoo');
         var esui = require('esui');
@@ -267,7 +266,7 @@ define(
                 +     this.helper.getPartEndTag('foot', 'div')
                 + this.helper.getPartEndTag('foot-frame', 'div');
 
-            var colorPickerOverLay = ui.create(
+            var colorPickerOverLay = esui.create(
                 'Overlay',
                 {
                     main: overlayMain,

@@ -50,23 +50,24 @@ define(
                  */
                 initStructure: function () {
                     var me = this;
-                    var mainElement = me.main;
+
                     var controlHelper = this.helper;
                     me.$super(arguments);
+                    var $mainElement = $(me.main);
 
-                    var children = lib.getChildren(mainElement);
-                    var innerSelect = document.createElement('div');
-                    innerSelect.id = controlHelper.getId('select-inner');
-                    $(innerSelect).addClass(controlHelper.getPrefixClass('select-inner'));
-                    $(mainElement).addClass(controlHelper.getPrefixClass('select'));
-                    // 这里没有做判断，因为toggle panel中已经假设有2个子节点
-                    $(children[0]).addClass(controlHelper.getPrefixClass('select-text'));
-                    innerSelect.appendChild(children[0]);
-                    var caret = document.createElement('span');
-                    $(caret).addClass(controlHelper.getPrefixClass('select-arrow'));
-                    $(caret).addClass(controlHelper.getIconClass('caret-down'));
-                    innerSelect.appendChild(caret);
-                    lib.insertBefore(innerSelect, mainElement.firstChild);
+                    var $children = $mainElement.children();
+                    var $text = $children.eq(0);
+                    var $contentLayer = $children.eq(1);
+                    var $caret = $('<span></span>').addClass(
+                        controlHelper.getPrefixClass('select-arrow')
+                        + ' '
+                        + controlHelper.getIconClass()
+                    );
+
+                    $mainElement.addClass(controlHelper.getPrefixClass('select'));
+                    $text.addClass(controlHelper.getPrefixClass('select-text'));
+                    $mainElement.append($caret);
+                    $contentLayer.insertAfter($mainElement);
                 },
 
                 /**
@@ -81,7 +82,7 @@ define(
                     target.on('add', u.bind(addHandler, me));
                     me.updateDisplayText(target);
                     controlHelper.addDOMEvent(
-                        controlHelper.getPart('select-inner'),
+                        me.main,
                         'click',
                         me.toggleContent
                     );

@@ -26,6 +26,9 @@
     .box-sizing(border-box);
     .user-select(none);
     display: block;
+    &.@{ui-state-prefix}-disabled {
+        .esui-disabled();
+    }
 }
 
 .@{ui-class-prefix}-slider-body {

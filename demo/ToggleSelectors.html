@@ -44,7 +44,8 @@
                                 data-ui-multi="false"
                                 data-ui-has-foot="true"
                                 data-ui-has-head="false"
-                                data-ui-has-row-head="false">
+                                data-ui-has-row-head="false"
+                                data-ui-states="no-hover-icon">
                             </div>
                         </div>
                     </div>
@@ -60,7 +61,7 @@
                         data-ui-value-field="id">
                         <span>请选择</span>
                         <div>
-                            <div class="no-move-richselector"
+                            <div data-ui-states="no-hover-icon"
                                 data-ui-type="TreeRichSelector"
                                 data-ui-id="all-slots"
                                 data-ui-multi="false"
@@ -84,7 +85,7 @@
                         <div>
                             <div data-ui-type="RichSelectorGroup"
                                 data-ui-id="delivery-under-order">
-                                <esui-table-rich-selector-with-filter
+                                <esui-table-rich-selector
                                     data-ui-child-name="filter"
                                     data-ui-title="订单"
                                     data-ui-has-head="false"
@@ -93,8 +94,9 @@
                                     data-ui-has-row-head="true"
                                     data-ui-multi="false"
                                     data-ui-mode="load">
-                                </esui-table-rich-selector-with-filter>
+                                </esui-table-rich-selector>
                                 <esui-table-rich-selector
+                                    data-ui-states="no-hover-icon"
                                     data-ui-child-name="source"
                                     data-ui-title="广告"
                                     data-ui-mode="add"
@@ -110,23 +112,25 @@
                 </div>
                 <div class="row">
                     <label class="label">占位：</label>
-                    <div
-                        data-ui-type="ToggleSelector"
-                        data-ui-id="slot-tree-oppucied"
-                        data-ui-name="slotTree"
-                        data-ui-target-control="all-slots-oppucied"
-                        data-ui-text-field="name"
-                        data-ui-value-field="id"
-                        data-ui-position="fixed">
-                        <span>请选择</span>
-                        <div>
-                            <div class="no-move-richselector"
-                                data-ui-type="TreeRichSelector"
-                                data-ui-id="all-slots-oppucied"
-                                data-ui-multi="false"
-                                data-ui-has-foot="false"
-                                data-ui-has-head="false"
-                                data-ui-only-leaf-select="true">
+                    <div>
+                        <div
+                            data-ui-type="ToggleSelector"
+                            data-ui-id="slot-tree-oppucied"
+                            data-ui-name="slotTree"
+                            data-ui-target-control="all-slots-oppucied"
+                            data-ui-text-field="name"
+                            data-ui-value-field="id"
+                            data-ui-position="fixed">
+                            <span>请选择</span>
+                            <div>
+                                <div data-ui-states="no-hover-icon"
+                                    data-ui-type="TreeRichSelector"
+                                    data-ui-id="all-slots-oppucied"
+                                    data-ui-multi="false"
+                                    data-ui-has-foot="false"
+                                    data-ui-has-head="false"
+                                    data-ui-only-leaf-select="true">
+                                </div>
                             </div>
                         </div>
                     </div>

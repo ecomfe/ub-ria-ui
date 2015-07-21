@@ -15,6 +15,9 @@
 
 .@{ui-class-prefix}-accordion {
     display: block;
+    &.@{ui-state-prefix}-disabled {
+        .esui-disabled();
+    }
 }
 
 .@{ui-class-prefix}-accordion-panel {
