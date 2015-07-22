@@ -4343,6 +4343,10 @@ hr {
 .ui-calendar-layer .ui-monthview {
   vertical-align: top;
 }
+.ui-layer {
+  position: absolute;
+  margin: 0;
+}
 /**
  * ESUI (Enterprise Simple UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
@@ -4641,10 +4645,6 @@ hr {
  */
 .ui-commandmenu-layer {
   position: absolute;
-}
-.ui-layer {
-  position: absolute;
-  margin: 0;
 }
 /**
   * ESUI (Enterprise Simple UI)
@@ -6661,6 +6661,26 @@ i.ui-autocomplete-item-char-selected {
 .ui-togglepanel {
   display: block;
 }
+.ui-togglepanel-angle .ui-togglepanel-title {
+  cursor: pointer;
+}
+.ui-togglepanel-angle .ui-togglepanel-title:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f105";
+  width: 1em;
+}
+.ui-togglepanel-angle.state-expanded .ui-togglepanel-title:before {
+  content: "\f107";
+}
+.ui-togglepanel-angle .ui-togglepanel-content {
+  padding: 1em;
+}
 /* 滑动杆控件开始 */
 /* 滑动杆的头 */
 /* 横向滑动杆体 */
@@ -7433,6 +7453,7 @@ i.ui-autocomplete-item-char-selected {
 .main-container {
   margin-top: 2em;
   margin-bottom: 5em;
+  min-height: 40em;
 }
 .footer {
   padding: 1em;
