@@ -4343,10 +4343,6 @@ hr {
 .ui-calendar-layer .ui-monthview {
   vertical-align: top;
 }
-.ui-layer {
-  position: absolute;
-  margin: 0;
-}
 /**
  * ESUI (Enterprise Simple UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
@@ -4776,6 +4772,10 @@ span.ui-crumb-node {
 }
 .ui-dialog-icon-confirm {
   color: #6bd5ec;
+}
+.ui-layer {
+  position: absolute;
+  margin: 0;
 }
 /**
 * ESUI (Enterprise Simple UI)
@@ -6260,9 +6260,9 @@ span.ui-crumb-node {
   cursor: pointer;
   padding: 0.5em 0.5em 0.5em 2em;
   position: relative;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   border: 1px solid #dddddd;
   background: #f6f6f6;
   color: #666666;
@@ -6302,9 +6302,9 @@ span.ui-crumb-node {
   padding: 1em 1em 1em 1em;
   position: relative;
   margin: 0 0 0.5em 0;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
 }
 .ui-alert-has-icon {
   padding-left: 3.5em;
