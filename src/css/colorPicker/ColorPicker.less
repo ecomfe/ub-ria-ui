@@ -89,9 +89,12 @@
         }
 
         .@{ui-class-prefix}-colorpicker-foot-frame {
-            padding: @esui-color-picker-header-padding-horizontal;
+            padding: 0 @esui-color-picker-header-padding-horizontal;
 
             .@{ui-class-prefix}-colorpicker-foot {
+                padding: @esui-color-picker-header-padding-horizontal 0;
+                border-top: @esui-color-picker-color-block-border;
+                border-top-style: dotted;
                 text-align: right;
             }
         }
