@@ -23,7 +23,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.2.0-beta.1/src',
+            'location': '../dep/esui/3.2.0-beta.2/src',
             'main': 'main'
         },
         {
@@ -48,7 +48,7 @@ require.config({
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-rc.1/src'
+            'location': '../dep/esf/1.0.0-rc.2/src'
         },
         {
             'name': 'est',

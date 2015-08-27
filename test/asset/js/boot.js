@@ -10,7 +10,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.2.0-beta.1/src',
+            'location': '../dep/esui/3.2.0-beta.2/src',
             'main': 'main'
         },
         {
@@ -30,7 +30,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.0.0/src',
+            'location': '../dep/etpl/3.0.1/src',
             'main': 'main'
         },
         {
@@ -50,7 +50,7 @@ require.config({
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-beta.2/src'
+            'location': '../dep/esf/1.0.0-rc.2/src'
         },
         {
             'name': 'est',
