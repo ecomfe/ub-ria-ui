@@ -239,17 +239,17 @@ define(
                         var control = this;
                         tree.on(
                             'selectnode',
-                            function (e, data) {
-                                var node = data.node;
+                            function (e) {
+                                var node = e.node;
                                 control.handlerAfterClickNode(node);
                             }
                         );
 
                         tree.on(
                             'unselectnode',
-                            function (e, data) {
+                            function (e) {
                                 // control.setItemState(e.node.id, 'isSelected', false);
-                                control.handlerAfterClickNode(data.node);
+                                control.handlerAfterClickNode(e.node);
                             }
                         );
                     }
