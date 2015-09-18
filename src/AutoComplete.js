@@ -1,15 +1,13 @@
 /**
- * ESUI (Enterprise Simple UI)
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * UB-RIA-UI
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 输入控件自动提示扩展
- * @author: maoquan(3610cn@gmail.com), liwei
+ * @exports AutoComplete
+ * @author maoquan(3610cn@gmail.com), liwei
  */
-
 define(
     function (require) {
-
         var esui = require('esui');
         var lib = require('esui/lib');
         var u = require('underscore');
@@ -25,12 +23,17 @@ define(
         var INPUT = 'input';
         var $ = require('jquery');
 
+        /**
+         * @class AutoCompleteLayer
+         * @exports esui.Layer
+         */
         var AutoCompleteLayer = eoo.create(
             Layer,
             {
 
                 /**
                  * 自动提示层构造器
+                 *
                  * @param {Object} [control] TextBox控件
                  */
                 constructor: function (control) {
@@ -80,11 +83,28 @@ define(
                         function (e) {
                             var clickedTarget = e.currentTarget;
                             me.hide();
-                            var text = $(clickedTarget.firstChild).text();
+
+                            var firstChild = $(clickedTarget.firstChild);
+                            var text = firstChild.text();
+                            var id = firstChild.closest('li').data('id');
+
+                            /**
+                             * @deprecated
+                             */
                             var event = me.control.fire('select', text);
                             if (event.isDefaultPrevented()) {
                                 return;
                             }
+
+                            var args = {value: text};
+                            if (id !== undefined) {
+                                args.id = id;
+                            }
+                            var evt = me.control.fire('selected', args);
+                            if (evt.isDefaultPrevented()) {
+                                return;
+                            }
+
                             setTargetValue.call(me, text);
                         }
                     );
@@ -120,11 +140,28 @@ define(
                                         return;
                                     }
                                     me.hide();
-                                    var text = $(selectedItem.firstChild).text();
+
+                                    var firstChild = $(selectedItem.firstChild);
+                                    var text = firstChild.text();
+                                    var id = firstChild.closest('li').data('id');
+
+                                    /**
+                                     * @deprecated
+                                     */
                                     var event = me.control.fire('select', text);
                                     if (event.isDefaultPrevented()) {
                                         return;
                                     }
+
+                                    var args = {value: text};
+                                    if (id !== undefined) {
+                                        args.id = id;
+                                    }
+                                    var evt = me.control.fire('selected', args);
+                                    if (evt.isDefaultPrevented()) {
+                                        return;
+                                    }
+
                                     setTimeout(
                                         function () {
                                             setTargetValue.call(me, text);
@@ -246,6 +283,7 @@ define(
 
                 /**
                  * 获取内部输入元素
+                 *
                  * @return {Element}
                  */
                 getInput: function () {
@@ -265,6 +303,7 @@ define(
 
         /**
          * 匹配已输入值的算法
+         *
          * @param {string} value 当前用户输入
          * @param {Array} datasource 数据源
          * @return {Array}
@@ -281,6 +320,7 @@ define(
 
         /**
          * 特殊字符处理，这些字符排除在匹配算法外
+         *
          * @param {string} value 用户输入
          * @return {string}
          */
@@ -290,6 +330,7 @@ define(
 
         /**
          * 根据用户输入绘制下拉选择列表
+         *
          * @param {sttring} value 用户输入
          */
         function repaintSuggest(value) {
@@ -396,6 +437,7 @@ define(
 
         /**
          * 下拉建议列表中上下选择
+         *
          * @param {string} updown up / down
          */
         function moveTo(updown) {

@@ -59,7 +59,10 @@
             window.ui = ui;
             var controls = ui.init();
             var data = [
-                'actionScript',
+                {
+                    text: 'actionScript',
+                    id: '1'
+                },
                 'AppleScript',
                 'Asp',
                 'BASIC',
@@ -119,9 +122,18 @@
                 else {
                     datasource = data;
                 }
-                controls[i].setProperties({
+
+                control.setProperties({
                     datasource: datasource
                 });
+
+                control.on(
+                    'selected',
+                    function (e) {
+                        console.log('value: ' + e.value);
+                        console.log('id: ' + e.id);
+                    }
+                );
             }
         }
     );
