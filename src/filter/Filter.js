@@ -7,7 +7,7 @@
  * @author yaofeifei@baidu.com; liwei47@baidu.com
  */
 define(function (require) {
-    var lib = require('esui/lib');
+    var etpl = require('etpl');
     var u = require('underscore');
     var InputControl = require('esui/InputControl');
     var eoo = require('eoo');
@@ -59,25 +59,23 @@ define(function (require) {
              */
             initStructure: function () {
                 var controlHelper = this.helper;
-                var mainEle = this.main;
-                var html = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
+                var template = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
                     + '<label id="${labelId}"></label>'
                     + '<div id="${contentPanelId}" class="${contentPanelStyle}"></div>'
                     + '</div>';
+                var data = {
+                    filterPanelStyle: controlHelper.getPartClassName('panel'),
+                    filterPanelId: controlHelper.getId('items-wrapper-panel'),
+                    labelId: controlHelper.getId('items-label'),
+                    contentPanelId: controlHelper.getId('items-panel'),
+                    contentPanelStyle: controlHelper.getPartClassName('items-panel')
+                };
 
-                mainEle.innerHTML = lib.format(
-                    html,
-                    {
-                        filterPanelStyle: controlHelper.getPartClassName('panel'),
-                        filterPanelId: controlHelper.getId('items-wrapper-panel'),
-                        labelId: controlHelper.getId('items-label'),
-                        contentPanelId: controlHelper.getId('items-panel'),
-                        contentPanelStyle: controlHelper.getPartClassName('items-panel')
-                    }
-                );
+                var mainElement = this.main;
+                mainElement.innerHTML = etpl.compile(template)(data);
 
                 // 创建控件树
-                this.initChildren(mainEle);
+                this.initChildren(mainElement);
             },
 
             /**
@@ -120,43 +118,59 @@ define(function (require) {
              * @override
              */
             initEvents: function () {
-                var me = this;
-                var controlHelper = me.helper;
-
-                controlHelper.addDOMEvent(
-                    me.main,
+                this.helper.addDOMEvent(
+                    this.main,
                     'click',
                     'a',
                     function (e) {
-                        var itemClass = controlHelper.getPartClassName('item');
-                        var itemRemoveClass = controlHelper.getPartClassName('item-remove');
-                        var cmdItemClass = controlHelper.getPartClassName('item-cmd');
-                        var $t = $(e.target);
-                        var $tWrapper = $t.closest('a');
-
                         e.preventDefault();
-                        if ($t.hasClass(itemRemoveClass)) {
-                            var value = $tWrapper.data('value');
-                            var item = {value: value};
-
-                            me.removeItem(item);
-                            me.fire('custom-item-remove', {item: item});
-                        }
-                        else {
-                            if ($tWrapper.hasClass(itemClass)) {
-                                var item = {
-                                    value: $tWrapper.attr('data-value'),
-                                    text: $tWrapper.text()
-                                };
-
-                                me.selectItem(item);
-                            }
-                            else if ($tWrapper.hasClass(cmdItemClass)) {
-                                me.fire('custom-link-click');
-                            }
-                        }
+                        this.changeItemStatus(e.target);
                     }
                 );
+            },
+
+            /**
+             * 改变选择项的选中状态
+             *
+             * @protected
+             * @method filter.Filter#changeItemStatus
+             * @param {HTMLElement} target 目标元素
+             */
+            changeItemStatus: function (target) {
+                var helper = this.helper;
+                var itemRemoveClass = helper.getPartClassName('item-remove');
+
+                var clickItem = $(target);
+                var selectedItem = clickItem.closest('a');
+                var item = {
+                    value: selectedItem.data('value'),
+                    text: selectedItem.text()
+                };
+
+                if (clickItem.hasClass(itemRemoveClass)) {
+                    this.removeItem(item);
+
+                    this.fire('customitemremove', {item: item});
+                    /**
+                     * @deprecated
+                     */
+                    this.fire('custom-item-remove', {item: item});
+                }
+                else {
+                    var itemClass = helper.getPartClassName('item');
+                    var cmdItemClass = helper.getPartClassName('item-cmd');
+
+                    if (selectedItem.hasClass(itemClass)) {
+                        this.selectItem(item);
+                    }
+                    else if (selectedItem.hasClass(cmdItemClass)) {
+                        this.fire('customlinkclick');
+                        /**
+                         * @deprecated
+                         */
+                        this.fire('custom-link-click');
+                    }
+                }
             },
 
             /**
@@ -309,46 +323,37 @@ define(function (require) {
      * @param {Object} item 选项数据
      * @param {string} style 额外的样式
      * @return {HtmlElement} 生成的选择项元素
-     * @private
      */
     function buildItem(item, style) {
-        var htmls = [
-            '<a href="#" class="${style}" data-value="${value}" data-allow-delete="${allowDelete}">',
-            '<span>${text}</span>',
-            '</a>'
-        ];
-        var allowDeleteSegment = '<span class="ui-icon ui-filter-remove ui-filter-item-remove"></span>';
-        var allowDelete = item.allowDelete || false;
-        allowDelete && htmls.splice(2, 0, allowDeleteSegment);
+        var template = '<a href="#" class="${style}" data-value="${value}" data-allow-delete="${allowDelete}">'
+         + '<span>${text}</span>'
+         + '<!-- if: ${allowDelete}--><span class="ui-icon ui-filter-remove ui-filter-item-remove"></span><!-- /if -->'
+         + '</a>';
+        var renderer = etpl.compile(template);
+        var data = {
+            style: this.helper.getPartClassName('item') + ' ' + (style || ''),
+            value: item.value,
+            text: item.text,
+            allowDelete: item.allowDelete
+        };
 
-        return lib.format(
-            htmls.join(''),
-            {
-                style: this.helper.getPartClassName('item') + ' ' + (style || ''),
-                value: item.value,
-                text: item.text
-            }
-        );
+        return renderer(data);
     }
 
     /**
      * 生成自定义项
      */
     function buildCustomItem() {
-        var html = '<a href="#" id="${customLinkId}" class="${style}">${text}</a>';
         var controlHelper = this.helper;
-        var itemsPanel = controlHelper.getPart('items-panel');
+        var template = '<a href="#" id="${customLinkId}" class="${style}">${text}</a>';
+        var data = {
+            customLinkId: controlHelper.getId('custom-link'),
+            style: controlHelper.getPartClassName('item-cmd'),
+            text: this.customBtnLabel
+        };
+        var html = etpl.compile(template)(data);
 
-        $(itemsPanel).append(
-            lib.format(
-                html,
-                {
-                    customLinkId: controlHelper.getId('custom-link'),
-                    style: controlHelper.getPartClassName('item-cmd'),
-                    text: this.customBtnLabel
-                }
-            )
-        );
+        $(controlHelper.getPart('items-panel')).append(html);
     }
 
     esui.register(Filter);

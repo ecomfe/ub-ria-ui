@@ -88,20 +88,23 @@ define(
                             var text = firstChild.text();
                             var id = firstChild.closest('li').data('id');
 
-                            /**
-                             * @deprecated
-                             */
-                            var event = me.control.fire('select', text);
-                            if (event.isDefaultPrevented()) {
-                                return;
-                            }
-
+                            // 事件参数
                             var args = {value: text};
+                            // 如果选择项存在id属性，则在事件参数中加上
                             if (id !== undefined) {
                                 args.id = id;
                             }
-                            var evt = me.control.fire('selected', args);
-                            if (evt.isDefaultPrevented()) {
+                            // 为了与 `select` 事件区分，用了 `targetselect`
+                            var selectEvent = me.control.fire('targetselect', args);
+                            if (selectEvent.isDefaultPrevented()) {
+                                return;
+                            }
+
+                            /**
+                             * @deprecated
+                             */
+                            var deprecatedEvent = me.control.fire('select', text);
+                            if (deprecatedEvent.isDefaultPrevented()) {
                                 return;
                             }
 
@@ -145,20 +148,23 @@ define(
                                     var text = firstChild.text();
                                     var id = firstChild.closest('li').data('id');
 
-                                    /**
-                                     * @deprecated
-                                     */
-                                    var event = me.control.fire('select', text);
-                                    if (event.isDefaultPrevented()) {
-                                        return;
-                                    }
-
+                                    // 事件参数
                                     var args = {value: text};
+                                    // 如果选择项存在id属性，则在事件参数中加上
                                     if (id !== undefined) {
                                         args.id = id;
                                     }
-                                    var evt = me.control.fire('selected', args);
-                                    if (evt.isDefaultPrevented()) {
+                                    // 为了与 `select` 事件区分，用了 `targetselect`
+                                    var selectEvent = me.control.fire('targetselect', args);
+                                    if (selectEvent.isDefaultPrevented()) {
+                                        return;
+                                    }
+
+                                    /**
+                                     * @deprecated
+                                     */
+                                    var deprecatedEvent = me.control.fire('select', text);
+                                    if (deprecatedEvent.isDefaultPrevented()) {
                                         return;
                                     }
 
