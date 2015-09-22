@@ -1,147 +1,171 @@
 /**
- * @file Sticky控件类
+ * @file Sticky 悬停控件
  * @exports Sticky
+ * @author maoquan(3610cn@gmail.com), xutingting02
  */
 
 define(function (require) {
     var u = require('underscore');
+    var esui = require('esui');
     var lib = require('esui/lib');
-    var paint = require('esui/painters');
     var Control = require('esui/Control');
     var eoo = require('eoo');
+    var $ = require('jquery');
 
     var sticked = [];
-    var bindScroll = false;
-    var getCurrentStyle = lib.getComputedStyle;
 
+    var Sticky = eoo.create(
+        Control,
+        {
+            type: 'Sticky',
+
+            initOptions: function (options) {
+                var properties = {
+                    top: 0
+                };
+                u.extend(properties, options);
+                this.setProperties(properties);
+            },
+
+            initStructure: function () {
+                var main = this.main;
+
+                var height = $(main).css('position') !== 'absolute' ? main.offsetHeight : '';
+                var cssFloat = $(main).css('float');
+                cssFloat = cssFloat === 'none' ? '' : cssFloat;
+
+                var $placeHolder = $('<div></div>')
+                    .css(
+                        {
+                            'height': height + 'px',
+                            'float': cssFloat,
+                            'margin': $(main).css('margin')
+                        }
+                    )
+                    .addClass(
+                        this.helper.getPartClassName('placeholder')
+                    );
+                $(main).wrap($placeHolder);
+
+                this.initialTop = $(main).offset().top;
+            },
+
+            initEvents: function () {
+                if (sticked.length === 0) {
+                    this.helper.addDOMEvent(window, 'scroll', checkScrollPosition);
+                }
+                sticked.push(this);
+            },
+
+            dispose: function () {
+
+                reset(this);
+
+                sticked = u.without(sticked, this);
+                if (sticked.length === 0) {
+                    this.helper.addDOMEvent(window, 'scroll', checkScrollPosition);
+                }
+
+                $(this.main).unwrap();
+
+                this.$super(arguments);
+            }
+        }
+    );
+
+    /**
+     * 计算文档高度
+     *
+     * @return {number}
+     */
     function documentHeight() {
-        return Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.documentElement.clientHeight);
+        return $(document).height();
     }
 
+    /**
+     * 检查是否达到悬停条件
+     *
+     * @param {ui.Sticky} sticky Sticky实例
+     * @return {boolean}
+     */
     function check(sticky) {
         if (sticky.disabled) {
             return false;
         }
-        var scrollTop = window.pageYOffset || document.documentElement.scrollTop,
-            dwh = documentHeight() - window.innerHeight,
-            extra = (scrollTop > dwh) ? dwh - scrollTop : 0,
-            etse = sticky.initialTop - sticky.top - extra;
-        return (scrollTop >= etse);
+        var scrollTop = $(window).scrollTop();
+        var dwh = documentHeight() - $(window).height;
+        var extra = (scrollTop > dwh) ? dwh - scrollTop : 0;
+        var etse = sticky.initialTop - sticky.top - extra;
+        return scrollTop >= etse;
     }
 
+    /**
+     * 重置，即取消悬停
+     *
+     * @param {ui.Sticky} sticky Sticky实例
+     */
     function reset(sticky) {
         sticky.currentTop = null;
-        var style = sticky.main.style;
-        style.position = '';
-        style.top = '';
-        style.width = '';
-        style.margin = 0 + 'px';
-        style.left = '';
+        $(sticky.main).css(
+            {
+                position: '',
+                top: '',
+                width: '',
+                margin: 0 + 'px',
+                left: ''
+            }
+        );
     }
 
-    function checkscrollposition() {
-        var stickies = sticked;
-        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    /**
+     * 页面滚动时，检查页面所有sticky组件
+     * 对需要悬停效果的，进行相应处理
+     */
+    function checkScrollPosition() {
+        var scrollTop = $(document).scrollTop();
 
-        if (!stickies.length || scrollTop < 0) {
+        if (!sticked.length || scrollTop < 0) {
             return;
         }
 
-        var windowHeight = document.documentElement.clientHeight;
-        var dwh = documentHeight() - windowHeight;
+        var dwh = documentHeight() - $(window).height();
         var extra = (scrollTop > dwh) ? dwh - scrollTop : 0;
-        var newTop;
-        var stickyHeight;
-        var sticky;
-        var stickyMainElement;
 
-        for (var i = 0; i < stickies.length; i++) {
-            sticky = stickies[i];
-            stickyMainElement = sticky.main;
-            if (!stickyMainElement.offsetWidth || !stickyMainElement.offsetHeight) {
+        for (var i = 0; i < sticked.length; i++) {
+            var sticky = sticked[i];
+            var main = sticky.main;
+            if (!main.offsetWidth || !main.offsetHeight) {
                 continue;
             }
             if (!check(sticky)) {
                 if (!isNaN(sticky.currentTop)) {
                     reset(sticky);
                 }
-            } 
+            }
             else {
-                if (sticky.top < 0) {
-                    newTop = 0;
-                } 
-                else {
-                    stickyHeight = stickyMainElement.offsetHeight;
-                    newTop = documentHeight - stickyHeight - sticky.top - scrollTop - extra;
+                var newTop = 0;
+                if (sticky.top >= 0) {
+                    var stickyHeight = main.offsetHeight;
+                    newTop = documentHeight() - stickyHeight - sticky.top - scrollTop - extra;
                     newTop = newTop < 0 ? newTop + sticky.top : sticky.top;
                 }
-                if (sticky.currentTop != newTop) {
-                    var style = stickyMainElement.style;
-                    var width = sticky.getWidthFrom ?
-                        lib.g(sticky.getWidthFrom).offsetWidth : stickyMainElement.offsetWidth;
-                    style.width = width + 'px';
-                    style.position = 'fixed';
-                    style.top = parseInt(newTop) + 'px';
-                    style.left = lib.getOffset(stickyMainElement).left + 'px';
+
+                if (sticky.currentTop !== newTop) {
+                    var width = sticky.getWidthFrom ? lib.g(sticky.getWidthFrom).offsetWidth : main.offsetWidth;
+                    $(main).css(
+                        {
+                            width: width + 'px',
+                            position: 'fixed',
+                            top: parseInt(newTop, 10) + 'px',
+                            left: $(main).offset().left + 'px'
+                        }
+                    );
                     sticky.currentTop = newTop;
                 }
             }
         }
     }
 
-    var exports = {
-        type : 'Sticky',
-
-        initOptions: function (options) {
-            var properties = {
-                top: 0
-            };
-            u.extend(properties, options); 
-            this.setProperties(properties);
-        },
-
-        initStructure: function () {
-            var placeHolder = document.createElement('div');
-            var mainElement = this.main;
-            lib.insertBefore(placeHolder, mainElement);
-            placeHolder.appendChild(mainElement);
-            lib.addClass(placeHolder, this.helper.getPartClassName('placeholder'));
-            var height = getCurrentStyle(mainElement, 'position') != 'absolute' ? mainElement.offsetHeight : ''; 
-            var style = placeHolder.style;
-
-            style.height = height + 'px';
-            style.float = getCurrentStyle(mainElement, 'float') != 'none' ? getCurrentStyle(mainElement).float : '';
-            style.margin = getCurrentStyle(mainElement, 'margin');
-            this.initialTop = lib.getOffset(mainElement).top;
-        },
-
-        initEvents: function() {
-            if (sticked.length === 0) {
-                lib.on(window, 'scroll', checkscrollposition);
-            }
-            sticked.push(this);
-        },
-
-        dispose: function () {
-            var me = this;
-            me.$super(arguments);
-            var mainElement = me.main;
-            reset(me);
-            sticked = u.without(sticked, me);
-            if (sticked.length === 0) {
-                lib.un(window, 'scroll', checkscrollposition);
-            }
-
-            var placeHolder = mainElement.parentNode;
-            lib.insertBefore(mainElement, mainElement.parentNode);
-            lib.removeNode(placeHolder);
-        }
-    };
-
-    var Sticky = eoo.create(Control, exports);
-    require('esui/main').register(Sticky);
+    esui.register(Sticky);
     return Sticky;
 });

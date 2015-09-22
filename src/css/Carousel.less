@@ -8,6 +8,13 @@
 @esui-carousel-pointer-color: #6CCDC0;
 @esui-carousel-pointer-hover-color: lighten(#6CCDC0, 5%);
 
+.@{ui-class-prefix}-carousel {
+    display: block;
+    &.@{ui-state-prefix}-disabled {
+        .esui-disabled();
+    }
+}
+
 .@{ui-class-prefix}-carousel-content {
     position: relative;
     padding: @esui-carousel-padding;
@@ -26,14 +33,16 @@
 
 .@{ui-class-prefix}-carousel-pointer-active-l {
     left: 0;
+    .eicons-icon(chevron-left);
 }
 
 .@{ui-class-prefix}-carousel-pointer-disable {
-    .esf-disabled();
+    .esui-disabled();
 }
 
 .@{ui-class-prefix}-carousel-pointer-active-r {
     right: 0;
+    .eicons-icon(chevron-right);
 }
 
 .@{ui-class-prefix}-carouse-list-wrap {
@@ -74,6 +83,7 @@
     bottom:0;
     background: @esui-carousel-selected-color;
     color: @esui-carousel-selected-text-color;
+    .eicons-icon(check);
 }
 
 .@{ui-class-prefix}-carousel-selected-item .@{ui-class-prefix}-carousel-check {
@@ -97,7 +107,7 @@
     background: @esui-carousel-toolbar-pageColor;
     display: inline-block;
     cursor: pointer;
-    .esf-circular();
+    .esui-circular();
 }
 
 .@{ui-class-prefix}-carousel-toolbar .@{ui-class-prefix}-carousel-current-page {

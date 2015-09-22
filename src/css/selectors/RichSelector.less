@@ -10,7 +10,7 @@
 @esui-richselector-width: 20em;
 
 /** 标题栏 */
-@esui-richselector-head-height: 2em;
+@esui-richselector-head-height: 2.5em;
 @esui-richselector-head-padding: 0 .75em;
 
 /** 主体 */
@@ -56,13 +56,16 @@
 }
 
 .@{ui-class-prefix}-richselector-has-search .@{ui-class-prefix}-richselector-content-wrapper {
-    height: @esui-richselector-body-height - @esf-textbox-height - 2*@esui-richselector-searchbox-wrapper-padding;
+    height: @esui-richselector-body-height - @esui-textbox-height - 2*@esui-richselector-searchbox-wrapper-padding;
 }
 
 // 无结果状态
 .@{ui-class-prefix}-richselector-empty {
     .@{ui-class-prefix}-richselector-empty-text {
         display: block;
+    }
+    .@{ui-class-prefix}-richselector-query-list {
+        display: none;
     }
 }
 
@@ -77,6 +80,11 @@
     padding: @esui-richselector-foot-padding;
 
     .esui-richselector-foot-theme();
+}
+
+// 暂时把group的定义放在这里
+.@{ui-class-prefix}-richselectorgroup {
+    white-space: nowrap;
 }
 
 .esui-richselector-theme() {}

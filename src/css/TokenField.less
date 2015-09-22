@@ -1,28 +1,32 @@
 @esui-tokenfield-padding: .5em;
-@esui-tokenfield-border-radius: 5px;
+@esui-tokenfield-border-radius: 0;
 
 @esui-tokenfield-item-height: 1.5em;
 @esui-tokenfield-item-margin: .1em .2em 0.1em 0;
 @esui-tokenfield-item-padding: 0 .5em;
-@esui-tokenfield-item-radius: 5px;
+@esui-tokenfield-item-radius: 0;
 
 @esui-tokenfield-item-remove-icon-left-margin: .2em;
 
 .@{ui-class-prefix}-tokenfield {
-    .esf-border-radius(
+    .esui-border-radius(
         @esui-tokenfield-border-radius,
         @esui-tokenfield-border-radius
     );
-    @esf-tokenfield-transition:
+    @esui-tokenfield-transition:
         background-color 0.3s ease-out,
         box-shadow 0.2s ease,
         border-color 0.2s ease;
-    .esf-transition(@esf-tokenfield-transition);
+    .esui-transition(@esui-tokenfield-transition);
     padding: @esui-tokenfield-padding;
     position: relative;
+    display: inline-block;
     .user-select(none);
 
     .esui-tokenfield-theme();
+    &.@{ui-state-prefix}-disabled {
+        .esui-disabled();
+    }
 }
 
 .esui-tokenfield-theme() {}
@@ -43,7 +47,7 @@
     line-height: @esui-tokenfield-item-height;
     vertical-align: middle;
     cursor: pointer;
-    .esf-transition(opacity .1s ease-in-out);
+    .esui-transition(opacity .1s ease-in-out);
     .esui-tokenfield-item-theme();
 }
 
@@ -52,6 +56,7 @@
 .@{ui-class-prefix}-tokenfield-close {
     display: inline-block;
     margin-left: @esui-tokenfield-item-remove-icon-left-margin;
+    .eicons-icon(close);
 }
 
 // 要保证input和item的定位一致
