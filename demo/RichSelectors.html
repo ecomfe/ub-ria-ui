@@ -94,6 +94,7 @@
                             data-ui-only-leaf-select="false"
                             data-ui-need-batch-action="true"
                             data-ui-allow-unselect-node="true"
+                            data-ui-case-sensitive="true"
                             data-ui-batch-action-label="选择全部">
                         </div>
                         <div data-ui-type="TreeRichSelector"
@@ -135,9 +136,9 @@
             var arrayDatasource = [];
             for (var i = 0; i < 20; i++) {
                 arrayDatasource.push({
-                    text: '选项' + (i + 1),
-                    name: '选项' + (i + 1),
-                    prop: '属性' + (i + 1),
+                    text: '选项a' + (i + 1),
+                    name: '选项b' + (i + 1),
+                    prop: '属性c' + (i + 1),
                     id: i + 1
                 });
             }
@@ -155,7 +156,8 @@
                         searchScope: 'partial',
                         width: 200,
                         isDefaultSearchField: true,
-                        title: '名称'
+                        title: '名称',
+                        caseSensitive: true
                     }
                 ]
             });
@@ -226,8 +228,8 @@
             var children = treeDatasource.children;
             for (var j = 0; j < 2; j++) {
                 children.push({
-                    text: '选项' + (j + 1),
-                    name: '选项' + (j + 1),
+                    text: '选项a' + (j + 1),
+                    name: '选项b' + (j + 1),
                     id: j + 1
                 });
             }
@@ -236,14 +238,14 @@
                 var node = children[i];
                 node.children = [
                     {
-                        text: '子节点' + i + 1,
-                        name: '子节点' + i + 1,
+                        text: '子节点a' + i + 1,
+                        name: '子节点b' + i + 1,
                         id: (i + 1) * 100 + 1,
                         isSelected: true
                     },
                     {
-                        text: '子节点' + i + 2,
-                        name: '子节点' + i + 2,
+                        text: '子节点a' + i + 2,
+                        name: '子节点b' + i + 2,
                         id: (i + 1) * 100 + 2
                     }
                 ];

@@ -64,7 +64,9 @@ define(
                         // 选择父节点不代表其下的子节点全被选中；选择全部子节点也不代表父节点选中
                         needSyncParentChild: true,
                         // 树样式
-                        treeVariants: 'icon angle hoverable'
+                        treeVariants: 'icon angle hoverable',
+                        // 大小写是否敏感。默认无视大小写
+                        caseSensitive: false
                     };
 
                     u.extend(properties, options);
@@ -191,6 +193,7 @@ define(
 
                 /**
                  * 刷新备选区
+                 *
                  * @override
                  */
                 refreshContent: function () {
@@ -294,6 +297,7 @@ define(
 
                 /**
                  * 点击触发，选择或删除节点
+                 *
                  * @param {Object} node 节点对象
                  * @ignore
                  */
@@ -591,7 +595,7 @@ define(
                     // Tree就只定位一个关键词字段
                     var keyword = filters[0].value;
                     var filteredTreeData = [];
-                    filteredTreeData = queryFromNode(keyword, this.allData);
+                    filteredTreeData = queryFromNode.call(this, keyword, this.allData);
                     // 更新状态
                     this.queriedData = {
                         id: getTopId(this), text: '符合条件的结果', children: filteredTreeData
@@ -693,6 +697,7 @@ define(
 
         /**
          * 撤销选择当前项
+         *
          * @param {ui.TreeRichSelector} control 类实例
          * @ignore
          */
@@ -707,6 +712,7 @@ define(
         /**
          * 同步一个节点的父节点和子节点选择状态
          * 比如：父节点选中与子节点全部选中的状态同步
+         *
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
@@ -721,6 +727,7 @@ define(
 
         /**
          * 同步一个节点的父节点选择状态
+         *
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
@@ -738,6 +745,7 @@ define(
 
         /**
          * 同步一个节点的子节点选择状态
+         *
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
@@ -826,12 +834,19 @@ define(
                 function (data, key) {
                     var filteredData;
                     // 命中节点，先保存副本，之后要修改children
-                    if (data.text.indexOf(keyword) !== -1) {
-                        filteredData = u.clone(data);
+                    if (this.caseSensitive) {
+                        if (data.text.indexOf(keyword) !== -1) {
+                            filteredData = u.clone(data);
+                        }
+                    }
+                    else {
+                        if (data.text.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+                            filteredData = u.clone(data);
+                        }
                     }
 
                     if (data.children && data.children.length) {
-                        var filteredChildren = queryFromNode(keyword, data);
+                        var filteredChildren = queryFromNode.call(this, keyword, data);
                         // 如果子节点有符合条件的，那么只把符合条件的子结点放进去
                         if (filteredChildren.length > 0) {
                             if (!filteredData) {
@@ -851,7 +866,8 @@ define(
                     if (filteredData) {
                         filteredTreeData.push(filteredData);
                     }
-                }
+                },
+                this
             );
             return filteredTreeData;
         }

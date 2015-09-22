@@ -51,13 +51,15 @@ define(
                         // 已选的数据
                         selectedData: [],
                         // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
+                        // caseSensitive表示大小写敏感，默认不敏感
                         fields: [
                             {
                                 field: 'name',
                                 title: '名称',
                                 content: 'name',
                                 searchScope: 'partial',
-                                isDefaultSearchField: true
+                                isDefaultSearchField: true,
+                                caseSensitive: false
                             }
                         ],
                         // 是否展示表格属性栏
@@ -274,6 +276,7 @@ define(
 
                 /**
                  * 点击行为分发器
+                 *
                  * @param {Event} e 事件对象
                  * @ignore
                  */
@@ -331,6 +334,7 @@ define(
                 /**
                  * 选择全部
                  * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
+                 *
                  * @public
                  */
                 selectAll: function () {
@@ -398,12 +402,33 @@ define(
 
                         // 部分击中
                         if (this.fieldsIndex[field].searchScope === 'partial') {
-                            if (data[field].indexOf(expectValue) !== -1) {
-                                hit = true;
+                            // 大小写敏感
+                            if (this.fieldsIndex[field].caseSensitive) {
+                                if (data[field].indexOf(expectValue) !== -1) {
+                                    hit = true;
+                                }
+                            }
+                            // 无视大小写
+                            else {
+                                if (data[field].toLowerCase().indexOf(expectValue.toLowerCase()) !== -1) {
+                                    hit = true;
+                                }
                             }
                         }
-                        else if (data[field] === expectValue) {
-                            hit = true;
+                        // 全部命中
+                        else {
+                            // 大小写敏感
+                            if (this.fieldsIndex[field].caseSensitive) {
+                                if (data[field] === expectValue) {
+                                    hit = true;
+                                }
+                            }
+                            // 无视大小写
+                            else {
+                                if (data[field].toLowerCase() === expectValue.toLowerCase()) {
+                                    hit = true;
+                                }
+                            }
                         }
                         return hit;
                     }
@@ -633,6 +658,7 @@ define(
 
         /**
          * 下面的方法专属delete型table
+         *
          * @param {Object} control table
          * @param {DOMElement} row 行DOM
          * @param {Object} item 要删除的item
