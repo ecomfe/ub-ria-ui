@@ -129,8 +129,15 @@
             });
             // 保存自定义时监听
             filter1.on('custom-link-click', function () {
-                this.addItem({text: 'text', value: 'value'});
+                this.addItem({text: 'text', value: 'value', allowDelete: true});
             });
+            // 监听自定义选项的remove动作
+            filter1.on(
+                'custom-item-remove',
+                function (e) {
+                    result.removeItem(e.item);
+                }
+            );
             filter2.on('change', function (e) {
                 if (e.action === 'select') {
                     result.addItem(e.item);

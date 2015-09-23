@@ -1,12 +1,13 @@
 /**
- * 过滤器
- * @file: Filter.js
- * @author: yaofeifei@baidu.com; liwei47@baidu.com
+ * UB-RIA-UI
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
+ * @file 过滤器
+ * @exports filter.Filter
+ * @author yaofeifei@baidu.com; liwei47@baidu.com
  */
-
 define(function (require) {
-    var lib = require('esui/lib');
+    var etpl = require('etpl');
     var u = require('underscore');
     var InputControl = require('esui/InputControl');
     var eoo = require('eoo');
@@ -17,13 +18,16 @@ define(function (require) {
     /**
      * Filter
      *
-     * @extends InputControl
-     * @constructor
+     * @class filter.Filter
+     * @extends esui.InputControl
      */
     var Filter = eoo.create(
         InputControl,
         {
 
+            /**
+             * @override
+             */
             type: 'Filter',
 
             /**
@@ -55,26 +59,23 @@ define(function (require) {
              */
             initStructure: function () {
                 var controlHelper = this.helper;
-                var mainEle = this.main;
-                var html
-                        = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
-                        + '<label id="${labelId}"></label>'
-                        + '<div id="${contentPanelId}" class="${contentPanelStyle}"></div>'
-                        + '</div>';
+                var template = '<div id="${filterPanelId}" class="${filterPanelStyle}">'
+                    + '<label id="${labelId}"></label>'
+                    + '<div id="${contentPanelId}" class="${contentPanelStyle}"></div>'
+                    + '</div>';
+                var data = {
+                    filterPanelStyle: controlHelper.getPartClassName('panel'),
+                    filterPanelId: controlHelper.getId('items-wrapper-panel'),
+                    labelId: controlHelper.getId('items-label'),
+                    contentPanelId: controlHelper.getId('items-panel'),
+                    contentPanelStyle: controlHelper.getPartClassName('items-panel')
+                };
 
-                mainEle.innerHTML = lib.format(
-                    html,
-                    {
-                        filterPanelStyle: controlHelper.getPartClassName('panel'),
-                        filterPanelId: controlHelper.getId('items-wrapper-panel'),
-                        labelId: controlHelper.getId('items-label'),
-                        contentPanelId: controlHelper.getId('items-panel'),
-                        contentPanelStyle: controlHelper.getPartClassName('items-panel')
-                    }
-                );
+                var mainElement = this.main;
+                mainElement.innerHTML = etpl.compile(template)(data);
 
                 // 创建控件树
-                this.initChildren(mainEle);
+                this.initChildren(mainElement);
             },
 
             /**
@@ -117,82 +118,107 @@ define(function (require) {
              * @override
              */
             initEvents: function () {
-                var me = this;
-                var controlHelper = me.helper;
-
-                controlHelper.addDOMEvent(
-                    me.main,
+                this.helper.addDOMEvent(
+                    this.main,
                     'click',
                     'a',
                     function (e) {
-                        var itemClass = controlHelper.getPartClassName('item');
-                        var cmdItemClass = controlHelper.getPartClassName('item-cmd');
-                        var $t = $(e.target);
-
                         e.preventDefault();
-                        if ($t.hasClass(itemClass)) {
-                            var value = $t.attr('data-value');
-                            var text = $t.text();
-                            var item = {
-                                value: value,
-                                text: text
-                            };
-
-                            me.selectItem(item);
-                        }
-                        else if ($t.hasClass(cmdItemClass)) {
-                            me.fire('custom-link-click');
-                        }
+                        this.changeItemStatus(e.target);
                     }
                 );
             },
 
             /**
+             * 改变选择项的选中状态
+             *
+             * @protected
+             * @method filter.Filter#changeItemStatus
+             * @param {HTMLElement} target 目标元素
+             */
+            changeItemStatus: function (target) {
+                var helper = this.helper;
+                var itemRemoveClass = helper.getPartClassName('item-remove');
+
+                var clickItem = $(target);
+                var selectedItem = clickItem.closest('a');
+                var item = {
+                    value: selectedItem.data('value'),
+                    text: selectedItem.text()
+                };
+
+                if (clickItem.hasClass(itemRemoveClass)) {
+                    this.removeItem(item);
+
+                    this.fire('customitemremove', {item: item});
+                    /**
+                     * @deprecated
+                     */
+                    this.fire('custom-item-remove', {item: item});
+                }
+                else {
+                    var itemClass = helper.getPartClassName('item');
+                    var cmdItemClass = helper.getPartClassName('item-cmd');
+
+                    if (selectedItem.hasClass(itemClass)) {
+                        this.selectItem(item);
+                    }
+                    else if (selectedItem.hasClass(cmdItemClass)) {
+                        this.fire('customlinkclick');
+                        /**
+                         * @deprecated
+                         */
+                        this.fire('custom-link-click');
+                    }
+                }
+            },
+
+            /**
              * 根据datasource生成选择项
+             *
              * @param {Array} datasource 选项列表数据源
              * @private
              */
             buildItems: function () {
-                var s = '';
                 var helper = this.helper;
+                var htmls = u.map(
+                    this.datasource,
+                    function (item) {
+                        var active = item.selected ? helper.getPartClassName('item-active') : '';
+                        return buildItem.call(this, item, active);
+                    },
+                    this
+                );
 
-                u.forEach(this.datasource, function (item) {
-                    var active = item.selected ? helper.getPartClassName('item-active') : '';
-                    s += buildItem.call(this, item, active);
-                }, this);
-                var itemsPanel = helper.getPart('items-panel');
-                itemsPanel.innerHTML = s;
-                this.custom && this.buildCustomItem();
+                helper.getPart('items-panel').innerHTML = htmls.join('');
+                this.custom && buildCustomItem.call(this);
             },
 
+            /**
+             * 新增选择项
+             *
+             * @public
+             * @param {Object} item 新增的选择项
+             */
             addItem: function (item) {
                 this.datasource.push(item);
                 this.buildItems();
             },
 
             /**
-             * 生成自定义项
-             * @private
+             * 移除选择项
+             *
+             * @param {Object} item 待移除的项
              */
-            buildCustomItem: function () {
-                var html = '<a href="#" id="${customLinkId}" class="${style}">${text}</a>';
-                var controlHelper = this.helper;
-                var itemsPanel = controlHelper.getPart('items-panel');
-
-                $(itemsPanel).append(
-                    lib.format(
-                        html,
-                        {
-                            customLinkId: controlHelper.getId('custom-link'),
-                            style: controlHelper.getPartClassName('item-cmd'),
-                            text: this.customBtnLabel
-                        }
-                    )
-                );
+            removeItem: function (item) {
+                var removeItem = this.getItemByValue(item.value);
+                this.datasource = u.without(this.datasource, removeItem);
+                this.buildItems();
             },
 
             /**
              * 设置选择项
+             *
              * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @public
              */
@@ -207,6 +233,7 @@ define(function (require) {
 
             /**
              * 选择项
+             *
              * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @param {HtmlElement} target 选中的元素
              * @private
@@ -242,6 +269,7 @@ define(function (require) {
 
             /**
              * 根据值获取整个选择项的数据
+             *
              * @param {string} value 值
              * @param {Object=} datasource 数据源
              * @return {Object} item 选中项的数据 格式如: {value: '', text: ''}
@@ -260,6 +288,7 @@ define(function (require) {
 
             /**
              * 获取选中的项
+             *
              * @return {Object} 选中项
              */
             getSelectedItems: function () {
@@ -274,6 +303,7 @@ define(function (require) {
 
             /**
              * 获取选中的值
+             *
              * @return {Object} 选中项
              */
             getValue: function () {
@@ -289,23 +319,41 @@ define(function (require) {
 
     /**
      * 根据选项数据生成选择项
+     *
      * @param {Object} item 选项数据
      * @param {string} style 额外的样式
      * @return {HtmlElement} 生成的选择项元素
-     * @private
      */
     function buildItem(item, style) {
-        var html = '<a href="#" class="${style}" data-value="${value}">${text}</a>';
-        style = style || '';
+        var template = '<a href="#" class="${style}" data-value="${value}" data-allow-delete="${allowDelete}">'
+         + '<span>${text}</span>'
+         + '<!-- if: ${allowDelete}--><span class="ui-icon ui-filter-remove ui-filter-item-remove"></span><!-- /if -->'
+         + '</a>';
+        var renderer = etpl.compile(template);
+        var data = {
+            style: this.helper.getPartClassName('item') + ' ' + (style || ''),
+            value: item.value,
+            text: item.text,
+            allowDelete: item.allowDelete
+        };
 
-        return lib.format(
-            html,
-            {
-                style: this.helper.getPartClassName('item') + ' ' + style,
-                value: item.value,
-                text: item.text
-            }
-        );
+        return renderer(data);
+    }
+
+    /**
+     * 生成自定义项
+     */
+    function buildCustomItem() {
+        var controlHelper = this.helper;
+        var template = '<a href="#" id="${customLinkId}" class="${style}">${text}</a>';
+        var data = {
+            customLinkId: controlHelper.getId('custom-link'),
+            style: controlHelper.getPartClassName('item-cmd'),
+            text: this.customBtnLabel
+        };
+        var html = etpl.compile(template)(data);
+
+        $(controlHelper.getPart('items-panel')).append(html);
     }
 
     esui.register(Filter);
