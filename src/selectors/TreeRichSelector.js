@@ -15,7 +15,7 @@ define(
         var eoo = require('eoo');
 
         var u = require('underscore');
-        var util = require('helper/util');
+        var util = require('../helper/util');
         var lib = require('esui/lib');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');

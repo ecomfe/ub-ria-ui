@@ -11,7 +11,7 @@ define(
         var esui = require('esui');
         var lib = require('esui/lib');
         var u = require('underscore');
-        var util = require('helper/util');
+        var util = require('../helper/util');
         var eoo = require('eoo');
         var painters = require('esui/painters');
 
