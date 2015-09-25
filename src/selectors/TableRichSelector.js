@@ -11,6 +11,7 @@ define(
         var esui = require('esui');
         var lib = require('esui/lib');
         var u = require('underscore');
+        var util = require('helper/util');
         var eoo = require('eoo');
         var painters = require('esui/painters');
 
@@ -400,36 +401,15 @@ define(
                             expectValue = lib.trim(expectValue);
                         }
 
-                        // 部分击中
-                        if (this.fieldsIndex[field].searchScope === 'partial') {
-                            // 大小写敏感
-                            if (this.fieldsIndex[field].caseSensitive) {
-                                if (data[field].indexOf(expectValue) !== -1) {
-                                    hit = true;
-                                }
-                            }
-                            // 无视大小写
-                            else {
-                                if (data[field].toLowerCase().indexOf(expectValue.toLowerCase()) !== -1) {
-                                    hit = true;
-                                }
-                            }
+                        var config = {
+                            isPartial: this.fieldsIndex[field].searchScope === 'partial',
+                            caseSensitive: this.fieldsIndex[field].caseSensitive
+                        };
+
+                        if (util.compare(data[field], expectValue, config)) {
+                            hit = true;
                         }
-                        // 全部命中
-                        else {
-                            // 大小写敏感
-                            if (this.fieldsIndex[field].caseSensitive) {
-                                if (data[field] === expectValue) {
-                                    hit = true;
-                                }
-                            }
-                            // 无视大小写
-                            else {
-                                if (data[field].toLowerCase() === expectValue.toLowerCase()) {
-                                    hit = true;
-                                }
-                            }
-                        }
+
                         return hit;
                     }
 

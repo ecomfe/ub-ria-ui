@@ -15,6 +15,7 @@ define(
         var eoo = require('eoo');
 
         var u = require('underscore');
+        var util = require('helper/util');
         var lib = require('esui/lib');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
@@ -834,15 +835,14 @@ define(
                 function (data, key) {
                     var filteredData;
                     // 命中节点，先保存副本，之后要修改children
-                    if (this.caseSensitive) {
-                        if (data.text.indexOf(keyword) !== -1) {
-                            filteredData = u.clone(data);
-                        }
-                    }
-                    else {
-                        if (data.text.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
-                            filteredData = u.clone(data);
-                        }
+
+                    var config = {
+                        caseSensitive: this.caseSensitive,
+                        isPartial: true
+                    };
+
+                    if (util.compare(data.text, keyword, config)) {
+                        filteredData = u.clone(data);
                     }
 
                     if (data.children && data.children.length) {
