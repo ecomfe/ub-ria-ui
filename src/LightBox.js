@@ -12,6 +12,7 @@ define(function (require) {
     var Control = require('esui/Control');
     var painters = require('esui/painters');
     var $ = require('jquery');
+    var PreviewHelper = require('./helper/PreviewHelper');
     require('./helper/swfHelper');
 
     require('esui/Dialog');
@@ -46,7 +47,8 @@ define(function (require) {
                     loadingStyle: this.helper.getPartClassName('media-loading'),
                     loadFailedStyle: this.helper.getPartClassName('media-load-failed'),
                     group: null,
-                    groupContainerId: null
+                    groupContainerId: null,
+                    swfPath: '../resource/video-preview-payer.swf'
                 };
                 u.extend(properties, LightBox.defaultProperties, options);
                 this.setProperties(properties);
@@ -289,7 +291,9 @@ define(function (require) {
              */
             previewImage: function (options) {
                 var me = this;
-                var img = new Image();
+                options.width += 'px';
+                options.height += 'px';
+                var img = PreviewHelper.preview(options);
                 img.onload = function () {
                     me.hideLoading();
                     me.mediaContainer().innerHTML = '';
@@ -304,13 +308,6 @@ define(function (require) {
                     img.onload = img.onerror = null;
                     me.dialog.show();
                 };
-                img.src = options.url;
-                if (options.width) {
-                    img.style.width = options.width + 'px';
-                }
-                if (options.height) {
-                    img.style.height = options.height + 'px';
-                }
             },
 
             /**
@@ -319,7 +316,7 @@ define(function (require) {
              * @protected
              */
             previewFlash: function (options) {
-                var html = getFlashHtml(options);
+                var html = PreviewHelper.preview(options);
                 this.hideLoading();
                 this.mediaContainer().innerHTML = '';
                 this.mediaContainer().appendChild(html);
@@ -335,11 +332,12 @@ define(function (require) {
                 var url = options.url;
                 var html = '';
                 if (/\.flv/.test(url)) {
-                    html = getFlvHtml(options, this.swfPath);
+                    options.type = 'flv';
                 }
                 else if (/\.mp4|\.mov/.test(url)) {
-                    html = getVideoHtml(options, this);
+                    options.type = 'video';
                 }
+                html = PreviewHelper.preview(options);
                 var $container = $(this.mediaContainer());
                 this.hideLoading();
                 $container.html('');
@@ -394,72 +392,8 @@ define(function (require) {
 
     LightBox.defaultProperties = {
         NOT_SUPPORT_MESSAGE: '暂不支持该格式预览',
-        VIDEO_TPL: [
-            '<video id="${id}" title="${title}" width="${width}" height="${height}" src="${src}" autoplay="autoplay">',
-            '该浏览器暂不支持此格式视频预览',
-            '</video>'
-        ].join(''),
         LOAD_FAILED_TPL: '<div class="${loadFailedStyle}">加载图片失败</div>'
     };
-
-    /**
-     * 获取预览Flash
-     * @param {Object} options flash数据
-     * @private
-     * @return {string}
-     */
-    function getFlashHtml(options) {
-        return $.flash.create(
-            {
-                id: options.id || 'preview-fla',
-                swf: options.url,
-                width: options.width,
-                height: options.height,
-                wmode: 'transparent'
-            }
-        );
-    }
-
-    /**
-     * 获取预览视频
-     *
-     * @private
-     * @param {Object} options flv数据
-     * @param {string} swfPath flash播放器地址
-     * @return {string}
-     */
-    function getFlvHtml(options, swfPath) {
-        return $.flash.create(
-            {
-                id: options.id || 'preview-flv',
-                swf: swfPath,
-                width: options.width,
-                height: options.height,
-                wmode: 'transparent',
-                flashvars: 'play_url=' + options.url
-            }
-        );
-    }
-
-    /**
-     * 获取预览视频 - html5
-     * @param {Object} options 视频数据
-     * @param {Object} me lightbox
-     * @private
-     * @return {string}
-     */
-    function getVideoHtml(options, me) {
-        return lib.format(
-            me.VIDEO_TPL,
-            {
-                id: options.id || 'preview-video',
-                title: options.title,
-                src: options.url,
-                width: options.width,
-                height: options.height
-            }
-        );
-    }
 
     esui.register(LightBox);
     return LightBox;
