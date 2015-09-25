@@ -9,6 +9,11 @@
 define(
     function (require) {
 
+        var eoo = require('eoo');
+        var Panel = require('esui/Panel');
+        var esui = require('esui');
+        var u = require('underscore');
+
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选
          *
@@ -43,86 +48,97 @@ define(
          * @class RichSelectorGroup
          * @extends esui.Panel
          */
-        var exports = {};
+        var RichSelectorGroup = eoo.create(
+            Panel,
+            {
 
-        /**
-         * @override
-         */
-        exports.type = 'RichSelectorGroup';
+                /**
+                 * @override
+                 */
+                type: 'RichSelectorGroup',
 
-        exports.getCategory = function () {
-            return 'input';
-        };
-
-        /**
-         * @override
-         */
-        exports.initStructure = function () {
-            this.helper.initChildren();
-
-            var filter = this.getChild('filter');
-            var source = this.getChild('source');
-            var target = this.getChild('target');
-
-            // 绑事件
-            filter && filter.on('load', this.fire.bind(this, 'load'));
-
-            source && source.on(
-                'add',
-                function (e) {
-                    var newdata = e.target.getSelectedItemsFullStructure();
-                    target && target.setProperties({datasource: newdata});
-                    this.fire('add');
-                    this.fire('change');
+                getCategory: function () {
+                    return 'input';
                 },
-                this
-            );
 
-            target && target.on(
-                'delete',
-                function (arg) {
-                    var items = arg.items;
-                    source && source.selectItems(items, false);
-                    this.fire('delete');
-                    this.fire('change');
+                /**
+                 * @override
+                 */
+                initStructure: function () {
+                    this.helper.initChildren();
                 },
-                this
-            );
-        };
 
-        exports.getRealTargetSelector = function () {
-            var source = this.getChild('source');
-            var target = this.getChild('target');
-            if (target) {
-                return target;
+                /**
+                 * @override
+                 */
+                initEvents: function () {
+
+                    var filter = this.getChild('filter');
+                    var source = this.getChild('source');
+                    var target = this.getChild('target');
+
+                    // 绑事件
+                    filter && filter.on('load', this.fire.bind(this, 'load'));
+
+                    source && source.on(
+                        'add',
+                        u.bind(
+                            function (e) {
+                                var newdata = e.target.getSelectedItemsFullStructure();
+                                target && target.setProperties({datasource: newdata});
+                                this.fire('add');
+                                this.fire('change');
+                            },
+                            this
+                        )
+                    );
+
+                    target && target.on(
+                        'delete',
+                        u.bind(
+                            function (event, data) {
+                                source && source.selectItems(data.items, false);
+                                this.fire('delete');
+                                this.fire('change');
+                            },
+                            this
+                        )
+                    );
+                },
+
+                getRealTargetSelector: function () {
+                    var source = this.getChild('source');
+                    var target = this.getChild('target');
+                    if (target) {
+                        return target;
+                    }
+                    return source;
+                },
+
+                getValue: function () {
+                    return this.getRealTargetSelector().getValue();
+                },
+
+                getRawValue: function () {
+                    return this.getRealTargetSelector().getRawValue();
+                },
+
+                /**
+                 * 进行验证
+                 *
+                 * @return {boolean}
+                 */
+                validate: function () {
+                    var target = this.getRealTargetSelector();
+
+                    if (typeof target.validate === 'function') {
+                        return target.validate();
+                    }
+                }
             }
-            return source;
-        };
+        );
 
-        exports.getValue = function () {
-            return this.getRealTargetSelector().getValue();
-        };
-
-        exports.getRawValue = function () {
-            return this.getRealTargetSelector().getRawValue();
-        };
-
-        /**
-         * 进行验证
-         *
-         * @return {boolean}
-         */
-        exports.validate = function () {
-            var target = this.getRealTargetSelector();
-
-            if (typeof target.validate === 'function') {
-                return target.validate();
-            }
-        };
-
-        var RichSelectorGroup = require('eoo').create(require('esui/Panel'), exports);
-        require('esui').register(RichSelectorGroup);
-
+        esui.register(RichSelectorGroup);
         return RichSelectorGroup;
     }
 );

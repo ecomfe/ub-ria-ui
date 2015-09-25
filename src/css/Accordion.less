@@ -11,10 +11,13 @@
 @esui-accordion-panel-header-padding: .5em .5em .5em 2em;
 @esui-accordion-panel-header-icon-right-padding: .5em 2em .5em .5em;
 @esui-accordion-panel-header-icon-spacing: 1em;
-@esui-accordion-panel-header-border-radius: 5px;
+@esui-accordion-panel-header-border-radius: 0;
 
 .@{ui-class-prefix}-accordion {
     display: block;
+    &.@{ui-state-prefix}-disabled {
+        .esui-disabled();
+    }
 }
 
 .@{ui-class-prefix}-accordion-panel {
@@ -25,7 +28,7 @@
     cursor: pointer;
     padding: @esui-accordion-panel-header-padding;
     position: relative;
-    .esf-border-radius(
+    .esui-border-radius(
         @esui-accordion-panel-header-border-radius,
         @esui-accordion-panel-header-border-radius
     );

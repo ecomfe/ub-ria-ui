@@ -20,14 +20,14 @@
 @esui-alert-pager-top: @esui-alert-vertical-padding;
 @esui-alert-pager-number-margin: 0 .5em;
 
-@esui-alert-border-radius: 5px;
+@esui-alert-border-radius: 0;
 
 .@{ui-class-prefix}-alert {
     display: block;
     padding: @esui-alert-vertical-padding @esui-alert-right-padding @esui-alert-vertical-padding @esui-alert-left-padding;
     position: relative;
     margin: @esui-alert-margin;
-    .esf-border-radius(
+    .esui-border-radius(
         @esui-alert-border-radius,
         @esui-alert-border-radius
     );
@@ -117,7 +117,7 @@
 
 .@{ui-class-prefix}-alert-prev-disabled,
 .@{ui-class-prefix}-alert-next-disabled {
-    .esf-disabled();
+    .esui-disabled();
 }
 
 .@{ui-class-prefix}-alert-close {
