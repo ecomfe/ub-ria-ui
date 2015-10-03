@@ -1,5 +1,5 @@
 /**
- * 图片，Flash和视频的预览控件
+ * 图片,Flash和视频的预览控件
  * @file MediaPreview.js
  * @author chuzhenyang(chuzhenyang@baidu.com)
  */
@@ -15,9 +15,9 @@ define(function (require) {
     var PreviewHelper = require('./helper/PreviewHelper');
 
     /**
-     * 图片，视频和Flash预览控件
+     * 图片,视频和Flash预览控件
      *
-     * 显示图片，视频和Flash资源，并提供配置
+     * 显示图片,视频和Flash资源,并提供配置
      *
      * @extends {InputControl}
      * @param {Object} options 初始化参数
@@ -27,7 +27,7 @@ define(function (require) {
         InputControl,
         {
             /**
-             * 控件类型，始终为`"MediaPreview"`
+             * 控件类型,始终为`"MediaPreview"`
              *
              * @type {string}
              * @readonly
@@ -38,8 +38,8 @@ define(function (require) {
             /**
              * 初始化参数
              *
-             * 对于图片资源，显示的宽度为容器宽度
-             * 而高度是默认高度，最大高度为容器高度
+             * 对于图片资源,显示的宽度为容器宽度
+             * 而高度是默认高度,最大高度为容器高度
              *
              * @param {Object} [options] 构造函数传入的参数
              * @protected
@@ -62,7 +62,7 @@ define(function (require) {
                     /**
                      * @property {String} [toolClass='']
                      *
-                     * 要设置的工具图标的class名称，要以','分隔，用来标识点击了那个工具icon
+                     * 要设置的工具图标的class名称,要以','分隔,用来标识点击了那个工具icon
                      */
                     toolClass: '',
                     /**
@@ -74,7 +74,7 @@ define(function (require) {
                     /**
                      * @property {String} [sourceType='']
                      *
-                     * 资源的类别，共支持以下四种类型
+                     * 资源的类别,共支持以下四种类型
                      * 1.image: 图片类型
                      * 2.flash: 带有'swf'后缀名的flash文件
                      * 3.flv: 带有'flv'后缀名的视频文件
@@ -188,6 +188,8 @@ define(function (require) {
             initEvents: function () {
                 var me = this;
 
+                // 为所有的具有'data-role="tool"'属性的span节点添加点击事件
+                // 并在该控件上fire一个‘toolEvent’的事件,参数是点击的span的class
                 this.helper.addDOMEvent(
                     this.helper.getPart('tool'),
                     'click',
@@ -201,7 +203,8 @@ define(function (require) {
 
             /**
              * 获取预览资源的URL地址
-             * @return {String} 资源的URL地址
+             *
+             * @return {string} 资源的URL地址
              */
             getValue: function () {
                 return this.sourceUrl;
@@ -231,6 +234,7 @@ define(function (require) {
             type: this.sourceType
         });
 
+        // 如果PreviewHelper中无法将其渲染出来,这里要现实一个错误的模版
         if (!html) {
             html = lib.format(
                 errorTpl,
@@ -243,7 +247,7 @@ define(function (require) {
     }
 
     /**
-     * 构造工具栏的html代码
+     * 构造工具栏的html结构
      *
      * @ignore
      */

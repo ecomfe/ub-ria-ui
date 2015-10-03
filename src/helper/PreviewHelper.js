@@ -1,5 +1,5 @@
 /**
- * 构造图片，视频和Flash显示的HTML片段
+ * 构造图片,视频和Flash显示的HTML片段
  * @file PreviewHelper.js
  * @author chuzhenyang(chuzhenyang@baidu.com)
  */
@@ -10,10 +10,28 @@ define(function (require) {
     var $ = require('jquery');
 
     var PreviewHelper = {
+
+        /**
+         * 构造Image,Video,Flash和flv的HTML节点
+         *
+         * @param {Object=} options 渲染的参数
+         *    {string} id 节点的id,如果不设置,则会给一个默认的id
+         *    {string} url 资源的URL地址
+         *    {string} type 资源的类型,共支持四种类型
+         *    1.image: 图片类型
+         *    2.flash: 带有'swf'后缀名的flash文件
+         *    3.flv: 带有'flv'后缀名的视频文件
+         *    4.video: 带有'mp4|mov|mkv|mpg|avi|rmvb|rm|ogg|wmv|mp3|wma|mid'后缀名的文件
+         *    {number|string} width 资源的宽度,对于图片而言,使用一个带‘px’的字符串,而其它三种类型则是数字
+         *    {number|string} height 资源的高度,对于图片而言,使用一个带‘px’的字符串,而其它三种类型则是数字
+         *    {string} title 对于video类型,可以为其添加一个title的属性
+         * @return {ELement} 构造好的HTML节点对象
+         */
         preview: function (options) {
             var type = options.type || this.analysizeType(options.url);
             var previewNode = null;
 
+            // 必须设置url,或者没有设置type同时通过analysizeType方法也无法拿到type,则直接返回
             if (!options.url || !type) {
                 return;
             }
@@ -35,6 +53,13 @@ define(function (require) {
 
             return previewNode;
         },
+
+        /**
+         * 根据资源的URL地址分析出其所属类型
+         *
+         * @param {string} url 资源的URL地址
+         * @return {string} 资源的type类型
+         */
         analysizeType: function (url) {
             var type = '';
             if (/\.(?:jpg|png|gif|jpeg|bmp)$/i.test(url)) {
@@ -54,6 +79,14 @@ define(function (require) {
         }
     };
 
+    /**
+     * 构造Image的HTML节点
+     *
+     * @param {Object=} options 渲染的参数
+     *    {string} width 图片的宽度
+     *    {string} height 图片的高度
+     * @return {ELement} 构造好的图片节点对象
+     */
     function getImageHtml(options) {
         var img = new Image();
         img.src = options.url;
@@ -67,6 +100,16 @@ define(function (require) {
         return img;
     }
 
+    /**
+     * 构造FLash的HTML节点
+     *
+     * @param {Object=} options 渲染的参数
+     *    {string} id 节点的id,如果不设置,则会给一个默认的名为'preview-fla'的id
+     *    {string} url FLash的URL地址
+     *    {string} width FLash的宽度
+     *    {string} height FLash的高度
+     * @return {ELement} 构造好的FLash节点对象
+     */
     function getFlashHtml(options) {
         return $.flash.create(
             {
@@ -79,6 +122,16 @@ define(function (require) {
         );
     }
 
+    /**
+     * 构造Flv视频的HTML节点
+     *
+     * @param {Object=} options 渲染的参数
+     *    {string} id 节点的id,如果不设置,则会给一个默认的名为'preview-flv'的id
+     *    {string} url Flv视频的URL地址
+     *    {string} width Flv视频的宽度
+     *    {string} height Flv视频的高度
+     * @return {ELement} 构造好的Flv视频节点对象
+     */
     function getFlvHtml(options) {
         return $.flash.create(
             {
@@ -92,6 +145,17 @@ define(function (require) {
         );
     }
 
+    /**
+     * 构造video的HTML节点
+     *
+     * @param {Object=} options 渲染的参数
+     *    {string} id 节点的id,如果不设置,则会给一个默认的名为'preview-video'的id
+     *    {string} url video的URL地址
+     *    {string} title video的title
+     *    {string} width video的宽度
+     *    {string} height video的高度
+     * @return {ELement} 构造好的video节点对象
+     */
     function getVideoHtml(options) {
         var video = document.createElement('VIDEO');
         $(video).html('该浏览器暂不支持此格式视频预览');

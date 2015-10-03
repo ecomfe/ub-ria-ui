@@ -22,6 +22,8 @@ define(function (require) {
         {
 
             /**
+             * 资源预览弹出框控件
+             *
              * @extends Control
              * @constructor
              */
@@ -193,6 +195,7 @@ define(function (require) {
 
             /**
              * 显示图片/视频对话框容器
+             *
              * @param {Object} args 显示对话框时传入的参数
              * @protected
              */
@@ -214,6 +217,7 @@ define(function (require) {
 
             /**
              * 填充内容
+             *
              * @param {Array} list 图片或视频数据列表
              * @protected
              */
@@ -286,6 +290,7 @@ define(function (require) {
 
             /**
              * 预览图片
+             *
              * @param {Object} options 图片数据
              * @protected
              */
@@ -312,6 +317,7 @@ define(function (require) {
 
             /**
              * 预览Flash
+             *
              * @param {Object} options flash数据
              * @protected
              */
@@ -325,6 +331,7 @@ define(function (require) {
 
             /**
              * 预览视频
+             *
              * @param {Object} options 视频数据
              * @protected
              */
