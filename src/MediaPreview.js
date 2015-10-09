@@ -8,7 +8,7 @@ define(function (require) {
     var u = require('underscore');
     var esui = require('esui');
     var lib = require('esui/lib');
-    var InputControl = require('esui/InputControl');
+    var Control = require('esui/Control');
     var eoo = require('eoo');
     var $ = require('jquery');
     var painters = require('esui/painters');
@@ -19,12 +19,12 @@ define(function (require) {
      *
      * 显示图片,视频和Flash资源,并提供配置
      *
-     * @extends {InputControl}
+     * @extends {Control}
      * @param {Object} options 初始化参数
      * @constructor
      */
     var MediaPreview = eoo.create(
-        InputControl,
+        Control,
         {
             /**
              * 控件类型,始终为`"MediaPreview"`
@@ -83,7 +83,7 @@ define(function (require) {
                     sourceType: ''
                 };
 
-                u.extend(properties, options);
+                u.extend(properties, MediaPreview.defaultProperties, options);
 
                 this.setProperties(properties);
             },
@@ -127,7 +127,7 @@ define(function (require) {
              * @override
              */
             repaint: painters.createRepaint(
-                InputControl.prototype.repaint,
+                Control.prototype.repaint,
                 /**
                  * @property {String} sourceUrl
                  * @property {String} sourceType
@@ -138,17 +138,6 @@ define(function (require) {
                     name: ['sourceUrl', 'sourceType'],
                     paint: function (mediaPreview, sourceUrl, sourceType) {
                         initBody.call(mediaPreview);
-                    }
-                },
-                /**
-                 * @property {String} value
-                 *
-                 * 控件的值,返回的是sourceUrl
-                 */
-                {
-                    name: ['value'],
-                    paint: function (mediaPreview, value) {
-                        mediaPreview.setProperties({sourceUrl: value});
                     }
                 },
                 /**
@@ -171,10 +160,7 @@ define(function (require) {
                 {
                     name: ['width', 'height'],
                     paint: function (mediaPreview, width, height) {
-                        width = parseInt(width, 10);
-                        height = parseInt(height, 10);
-                        $(mediaPreview.main).width(width);
-                        $(mediaPreview.main).height(height);
+                        $(mediaPreview.main).width(width).height(height);
                     }
                 }
             ),
@@ -189,28 +175,29 @@ define(function (require) {
                 var me = this;
 
                 // 为所有的具有'data-role="tool"'属性的span节点添加点击事件
-                // 并在该控件上fire一个‘toolEvent’的事件,参数是点击的span的class
+                // 并在该控件上fire一个'iconclick'的事件,参数是点击的span的class
                 this.helper.addDOMEvent(
                     this.helper.getPart('tool'),
                     'click',
                     '[data-role="tool"]',
                     function (event) {
                         var toolNode = event.target;
-                        me.fire('toolEvent', {toolClass: $(toolNode).attr('class')});
+                        me.fire('iconclick', {iconClass: $(toolNode).attr('class')});
                     }
                 );
-            },
-
-            /**
-             * 获取预览资源的URL地址
-             *
-             * @return {string} 资源的URL地址
-             */
-            getValue: function () {
-                return this.sourceUrl;
             }
         }
     );
+
+    /**
+     * 默认属性值
+     *
+     * @type {Object}
+     * @public
+     */
+    MediaPreview.defaultProperties = {
+        errorHtml: '无法预览该内容！'
+    };
 
     /**
      * 构造预览资源的html结构
@@ -219,7 +206,7 @@ define(function (require) {
      */
     function initBody() {
         var bodyElement = $(this.main).find('#' + this.helper.getId('body'));
-        var errorTpl = '<p class="${errorClass}">无法预览该内容！</p>';
+        var errorTpl = '<p class="${errorClass}">' + this.errorHtml + '</p>';
 
         var width = this.width;
         var height = this.height;

@@ -25,11 +25,13 @@ define(function (require) {
          *    {number|string} width 资源的宽度,对于图片而言,使用一个带‘px’的字符串,而其它三种类型则是数字
          *    {number|string} height 资源的高度,对于图片而言,使用一个带‘px’的字符串,而其它三种类型则是数字
          *    {string} title 对于video类型,可以为其添加一个title的属性
+         *    {string} swfPath 用来播放flv格式视频的swf文件路径
          * @return {ELement} 构造好的HTML节点对象
          */
         preview: function (options) {
             var type = options.type || this.analysizeType(options.url);
             var previewNode = null;
+            options.swfPath = options.swfPath || require.toUrl('../../../resource/video-preview-player.swf');
 
             // 必须设置url,或者没有设置type同时通过analysizeType方法也无法拿到type,则直接返回
             if (!options.url || !type) {
@@ -136,7 +138,7 @@ define(function (require) {
         return $.flash.create(
             {
                 id: options.id || 'preview-flv',
-                swf: '../resource/video-preview-player.swf',
+                swf: options.swfPath,
                 width: options.width,
                 height: options.height,
                 wmode: 'transparent',
@@ -158,10 +160,11 @@ define(function (require) {
      */
     function getVideoHtml(options) {
         var video = document.createElement('VIDEO');
-        $(video).html('该浏览器暂不支持此格式视频预览');
         $(video).attr('id', options.id || 'preview-video');
         $(video).attr('title', options.title);
         $(video).attr('src', options.url);
+        $(video).attr('autoplay', 'autoplay');
+        $(video).attr('loop', 'loop');
         $(video).attr('width', options.width);
         $(video).attr('height', options.height);
 
