@@ -97,6 +97,7 @@ define(
 
                 /**
                  * 刷新筛选区
+                 *
                  * @public
                  */
                 refreshFilter: function () {
@@ -182,6 +183,7 @@ define(
 
                 /**
                  * 获取筛选区Panel
+                 *
                  * @return {esui.Panel}
                  */
                 getFilter: function () {

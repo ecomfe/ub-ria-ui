@@ -11,6 +11,7 @@ define(
         var esui = require('esui');
         var lib = require('esui/lib');
         var u = require('underscore');
+        var util = require('../helper/util');
         var eoo = require('eoo');
         var painters = require('esui/painters');
 
@@ -51,13 +52,15 @@ define(
                         // 已选的数据
                         selectedData: [],
                         // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
+                        // caseSensitive表示大小写敏感，默认不敏感
                         fields: [
                             {
                                 field: 'name',
                                 title: '名称',
                                 content: 'name',
                                 searchScope: 'partial',
-                                isDefaultSearchField: true
+                                isDefaultSearchField: true,
+                                caseSensitive: false
                             }
                         ],
                         // 是否展示表格属性栏
@@ -274,6 +277,7 @@ define(
 
                 /**
                  * 点击行为分发器
+                 *
                  * @param {Event} e 事件对象
                  * @ignore
                  */
@@ -331,6 +335,7 @@ define(
                 /**
                  * 选择全部
                  * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
+                 *
                  * @public
                  */
                 selectAll: function () {
@@ -396,15 +401,15 @@ define(
                             expectValue = lib.trim(expectValue);
                         }
 
-                        // 部分击中
-                        if (this.fieldsIndex[field].searchScope === 'partial') {
-                            if (data[field].indexOf(expectValue) !== -1) {
-                                hit = true;
-                            }
-                        }
-                        else if (data[field] === expectValue) {
+                        var config = {
+                            isPartial: this.fieldsIndex[field].searchScope === 'partial',
+                            caseSensitive: this.fieldsIndex[field].caseSensitive
+                        };
+
+                        if (util.compare(data[field], expectValue, config)) {
                             hit = true;
                         }
+
                         return hit;
                     }
 
@@ -633,6 +638,7 @@ define(
 
         /**
          * 下面的方法专属delete型table
+         *
          * @param {Object} control table
          * @param {DOMElement} row 行DOM
          * @param {Object} item 要删除的item
