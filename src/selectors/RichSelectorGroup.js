@@ -82,27 +82,23 @@ define(
 
                     source && source.on(
                         'add',
-                        u.bind(
-                            function (e) {
-                                var newdata = e.target.getSelectedItemsFullStructure();
-                                target && target.setProperties({datasource: newdata});
-                                this.fire('add');
-                                this.fire('change');
-                            },
-                            this
-                        )
+                        function (e) {
+                            var newdata = e.target.getSelectedItemsFullStructure();
+                            target && target.setProperties({datasource: newdata});
+                            this.fire('add');
+                            this.fire('change');
+                        },
+                        this
                     );
 
                     target && target.on(
                         'delete',
-                        u.bind(
-                            function (event, data) {
-                                source && source.selectItems(data.items, false);
-                                this.fire('delete');
-                                this.fire('change');
-                            },
-                            this
-                        )
+                        function (e) {
+                            source && source.selectItems(e.items, false);
+                            this.fire('delete');
+                            this.fire('change');
+                        },
+                        this
                     );
                 },
 
