@@ -12,7 +12,7 @@ define(function (require) {
     var eoo = require('eoo');
     var $ = require('jquery');
     var painters = require('esui/painters');
-    var PreviewHelper = require('./helper/PreviewHelper');
+    var previewHelper = require('./helper/previewHelper');
 
     /**
      * 图片,视频和Flash预览控件
@@ -60,17 +60,17 @@ define(function (require) {
                      */
                     height: 500,
                     /**
-                     * @property {String} [toolClass='']
+                     * @property {String} [toolRole='']
                      *
-                     * 要设置的工具图标的class名称,要以','分隔,用来标识点击了那个工具icon
+                     * 用以标注添加工具icon的属性,要以','分隔,并由role生成相应的class
                      */
-                    toolClass: '',
+                    toolRole: '',
                     /**
-                     * @property {String} [sourceUrl='']
+                     * @property {String} [sourceURL='']
                      *
                      * 资源路径
                      */
-                    sourceUrl: '',
+                    sourceURL: '',
                     /**
                      * @property {String} [sourceType='']
                      *
@@ -129,25 +129,25 @@ define(function (require) {
             repaint: painters.createRepaint(
                 Control.prototype.repaint,
                 /**
-                 * @property {String} sourceUrl
+                 * @property {String} sourceURL
                  * @property {String} sourceType
                  *
                  * 资源的路径以及type
                  */
                 {
-                    name: ['sourceUrl', 'sourceType'],
-                    paint: function (mediaPreview, sourceUrl, sourceType) {
+                    name: ['sourceURL', 'sourceType'],
+                    paint: function (mediaPreview, sourceURL, sourceType) {
                         initBody.call(mediaPreview);
                     }
                 },
                 /**
-                 * @property {String} toolClass
+                 * @property {String} toolRole
                  *
-                 * 工具栏工具的class,以','分隔,用来标志工具icon
+                 * 工具栏工具的自定义属性,以','分隔,用来标志工具icon
                  */
                 {
-                    name: ['toolClass'],
-                    paint: function (mediaPreview, toolClass) {
+                    name: ['toolRole'],
+                    paint: function (mediaPreview, toolRole) {
                         initToolBar.call(mediaPreview);
                     }
                 },
@@ -175,14 +175,14 @@ define(function (require) {
                 var me = this;
 
                 // 为所有的具有'data-role="tool"'属性的span节点添加点击事件
-                // 并在该控件上fire一个'iconclick'的事件,参数是点击的span的class
+                // 并在该控件上fire一个'iconclick'的事件,参数是点击的span的toolRole
                 this.helper.addDOMEvent(
                     this.helper.getPart('tool'),
                     'click',
                     '[data-role="tool"]',
                     function (event) {
                         var toolNode = event.target;
-                        me.fire('iconclick', {iconClass: $(toolNode).attr('class')});
+                        me.fire('iconclick', {roleName: $(toolNode).attr('data-tool-role')});
                     }
                 );
             }
@@ -196,7 +196,7 @@ define(function (require) {
      * @public
      */
     MediaPreview.defaultProperties = {
-        errorHtml: '无法预览该内容！'
+        errorHTML: '无法预览该内容！'
     };
 
     /**
@@ -205,8 +205,7 @@ define(function (require) {
      * @ignore
      */
     function initBody() {
-        var bodyElement = $(this.main).find('#' + this.helper.getId('body'));
-        var errorTpl = '<p class="${errorClass}">' + this.errorHtml + '</p>';
+        var errorTpl = '<p class="${errorClass}">' + this.errorHTML + '</p>';
 
         var width = this.width;
         var height = this.height;
@@ -214,14 +213,14 @@ define(function (require) {
             width = '100%';
             height = 'auto';
         }
-        var html = PreviewHelper.preview({
+        var html = previewHelper.preview({
             width: width,
             height: height,
-            url: this.sourceUrl,
+            url: this.sourceURL,
             type: this.sourceType
         });
 
-        // 如果PreviewHelper中无法将其渲染出来,这里要现实一个错误的模版
+        // 如果previewHelper中无法将其渲染出来,这里要显示一个错误的模版
         if (!html) {
             html = lib.format(
                 errorTpl,
@@ -230,6 +229,9 @@ define(function (require) {
                 }
             );
         }
+
+        // 获取body节点
+        var bodyElement = $(this.helper.getPart('body'));
         bodyElement.html(html);
     }
 
@@ -239,19 +241,19 @@ define(function (require) {
      * @ignore
      */
     function initToolBar() {
-        var toolClass = this.toolClass;
-        var helper = this.helper;
-        var toolTpl = '<span data-role="tool" class="${toolClass}"></span>';
-        if (!toolClass) {
+        var toolRole = this.toolRole;
+        if (!toolRole) {
             return;
         }
 
-        var mainElement = this.main;
-        u.each(toolClass.split(','), function (className) {
-            $(mainElement).find('#' + helper.getId('tool')).append(lib.format(
+        var helper = this.helper;
+        var toolTpl = '<span data-role="tool" class="${iconClass}" data-tool-role="${iconRole}"></span>';
+        u.each(toolRole.split(','), function (role) {
+            $(helper.getPart('tool')).append(lib.format(
                 toolTpl,
                 {
-                    toolClass: className
+                    iconClass: helper.getIconClass() + '-' + role,
+                    iconRole: role
                 }
             ));
         });

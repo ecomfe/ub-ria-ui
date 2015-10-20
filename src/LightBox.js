@@ -12,7 +12,7 @@ define(function (require) {
     var Control = require('esui/Control');
     var painters = require('esui/painters');
     var $ = require('jquery');
-    var PreviewHelper = require('./helper/PreviewHelper');
+    var previewHelper = require('./helper/previewHelper');
     require('./helper/swfHelper');
 
     require('esui/Dialog');
@@ -298,7 +298,7 @@ define(function (require) {
                 var me = this;
                 options.width += 'px';
                 options.height += 'px';
-                var img = PreviewHelper.preview(options);
+                var img = previewHelper.preview(options);
                 img.onload = function () {
                     me.hideLoading();
                     me.mediaContainer().innerHTML = '';
@@ -322,7 +322,7 @@ define(function (require) {
              * @protected
              */
             previewFlash: function (options) {
-                var html = PreviewHelper.preview(options);
+                var html = previewHelper.preview(options);
                 this.hideLoading();
                 this.mediaContainer().innerHTML = '';
                 this.mediaContainer().appendChild(html);
@@ -344,7 +344,7 @@ define(function (require) {
                 else if (/\.mp4|\.mov/.test(url)) {
                     options.type = 'video';
                 }
-                html = PreviewHelper.preview(options);
+                html = previewHelper.preview(options);
                 var $container = $(this.mediaContainer());
                 this.hideLoading();
                 $container.html('');

@@ -1,6 +1,6 @@
 /**
  * 构造图片,视频和Flash显示的HTML片段
- * @file PreviewHelper.js
+ * @file previewHelper.js
  * @author chuzhenyang(chuzhenyang@baidu.com)
  */
 
@@ -9,7 +9,7 @@ define(function (require) {
 
     var $ = require('jquery');
 
-    var PreviewHelper = {
+    var previewHelper = {
 
         /**
          * 构造Image,Video,Flash和flv的HTML节点
@@ -171,5 +171,5 @@ define(function (require) {
         return video;
     }
 
-    return PreviewHelper;
+    return previewHelper;
 });
