@@ -11,6 +11,7 @@ function genNavigator() {
         + '<li><a href="ColorPicker.html">ColorPicker</a></li>'
         + '<li><a href="Filter.html">Filter</a></li>'
         + '<li><a href="LightBox.html">LightBox</a></li>'
+        + '<li><a href="MediaPreview.html">MediaPreview</a></li>'
         + '<li><a href="MultiCalendar.html">MultiCalendar</a></li>'
         + '<li><a href="RichSelectors.html">RichSelectors</a></li>'
         + '<li><a href="Slider.html">Slider</a></li>'
