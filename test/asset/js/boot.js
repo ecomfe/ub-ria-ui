@@ -1,67 +1,67 @@
 
 require.config({
     'waitSeconds': 2,
-    'baseUrl': '../../../test',
+    'baseUrl': '../../..',
     'packages': [
         {
             'name': 'ubRiaUi',
-            'location': '../src',
+            'location': 'src',
             'main': 'main'
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.2.0-beta.2/src',
+            'location': 'dep/esui/3.2.0-beta.2/src',
             'main': 'main'
         },
         {
             'name': 'mini-event',
-            'location': '../dep/mini-event/1.0.2/src',
+            'location': 'dep/mini-event/1.0.2/src',
             'main': 'main'
         },
         {
             'name': 'underscore',
-            'location': '../dep/underscore/1.5.2/src',
+            'location': 'dep/underscore/1.5.2/src',
             'main': 'underscore'
         },
         {
             'name': 'moment',
-            'location': '../dep/moment/2.7.0/src',
+            'location': 'dep/moment/2.7.0/src',
             'main': 'moment'
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.0.1/src',
+            'location': 'dep/etpl/3.0.1/src',
             'main': 'main'
         },
         {
             'name': 'eoo',
-            'location': '../dep/eoo/0.1.4/src',
+            'location': 'dep/eoo/0.1.4/src',
             'main': 'main'
         },
         {
             'name': 'jquery',
-            'location': '../dep/jquery/1.9.1/src',
+            'location': 'dep/jquery/1.9.1/src',
             'main': 'jquery.min'
         },
         {
             'name': 'eicons',
-            'location': '../dep/eicons/1.0.0-beta.1/src',
+            'location': 'dep/eicons/1.0.0-beta.1/src',
             'main': 'main.less'
         },
         {
             'name': 'esf',
-            'location': '../dep/esf/1.0.0-rc.2/src'
+            'location': 'dep/esf/1.0.0-rc.2/src'
         },
         {
             'name': 'est',
-            'location': '../dep/est/1.3.0/src'
+            'location': 'dep/est/1.3.0/src'
         }
     ],
     'paths': {
-        'jasmine': 'asset/js/jasmine',
-        'jasmine-html': 'asset/js/jasmine-html',
-        'matchers': 'asset/js/matchers',
-        'jquery-simulate': 'asset/js/jquery.simulate'
+        'jasmine': 'test/asset/js/jasmine',
+        'jasmine-html': 'test/asset/js/jasmine-html',
+        'matchers': 'test/asset/js/matchers',
+        'jquery-simulate': 'test/asset/js/jquery.simulate'
     },
     'shim': {
         'jquery-simulate': ['jquery'],
@@ -92,7 +92,7 @@ define('boot', function (require) {
         createNav($);
         var widget = $('script[data-widget]').attr('data-widget');
         var initial = widget.slice(0, 1).toUpperCase() + widget.slice(1);
-        var ctrPath = 'unit/' + widget + '/' + initial;
+        var ctrPath = 'test/unit/' + widget + '/' + initial;
         window.require([ctrPath], function () {
             var jasmineEnv = jasmine.getEnv();
             jasmineEnv.updateInterval = 1000;
