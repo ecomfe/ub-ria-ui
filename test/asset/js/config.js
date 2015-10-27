@@ -61,7 +61,7 @@ require.config({
         }
     ],
     'paths': {
-        'jquery-simulate': 'test/dep/jquery.simulate'
+        'jquery-simulate': 'test/third-party/jquery.simulate'
     },
     'shim': {
         'jquery-simulate': ['jquery'],
