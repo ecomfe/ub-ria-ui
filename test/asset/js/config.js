@@ -1,6 +1,6 @@
 require.config({
     'waitSeconds': 2,
-    'baseUrl': '../../..',
+    'baseUrl': '../..',
     'packages': [
         {
             'name': 'ubRiaUi',
