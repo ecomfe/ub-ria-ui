@@ -53,6 +53,11 @@ require.config({
         {
             'name': 'est',
             'location': '../dep/est/1.3.0/src'
+        },
+        {
+            'name': 'mini-event',
+            'location': '../dep/mini-event/1.0.2/src',
+            'main': 'main'
         }
     ]
 });
