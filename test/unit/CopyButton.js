@@ -5,7 +5,6 @@
  */
 
 define(function (require) {
-    var esui = require('esui');
     var CopyButton = require('ubRiaUi/CopyButton');
     var u = require('underscore');
     var $ = require('jquery');
@@ -15,8 +14,8 @@ define(function (require) {
         var copyButton;
 
         // 每次测试循环前创建用例
-        beforeEach(function() {
-            var copyButtonTest = $('#copyButtonTest')[0];
+        beforeEach(function () {
+            var copyButtonTest = $('#copybuttontest')[0];
             copyButton = new CopyButton({
                 main: copyButtonTest,
                 content: 'copyText'
@@ -60,6 +59,4 @@ define(function (require) {
             copyButton.render();
         });
     });
-
-    
 });

@@ -149,7 +149,7 @@ define(
              * @event
              * @param {Object} e 事件参数
              * @param {string} e.content CopyButton当前content的值
-             
+             *
              * @example
              *     copyButtonInstance.on('copy', function (e) {
              *         // 上一次的值

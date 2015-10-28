@@ -56,7 +56,7 @@
             ui.init();
             var cpButton = ui.get('copyButtonTest');
             var textBox = ui.get('copyText');
-            
+
             cpButton.on('copy', function () {
                 this.content = textBox.getValue();
                 toast.success('拷贝成功：' + this.content).show();
