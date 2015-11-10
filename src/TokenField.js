@@ -3,8 +3,9 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @ignore
- * @file TokenField, 典型场景为收件人输入框
- * @author maoquan
+ * @file TokenField.js
+ * @description 标签输入框，典型场景如邮件收件人输入框
+ * @author maoquan(maoquan@baidu.com)
  */
 define(
     function (require) {
@@ -21,13 +22,16 @@ define(
         /**
          * TokenField
          *
-         * @extends InputControl
+         * @extends esui.InputControl
          * @constructor
          */
         var TokenField = eoo.create(
             InputControl,
             {
 
+                /**
+                 * @override
+                 */
                 constructor: function () {
                     this.$super(arguments);
                     this.data = {};
@@ -44,51 +48,51 @@ define(
 
                 /**
                  * 初始化配置
-                 *
                  * @protected
                  * @override
                  */
                 initOptions: function (options) {
                     var properties = {
+
                         /**
                          * 控件宽度
                          *
                          * @type {number}
                         */
                         width: 300,
+
                         /**
-                         * 输入input宽度
-                         *
+                         * 输入框最小宽度,剩余宽度不够就换行了
                          * @type {number}
                         */
-                        inputWidth: 90, // 输入框最小宽度,剩余宽度不够就换行了
+                        inputWidth: 90,
+
                         /**
                          * token最小字符串长度，低于该长度不创建, 默认不限制
-                         *
                          * @type {number}
                         */
                         minLength: 0,
+
                         /**
                          * token最大数量,默认不限制
-                         *
                          * @type {number}
                         */
                         limit: 0,
+
                         /**
                          * 分隔符
-                         *
                          * @type {string}
                         */
                         delimiter: ',',
+
                         /**
                          * TokenField的值
-                         *
                          * @type {string}
                         */
                         tokens: '',
+
                         /**
                          * 是否允许重复
-                         *
                          * @type {bool}
                         */
                         repeat: false
@@ -96,7 +100,6 @@ define(
                     u.extend(properties, options);
 
                     properties.name = properties.name || this.main.getAttribute('name');
-
                     this.setProperties(properties);
                 },
 
@@ -160,11 +163,10 @@ define(
                     var input = this.getInput();
                     var inputElem = input.getFocusTarget();
 
-                    input.on('focus', u.bind(this.focus, this));
-                    input.on('blur', u.bind(this.blur, this));
-                    input.on('enter', u.bind(this.enter, this));
+                    input.on('focus', this.focus, this);
+                    input.on('blur', this.blur, this);
+                    input.on('enter', this.enter, this);
 
-                    // TODO: TextBox不提供keydown / keyup事件
                     controlHelper.addDOMEvent(inputElem, 'keydown', this.keydown);
                     controlHelper.addDOMEvent(inputElem, 'keyup', this.keyup);
                 },
@@ -204,7 +206,10 @@ define(
                         return;
                     }
 
-                    this.fire('beforecreate', {token: token});
+                    var event = this.fire('beforecreate', {token: token});
+                    if (event.preventDefault()) {
+                        return;
+                    }
 
                     var $tokenElem = $('<div></div>');
                     $tokenElem.addClass(this.helper.getPartClassName('item'));
@@ -216,14 +221,15 @@ define(
                     $tokenElem.attr('data-id', guid);
                     this.data[guid] = token;
 
-                    var input = this.getInput();
-                    var inputElem = input.main;
-
+                    // token标签值
                     var $tokenLabel = $tokenElem.children(':first-child');
                     $tokenLabel.html(token.label);
+                    // 关闭按钮
                     var $closeButton = $tokenElem.children(':last-child');
                     $closeButton.addClass(this.helper.getIconClass());
 
+                    var input = this.getInput();
+                    var inputElem = input.main;
                     $tokenElem.insertBefore(inputElem);
 
                     this.fire(
@@ -268,7 +274,8 @@ define(
                 keydown: function (e) {
                     var input = this.getInput();
                     switch (e.keyCode) {
-                        case 8: // backspace
+                        // backspace
+                        case 8:
                             if (input.getFocusTarget() === document.activeElement) {
                                 // keydown触发早于keyup，keydown时记下当前输入框的字符
                                 // 用于keyup时判断是否应删除token
@@ -291,8 +298,10 @@ define(
                     var input = this.getInput();
                     var inputValue = input.getRawValue();
                     switch (e.keyCode) {
-                        case 8: // backspace
-                        case 46: // delete
+                        // backspace
+                        case 8:
+                        // delete
+                        case 46:
                             if (input.getFocusTarget() === document.activeElement) {
                                 if (inputValue.length || this.lastInputValue) {
                                     break;
@@ -411,9 +420,7 @@ define(
                 },
 
                 /**
-                 * 重渲染
-                 *
-                 * @method
+                 * 重绘
                  * @protected
                  * @override
                  */
@@ -436,26 +443,39 @@ define(
             }
         );
 
+        /**
+         * 闪动指定元素
+         * @param {Element} tokenElem 要闪动的元素
+         */
         function flashToken(tokenElem) {
             var me = this;
-            setTimeout(function () {
-                me.helper.addPartClasses('flash', tokenElem);
-            }, 0);
+            me.helper.addPartClasses('flash', tokenElem);
 
-            setTimeout(function () {
-                me.helper.removePartClasses('flash', tokenElem);
-            }, 300);
+            setTimeout(
+                function () {
+                    me.helper.removePartClasses('flash', tokenElem);
+                },
+                300
+            );
         }
 
-        function checkRepeatToken(tokenValue) {
+        /**
+         * 检测指定值是否已存在
+         * @param {string} value 指定值
+         * @return {Object}
+         */
+        function checkRepeatToken(value) {
             var repeatToken = {};
-            u.each(this.data, function (token, dataId) {
-                if (token.value === tokenValue) {
-                    repeatToken.dataId = dataId;
-                    repeatToken.token = token;
-                    return false;
+            u.each(
+                this.data,
+                function (token, dataId) {
+                    if (token.value === value) {
+                        repeatToken.dataId = dataId;
+                        repeatToken.token = token;
+                        return false;
+                    }
                 }
-            });
+            );
 
             if (repeatToken.dataId) {
                 repeatToken.tokenElement = $(this.main).find('div[data-id=' + repeatToken.dataId + ']')[0];
@@ -463,6 +483,9 @@ define(
             return repeatToken;
         }
 
+        /**
+         * 根据input输入创建tokens列表
+         */
         function createTokensFromInput() {
             var input = this.getInput();
             var inputValue = input.getRawValue();
