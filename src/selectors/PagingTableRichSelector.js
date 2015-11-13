@@ -12,7 +12,7 @@ define(
         var u = require('underscore');
 
         var util = require('./util');
-        var RichSelector = require('./TableRichSelector');
+        var TableRichSelector = require('./TableRichSelector');
 
 
         /**
@@ -693,10 +693,10 @@ define(
             return this.datasource.totalCount;
         };
 
-        var TableRichSelector = require('eoo').create(RichSelector, exports);
+        var PagingTableRichSelector = require('eoo').create(TableRichSelector, exports);
 
-        require('esui').register(TableRichSelector);
+        require('esui').register(PagingTableRichSelector);
 
-        return TableRichSelector;
+        return PagingTableRichSelector;
     }
 );
