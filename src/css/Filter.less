@@ -25,16 +25,22 @@
 
 .@{ui-class-prefix}-filter-items-panel,
 .@{ui-class-prefix}-filterresult-items-panel {
-    display: inline-block;
+    .inline-block();
+}
+
+.@{ui-class-prefix}-filter-item,
+.@{ui-class-prefix}-filterresult-item,
+.@{ui-class-prefix}-filter-item-cmd {
+    .inline-block();
+    cursor: pointer;
+    margin: @esui-filter-item-margin;
+    padding: @esui-filter-item-padding;
+    line-height: 1em;
+    white-space: nowrap;
 }
 
 .@{ui-class-prefix}-filter-item,
 .@{ui-class-prefix}-filterresult-item {
-    margin: @esui-filter-item-margin;
-    padding: @esui-filter-item-padding;
-    text-decoration: none !important;
-    white-space: nowrap;
-
     color: @esui-filter-item-color;
     &:hover {
         background: @esui-filter-item-hover-background;
@@ -44,16 +50,15 @@
 
 .@{ui-class-prefix}-filter-item-active,
 .@{ui-class-prefix}-filterresult-item {
-    background: @esui-filter-item-active-background !important;
-    color: @esui-filter-item-active-color !important;
+    background: @esui-filter-item-active-background;
+    color: @esui-filter-item-active-color;
+    &:hover {
+        background: @esui-filter-item-active-background;
+        color: @esui-filter-item-active-color;
+    }
 }
 
 .@{ui-class-prefix}-filter-item-cmd {
-    text-decoration: none;
-    margin: 0 .5em;
-    padding: .25em;
-    white-space: nowrap;
-
     background: @esui-filter-cmd-background;
     color: @esui-filter-cmd-color;
     &:hover {
