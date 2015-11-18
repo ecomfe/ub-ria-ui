@@ -172,7 +172,7 @@ define(
                         ' class="' + this.helper.getPartClassName('search-wrapper') + '">',
                         '   <div',
                         '   data-ui="buttonPosition:right;buttonVariants:bordered icon;',
-                        '   type:SearchBox;childName:itemSearch;variants:clear-border hide-searched-button">',
+                        '   type:SearchBox;childName:itemSearch;variants:clear-border hide-searched-button;searchMode:instant;" >',
                         '   </div>',
                         '</div>'
                     ].join('');
