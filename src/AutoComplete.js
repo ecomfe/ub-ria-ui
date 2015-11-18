@@ -546,10 +546,12 @@ define(
                     helper.removeDOMEvent(inputEle, INPUT);
 
                     var layerMain = this.layer.getElement(false);
-                    helper.removeDOMEvent(inputEle, 'keydown');
-                    helper.removeDOMEvent(layerMain, 'click');
-                    this.target.main.removeChild(layerMain);
 
+                    if (layerMain) {
+                        helper.removeDOMEvent(layerMain, 'click');
+                        layerMain.remove();
+                    }
+                    helper.removeDOMEvent(inputEle, 'keydown');
                     this.$super(arguments);
                 }
             }
