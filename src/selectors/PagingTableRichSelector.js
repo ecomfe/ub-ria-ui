@@ -122,21 +122,21 @@ define(
             this.indexData = indexData;
 
             // 把选择状态merge进allData的数据项中
-            var selectedData = this.selectedData || [];
+            this.selectedData = this.selectedData || [];
             // 单选模式
             if (!this.multi) {
                 // 如果不是数组，这个值就是id
-                if (!u.isArray(selectedData)) {
-                    this.currentSelectedId = selectedData;
-                    selectedData = [{id: selectedData}];
+                if (!u.isArray(this.selectedData)) {
+                    this.currentSelectedId = this.selectedData.id;
+                    this.selectedData = [this.selectedData];
                 }
                 // 如果是数组，保存第一个值为当前选值
-                else if (selectedData.length) {
-                    this.currentSelectedId = selectedData[0].id;
+                else if (this.selectedData.length) {
+                    this.currentSelectedId = this.selectedData[0].id;
                 }
             }
 
-            u.each(selectedData, function (item, index) {
+            u.each(this.selectedData, function (item, index) {
                 var selectedIndex = indexData[item.id];
                 // 有可能出现已选的数据在备选中已经被删除的情况
                 // 此时selectedIndex会取到undefined，不做加标记处理
@@ -584,6 +584,18 @@ define(
                 unselectCurrent(control);
                 // 赋予新值
                 control.currentSelectedId = toBeSelected ? id : null;
+
+                control.selectedData = [item];
+            }
+            else {
+                if (toBeSelected) {
+                    control.selectedData.push(item);
+                }
+                else {
+                    control.selectedData = u.filter(control.selectedData, function (item) {
+                        return item.id !== id;
+                    });
+                }
             }
             updateSingleItemStatus(control, item, toBeSelected);
         }
@@ -591,6 +603,7 @@ define(
         // 撤销选择当前项
         function unselectCurrent(control) {
             var curId = control.currentSelectedId;
+
             // 撤销当前选中项
             // 要把两组数据的都撤销选中
             var index = control.indexData[curId];
@@ -627,6 +640,17 @@ define(
                 control.helper.getPartClassName('row-selected')
             );
         }
+
+        /**
+         * 获取已经选择的数据项
+         * 在查询状态下选过的东西，也应该保留。
+         *
+         * @return {Array}
+         * @public
+         */
+        exports.getSelectedItems = function () {
+            return this.selectedData;
+        };
 
         /**
          * 手动刷新
@@ -684,13 +708,34 @@ define(
         };
 
         /**
+         * @override
+         */
+        exports.selectItems = function (items, toBeSelected) {
+            var allData = this.allData;
+            var indexData = this.indexData;
+            var control = this;
+            u.each(
+                items,
+                function (item) {
+                    var id = item.id !== undefined ? item.id : item;
+                    var itemIndex = indexData[id];
+                    if (itemIndex != null) {
+                        var rawItem = allData[itemIndex];
+                        // 更新状态，但不触发事件
+                        selectItem(control, rawItem.id, toBeSelected);
+                    }
+                }
+            );
+        };
+
+        /**
          * 获取当前状态的显示个数
          *
          * @return {number}
          * @override
          */
         exports.getCurrentStateItemsCount = function () {
-            return this.datasource.totalCount;
+            return this.isQuery() ? this.queriedDatasource.totalCount : this.datasource.totalCount;
         };
 
         var PagingTableRichSelector = require('eoo').create(TableRichSelector, exports);
