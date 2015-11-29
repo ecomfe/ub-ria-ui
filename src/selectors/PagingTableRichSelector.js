@@ -206,14 +206,15 @@ define(
             var tpl = ['<table border=0 class="' + tableClass + '"><tr>'];
             var colmNum = control.fields.length;
             // 绘制表头th
+            var thTpl = '<th class="th${i}" style="width:${width}px;">${title}</th>';
             for (var i = 0; i < colmNum; i++) {
                 var field = control.fields[i];
-                tpl.push(''
-                    + '<th class="th' + i + '"'
-                    + ' style="width:' + field.width + 'px;">'
-                    + field.title || ''
-                    + '</th>'
-                );
+                var data = {
+                    i: i,
+                    width: field.width,
+                    title: field.title
+                };
+                tpl.push(lib.format(thTpl, data));
             }
             // 最后一列用来装箭头
             tpl.push('<th style="width:30px;"></th>');
@@ -260,7 +261,7 @@ define(
             // 绘制内容
             u.each(data, function (item, index) {
                 var rowClasses = [baseRowClasses];
-                if (item.isSelected) {
+                if (isNodeSelected(control, item)) {
                     rowClasses.push(selectedRowClasses);
                 }
                 if (item.isDisabled) {
@@ -280,6 +281,10 @@ define(
             });
 
             return tpl.join(' ');
+        }
+
+        function isNodeSelected(control, node) {
+            return !!u.findWhere(control.selectedData, {id: node.id});
         }
 
         /**
@@ -323,17 +328,18 @@ define(
          */
         function createMoreDataRow(control) {
             var fieldClasses = control.helper.getPartClassName('row-field');
-            var html = [];
-            var contentHtml = ''
-                        + '<td class="' + fieldClasses + '">'
-                        + '加载更多'
-                        + '</td>';
-            html.push(contentHtml);
             var arrowClasses = control.helper.getPartClassName('row-loading-icon');
-            var arrowHTML = '<span class="' + arrowClasses + '"></span>';
-            html.push('<td style="width:30px;">' + arrowHTML + '</td>');
+            var fields = control.fields.length;
+            var contentHtml = '<td colspan="${fields}" class="${fieldClasses}">加载更多</td>'
+                + '<td style="width:30px;"><span class="${arrowClasses}"></span></td>';
 
-            return html.join(' ');
+            var data = {
+                fields: fields,
+                fieldClasses: fieldClasses,
+                arrowClasses: arrowClasses
+            };
+
+            return lib.format(contentHtml, data);
         }
 
         /**
@@ -371,13 +377,16 @@ define(
                     td.innerHTML = innerHTML;
                 }
                 else {
-                    var contentHtml = ''
-                        + '<td class="' + fieldClasses
-                        + '" title="' + titleHTML
-                        + '" style="width:' + field.width + 'px;">'
-                        + innerHTML
-                        + '</td>';
-                    html.push(contentHtml);
+                    var data = {
+                        fieldClasses: fieldClasses,
+                        titleHTML: titleHTML,
+                        width: field.width,
+                        innerHTML: innerHTML
+                    };
+
+                    var contentHtml = '<td class="${fieldClasses}" title="${titleHTML}" '
+                        + 'style="width:${width}px;">${innerHTML}</td>';
+                    html.push(lib.format(contentHtml, data));
                 }
                 cursor++;
             });
@@ -403,6 +412,10 @@ define(
          * @override
          */
         exports.search = function () {
+            var event = {
+                filterData: []
+            };
+
             var searchBox = this.getSearchBox();
             this.keyword = lib.trim(searchBox.getValue());
 
@@ -411,7 +424,7 @@ define(
             this.queriedDatasource = {results: []};
 
             this.addState('queried');
-            this.fire('search');
+            this.fire('search', event);
         };
 
         /**
@@ -556,7 +569,11 @@ define(
         function actionForLoadMoreData(control, row, item) {
             var loadMoreClasses = control.helper.getPartClassName('row-loading');
             lib.addClass(row, loadMoreClasses);
-            control.fire('loadmoredata', {item: item});
+            var event = {
+                item: item,
+                filterData: []
+            };
+            control.fire('loadmoredata', event);
         }
 
         /**
@@ -644,6 +661,8 @@ define(
         /**
          * 获取已经选择的数据项
          * 在查询状态下选过的东西，也应该保留。
+         * 在查询状态下，删除非查询的选择结点，也应该删除
+         * 所有数据都同步到这个节字段
          *
          * @return {Array}
          * @public
@@ -674,16 +693,6 @@ define(
             this.adjustHeight();
         };
 
-        /**
-         * 选择全部
-         *
-         * @override
-         */
-        exports.selectAll = function () {
-            this.fire('selectall');
-            this.fire('change');
-        };
-
         function actionForLoad(control, row, item) {
             var selectedClasses = control.helper.getPartClassName('row-selected');
             // 点击未选中的，执行
@@ -708,6 +717,22 @@ define(
         };
 
         /**
+         * 选择全部
+         * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
+         *
+         * @public
+         */
+        exports.selectAll = function () {
+            var data = this.isQuery() ? this.queriedData : this.allData;
+            var control = this;
+            u.each(data, function (item) {
+                selectItem(control, item.id, true);
+            });
+            this.fire('add');
+            this.fire('change');
+        };
+
+        /**
          * @override
          */
         exports.selectItems = function (items, toBeSelected) {
@@ -723,6 +748,11 @@ define(
                         var rawItem = allData[itemIndex];
                         // 更新状态，但不触发事件
                         selectItem(control, rawItem.id, toBeSelected);
+                    }
+                    else {
+                        // 在结点列表里找不到，如果是删掉的话，到已选择的列表里去找
+                        var selectedItem = u.findWhere(control.selectedData, {id: id});
+                        selectItem(control, selectedItem.id, toBeSelected);
                     }
                 }
             );
