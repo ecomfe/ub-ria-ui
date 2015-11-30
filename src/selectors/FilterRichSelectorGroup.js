@@ -46,18 +46,8 @@ define(
             };
 
             u.extend(properties, options);
-            parseBoolean(properties);
-
             this.$super([properties]);
         };
-
-        function parseBoolean(properties) {
-            u.each(properties, function (property, key) {
-                if (property === 'false') {
-                    properties[key] = false;
-                }
-            });
-        }
 
         /**
          * @override
