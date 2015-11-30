@@ -526,19 +526,19 @@ define(
                     ? content.call(control, item, index, i)
                     : u.escape(item[content]));
 
-                var escapeContent = field.escapeContent ? field.escapeContent.call(control, item, index, i) : innerHTML;
+                var textContent = field.textContent ? field.textContent.call(control, item, index, i) : innerHTML;
 
                 // IE不支持tr.innerHTML，所以这里要使用insertCell
                 if (tr) {
                     var td = tr.insertCell(i);
                     td.style.width = field.width + 'px';
-                    td.title = escapeContent;
+                    td.title = textContent;
                     td.innerHTML = innerHTML;
                 }
                 else {
                     var contentHtml = ''
                         + '<td class="' + fieldClasses
-                        + '" title="' + escapeContent
+                        + '" title="' + textContent
                         + '" style="width:' + field.width + 'px;">'
                         + innerHTML
                         + '</td>';
