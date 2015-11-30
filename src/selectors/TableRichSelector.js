@@ -10,6 +10,7 @@ define(
     function (require) {
         var esui = require('esui');
         var lib = require('esui/lib');
+        var util = require('../helper/util');
         var u = require('underscore');
         var eoo = require('eoo');
         var painters = require('esui/painters');
@@ -51,12 +52,14 @@ define(
                         // 已选的数据
                         selectedData: [],
                         // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
+                        // caseSensitive表示大小写敏感，默认不敏感
                         fields: [
                             {
                                 field: 'name',
                                 title: '名称',
                                 content: 'name',
                                 searchScope: 'partial',
+                                caseSensitive: false,
                                 isDefaultSearchField: true
                             }
                         ],
@@ -399,13 +402,12 @@ define(
                             expectValue = lib.trim(expectValue);
                         }
 
-                        // 部分击中
-                        if (this.fieldsIndex[field].searchScope === 'partial') {
-                            if (data[field].indexOf(expectValue) !== -1) {
-                                hit = true;
-                            }
-                        }
-                        else if (data[field] === expectValue) {
+                        var config = {
+                            isPartial: this.fieldsIndex[field].searchScope === 'partial',
+                            caseSensitive: this.fieldsIndex[field].caseSensitive
+                        };
+
+                        if (util.compare(data[field], expectValue, config)) {
                             hit = true;
                         }
                         return hit;

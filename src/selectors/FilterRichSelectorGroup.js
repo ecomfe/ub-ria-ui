@@ -82,7 +82,21 @@ define(
             this.filter.on(
                 'load',
                 function (e) {
-                    this.fire('load', {item: e.item});
+                    var event = this.fire('load', {item: e.item});
+                    if (event.isDefaultPrevented()) {
+                        return;
+                    }
+                    var data = event.data;
+                    // 从data中筛选出已选择的，勾选上
+                    var selectedItems = u.filter(
+                        data,
+                        function (item) {
+                            return u.findWhere(this.getRawValue(), {id: item.id}) != null;
+                        },
+                        this
+                    );
+
+                    this.source.setProperties({datasource: data, selectedData: selectedItems});
                 },
                 this
             );
