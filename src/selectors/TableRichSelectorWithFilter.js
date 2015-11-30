@@ -16,7 +16,6 @@ define(
 
         require('esui/Select');
         require('esui/Panel');
-        require('ub-ria-ui/extension/ColorSelect');
 
         var TableRichSelector = require('./TableRichSelector');
 
@@ -51,9 +50,7 @@ define(
                 getSearchBoxHTML: function () {
                     var searchBoxHTML = this.$super(arguments);
 
-                    var filterHTML = ''
-                        + '<div data-ui="type:Select;childName:filter;" '
-                        + 'data-ui-extension-colorselect-type="ColorSelect"></div>';
+                    var filterHTML = '<div data-ui="type:Select;childName:filter;"></div>';
 
                     return filterHTML + searchBoxHTML;
                 },
