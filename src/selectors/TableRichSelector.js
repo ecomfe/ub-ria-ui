@@ -11,7 +11,6 @@ define(
         var esui = require('esui');
         var lib = require('esui/lib');
         var u = require('underscore');
-        var util = require('../helper/util');
         var eoo = require('eoo');
         var painters = require('esui/painters');
 
@@ -52,15 +51,13 @@ define(
                         // 已选的数据
                         selectedData: [],
                         // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
-                        // caseSensitive表示大小写敏感，默认不敏感
                         fields: [
                             {
                                 field: 'name',
                                 title: '名称',
                                 content: 'name',
                                 searchScope: 'partial',
-                                isDefaultSearchField: true,
-                                caseSensitive: false
+                                isDefaultSearchField: true
                             }
                         ],
                         // 是否展示表格属性栏
@@ -94,11 +91,10 @@ define(
                     RichSelector.prototype.repaint,
                     {
                         name: ['datasource', 'selectedData', 'disabledData', 'fields'],
-                        paint:
-                            function (control, datasource, selectedData, disabledData, fields) {
-                                control.refresh();
-                                control.fire('change');
-                            }
+                        paint: function (control, datasource, selectedData, disabledData, fields) {
+                            control.refresh();
+                            control.fire('change');
+                        }
                     }
                 ),
 
@@ -119,7 +115,7 @@ define(
                     // 先构建indexData，把数据源里的选择状态清除
                     var indexData = {};
                     u.each(this.allData, function (item, index) {
-                        indexData[item.id] = {index: index};
+                        indexData[item.id] = {index: index, isSelected: false};
                     });
 
                     // 把选择状态merge进indexData的数据项中
@@ -195,6 +191,10 @@ define(
                     htmlArray.push(this.createTableContent(data));
 
                     var queryList = this.getQueryList();
+                    // 选择状态当使用手动触发时，panel的content属性并不会同步更改，
+                    // 如果此时新的content恰好与初始的content相同，则panel不会重置
+                    // 因此现执行一下置空
+                    queryList.setContent('');
                     queryList.setContent(htmlArray.join(''));
                 },
 
@@ -277,7 +277,6 @@ define(
 
                 /**
                  * 点击行为分发器
-                 *
                  * @param {Event} e 事件对象
                  * @ignore
                  */
@@ -335,7 +334,6 @@ define(
                 /**
                  * 选择全部
                  * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
-                 *
                  * @public
                  */
                 selectAll: function () {
@@ -401,15 +399,15 @@ define(
                             expectValue = lib.trim(expectValue);
                         }
 
-                        var config = {
-                            isPartial: this.fieldsIndex[field].searchScope === 'partial',
-                            caseSensitive: this.fieldsIndex[field].caseSensitive
-                        };
-
-                        if (util.compare(data[field], expectValue, config)) {
+                        // 部分击中
+                        if (this.fieldsIndex[field].searchScope === 'partial') {
+                            if (data[field].indexOf(expectValue) !== -1) {
+                                hit = true;
+                            }
+                        }
+                        else if (data[field] === expectValue) {
                             hit = true;
                         }
-
                         return hit;
                     }
 
@@ -526,17 +524,19 @@ define(
                     ? content.call(control, item, index, i)
                     : u.escape(item[content]));
 
+                var escapeContent = field.escapeContent ? field.escapeContent.call(control, item, index, i) : innerHTML;
+
                 // IE不支持tr.innerHTML，所以这里要使用insertCell
                 if (tr) {
                     var td = tr.insertCell(i);
                     td.style.width = field.width + 'px';
-                    td.title = innerHTML;
+                    td.title = escapeContent;
                     td.innerHTML = innerHTML;
                 }
                 else {
                     var contentHtml = ''
                         + '<td class="' + fieldClasses
-                        + '" title="' + innerHTML
+                        + '" title="' + escapeContent
                         + '" style="width:' + field.width + 'px;">'
                         + innerHTML
                         + '</td>';
@@ -638,7 +638,6 @@ define(
 
         /**
          * 下面的方法专属delete型table
-         *
          * @param {Object} control table
          * @param {DOMElement} row 行DOM
          * @param {Object} item 要删除的item

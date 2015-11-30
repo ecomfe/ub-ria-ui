@@ -16,6 +16,7 @@ define(
 
         require('esui/Select');
         require('esui/Panel');
+        require('ub-ria-ui/extension/ColorSelect');
 
         var TableRichSelector = require('./TableRichSelector');
 
@@ -42,73 +43,31 @@ define(
                  */
                 styleType: 'RichSelector',
 
-                /**
-                 * 创建表头
-                 *
-                 * @override
-                 */
-                createTableHead: function () {
-                    var tableClass = this.helper.getPartClassName('head-table');
-                    var tpl = ['<table border=0 class="' + tableClass + '"><tr>'];
-                    var colmNum = this.fields.length;
-                    // 绘制表头th
-                    for (var i = 0; i < colmNum; i++) {
-                        var field = this.fields[i];
-                        if (field.field !== this.filterField) {
-                            tpl.push(''
-                                + '<th class="th' + i + '"'
-                                + ' style="width:' + field.width + 'px;">'
-                                + field.title || ''
-                                + '</th>'
-                            );
-                        }
-                        else {
-                            tpl.push(''
-                                + '<th class="th' + i + '" style="width:' + field.width + 'px;">'
-                                + '    <div data-ui="type:Select;childName:filterSel;variants:compact;"></div>'
-                                + '</th>'
-                            );
-                        }
-                    }
-                    // 最后一列用来装箭头
-                    tpl.push('<th></th>');
-                    tpl.push('</tr></table>');
-                    return tpl.join(' ');
-                },
 
                 /**
+                 * 在搜索框的旁边增加筛选
                  * @override
                  */
                 getSearchBoxHTML: function () {
                     var searchBoxHTML = this.$super(arguments);
 
-                    var filterHTML = '<div class="${queryListClass}" data-ui-type="Panel"'
-                        + ' data-ui-child-name="filter"></div>';
+                    var filterHTML = ''
+                        + '<div data-ui="type:Select;childName:filter;" '
+                        + 'data-ui-extension-colorselect-type="ColorSelect"></div>';
 
-                    filterHTML = lib.format(
-                        filterHTML,
-                        {
-                            queryListClass:
-                                this.helper.getPrefixClass('richselector-query-list')
-                        }
-                    );
-                    return searchBoxHTML + filterHTML;
+                    return filterHTML + searchBoxHTML;
                 },
 
                 /**
                  * 刷新筛选区
-                 *
                  * @public
                  */
                 refreshFilter: function () {
                     var filter = this.getFilter();
-                    filter.setContent(this.createTableHead());
 
-                    var filterSelect = filter.getChild('filterSel');
-
-                    if (filterSelect) {
-                        filterSelect.setProperties({datasource: this.filterDatasource});
-                        filterSelect.on('change', u.bind(this.search, this));
+                    if (filter) {
+                        filter.setProperties({datasource: this.filterDatasource});
+                        filter.on('change', u.bind(this.search, this));
                     }
                 },
 
@@ -122,8 +81,8 @@ define(
                 repaint: painters.createRepaint(
                     TableRichSelector.prototype.repaint,
                     {
-                        name: 'fields',
-                        paint: function (control, fields) {
+                        name: 'filterDatasource',
+                        paint: function (control, filterDatasource) {
                             control.refreshFilter();
                         }
                     }
@@ -134,16 +93,11 @@ define(
                  */
                 initStructure: function () {
                     this.$super(arguments);
-                    this.addState('with-filter');
-                },
+                    // 状态筛选，最终调用search函数
+                    var filter = this.getFilter();
+                    filter.extensions[0].activate();
 
-                /**
-                 * @override
-                 */
-                refreshContent: function () {
-                    // 带筛选功能的控件表头放在搜索框下面，所以要取消原始的表头创建
-                    this.hasRowHead = false;
-                    this.$super(arguments);
+                    this.addState('with-filter');
                 },
 
                 /**
@@ -157,11 +111,11 @@ define(
                         filterData.push({value: lib.trim(searchBox.getValue())});
                     }
 
-                    var filterSelect = this.getFilter().getChild('filterSel');
+                    var filterSelect = this.getFilter();
                     if (filterSelect) {
                         var value = filterSelect.getValue();
                         if (value && value !== '') {
-                            filterData.push({keys: [this.filterField], value: filterSelect.getValue()});
+                            filterData.push({keys: [this.filterField], value: filterSelect.getRawValue()});
                         }
                     }
 
@@ -183,7 +137,6 @@ define(
 
                 /**
                  * 获取筛选区Panel
-                 *
                  * @return {esui.Panel}
                  */
                 getFilter: function () {
