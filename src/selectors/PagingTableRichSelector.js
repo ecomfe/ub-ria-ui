@@ -115,10 +115,15 @@ define(
         exports.adaptData = function () {
             var allData = util.deepClone(this.datasource.results);
             // 先构建indexData
-            var indexData = {};
-            u.each(allData, function (item, index) {
-                indexData[item.id] = index;
-            });
+            var indexData = u.reduce(
+                allData,
+                function (memo, item, index) {
+                    memo[item.id] = index;
+                    return memo;
+                },
+                {}
+            );
+
             this.indexData = indexData;
 
             // 把选择状态merge进allData的数据项中
