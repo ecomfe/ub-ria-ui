@@ -12,7 +12,6 @@ define(
         var eoo = require('eoo');
         var Panel = require('esui/Panel');
         var esui = require('esui');
-        var u = require('underscore');
 
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选

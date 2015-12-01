@@ -172,7 +172,8 @@ define(
                         ' class="' + this.helper.getPartClassName('search-wrapper') + '">',
                         '   <div',
                         '   data-ui="buttonPosition:right;buttonVariants:bordered icon;',
-                        '   type:SearchBox;childName:itemSearch;variants:clear-border hide-searched-button;searchMode:instant;" >',
+                        '   type:SearchBox;childName:itemSearch;variants:clear-border',
+                        '   hide-searched-button;searchMode:instant;">',
                         '   </div>',
                         '</div>'
                     ].join('');
@@ -215,7 +216,6 @@ define(
                             footInfo: this.hasFoot ? this.getFootHTML() : ''
                         }
                     );
-
                     this.initChildren();
 
                     // 初始化模式状态
