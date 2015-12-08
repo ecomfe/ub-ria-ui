@@ -269,7 +269,8 @@ define(
                     }
 
                     if (deleteIndex > 0) {
-                        rawValue.splice(deleteIndex, 1);
+                        var removedValue = rawValue.splice(deleteIndex, 1);
+                        this.fire('removetoken', {token: removedValue[0]});
                         this.setProperties({rawValue: rawValue});
                     }
                 },
