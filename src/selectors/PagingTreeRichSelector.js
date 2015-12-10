@@ -134,6 +134,23 @@ define(
                 }
             },
             {
+                name: 'selectedTree',
+                paint: function (control, selectedTree) {
+                    // 带加载更多的树，多选情况下，已选数据只有叶子的话不足以构建selectedTree
+                    if (selectedTree) {
+                        control.walkTree(selectedTree, selectedTree.children, function (parent, child) {
+                            control.indexData[child.id] = {
+                                parentId: parent.id,
+                                node: child
+                            };
+                            if (!child.children || child.children.length === 0) {
+                                control.selectedData.push(child);
+                            }
+                        });
+                    }
+                }
+            },
+            {
                 name: 'selectedData',
                 paint: function (control, selectedData) {
                     // 如果没有传selectedData，就别取消了。
@@ -161,7 +178,7 @@ define(
          * @ignore
          */
         exports.adaptData = function () {
-            var selectedData = [];
+            this.selectedData = this.selectedData || [];
             var isQuery = this.isQuery();
             /**
              * datasource的数据结构：
@@ -186,31 +203,26 @@ define(
             this[isQuery ? 'queriedDataCount' : 'allDataCount'] = allData.children.totalCount;
             // 一个扁平化的索引
             // 其中包含父节点信息，以及节点选择状态
-            var indexData = {};
+            var indexData = this.indexData || {};
             if (allData && allData.children) {
-                this.walkTree(
-                    allData,
+                u.each(
                     allData.children.results,
-                    function (parent, child) {
-                        indexData[child.id] = {
-                            parentId: parent.id,
-                            node: child,
-                            isSelected: false
+                    function (item) {
+                        indexData[item.id] = {
+                            parentId: allData.id,
+                            node: item
                         };
-                        if (child.hasOwnProperty('isSelected')) {
-                            indexData[child.id].isSelected = child.isSelected;
+                        if (item.hasOwnProperty('isSelected')) {
+                            this.selectedData.push(item);
                         }
-                        if (indexData[child.id].isSelected === true) {
-                            selectedData.push(child);
-                        }
-                    }
+                    },
+                    this
                 );
             }
-            this[isQuery ? 'queriedIndexData' : 'indexData'] = indexData;
+            this.indexData = indexData;
 
             return {
-                indexData: indexData,
-                selectedData: selectedData
+                indexData: indexData
             };
         };
 
@@ -220,7 +232,7 @@ define(
         exports.processDataAfterRefresh = function (adaptedData) {
             // 用这个数据结构更新选择状态
             if (this.mode !== 'delete') {
-                this.selectItems(adaptedData.selectedData, true);
+                this.selectItems(this.selectedData, true);
             }
         };
 
@@ -235,7 +247,6 @@ define(
             this.keyword = lib.trim(searchBox.getValue());
 
             this.queriedData = [];
-            this.queriedIndexData = {};
             this.queriedDatasource = {results: []};
 
             this.addState('queried');
@@ -394,6 +405,7 @@ define(
                 }
                 // 赋予新值
                 this.currentSeletedId = item.node.id;
+
                 needFire = true;
             }
             // 多选同步父子状态
@@ -404,13 +416,16 @@ define(
                 if (!parentSelected) {
                     this.setItemState(item.node.id, 'isSelected', true);
                     trySyncParentAndChildrenStates(this, item, true);
+                    needFire = true;
                 }
                 else {
                     var tree = this.getQueryList().getChild('tree');
                     tree.unselectNode(item.node.id, true);
                 }
             }
+
             if (needFire) {
+                selectItem(this, item.node.id, true);
                 this.fire('add', {item: item.node});
                 this.fire('change');
             }
@@ -473,6 +488,20 @@ define(
                 unselectCurrent(control);
                 // 赋予新值
                 control.currentSeletedId = id;
+
+                control.selectedData = [item.node];
+            }
+            else {
+                if (toBeSelected) {
+                    if (!u.findWhere(control.selectedData, {id: item.node.id})) {
+                        control.selectedData.push(item.node);
+                    }
+                }
+                else {
+                    control.selectedData = u.filter(control.selectedData, function (item) {
+                        return item.id !== id;
+                    });
+                }
             }
 
             control.setItemState(id, 'isSelected', toBeSelected);
@@ -500,6 +529,7 @@ define(
                 addExpandedStatus(this, targetId);
                 tree.expandNode(targetId, datasource);
             }
+            this.processDataAfterRefresh();
         };
 
         /**
@@ -530,6 +560,7 @@ define(
 
             this.refreshHead();
             this.refreshFoot();
+            this.processDataAfterRefresh();
         };
 
         /**
@@ -537,19 +568,19 @@ define(
          *
          * @param {Object} datasource 追加的数据
          * @param {number} targetId 标识结点Id
-         * @param {number} type 0 标识结点后的数据。1 标识结点的子数据。
+         * @param {number} searchType 0 标识结点后的数据。1 标识结点的子数据。
          * @ignore
          */
-        exports.adaptAppendData = function (datasource, targetId, type) {
+        exports.adaptAppendData = function (datasource, targetId, searchType) {
             var isQuery = this.isQuery();
 
-            var indexData = isQuery ? this.queriedIndexData : this.indexData;
+            var indexData = this.indexData;
 
             u.each(datasource.results, function (item, index) {
                 indexData[item.id] = {
                     isSelected: item.isSelected,
                     node: item,
-                    parentId: type === 1 ? targetId : indexData[targetId].parentId
+                    parentId: searchType === 1 ? targetId : indexData[targetId].parentId
                 };
             });
 
@@ -564,7 +595,7 @@ define(
                     allData.children.results,
                     function (parent, child) {
                         if (child.id === targetId) {
-                            if (type === 1) {
+                            if (searchType === 1) {
                                 child.children = datasource;
                             }
                             else {
@@ -582,7 +613,7 @@ define(
                 this.queriedData = datasource;
             }
 
-            this[isQuery ? 'queriedIndexData' : 'indexData'] = indexData;
+            this.indexData = indexData;
         };
 
         /**
@@ -601,20 +632,30 @@ define(
 
         /**
          * 添加全部
+         * 全选应该选中当前显示的所有根节点
+         * 当这个节点是`disabled`的时候，选中该节点下所有子节点
          *
          * @override
          */
         exports.selectAll = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
-            var children = data.children;
-            var control = this;
-            this.walkTree(
-                data,
-                children,
-                function (parent, child) {
-                    selectItem(control, child.id, true);
-                }
-            );
+
+            var toBeSelectItems = [];
+
+            function selectItemsWithoutDisabled (nodes) {
+                u.each(nodes, function (node) {
+                    if (!node.disabled) {
+                        toBeSelectItems.push(node);
+                    }
+                    else if (node.children) {
+                        selectItemsWithoutDisabled(node.children.results);
+                    }
+                });
+            }
+
+            selectItemsWithoutDisabled(data.children.results);
+
+            this.selectItems(toBeSelectItems, true);
             this.fire('add');
             this.fire('change');
         };
@@ -673,7 +714,7 @@ define(
         }
 
         /**
-         * 同步一个节点的父节点选择状态
+         * 同步一个节点的孩子节点选择状态
          *
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
@@ -681,12 +722,18 @@ define(
          */
         function trySyncChildrenStates(control, item, toBeSelected) {
             var indexData = control.indexData;
-            var node = item.node;
+            var selectedData = control.selectedData;
+
             // 如果选的是父节点，子节点要全部去掉
-            var children = node.children ? (node.children.results || []) : [];
-            u.each(children, function (child) {
-                selectItem(control, child.id, false);
-                trySyncChildrenStates(control, indexData[child.id], false);
+            u.each(selectedData, function (node) {
+                var id = node.id;
+                while (indexData[id] != null) {
+                    if (indexData[id].parentId === item.node.id) {
+                        selectItem(control, node.id, false);
+                        return;
+                    }
+                    id = indexData[id].parentId;
+                }
             });
         }
 
@@ -698,22 +745,8 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          */
         function trySyncParentStates(control, item, toBeSelected) {
-            var indexData = control.indexData;
-            // 选的是子节点，判断一下是不是全部选择了，全部选择了，也要勾上父节点
-            var parentId = item.parentId;
-            var parentItem = indexData[parentId];
-
-            if (parentItem) {
-                var brothers = parentItem.node.children || [];
-                var allSelected = !u.find(
-                    brothers,
-                    function (brother) {
-                        return !control.getItemState(brother.id, 'isSelected');
-                    }
-                );
-                selectItem(control, parentId, allSelected);
-                trySyncParentStates(control, parentItem, allSelected);
-            }
+            // 分页控件子节点不会影响父节点
+            return;
         }
 
         /**
@@ -858,22 +891,7 @@ define(
          * @public
          */
         exports.getSelectedItems = function () {
-            if (!this.allData) {
-                return [];
-            }
-            var selectedItems = [];
-            var control = this;
-            this.walkTree(
-                this.allData,
-                this.allData.children.results,
-                function (parent, child) {
-                    if (control.mode === 'delete' || control.getStateNode(child.id).isSelected) {
-                        selectedItems.push(child);
-                    }
-                }
-            );
-
-            return selectedItems;
+            return this.selectedData;
         };
 
 
@@ -884,42 +902,39 @@ define(
          * @public
          */
         exports.getSelectedTree = function () {
-            var control = this;
-            // clone完整数据，这个数据是原始的，不带最新选择状态的
-            var copyData = util.deepClone(this.allData);
-            // 遍历树，把各个节点的children更新成只包含已选状态节点的
-            this.walkTree(
-                copyData,
-                copyData.children,
-                function (parent, child) {
-                    var selectedChildren = getSelectedNodesUnder(child, control);
-                    if (selectedChildren.length) {
-                        child.children = selectedChildren;
-                    }
-                    else {
-                        child.children = null;
-                    }
+            var indexData = util.deepClone(this.indexData);
+            var selectedData = util.deepClone(this.selectedData);
+
+            var result = [];
+
+            u.each(selectedData, function (item) {
+                var nodeArray = [];
+                nodeArray.unshift(indexData[item.id].node);
+
+                var nodeItem = indexData[item.id];
+                var parentNode = indexData[nodeItem.parentId];
+                while (parentNode) {
+                    nodeArray.unshift(parentNode.node);
+                    parentNode = indexData[parentNode.parentId];
                 }
-            );
-            // 最外层再处理一下
-            copyData.children = u.filter(copyData.children, function (node) {
-                // 可能是叶子节点
-                return node.children || control.indexData[node.id].isSelected;
+
+                var parent = result;
+                for (var i = 0; i < nodeArray.length; i++) {
+                    var node = u.findWhere(parent, {id: nodeArray[i].id});
+                    if (!node) {
+                        nodeArray[i].children = (nodeArray[i].type === 1) ? null : [];
+                        parent.push(nodeArray[i]);
+                    }
+                    parent = nodeArray[i].children;
+                }
             });
-            return copyData;
+
+            return {
+                id: this.datasource.id,
+                name: this.datasource.name,
+                children: result
+            };
         };
-
-        function getSelectedNodesUnder(parentNode, control) {
-            var children = parentNode.children;
-            return u.filter(
-                children,
-                function (node) {
-                    return this.getItemState(node.id, 'isSelected');
-                },
-                control
-            );
-
-        }
 
         /**
          * 清除搜索结果
@@ -947,7 +962,6 @@ define(
         exports.clearData = function () {
             // 清空数据
             this.queriedData = [];
-            this.queriedIndexData = {};
             this.queriedDatasource = {results: []};
         };
 
@@ -1051,19 +1065,6 @@ define(
         function isLeaf(node) {
             return !node.children;
         }
-
-        /**
-         * 获取当前列表的结果个数
-         *
-         * @return {number}
-         * @public
-         */
-        exports.getFilteredItemsCount = function () {
-            var node = this.isQuery() ? this.queriedData : this.allData;
-            var count = getChildrenCount(this, node, true);
-            return count;
-        };
-
 
         /**
          * 获取当前状态的显示个数

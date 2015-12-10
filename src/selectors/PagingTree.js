@@ -208,24 +208,38 @@ define(
                     helper.getPartClasses(tree, 'content-wrapper-selected')
                 );
             }
-            wrapperClasses = wrapperClasses.join(' ');
+
+            if (node.disabled) {
+                wrapperClasses = wrapperClasses.concat(
+                    helper.getPartClasses(tree, 'content-wrapper-disabled')
+                );
+            }
 
             var wrapperId = helper.getId(tree, 'content-wrapper-' + node.id);
-            var html = '<div id="' + wrapperId + '" class="' + wrapperClasses + '">';
 
+            var indicatorHtml = '';
             var indicatorType = tree.strategy.isLeafNode(node)
                 ? 'empty'
                 : (expanded ? 'expanded' : 'collapsed');
             for (var i = 0; i <= level; i++) {
-                html += getIndicatorHTML(tree, node, indicatorType, i, level);
+                indicatorHtml += getIndicatorHTML(tree, node, indicatorType, i, level);
             }
 
             var itemWrapperClasses = helper.getPartClasses(tree, 'item-content');
-            html += '<div class="' + itemWrapperClasses.join(' ') + '">'
-                + tree.getItemHTML(node)
-                + '</div>';
 
-            html += '</div>';
+            var tpl = '<div id="${wrapperId}" class="${wrapperClasses}">'
+                + '${indicatorHtml}<div class="${itemWrapperClasses}">${itemHtml}</div></div>';
+
+            var html = lib.format(
+                tpl,
+                {
+                    wrapperId: wrapperId,
+                    wrapperClasses: wrapperClasses.join(' '),
+                    indicatorHtml: indicatorHtml,
+                    itemWrapperClasses: itemWrapperClasses.join(' '),
+                    itemHtml: tree.getItemHTML(node)
+                }
+            );
 
             if (expanded && !tree.strategy.isLeafNode(node)) {
                 var classes = [].concat(
@@ -258,38 +272,56 @@ define(
         }
 
         function getMoreNodeHtml(tree, node, i, level, nodeName) {
+            if (!node) {
+                return '';
+            }
             nodeName = nodeName || 'li';
             var classes = getNodeClasses(tree, node, level, false);
 
-            var html = '<' + nodeName + ' class="' + classes.join(' ') + '" '
-                + 'id="' + helper.getId(tree, 'node-row-more' + node.id) + '" '
-                + 'data-id="' + node.id + '" data-level="' + level + '">';
-            html += getMoreContent(tree, node, i, level);
-            html += '</' + nodeName + '>';
-            return html;
+            var tpl = '<${nodeName} class="${classes}" id="${id}" data-id="${nodeId}" data-level="${level}">'
+                + '${content}</${nodeName}>';
+
+            return lib.format(
+                tpl,
+                {
+                    nodeName: nodeName,
+                    classes: classes.join(' '),
+                    id: helper.getId(tree, 'node-row-more' + node.id),
+                    nodeId: node.id,
+                    level: level,
+                    content: getMoreContent(tree, node, i, level)
+                }
+            );
         }
 
         function getMoreContent(tree, node, i, level) {
             var wrapperClasses = helper.getPartClasses(tree, 'content-wrapper');
 
             wrapperClasses = wrapperClasses.concat(helper.getPartClasses(tree, 'content-wrapper-row-more'));
-            wrapperClasses = wrapperClasses.join(' ');
 
             var wrapperId = helper.getId(tree, 'content-wrapper-' + node.id);
-            var html = '<div id="' + wrapperId + '" class="' + wrapperClasses + '">';
 
+            var indicatorHtml = '';
             var indicatorType = 'empty';
             for (var j = 0; j <= level; j++) {
-                html += getIndicatorHTML(tree, node, indicatorType, j, level);
+                indicatorHtml += getIndicatorHTML(tree, node, indicatorType, j, level);
             }
 
             var itemWrapperClasses = helper.getPartClasses(tree, 'item-content');
-            html += '<div class="' + itemWrapperClasses.join(' ') + '">'
-                + tree.moreTemplate
-                + '</div>';
 
-            html += '</div>';
-            return html;
+            var tpl = '<div id="${wrapperId}" class="${wrapperClasses}">'
+                + '${indicatorHtml}<div class="${itemWrapperClasses}">${moreContent}</div></div>';
+
+            return lib.format(
+                tpl,
+                {
+                    wrapperId: wrapperId,
+                    wrapperClasses: wrapperClasses.join(' '),
+                    indicatorHtml: indicatorHtml,
+                    itemWrapperClasses: itemWrapperClasses.join(' '),
+                    moreContent: tree.moreTemplate
+                }
+            );
         }
 
         /**
@@ -337,12 +369,21 @@ define(
             nodeName = nodeName || 'li';
             var flag = node.children && node.children.results;
             var classes = getNodeClasses(tree, node, level, flag);
-            var html = '<' + nodeName + ' class="' + classes.join(' ') + '" '
-                + 'id="' + helper.getId(tree, 'node-' + node.id) + '" '
-                + 'data-id="' + node.id + '" data-level="' + level + '">';
-            html += getNodeContentHTML(tree, node, level, expanded);
-            html += '</' + nodeName + '>';
-            return html;
+
+            var tpl = '<${nodeName} class="${classes}" id="${id}" data-id="${nodeId}" data-level="${level}">'
+                + '${nodeContent}</${nodeName}>';
+
+            return lib.format(
+                tpl,
+                {
+                    nodeName: nodeName,
+                    classes: classes.join(' '),
+                    id: helper.getId(tree, 'node-' + node.id),
+                    nodeId: node.id,
+                    level: level,
+                    nodeContent: getNodeContentHTML(tree, node, level, expanded)
+                }
+            );
         }
 
         /**
@@ -366,10 +407,12 @@ define(
             // 点在`indicator`上时不触发选中逻辑，只负责展开/收起
             var isValidSelectEvent = false;
             var isValidLoadMoreEvent = false;
+            var disabled = false;
 
             if (!isValidToggleEvent) {
                 var wrapperClass = helper.getPartClasses(this, 'content-wrapper')[0];
                 var loadMoreClass = helper.getPartClasses(this, 'content-wrapper-row-more');
+                var disabledClass = helper.getPartClasses(this, 'content-wrapper-disabled');
 
                 while (target
                     && target !== this.main
@@ -377,6 +420,12 @@ define(
                 ) {
                     target = target.parentNode;
                 }
+
+                // 这行不准被选择（但是可以展开收起）
+                if (lib.hasClass(target, disabledClass)) {
+                    disabled = true;
+                }
+
 
                 // 点在加载更多上
                 if (lib.hasClass(target, loadMoreClass)) {
@@ -409,7 +458,7 @@ define(
                 this.triggerToggleStrategy(id);
             }
 
-            if (isValidSelectEvent) {
+            if (isValidSelectEvent && !disabled) {
                 this.triggerSelectStrategy(id);
             }
         }

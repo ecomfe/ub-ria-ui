@@ -26,10 +26,7 @@ define(
          */
         exports.constructor = function (options) {
             var defaults = {
-                defaultExpand: false,
-                // 需要一种定向展开的策略，
-                // 也就是允许某些符合条件的节点展开，某些不展开
-                orientExpand: false
+                defaultExpand: false
             };
             lib.extend(this, defaults, options);
         };
@@ -41,7 +38,7 @@ define(
          * @return {boolean}
          */
         exports.isLeafNode = function (node) {
-            return !node.hasChild;
+            return node.type === 1;
         };
 
         exports.hasMoreFlag = function (node) {
@@ -55,13 +52,6 @@ define(
          * @return {boolean}
          */
         exports.shouldExpand = function (node) {
-            // 定向展开
-            if (this.orientExpand) {
-                // @FIXME 忘记了为什么用这么个属性判断要不要展开
-                // 后面应该会改用比如 shouldExpand这种
-                return !node.isSelected;
-            }
-
             return this.defaultExpand;
         };
 
