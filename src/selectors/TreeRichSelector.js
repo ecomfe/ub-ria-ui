@@ -160,6 +160,7 @@ define(
                             this.allData,
                             this.allData.children,
                             function (parent, child) {
+                                child.id = child.id || child.value;
                                 indexData[child.id] = {
                                     parentId: parent.id,
                                     node: child,

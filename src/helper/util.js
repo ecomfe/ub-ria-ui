@@ -29,6 +29,10 @@ define(
          * @return {boolean} 比较结果
          */
         util.compare = function (stringA, stringB, config) {
+            if (!u.isString(stringA) || !u.isString(stringB)) {
+                return stringA === stringB;
+            }
+
             config = config || {};
             if (!config.caseSensitive) {
                 stringA = stringA.toLowerCase();
