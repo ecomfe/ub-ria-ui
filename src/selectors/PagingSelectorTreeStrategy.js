@@ -38,7 +38,7 @@ define(
          * @return {boolean}
          */
         exports.isLeafNode = function (node) {
-            return node.type === 1;
+            return !node.children || !node.children.length;
         };
 
         exports.hasMoreFlag = function (node) {

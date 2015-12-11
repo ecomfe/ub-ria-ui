@@ -276,18 +276,21 @@ define(
             var queryList = this.getQueryList();
             var tree = queryList.getChild('tree');
             if (!tree) {
+                var strategyConfig = {
+                    mode: this.mode,
+                    onlyLeafSelect: this.onlyLeafSelect,
+                    orientExpand: this.orientExpand
+                };
+
+                if (this.isLeafNode) {
+                    strategyConfig.isLeafNode = this.isLeafNode;
+                }
+
                 var options = {
                     childName: 'tree',
                     datasource: treeData,
                     allowUnselectNode: this.allowUnselectNode,
-                    strategy:
-                        new TreeStrategy(
-                            {
-                                mode: this.mode,
-                                onlyLeafSelect: this.onlyLeafSelect,
-                                orientExpand: this.orientExpand
-                            }
-                        ),
+                    strategy: new TreeStrategy(strategyConfig),
                     wideToggleArea: this.wideToggleArea,
                     hideRoot: this.hideRoot,
                     selectMode: this.multi ? 'multiple' : 'single'
