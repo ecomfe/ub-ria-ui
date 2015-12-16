@@ -10,8 +10,9 @@ define(
     function (require) {
 
         var eoo = require('eoo');
-        var Panel = require('esui/Panel');
+        var InputControl = require('esui/InputControl');
         var esui = require('esui');
+        var painters = require('esui/painters');
 
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选
@@ -45,10 +46,10 @@ define(
          * 选择控件必须配置childName，'source'代表源选择器，'target'代表目标选择器
          *
          * @class RichSelectorGroup
-         * @extends esui.Panel
+         * @extends esui.InputContro;
          */
         var RichSelectorGroup = eoo.create(
-            Panel,
+            InputControl,
             {
 
                 /**
@@ -100,6 +101,21 @@ define(
                         this
                     );
                 },
+
+                /**
+                 * @override
+                 */
+                repaint: painters.createRepaint(
+                    InputControl.prototype.repaint,
+                    {
+                        name: 'rawValue',
+                        paint: function (me, rawValue) {
+                            if (rawValue) {
+                                me.getRealTargetSelector().setProperties({datasource: rawValue});
+                            }
+                        }
+                    }
+                ),
 
                 getRealTargetSelector: function () {
                     var source = this.getChild('source');
