@@ -107,7 +107,7 @@ define(
                         ' class="${inputClasses}"',
                         ' data-ui-type="TextBox"',
                         ' data-ui-width="${width}"',
-                        ' data-ui-id="${inputId}" />'
+                        ' data-ui-id="${inputId}">'
                     ].join('');
 
                     this.main.innerHTML = lib.format(
@@ -304,30 +304,6 @@ define(
 
 
                 /**
-                 * 对tokens进行预处理
-                 *
-                 * @param {Array=} rawValue 要设置的token数组
-                 */
-                renderTokens: function (rawValue) {
-                    if (u.isArray(this.rawValue)) {
-                        // 因为renderTokens是对rawValue进行全量渲染，所以这里要全部清空
-                        this.clearAllTokens();
-                        // 合法性校验
-                        this.rawValue = u.filter(this.rawValue, isTokenValid, this);
-                        // 重复检测，分为两个场景
-                        // 1. 根据初始rawValue值生成tokens，仅去重；
-                        // 2. 在用户输入值时，如果与已存在列表重复，需提示用户，
-                        //  派发事件等，则在用户输入时进行处理;
-                        // 因此，这里仅对this.rawValue进行重复过滤
-                        if (!this.allowRepeat) {
-                            this.rawValue = u.uniq(this.rawValue);
-                        }
-                        // 根据rawValue值进行全量更新
-                        u.each(this.rawValue, renderToken, this);
-                    }
-                },
-
-                /**
                  * 重绘
                  *
                  * @protected
@@ -351,7 +327,7 @@ define(
                     {
                         name: ['rawValue'],
                         paint: function (textbox, rawValue) {
-                            textbox.renderTokens(rawValue);
+                            renderTokens.call(textbox, rawValue);
                         }
                     }
                 ),
@@ -481,6 +457,30 @@ define(
             $tokenElem.insertBefore(inputElem);
 
             this.fire('aftercreate', {token: token});
+        }
+
+        /**
+         * 对tokens进行预处理
+         *
+         * @param {Array=} rawValue 要设置的token数组
+         */
+        function renderTokens(rawValue) {
+            if (u.isArray(this.rawValue)) {
+                // 因为renderTokens是对rawValue进行全量渲染，所以这里要全部清空
+                this.clearAllTokens();
+                // 合法性校验
+                this.rawValue = u.filter(this.rawValue, isTokenValid, this);
+                // 重复检测，分为两个场景
+                // 1. 根据初始rawValue值生成tokens，仅去重；
+                // 2. 在用户输入值时，如果与已存在列表重复，需提示用户，
+                //  派发事件等，则在用户输入时进行处理;
+                // 因此，这里仅对this.rawValue进行重复过滤
+                if (!this.allowRepeat) {
+                    this.rawValue = u.uniq(this.rawValue);
+                }
+                // 根据rawValue值进行全量更新
+                u.each(this.rawValue, renderToken, this);
+            }
         }
 
         /**
