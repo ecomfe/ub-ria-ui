@@ -49,8 +49,7 @@ define(function (require) {
                     loadingStyle: this.helper.getPartClassName('media-loading'),
                     loadFailedStyle: this.helper.getPartClassName('media-load-failed'),
                     group: null,
-                    groupContainerId: null,
-                    swfPath: require.toUrl('../../../resource/video-preview-player.swf')
+                    groupContainerId: null
                 };
                 u.extend(properties, LightBox.defaultProperties, options);
                 this.setProperties(properties);

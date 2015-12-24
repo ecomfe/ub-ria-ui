@@ -82,11 +82,11 @@ define(function (require) {
                      */
                     sourceType: '',
                     /**
-                     * @property {String} [swfPath='../resource/video-preview-payer.swf']
+                     * @property {String} [swfPath='']
                      *
                      * 要使用的视频播放器路径
                      */
-                    swfPath: require.toUrl('../../../resource/video-preview-player.swf')
+                    swfPath: ''
                 };
 
                 u.extend(properties, MediaPreview.defaultProperties, options);
