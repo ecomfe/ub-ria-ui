@@ -80,7 +80,12 @@ define(
                          *
                          * @type {bool}
                         */
-                        allowRepeat: false
+                        allowRepeat: false,
+
+                        /**
+                         * 默认空数组
+                         */
+                        rawValue: []
                     };
                     u.extend(properties, options);
 
@@ -103,7 +108,7 @@ define(
                     }
 
                     var html = [
-                        '<input type="text" name="${inputName}" autocomplete="off"',
+                        '<input type="text" autocomplete="off"',
                         ' class="${inputClasses}"',
                         ' data-ui-type="TextBox"',
                         ' data-ui-width="${width}"',
@@ -113,7 +118,6 @@ define(
                     this.main.innerHTML = lib.format(
                         html,
                         {
-                            inputName: this.name,
                             inputId: this.helper.getId('input'),
                             inputClasses: this.helper.getPartClasses('input'),
                             width: this.inputWidth
@@ -268,7 +272,7 @@ define(
                         deleteIndex = $(this.main).find('.' + itemClass).index(target);
                     }
 
-                    if (deleteIndex > 0) {
+                    if (deleteIndex >= 0) {
                         var removedValue = rawValue.splice(deleteIndex, 1);
                         this.fire('removetoken', {token: removedValue[0]});
                         this.setProperties({rawValue: rawValue});
@@ -380,11 +384,6 @@ define(
                 return false;
             }
 
-            // token数量要小于最大限制
-            if (this.limit && this.getRawValue().length >= this.limit) {
-                return false;
-            }
-
             return true;
         }
 
@@ -401,7 +400,7 @@ define(
                     var itemClass = this.helper.getPartClassName('item');
                     return {
                         index: repeatIndex,
-                        element: $(this.main).find('.' + itemClass + ' :eq(' + repeatIndex + ')'),
+                        element: $(this.main).find('.' + itemClass).get(repeatIndex),
                         token: this.rawValue[repeatIndex]
                     };
                 }
@@ -471,6 +470,16 @@ define(
                 this.clearAllTokens();
                 // 合法性校验
                 this.rawValue = u.filter(this.rawValue, isTokenValid, this);
+
+                // token数量要小于最大限制
+                this.rawValue = u.filter(
+                    this.rawValue,
+                    function (item, index) {
+                        return index < this.limit
+                    },
+                    this
+                );
+
                 // 重复检测，分为两个场景
                 // 1. 根据初始rawValue值生成tokens，仅去重；
                 // 2. 在用户输入值时，如果与已存在列表重复，需提示用户，
