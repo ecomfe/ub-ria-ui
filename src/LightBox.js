@@ -49,8 +49,7 @@ define(function (require) {
                     loadingStyle: this.helper.getPartClassName('media-loading'),
                     loadFailedStyle: this.helper.getPartClassName('media-load-failed'),
                     group: null,
-                    groupContainerId: null,
-                    swfPath: '../resource/video-preview-payer.swf'
+                    groupContainerId: null
                 };
                 u.extend(properties, LightBox.defaultProperties, options);
                 this.setProperties(properties);
@@ -344,6 +343,7 @@ define(function (require) {
                 else if (/\.mp4|\.mov/.test(url)) {
                     options.type = 'video';
                 }
+                options.swfPath = this.swfPath;
                 html = previewHelper.preview(options);
                 var $container = $(this.mediaContainer());
                 this.hideLoading();
