@@ -31,7 +31,7 @@ define(function (require) {
         preview: function (options) {
             var type = options.type || this.analysizeType(options.url);
             var previewNode = null;
-            options.swfPath = options.swfPath || require.toUrl('../../../resource/video-preview-player.swf');
+            options.swfPath = options.swfPath;
 
             // 必须设置url,或者没有设置type同时通过analysizeType方法也无法拿到type,则直接返回
             if (!options.url || !type) {
