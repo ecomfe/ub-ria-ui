@@ -10,8 +10,8 @@ define(
     function (require) {
         var Control = require('esui/Control');
         var lib = require('esui/lib');
-        var helper = require('esui/controlHelper');
         var u = require('underscore');
+        var painters = require('esui/painters');
 
         var TreeStrategy = require('./PagingSelectorTreeStrategy');
 
@@ -171,21 +171,17 @@ define(
                 ? 'current'
                 : (diff === 1 ? 'previous' : 'far-previous');
             var classes = [].concat(
-                helper.getPartClasses(
-                    tree, 'node-indicator'),
-                helper.getPartClasses(
-                    tree, 'node-indicator-' + type),
-                helper.getPartClasses(
-                    tree, 'node-indicator-level-' + currentLevel),
-                helper.getPartClasses(
-                    tree, 'node-indicator-' + diffType)
+                tree.helper.getPartClasses('node-indicator'),
+                tree.helper.getPartClasses('node-indicator-' + type),
+                tree.helper.getPartClasses('node-indicator-level-' + currentLevel),
+                tree.helper.getPartClasses('node-indicator-' + diffType)
             );
             var text = diff === 0
                 ? INDICATOR_TEXT_MAPPING[type || 'collapsed']
                 : '第' + currentLevel + '级';
             var html = '<span ';
             if (diff === 0) {
-                html += 'id="' + helper.getId(tree, 'indicator-' + node.id) + '" ';
+                html += 'id="' + tree.helper.getId('indicator-' + node.id) + '" ';
             }
             html += 'class="' + classes.join(' ') + '">' + text + '</span>';
             return html;
@@ -202,20 +198,20 @@ define(
          * @ignore
          */
         function getNodeContentHTML(tree, node, level, expanded) {
-            var wrapperClasses = helper.getPartClasses(tree, 'content-wrapper');
+            var wrapperClasses = tree.helper.getPartClasses('content-wrapper');
             if (tree.selectedNodeIndex[node.id]) {
                 wrapperClasses = wrapperClasses.concat(
-                    helper.getPartClasses(tree, 'content-wrapper-selected')
+                    tree.helper.getPartClasses('content-wrapper-selected')
                 );
             }
 
             if (node.disabled) {
                 wrapperClasses = wrapperClasses.concat(
-                    helper.getPartClasses(tree, 'content-wrapper-disabled')
+                    tree.helper.getPartClasses('content-wrapper-disabled')
                 );
             }
 
-            var wrapperId = helper.getId(tree, 'content-wrapper-' + node.id);
+            var wrapperId = tree.helper.getId('content-wrapper-' + node.id);
 
             var indicatorHtml = '';
             var indicatorType = tree.strategy.isLeafNode(node)
@@ -225,7 +221,7 @@ define(
                 indicatorHtml += getIndicatorHTML(tree, node, indicatorType, i, level);
             }
 
-            var itemWrapperClasses = helper.getPartClasses(tree, 'item-content');
+            var itemWrapperClasses = tree.helper.getPartClasses('item-content');
 
             var tpl = '<div id="${wrapperId}" class="${wrapperClasses}">'
                 + '${indicatorHtml}<div class="${itemWrapperClasses}">${itemHtml}</div></div>';
@@ -243,8 +239,8 @@ define(
 
             if (expanded && !tree.strategy.isLeafNode(node)) {
                 var classes = [].concat(
-                    helper.getPartClasses(tree, 'sub-root'),
-                    helper.getPartClasses(tree, 'sub-root-' + indicatorType)
+                    tree.helper.getPartClasses('sub-root'),
+                    tree.helper.getPartClasses('sub-root-' + indicatorType)
                 );
                 html += '<ul class="' + classes.join(' ') + '">';
                 if (node.children) {
@@ -286,7 +282,7 @@ define(
                 {
                     nodeName: nodeName,
                     classes: classes.join(' '),
-                    id: helper.getId(tree, 'node-row-more' + node.id),
+                    id: tree.helper.getId('node-row-more' + node.id),
                     nodeId: node.id,
                     level: level,
                     content: getMoreContent(tree, node, i, level)
@@ -295,11 +291,11 @@ define(
         }
 
         function getMoreContent(tree, node, i, level) {
-            var wrapperClasses = helper.getPartClasses(tree, 'content-wrapper');
+            var wrapperClasses = tree.helper.getPartClasses('content-wrapper');
 
-            wrapperClasses = wrapperClasses.concat(helper.getPartClasses(tree, 'content-wrapper-row-more'));
+            wrapperClasses = wrapperClasses.concat(tree.helper.getPartClasses('content-wrapper-row-more'));
 
-            var wrapperId = helper.getId(tree, 'content-wrapper-' + node.id);
+            var wrapperId = tree.helper.getId('content-wrapper-' + node.id);
 
             var indicatorHtml = '';
             var indicatorType = 'empty';
@@ -307,7 +303,7 @@ define(
                 indicatorHtml += getIndicatorHTML(tree, node, indicatorType, j, level);
             }
 
-            var itemWrapperClasses = helper.getPartClasses(tree, 'item-content');
+            var itemWrapperClasses = tree.helper.getPartClasses('item-content');
 
             var tpl = '<div id="${wrapperId}" class="${wrapperClasses}">'
                 + '${indicatorHtml}<div class="${itemWrapperClasses}">${moreContent}</div></div>';
@@ -339,15 +335,15 @@ define(
                 ? 'empty'
                 : (expanded ? 'expanded' : 'collapsed');
             var classes = [].concat(
-                helper.getPartClasses(tree, 'node'),
-                helper.getPartClasses(tree, 'node-' + state),
-                helper.getPartClasses(tree, 'node-level-' + level)
+                tree.helper.getPartClasses('node'),
+                tree.helper.getPartClasses('node-' + state),
+                tree.helper.getPartClasses('node-level-' + level)
             );
             // 根节点再加2个类
             if (node === tree.datasource) {
                 classes = [].concat(
-                    helper.getPartClasses(tree, 'root'),
-                    helper.getPartClasses(tree, 'root-' + state),
+                    tree.helper.getPartClasses('root'),
+                    tree.helper.getPartClasses('root-' + state),
                     classes
                 );
             }
@@ -378,7 +374,7 @@ define(
                 {
                     nodeName: nodeName,
                     classes: classes.join(' '),
-                    id: helper.getId(tree, 'node-' + node.id),
+                    id: tree.helper.getId('node-' + node.id),
                     nodeId: node.id,
                     level: level,
                     nodeContent: getNodeContentHTML(tree, node, level, expanded)
@@ -401,7 +397,7 @@ define(
             //
             // 因此，首先判断是否点在提示元素上，如果不是则向上找看是不是能到wrapper
             var target = e.target;
-            var indicatorClass = helper.getPartClasses(this, 'node-indicator')[0];
+            var indicatorClass = this.helper.getPartClasses('node-indicator')[0];
             var isValidToggleEvent = lib.hasClass(target, indicatorClass);
 
             // 点在`indicator`上时不触发选中逻辑，只负责展开/收起
@@ -410,9 +406,9 @@ define(
             var disabled = false;
 
             if (!isValidToggleEvent) {
-                var wrapperClass = helper.getPartClasses(this, 'content-wrapper')[0];
-                var loadMoreClass = helper.getPartClasses(this, 'content-wrapper-row-more');
-                var disabledClass = helper.getPartClasses(this, 'content-wrapper-disabled');
+                var wrapperClass = this.helper.getPartClasses('content-wrapper')[0];
+                var loadMoreClass = this.helper.getPartClasses('content-wrapper-row-more');
+                var disabledClass = this.helper.getPartClasses('content-wrapper-disabled');
 
                 while (target
                     && target !== this.main
@@ -464,8 +460,8 @@ define(
         }
 
         exports.addExpandedNodeStatus = function (id) {
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
-            var childLoadedClass = helper.getPartClasses(this, 'node-child-loaded');
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
+            var childLoadedClass = this.helper.getPartClasses('node-child-loaded');
             lib.addClass(nodeElement, childLoadedClass);
         };
 
@@ -496,7 +492,7 @@ define(
          * @override
          */
         exports.initEvents = function () {
-            helper.addDOMEvent(this, this.main, 'click', this.clickNode);
+            this.helper.addDOMEvent(this.main, 'click', this.clickNode);
         };
 
         /**
@@ -550,7 +546,7 @@ define(
          * @protected
          * @override
          */
-        exports.repaint = helper.createRepaint(
+        exports.repaint = painters.createRepaint(
             Control.prototype.repaint,
             {
                 /**
@@ -701,9 +697,8 @@ define(
 
             if (removed) {
                 if (options.modifyDOM) {
-                    var nodeElement = lib.g(helper.getId(tree, 'content-wrapper-' + id));
-                    helper.removePartClasses(
-                        tree, 'content-wrapper-selected', nodeElement);
+                    var nodeElement = lib.g(tree.helper.getId('content-wrapper-' + id));
+                    tree.helper.removePartClasses('content-wrapper-selected', nodeElement);
                 }
 
                 if (!options.silent) {
@@ -749,9 +744,8 @@ define(
                     {force: true, silent: true, modifyDOM: true}
                 );
             }
-            var nodeElement = lib.g(helper.getId(this, 'content-wrapper-' + id));
-            helper.addPartClasses(
-                this, 'content-wrapper-selected', nodeElement);
+            var nodeElement = lib.g(this.helper.getId('content-wrapper-' + id));
+            this.helper.addPartClasses('content-wrapper-selected', nodeElement);
 
             if (!silent) {
                 /**
@@ -800,7 +794,7 @@ define(
          * - 如果原本没有子树元素，则取对应节点的`children`属性创建子树
          */
         exports.expandNode = function (id, children) {
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
 
             if (!nodeElement) {
                 return;
@@ -837,23 +831,19 @@ define(
             }
             else {
                 // 需要修改`indicator`的字样和class
-                var indicator = lib.g(helper.getId(this, 'indicator-' + id));
+                var indicator = lib.g(this.helper.getId('indicator-' + id));
                 indicator.innerHTML = INDICATOR_TEXT_MAPPING.expanded;
                 var indicatorClasses = [].concat(
-                    helper.getPartClasses(
-                        this, 'node-indicator'),
-                    helper.getPartClasses(
-                        this, 'node-indicator-level-' + level),
-                    helper.getPartClasses(
-                        this, 'node-indicator-current'),
-                    helper.getPartClasses(
-                        this, 'node-indicator-expanded')
+                    this.helper.getPartClasses('node-indicator'),
+                    this.helper.getPartClasses('node-indicator-level-' + level),
+                    this.helper.getPartClasses('node-indicator-current'),
+                    this.helper.getPartClasses('node-indicator-expanded')
                 );
                 indicator.className = indicatorClasses.join(' ');
                 // 子树的class要改掉
                 var rootClasses = [].concat(
-                    helper.getPartClasses(this, 'sub-root'),
-                    helper.getPartClasses(this, 'sub-root-expanded')
+                    this.helper.getPartClasses('sub-root'),
+                    this.helper.getPartClasses('sub-root-expanded')
                 );
                 nodeElement.lastChild.className = rootClasses.join(' ');
             }
@@ -871,7 +861,7 @@ define(
          * @param {boolean} [removeChild=false] 是否把子节点删除
          */
         exports.collapseNode = function (id, removeChild) {
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
 
             if (!nodeElement) {
                 return;
@@ -895,8 +885,8 @@ define(
                 }
                 else {
                     var rootClasses = [].concat(
-                        helper.getPartClasses(this, 'sub-root'),
-                        helper.getPartClasses(this, 'sub-root-collapsed')
+                        this.helper.getPartClasses('sub-root'),
+                        this.helper.getPartClasses('sub-root-collapsed')
                     );
                     childRoot.className = rootClasses.join(' ');
                 }
@@ -905,19 +895,15 @@ define(
             var level = +lib.getAttribute(nodeElement, 'data-level');
             var nodeClasses = getNodeClasses(this, node, level, false);
             // 既然能收起，表明已经展开过
-            var childLoadedClass = helper.getPartClasses(this, 'node-child-loaded');
+            var childLoadedClass = this.helper.getPartClasses('node-child-loaded');
             nodeClasses.push(childLoadedClass);
             nodeElement.className = nodeClasses.join(' ');
-            var indicator = lib.g(helper.getId(this, 'indicator-' + id));
+            var indicator = lib.g(this.helper.getId('indicator-' + id));
             var indicatorClasses = [].concat(
-                helper.getPartClasses(
-                    this, 'node-indicator'),
-                    helper.getPartClasses(
-                        this, 'node-indicator-level-' + level),
-                helper.getPartClasses(
-                    this, 'node-indicator-current'),
-                helper.getPartClasses(
-                    this, 'node-indicator-collapsed')
+                this.helper.getPartClasses('node-indicator'),
+                this.helper.getPartClasses('node-indicator-level-' + level),
+                this.helper.getPartClasses('node-indicator-current'),
+                this.helper.getPartClasses('node-indicator-collapsed')
             );
             indicator.className = indicatorClasses.join(' ');
             indicator.innerHTML = INDICATOR_TEXT_MAPPING.collapsed;
@@ -932,7 +918,7 @@ define(
          * @ignore
          */
         function isEmpty(tree, nodeElement) {
-            var className = helper.getPartClasses(tree, 'node-empty')[0];
+            var className = tree.helper.getPartClasses('node-empty')[0];
             return lib.hasClass(nodeElement, className);
         }
 
@@ -946,7 +932,7 @@ define(
          */
         function isExpanded(tree, nodeElement) {
             // TODO: 放出来给子类用
-            var className = helper.getPartClasses(tree, 'node-expanded')[0];
+            var className = tree.helper.getPartClasses('node-expanded')[0];
             return lib.hasClass(nodeElement, className);
         }
 
@@ -964,7 +950,7 @@ define(
                 return;
             }
 
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
 
             if (!nodeElement) {
                 return;
@@ -1011,7 +997,7 @@ define(
                 return;
             }
 
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
 
             if (!nodeElement) {
                 return;
@@ -1034,7 +1020,7 @@ define(
             else {
                 // 如果点开过，直接显示
                 // 否则后端加载
-                var childLoadedClass = helper.getPartClasses(this, 'node-child-loaded');
+                var childLoadedClass = this.helper.getPartClasses('node-child-loaded');
 
                 var isRemote = !lib.hasClass(nodeElement, childLoadedClass);
                 /**
@@ -1054,7 +1040,7 @@ define(
          * @param {string} id 节点的id
          */
         exports.indicateNodeLoading = function (id) {
-            var nodeElement = lib.g(helper.getId(this, 'node-' + id));
+            var nodeElement = lib.g(this.helper.getId('node-' + id));
             if (!nodeElement) {
                 return;
             }
@@ -1070,14 +1056,10 @@ define(
             var indicator = children[level];
             indicator.innerHTML = INDICATOR_TEXT_MAPPING.busy;
             var classes = [].concat(
-                helper.getPartClasses(
-                    this, 'node-indicator'),
-                    helper.getPartClasses(
-                        this, 'node-indicator-level-' + level),
-                helper.getPartClasses(
-                    this, 'node-indicator-current'),
-                helper.getPartClasses(
-                    this, 'node-indicator-busy')
+                this.helper.getPartClasses('node-indicator'),
+                this.helper.getPartClasses('node-indicator-level-' + level),
+                this.helper.getPartClasses('node-indicator-current'),
+                this.helper.getPartClasses('node-indicator-busy')
             );
             indicator.className = classes.join(' ');
         };
