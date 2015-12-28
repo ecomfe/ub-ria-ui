@@ -10,6 +10,7 @@ define(
     function (require) {
         var u = require('underscore');
         var Panel = require('esui/Panel');
+        var lib = require('esui/lib');
 
         /**
          * 带load型选择器的富选择控件组合由：
@@ -109,7 +110,7 @@ define(
                         // 情景1
                         if (this.target) {
                             // 获取原始的已选值
-                            newSelecteItems = u.deepClone(this.getRawValue()) || [];
+                            newSelecteItems = lib.deepClone(this.getRawValue()) || [];
                             // 单选
                             if (e.item) {
                                 // 添加
