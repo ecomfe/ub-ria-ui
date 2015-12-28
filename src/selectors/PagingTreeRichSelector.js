@@ -14,7 +14,7 @@ define(
         var lib = require('esui/lib');
 
         var u = require('underscore');
-        var util = require('./util');
+        var util = require('../helper/util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./PagingSelectorTreeStrategy');
 
@@ -330,7 +330,7 @@ define(
             }
             else {
                 tree.setProperties({
-                    datasource: util.deepClone(treeData),
+                    datasource: lib.deepClone(treeData),
                     keyword: this.getKeyword()
                 });
             }
@@ -356,7 +356,7 @@ define(
         };
 
         exports.getDatasourceWithState = function () {
-            var datasource = u.deepClone(this.datasource);
+            var datasource = lib.deepClone(this.datasource);
             var indexData = this.indexData;
             this.walkTree(datasource, datasource.children.results, function (parent, child) {
                 child.isSelected = indexData[child.id].isSelected;
@@ -905,8 +905,8 @@ define(
          * @public
          */
         exports.getSelectedTree = function () {
-            var indexData = util.deepClone(this.indexData);
-            var selectedData = util.deepClone(this.selectedData);
+            var indexData = lib.deepClone(this.indexData);
+            var selectedData = lib.deepClone(this.selectedData);
 
             var result = [];
 
