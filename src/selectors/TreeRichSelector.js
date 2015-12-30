@@ -538,6 +538,7 @@ define(
                         copyData,
                         copyData.children,
                         function (parent, child) {
+                            // 找出所有选中节点或父节点状态为`isSomeSelected`, 即该节点存在选中的子孙节点
                             var selectedChildren = getSelectedNodesUnder(child, control);
                             if (selectedChildren.length) {
                                 child.children = selectedChildren;
@@ -766,7 +767,21 @@ define(
                         return !control.getItemState(brother.id, 'isSelected');
                     }
                 );
-                selectItem(control, parentId, allSelected);
+                // 如果子节点部分选中，则标记父节点`isSomeSelected`为true
+                var someSelected = u.some(
+                    brothers,
+                    function (brother) {
+                        return control.getItemState(brother.id, 'isSelected')
+                            || control.getItemState(brother.id, 'isSomeSelected');
+                    }
+                );
+                if (!allSelected && someSelected) {
+                    control.setItemState(parentId, 'isSomeSelected', true);
+                }
+                else {
+                    control.setItemState(parentId, 'isSomeSelected', false);
+                    selectItem(control, parentId, allSelected);
+                }
                 trySyncParentStates(control, parentItem, allSelected);
             }
         }
@@ -814,7 +829,8 @@ define(
             return u.filter(
                 children,
                 function (node) {
-                    return this.getItemState(node.id, 'isSelected');
+                    return this.getItemState(node.id, 'isSelected')
+                        || this.getItemState(node.id, 'isSomeSelected');
                 },
                 control
             );
