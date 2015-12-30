@@ -114,6 +114,13 @@ define(
                  * @override
                  */
                 adaptData: function () {
+                    // 适配id/value的值
+                    u.each(
+                        this.datasource,
+                        function (item) {
+                            item.id = item.id || item.value;
+                        }
+                    );
                     this.allData = lib.deepClone(this.datasource);
                     // 先构建indexData，把数据源里的选择状态清除
                     var indexData = {};
