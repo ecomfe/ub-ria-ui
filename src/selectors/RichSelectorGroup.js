@@ -8,11 +8,37 @@
  */
 define(
     function (require) {
-
+        var u = require('underscore');
         var eoo = require('eoo');
         var InputControl = require('esui/InputControl');
         var esui = require('esui');
         var painters = require('esui/painters');
+
+        function traverseTree(tree, getter) {
+            var children = u.map(
+                tree,
+                function (node) {
+                    return traverseTreeWithRoot(node, getter);
+                }
+            );
+
+            return children;
+        }
+
+        function traverseTreeWithRoot(tree, getter) {
+            if (u.isArray(tree)) {
+                tree = traverseTree(tree, getter);
+            }
+            else if (u.isObject(tree) && tree) {
+                tree = getter(tree);
+
+                if (tree.children) {
+                    tree.children = traverseTree(tree.children, getter);
+                }
+            }
+
+            return tree;
+        }
 
         /**
          * 富选择控件组合一或两个富选择控件组成，支持单控件选择或左右控件互选
@@ -84,6 +110,16 @@ define(
                         'add',
                         function (e) {
                             var newdata = e.target.getSelectedItemsFullStructure();
+                            // 把所有节点的isSelected置false后传给另一个控件
+                            newdata = traverseTreeWithRoot(
+                                newdata,
+                                function (node) {
+                                    var newNode = u.clone(node);
+                                    newNode.isSelected = false;
+
+                                    return newNode;
+                                }
+                            );
                             target && target.setProperties({datasource: newdata});
                             this.fire('add');
                             this.fire('change');

@@ -125,7 +125,7 @@ define(
                     // 先构建indexData，把数据源里的选择状态清除
                     var indexData = {};
                     u.each(this.allData, function (item, index) {
-                        indexData[item.id] = {index: index, isSelected: false};
+                        indexData[item.id] = {index: index, isSelected: item.isSelected};
                     });
 
                     // 把选择状态merge进indexData的数据项中
