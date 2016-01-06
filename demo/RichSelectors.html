@@ -77,6 +77,39 @@
                 <esui-label data-ui-id="cas-slots-result"></esui-label>
             </div>
 
+            <h2>Disabled</h2>
+            <p>Disabled</p>
+            <div class="example">
+                <div class="row">
+                    <h3>双向Table Rich Selector</h3>
+                    <div
+                        data-ui-type="RichSelectorGroup"
+                        data-ui-id="cas-slots-disabled"
+                        data-ui-name="cas-slots"
+                        data-ui-disabled="true">
+                        <esui-table-rich-selector
+                            data-ui-child-name="source"
+                            data-ui-title="全部有效"
+                            data-ui-has-head="true"
+                            data-ui-has-search-box="true"
+                            data-ui-need-batch-action="true"
+                            data-ui-allow-unselect-node="true"
+                            data-ui-batch-action-label="选择全部">
+                        </esui-table-rich-selector>
+                        <esui-table-rich-selector
+                            data-ui-child-name="target"
+                            data-ui-title="已选择"
+                            data-ui-mode="delete"
+                            data-ui-need-batch-action="true"
+                            data-ui-batch-action-label="删除全部"
+                            data-ui-empty-text="请从左侧选择要添加的">
+                        </esui-table-rich-selector>
+                    </div>
+                </div>
+                <esui-button data-ui-id="get-cas-slots">获取选值</esui-button>
+                <esui-label data-ui-id="cas-slots-result"></esui-label>
+            </div>
+            
             <h2>左右选择Tree Selector</h2>
             <p>右两个树表型富选择器组成，支持从左侧添加到右侧，支持从右侧删除。</p>
             <div class="example">
@@ -216,6 +249,57 @@
                 ]
             });
 
+            var cascadingDisabled = ui.get('cas-slots-disabled');
+            casSource = cascadingDisabled.getChild('source');
+            casTarget = cascadingDisabled.getChild('target');
+
+            casSource.setProperties({
+                datasource: arrayDatasource,
+                fields: [
+                    {
+                        field: 'name',
+                        content: function (item) {
+                            return item.name;
+                        },
+                        searchScope: 'partial',
+                        width: 100,
+                        isDefaultSearchField: true,
+                        title: '名称'
+                    },
+                    {
+                        field: 'value',
+                        content: function (item) {
+                            return item.prop;
+                        },
+                        width: 35,
+                        title: '值'
+                    }
+                ]
+            });
+            casTarget.setProperties({
+                fields: [
+                    {
+                        field: 'name',
+                        content: function (item) {
+                            return item.name;
+                        },
+                        isDefaultSearchField: true,
+                        searchScope: 'partial',
+                        width: 120,
+                        title: '名称'
+                    },
+                    {
+                        field: 'value',
+                        content: function (item) {
+                            return item.prop;
+                        },
+                        width: 35,
+                        title: '值'
+                    }
+                ]
+            });
+
+            
             ui.get('get-cas-slots').on('click', function () {
                 ui.get('cas-slots-result').setText(cascading.getValue());
             });

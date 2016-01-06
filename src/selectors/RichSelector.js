@@ -542,10 +542,22 @@ define(
                     InputControl.prototype.repaint,
                     {
                         name: 'title',
-                        paint: function (control, title) {
-                            var head = control.getChild('head');
+                        paint: function (me, title) {
+                            var head = me.getChild('head');
                             var titleLabel = head && head.getChild('title');
                             titleLabel && titleLabel.setText(title);
+                        }
+                    },
+                    {
+                        name: 'disabled',
+                        paint: function (me, disabled) {
+                            var serachbox = me.getSearchBox();
+                            if (disabled) {
+                                serachbox && serachbox.disable();
+                            }
+                            else {
+                                serachbox && serachbox.enable();
+                            }
                         }
                     },
                     painters.style('width')
