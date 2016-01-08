@@ -108,7 +108,6 @@ define(
                         var newSelecteItems;
                         // 情景1
                         if (this.target) {
-                            debugger;
                             // 获取原始的已选值
                             newSelecteItems = u.clone(this.getRawValue()) || [];
                             // 单选
