@@ -100,8 +100,9 @@ define(
                     RichSelector.prototype.repaint,
                     {
                         name: 'datasource',
-                        paint: function (control, datasource) {
-                            control.refresh();
+                        paint: function (me, datasource) {
+                            me.refresh();
+                            toggleTreeState(me, me.disabled);
                         }
                     },
                     {
@@ -120,6 +121,12 @@ define(
                                 control.fire('add');
                                 control.fire('change');
                             }
+                        }
+                    },
+                    {
+                        name: 'disabled',
+                        paint: function (me, disabled) {
+                            toggleTreeState(me, disabled);
                         }
                     }
                 ),
@@ -932,6 +939,16 @@ define(
          */
         function getTopId(control) {
             return control.datasource.id;
+        }
+
+        function toggleTreeState(selector, disabled) {
+            var queryList = selector.getQueryList();
+            var tree = queryList.getChild('tree');
+
+            if (!tree) {
+                return;
+            }
+            disabled ? tree.disable() : tree.enable();
         }
 
         esui.register(TreeRichSelector);
