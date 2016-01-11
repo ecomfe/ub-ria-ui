@@ -149,7 +149,9 @@ define(
                             if (rawValue) {
                                 me.getRealTargetSelector().setProperties({datasource: rawValue});
                             }
-                        },
+                        }
+                    },
+                    {
                         name: 'disabled',
                         paint: function (me, disabled) {
                             if (disabled) {
