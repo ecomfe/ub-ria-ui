@@ -610,7 +610,11 @@ define(
             }
             else {
                 if (toBeSelected) {
-                    control.selectedData.push(item);
+                    var notSelected = !control.selectedData.length
+                        || !u.findWhere(control.selectedData, {id: item.id});
+                    if (notSelected) {
+                        control.selectedData.push(item);
+                    }
                 }
                 else {
                     control.selectedData = u.filter(control.selectedData, function (item) {
