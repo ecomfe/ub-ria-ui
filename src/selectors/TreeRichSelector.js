@@ -787,8 +787,8 @@ define(
                 }
                 else {
                     control.setItemState(parentId, 'isSomeSelected', false);
-                    selectItem(control, parentId, allSelected);
                 }
+                selectItem(control, parentId, allSelected);
                 trySyncParentStates(control, parentItem, allSelected);
             }
         }

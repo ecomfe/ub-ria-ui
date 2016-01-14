@@ -33,13 +33,12 @@ require.config({
         },
         {
             'name': 'eoo',
-            'location': '../dep/eoo/0.1.4/src',
-            'main': 'main'
+            'location': '../dep/eoo/0.1.4/src'
         },
         {
             'name': 'jquery',
-            'location': '../dep/jquery/1.9.1/src',
-            'main': 'jquery.min'
+            'location': '../dep/jquery/1.11.1/src',
+            'main': 'jquery'
         },
         {
             'name': 'eicons',
