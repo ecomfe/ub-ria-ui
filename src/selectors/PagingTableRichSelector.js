@@ -610,7 +610,9 @@ define(
             }
             else {
                 if (toBeSelected) {
-                    control.selectedData.push(item);
+                    if (!u.findWhere(control.selectedData, {id: item.id})) {
+                        control.selectedData.push(item);
+                    }
                 }
                 else {
                     control.selectedData = u.filter(control.selectedData, function (item) {
