@@ -48,11 +48,20 @@ define(
                  * @override
                  */
                 getSearchBoxHTML: function () {
-                    var searchBoxHTML = this.$super(arguments);
+                    var searchBoxHTML = [
+                        // 搜索区
+                        '<div data-ui="type:Panel;childName:searchBoxArea"',
+                        ' class="' + this.helper.getPartClassName('search-wrapper') + '">',
+                        '   <div style="float:left" data-ui="type:Select;childName:filter;"></div>',
+                        '   <div',
+                        '   data-ui="buttonPosition:right;buttonVariants:bordered icon;',
+                        '   type:SearchBox;childName:itemSearch;variants:clear-border',
+                        '   hide-searched-button;searchMode:instant;">',
+                        '   </div>',
+                        '</div>'
+                    ].join('');
 
-                    var filterHTML = '<div data-ui="type:Select;childName:filter;"></div>';
-
-                    return filterHTML + searchBoxHTML;
+                    return searchBoxHTML;
                 },
 
                 /**
@@ -137,7 +146,7 @@ define(
                  * @return {esui.Panel}
                  */
                 getFilter: function () {
-                    return this.getChild('body').getChild('filter');
+                    return this.getChild('body').getChild('searchBoxArea').getChild('filter');
                 }
             }
         );
