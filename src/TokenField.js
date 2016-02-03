@@ -508,6 +508,10 @@ define(
                 return;
             }
             // 这里要保证setProperties时rawValue前后值不同，这里复制一份
+            if (!this.rawValue) {
+                // 第一次没有设置的时候设置一个空值进来
+                this.rawValue = [];
+            }
             var rawValue = this.rawValue.slice(0);
             rawValue.push(inputValue);
             this.setProperties({rawValue: rawValue});

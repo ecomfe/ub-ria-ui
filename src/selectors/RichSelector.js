@@ -152,13 +152,28 @@ define(
                  * @return {string}
                  */
                 getFootHTML: function () {
-                    return [
-                        '<div data-ui="type:Panel;childName:foot;"',
-                        ' class="' + this.helper.getPartClassName('foot') + '">',
-                        '<span data-ui="type:Label;childName:totalCount">',
-                        '</span>',
+                    var tpl = [
+                        '<div data-ui="type:Panel;childName:foot;" class="${classes}">',
+                        '   <span data-ui="type:Label;childName:totalCount"></span>',
+                        '   ${footButton}',
                         '</div>'
                     ].join('\n');
+
+                    var footButton = '';
+
+                    if (this.footButtonText) {
+                        footButton = '<button data-ui="type:Button;childName:button;variants:link;">'
+                            + this.footButtonText
+                            + '</button>';
+                    }
+
+                    return lib.format(
+                        tpl,
+                        {
+                            classes: this.helper.getPartClassName('foot'),
+                            footButton: footButton
+                        }
+                    );
                 },
 
                 /**
@@ -247,6 +262,26 @@ define(
                         'click',
                         u.bind(this.eventDispatcher, this)
                     );
+                },
+
+                /**
+                 * @override
+                 */
+                initEvents: function () {
+                    this.$super(arguments);
+
+                    var foot = this.getChild('foot');
+                    var button = foot && foot.getChild('button');
+                    if (button) {
+                        button.on(
+                            'click',
+                            function (e) {
+                                e.preventDefault();
+                                this.fire('footclick');
+                            },
+                            this
+                        );
+                    }
                 },
 
                 /**
