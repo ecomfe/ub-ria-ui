@@ -8,7 +8,6 @@
  */
 define(
     function (require) {
-        var etpl = require('etpl');
         var u = require('underscore');
         var InputControl = require('esui/InputControl');
         var eoo = require('eoo');
@@ -73,7 +72,7 @@ define(
                     };
 
                     var mainElement = this.main;
-                    mainElement.innerHTML = etpl.compile(template)(data);
+                    mainElement.innerHTML = this.helper.render(template, data);
 
                     // 创建控件树
                     this.initChildren(mainElement);
@@ -331,23 +330,22 @@ define(
          */
         function buildItem(item, style, index) {
             var template = ''
-                + '<div class="${style}"'
+                + '<div class="${item | class} ${style}"'
                 + '  data-value="${value}" data-index="${index}" data-allow-delete="${allowDelete}">'
-                + '<span>${text}</span>'
+                + '<span>${text | raw}</span>'
                 + '<!-- if: ${allowDelete}-->'
                 + '<span class="ui-icon ui-filter-remove ui-filter-item-remove"></span>'
                 + '<!-- /if -->'
                 + '</div>';
-            var renderer = etpl.compile(template);
             var data = {
-                style: this.helper.getPartClassName('item') + ' ' + (style || ''),
+                style: style || '',
                 value: item.value,
                 index: index,
                 text: item.text,
                 allowDelete: item.allowDelete
             };
 
-            return renderer(data);
+            return this.helper.render(template, data);
         }
 
         /**
@@ -355,13 +353,11 @@ define(
          */
         function buildCustomItem() {
             var controlHelper = this.helper;
-            var template = '<div id="${customLinkId}" class="${style}"><span>${text}</span></div>';
+            var template = '<div id="${custom-link | id}" class="${item-cmd | class}"><span>${text}</span></div>';
             var data = {
-                customLinkId: controlHelper.getId('custom-link'),
-                style: controlHelper.getPartClassName('item-cmd'),
                 text: this.customBtnLabel
             };
-            var html = etpl.compile(template)(data);
+            var html = this.helper.render(template, data);
 
             $(controlHelper.getPart('items-panel')).append(html);
         }
