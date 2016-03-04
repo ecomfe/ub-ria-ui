@@ -689,6 +689,7 @@ define(
          * @ignore
          */
         function search(e) {
+            e.preventDefault();
             this.search();
         }
 
