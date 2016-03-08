@@ -100,19 +100,32 @@ define(
                     RichSelector.prototype.repaint,
                     {
                         name: 'datasource',
-                        paint: function (control, datasource) {
-                            control.refresh();
+                        paint: function (me, datasource) {
+                            me.refresh();
+                            toggleTreeState(me, me.disabled);
                         }
                     },
                     {
                         name: 'selectedData',
                         paint: function (control, selectedData) {
                             // 如果没有传selectedData，就别取消了。
-                            if (selectedData == null) {
+                            if (u.isEmpty(selectedData)) {
                                 return;
                             }
+
                             // 先取消选择
                             var allData = control.allData;
+
+                            // 因为取值也不会取根节点，赋值如果等于根节点
+                            // 避免所有子孙都被选中，这里无视
+                            if (allData && selectedData.length === 1) {
+                                var selectedItem = selectedData[0];
+                                selectedItem = selectedItem.id || selectedItem.value || selectedItem;
+                                if (selectedItem === allData.id) {
+                                    return;
+                                }
+                            }
+
                             if (allData && allData.children) {
                                 var oldSelectedData = control.getSelectedItems();
                                 control.selectItems(oldSelectedData, false);
@@ -120,6 +133,12 @@ define(
                                 control.fire('add');
                                 control.fire('change');
                             }
+                        }
+                    },
+                    {
+                        name: 'disabled',
+                        paint: function (me, disabled) {
+                            toggleTreeState(me, disabled);
                         }
                     }
                 ),
@@ -155,11 +174,13 @@ define(
                     // 一个扁平化的索引
                     // 其中包含父节点信息，以及节点选择状态
                     var indexData = {};
-                    if (this.allData && this.allData.children) {
+                    var allData = this.allData;
+                    if (allData && allData.children) {
                         this.walkTree(
-                            this.allData,
-                            this.allData.children,
+                            allData,
+                            allData.children,
                             function (parent, child) {
+                                parent.id = parent.id || parent.value;
                                 child.id = child.id || child.value;
                                 indexData[child.id] = {
                                     parentId: parent.id,
@@ -174,6 +195,12 @@ define(
                                 }
                             }
                         );
+                        // 把根节点也加上
+                        indexData[allData.id] = {
+                            parentId: null,
+                            node: allData,
+                            isSelected: false
+                        };
                     }
                     this.indexData = indexData;
 
@@ -538,6 +565,7 @@ define(
                         copyData,
                         copyData.children,
                         function (parent, child) {
+                            // 找出所有选中节点或父节点状态为`isSomeSelected`, 即该节点存在选中的子孙节点
                             var selectedChildren = getSelectedNodesUnder(child, control);
                             if (selectedChildren.length) {
                                 child.children = selectedChildren;
@@ -735,6 +763,10 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          */
         function trySyncChildrenStates(control, item, toBeSelected) {
+            // 如果当前节点确定选中或者未选中状态
+            // 就不可能处于半选状态了
+            control.setItemState(item.node.id, 'isSomeSelected', false);
+
             var indexData = control.indexData;
             var node = item.node;
             // 如果选的是父节点，子节点也要连带选上
@@ -766,6 +798,20 @@ define(
                         return !control.getItemState(brother.id, 'isSelected');
                     }
                 );
+                // 如果子节点部分选中，则标记父节点`isSomeSelected`为true
+                var someSelected = u.some(
+                    brothers,
+                    function (brother) {
+                        return control.getItemState(brother.id, 'isSelected')
+                            || control.getItemState(brother.id, 'isSomeSelected');
+                    }
+                );
+                if (!allSelected && someSelected) {
+                    control.setItemState(parentId, 'isSomeSelected', true);
+                }
+                else {
+                    control.setItemState(parentId, 'isSomeSelected', false);
+                }
                 selectItem(control, parentId, allSelected);
                 trySyncParentStates(control, parentItem, allSelected);
             }
@@ -814,7 +860,8 @@ define(
             return u.filter(
                 children,
                 function (node) {
-                    return this.getItemState(node.id, 'isSelected');
+                    return this.getItemState(node.id, 'isSelected')
+                        || this.getItemState(node.id, 'isSomeSelected');
                 },
                 control
             );
@@ -916,6 +963,16 @@ define(
          */
         function getTopId(control) {
             return control.datasource.id;
+        }
+
+        function toggleTreeState(selector, disabled) {
+            var queryList = selector.getQueryList();
+            var tree = queryList.getChild('tree');
+
+            if (!tree) {
+                return;
+            }
+            disabled ? tree.disable() : tree.enable();
         }
 
         esui.register(TreeRichSelector);

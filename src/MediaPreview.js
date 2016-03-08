@@ -80,7 +80,13 @@ define(function (require) {
                      * 3.flv: 带有'flv'后缀名的视频文件
                      * 4.video: 带有'mp4|mov|mkv|mpg|avi|rmvb|rm|ogg|wmv|mp3|wma|mid'后缀名的文件
                      */
-                    sourceType: ''
+                    sourceType: '',
+                    /**
+                     * @property {String} [swfPath='']
+                     *
+                     * 要使用的视频播放器路径
+                     */
+                    swfPath: ''
                 };
 
                 u.extend(properties, MediaPreview.defaultProperties, options);
@@ -217,7 +223,8 @@ define(function (require) {
             width: width,
             height: height,
             url: this.sourceURL,
-            type: this.sourceType
+            type: this.sourceType,
+            swfPath: this.swfPath
         });
 
         // 如果previewHelper中无法将其渲染出来,这里要显示一个错误的模版

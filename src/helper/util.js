@@ -16,6 +16,8 @@ define(
          */
         var util = {};
 
+        var u = require('underscore');
+
         /**
          * 比较两个字符串
          * stringA 是否等于 stringB

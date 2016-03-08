@@ -11,7 +11,6 @@ define(
         var lib = require('esui/lib');
         var u = require('underscore');
 
-        var util = require('./util');
         var TableRichSelector = require('./TableRichSelector');
 
 
@@ -113,7 +112,7 @@ define(
          * @override
          */
         exports.adaptData = function () {
-            var allData = util.deepClone(this.datasource.results);
+            var allData = lib.deepClone(this.datasource.results);
             // 先构建indexData
             var indexData = u.reduce(
                 allData,

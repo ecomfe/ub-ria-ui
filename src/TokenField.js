@@ -80,7 +80,12 @@ define(
                          *
                          * @type {bool}
                         */
-                        allowRepeat: false
+                        allowRepeat: false,
+
+                        /**
+                         * 默认空数组
+                         */
+                        rawValue: []
                     };
                     u.extend(properties, options);
 
@@ -103,17 +108,16 @@ define(
                     }
 
                     var html = [
-                        '<input type="text" name="${inputName}" autocomplete="off"',
+                        '<input type="text" autocomplete="off"',
                         ' class="${inputClasses}"',
                         ' data-ui-type="TextBox"',
                         ' data-ui-width="${width}"',
-                        ' data-ui-id="${inputId}" />'
+                        ' data-ui-id="${inputId}">'
                     ].join('');
 
                     this.main.innerHTML = lib.format(
                         html,
                         {
-                            inputName: this.name,
                             inputId: this.helper.getId('input'),
                             inputClasses: this.helper.getPartClasses('input'),
                             width: this.inputWidth
@@ -268,7 +272,7 @@ define(
                         deleteIndex = $(this.main).find('.' + itemClass).index(target);
                     }
 
-                    if (deleteIndex > 0) {
+                    if (deleteIndex >= 0) {
                         var removedValue = rawValue.splice(deleteIndex, 1);
                         this.fire('removetoken', {token: removedValue[0]});
                         this.setProperties({rawValue: rawValue});
@@ -305,30 +309,6 @@ define(
 
 
                 /**
-                 * 对tokens进行预处理
-                 *
-                 * @param {Array=} rawValue 要设置的token数组
-                 */
-                renderTokens: function (rawValue) {
-                    if (u.isArray(this.rawValue)) {
-                        // 因为renderTokens是对rawValue进行全量渲染，所以这里要全部清空
-                        this.clearAllTokens();
-                        // 合法性校验
-                        this.rawValue = u.filter(this.rawValue, isTokenValid, this);
-                        // 重复检测，分为两个场景
-                        // 1. 根据初始rawValue值生成tokens，仅去重；
-                        // 2. 在用户输入值时，如果与已存在列表重复，需提示用户，
-                        //  派发事件等，则在用户输入时进行处理;
-                        // 因此，这里仅对this.rawValue进行重复过滤
-                        if (!this.allowRepeat) {
-                            this.rawValue = u.uniq(this.rawValue);
-                        }
-                        // 根据rawValue值进行全量更新
-                        u.each(this.rawValue, renderToken, this);
-                    }
-                },
-
-                /**
                  * 重绘
                  *
                  * @protected
@@ -352,7 +332,7 @@ define(
                     {
                         name: ['rawValue'],
                         paint: function (textbox, rawValue) {
-                            textbox.renderTokens(rawValue);
+                            renderTokens.call(textbox, rawValue);
                         }
                     }
                 ),
@@ -404,11 +384,6 @@ define(
                 return false;
             }
 
-            // token数量要小于最大限制
-            if (this.limit && this.getRawValue().length >= this.limit) {
-                return false;
-            }
-
             return true;
         }
 
@@ -425,7 +400,7 @@ define(
                     var itemClass = this.helper.getPartClassName('item');
                     return {
                         index: repeatIndex,
-                        element: $(this.main).find('.' + itemClass + ' :eq(' + repeatIndex + ')'),
+                        element: $(this.main).find('.' + itemClass).get(repeatIndex),
                         token: this.rawValue[repeatIndex]
                     };
                 }
@@ -485,6 +460,40 @@ define(
         }
 
         /**
+         * 对tokens进行预处理
+         *
+         * @param {Array=} rawValue 要设置的token数组
+         */
+        function renderTokens(rawValue) {
+            if (u.isArray(this.rawValue)) {
+                // 因为renderTokens是对rawValue进行全量渲染，所以这里要全部清空
+                this.clearAllTokens();
+                // 合法性校验
+                this.rawValue = u.filter(this.rawValue, isTokenValid, this);
+
+                // token数量要小于最大限制
+                this.rawValue = u.filter(
+                    this.rawValue,
+                    function (item, index) {
+                        return index < this.limit
+                    },
+                    this
+                );
+
+                // 重复检测，分为两个场景
+                // 1. 根据初始rawValue值生成tokens，仅去重；
+                // 2. 在用户输入值时，如果与已存在列表重复，需提示用户，
+                //  派发事件等，则在用户输入时进行处理;
+                // 因此，这里仅对this.rawValue进行重复过滤
+                if (!this.allowRepeat) {
+                    this.rawValue = u.uniq(this.rawValue);
+                }
+                // 根据rawValue值进行全量更新
+                u.each(this.rawValue, renderToken, this);
+            }
+        }
+
+        /**
          * 根据input输入创建tokens列表
          */
         function createTokensFromInput() {
@@ -499,6 +508,10 @@ define(
                 return;
             }
             // 这里要保证setProperties时rawValue前后值不同，这里复制一份
+            if (!this.rawValue) {
+                // 第一次没有设置的时候设置一个空值进来
+                this.rawValue = [];
+            }
             var rawValue = this.rawValue.slice(0);
             rawValue.push(inputValue);
             this.setProperties({rawValue: rawValue});

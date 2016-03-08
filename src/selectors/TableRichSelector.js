@@ -114,11 +114,18 @@ define(
                  * @override
                  */
                 adaptData: function () {
+                    // 适配id/value的值
+                    u.each(
+                        this.datasource,
+                        function (item) {
+                            item.id = item.id || item.value;
+                        }
+                    );
                     this.allData = lib.deepClone(this.datasource);
                     // 先构建indexData，把数据源里的选择状态清除
                     var indexData = {};
                     u.each(this.allData, function (item, index) {
-                        indexData[item.id] = {index: index, isSelected: false};
+                        indexData[item.id] = {index: index, isSelected: item.isSelected};
                     });
 
                     // 把选择状态merge进indexData的数据项中
@@ -132,21 +139,23 @@ define(
                         }
                         // 如果是数组，保存第一个值为当前选值
                         else if (selectedData.length) {
-                            this.currentSelectedId = selectedData[0].id;
+                            this.currentSelectedId = selectedData[0].id || selectedData[0];
                         }
                     }
 
                     u.each(selectedData, function (item, index) {
+                        var id = item.id !== undefined ? item.id : item;
                         // 有可能出现已选的数据在备选中已经被删除的情况
-                        if (indexData[item.id] !== undefined) {
-                            indexData[item.id].isSelected = true;
+                        if (indexData[id] !== undefined) {
+                            indexData[id].isSelected = true;
                         }
                     });
 
                     var disabledData = this.disabledData || [];
                     u.each(disabledData, function (item, index) {
-                        if (indexData[item.id] !== undefined) {
-                            indexData[item.id].isDisabled = true;
+                        var id = item.id !== undefined ? item.id : item;
+                        if (indexData[id] !== undefined) {
+                            indexData[id].isDisabled = true;
                         }
                     });
 

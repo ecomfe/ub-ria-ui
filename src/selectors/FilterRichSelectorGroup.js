@@ -69,7 +69,7 @@ define(
             );
 
             // 绑事件
-            this.filter.on(
+            this.filter && this.filter.on(
                 'load',
                 function (e) {
                     var event = this.fire('load', {item: e.item});
@@ -91,7 +91,7 @@ define(
                 this
             );
 
-            this.source.on(
+            this.source && this.source.on(
                 'add',
                 function (e) {
                     var items = e.target.getSelectedItems();
@@ -109,7 +109,7 @@ define(
                         // 情景1
                         if (this.target) {
                             // 获取原始的已选值
-                            newSelecteItems = u.deepClone(this.getRawValue()) || [];
+                            newSelecteItems = u.clone(this.getRawValue()) || [];
                             // 单选
                             if (e.item) {
                                 // 添加
