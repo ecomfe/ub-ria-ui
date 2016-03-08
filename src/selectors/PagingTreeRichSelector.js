@@ -403,7 +403,7 @@ define(
 
                 // 如果以前选中了一个，要取消选择
                 // 节点的状态切换Tree控件会完成，因此无需这里手动unselect
-                if (this.currentSeletedId) {
+                if (this.currentSeletedId != null) {
                     this.setItemState(this.currentSeletedId, 'isSelected', false);
                 }
                 // 赋予新值
