@@ -143,9 +143,9 @@ define(
                      *
                      * 宽度
                      */
-                    painters.style('height'),
+                    painters.style('width'),
                     /**
-                     * @property {number} width
+                     * @property {number} height
                      *
                      * 宽度
                      */
