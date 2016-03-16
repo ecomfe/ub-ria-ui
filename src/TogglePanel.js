@@ -147,7 +147,7 @@ define(
                     /**
                      * @property {number} height
                      *
-                     * 宽度
+                     * 高度
                      */
                     painters.style('height')
                 ),
