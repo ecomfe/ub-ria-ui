@@ -113,6 +113,10 @@ define(function (require) {
                         me.showNextMedia();
                     }
                 );
+                this.dialog.on('close', function () {
+                    $(this.mediaContainer()).html('');
+                }, this);
+
 
                 if (this.group) {
                     var container = this.groupContainerId ? lib.g(this.groupContainerId) : document.body;
