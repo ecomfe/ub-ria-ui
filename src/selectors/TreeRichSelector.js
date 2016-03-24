@@ -109,11 +109,23 @@ define(
                         name: 'selectedData',
                         paint: function (control, selectedData) {
                             // 如果没有传selectedData，就别取消了。
-                            if (selectedData == null) {
+                            if (u.isEmpty(selectedData)) {
                                 return;
                             }
+
                             // 先取消选择
                             var allData = control.allData;
+
+                            // 因为取值也不会取根节点，赋值如果等于根节点
+                            // 避免所有子孙都被选中，这里无视
+                            if (allData && selectedData.length === 1) {
+                                var selectedItem = selectedData[0];
+                                selectedItem = selectedItem.id || selectedItem.value || selectedItem;
+                                if (selectedItem === allData.id) {
+                                    return;
+                                }
+                            }
+
                             if (allData && allData.children) {
                                 var oldSelectedData = control.getSelectedItems();
                                 control.selectItems(oldSelectedData, false);
@@ -162,11 +174,13 @@ define(
                     // 一个扁平化的索引
                     // 其中包含父节点信息，以及节点选择状态
                     var indexData = {};
-                    if (this.allData && this.allData.children) {
+                    var allData = this.allData;
+                    if (allData && allData.children) {
                         this.walkTree(
-                            this.allData,
-                            this.allData.children,
+                            allData,
+                            allData.children,
                             function (parent, child) {
+                                parent.id = parent.id || parent.value;
                                 child.id = child.id || child.value;
                                 indexData[child.id] = {
                                     parentId: parent.id,
@@ -181,6 +195,12 @@ define(
                                 }
                             }
                         );
+                        // 把根节点也加上
+                        indexData[allData.id] = {
+                            parentId: null,
+                            node: allData,
+                            isSelected: false
+                        };
                     }
                     this.indexData = indexData;
 
@@ -345,7 +365,7 @@ define(
                     if (!this.multi) {
                         // 如果以前选中了一个，要取消选择
                         // 节点的状态切换Tree控件会完成，因此无需这里手动unselect
-                        if (this.currentSeletedId) {
+                        if (this.currentSeletedId != null) {
                             this.setItemState(this.currentSeletedId, 'isSelected', !toBeSelected);
                         }
                         // 赋予新值
@@ -743,6 +763,10 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          */
         function trySyncChildrenStates(control, item, toBeSelected) {
+            // 如果当前节点确定选中或者未选中状态
+            // 就不可能处于半选状态了
+            control.setItemState(item.node.id, 'isSomeSelected', false);
+
             var indexData = control.indexData;
             var node = item.node;
             // 如果选的是父节点，子节点也要连带选上

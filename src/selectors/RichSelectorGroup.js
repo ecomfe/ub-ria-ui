@@ -14,26 +14,26 @@ define(
         var esui = require('esui');
         var painters = require('esui/painters');
 
-        function traverseTree(tree, getter) {
+        function traverseList(tree, getter) {
             var children = u.map(
                 tree,
                 function (node) {
-                    return traverseTreeWithRoot(node, getter);
+                    return traverseTree(node, getter);
                 }
             );
 
             return children;
         }
 
-        function traverseTreeWithRoot(tree, getter) {
+        function traverseTree(tree, getter) {
             if (u.isArray(tree)) {
-                tree = traverseTree(tree, getter);
+                tree = traverseList(tree, getter);
             }
             else if (u.isObject(tree) && tree) {
                 tree = getter(tree);
 
-                if (tree.children) {
-                    tree.children = traverseTree(tree.children, getter);
+                if (tree && tree.children) {
+                    tree.children = traverseList(tree.children, getter);
                 }
             }
 
@@ -90,6 +90,19 @@ define(
                 /**
                  * @override
                  */
+                initOptions: function (options) {
+                    var properties = {
+                        // 取值时，如果父节点选中，是否向下展开取子孙节点的值
+                        isValueExpand: true
+                    };
+
+                    u.extend(properties, options);
+                    this.$super([properties]);
+                },
+
+                /**
+                 * @override
+                 */
                 initStructure: function () {
                     this.helper.initChildren();
                 },
@@ -109,20 +122,7 @@ define(
                     source && source.on(
                         'add',
                         function (e) {
-                            var newdata = e.target.getSelectedItemsFullStructure();
-                            // 把所有节点的isSelected置false后传给另一个控件
-                            newdata = traverseTreeWithRoot(
-                                newdata,
-                                function (node) {
-                                    var newNode = u.clone(node);
-                                    newNode.isSelected = false;
-
-                                    return newNode;
-                                }
-                            );
-                            target && target.setProperties({datasource: newdata});
-                            this.fire('add');
-                            this.fire('change');
+                            syncLeftRight.call(this);
                         },
                         this
                     );
@@ -146,8 +146,12 @@ define(
                     {
                         name: 'rawValue',
                         paint: function (me, rawValue) {
-                            if (rawValue) {
-                                me.getRealTargetSelector().setProperties({datasource: rawValue});
+                            if (!u.isEmpty(rawValue)) {
+                                var source = me.getChild('source');
+                                var target = me.getChild('target');
+                                // 先设置左边，再同步右边
+                                source.setProperties({selectedData: rawValue});
+                                syncLeftRight.call(me);
                             }
                         }
                     },
@@ -178,7 +182,49 @@ define(
                 },
 
                 getRawValue: function () {
-                    return this.getRealTargetSelector().getRawValue();
+                    var rawValue = [];
+                    var source = this.getChild('source');
+
+                    // 如果是树控件，要根据this.isValueExpand来取值
+                    if (/^Tree/.test(source.type) && u.isFunction(source.getSelectedTree)) {
+                        var selectedTree = source.getSelectedTree();
+                        var me = this;
+                        traverseTree(
+                            selectedTree,
+                            function (node) {
+                                var isSelected = source.getItemState(node.id, 'isSelected');
+                                var isSomeSelected = source.getItemState(node.id, 'isSomeSelected');
+                                // 节点选中或者有子节点选中，否则没必要搞下去了
+                                if (isSelected || isSomeSelected) {
+                                    // 判断是否要展开处理
+                                    var isValueExpand = me.isValueExpand;
+                                    if (u.isFunction(isValueExpand)) {
+                                        isValueExpand = isValueExpand(node);
+                                    }
+                                    // 如果当前节点非叶节点，且允许展开或部分选中
+                                    // 则返回该节点继续递归
+                                    if ((isValueExpand || isSomeSelected) && !u.isEmpty(node.children)) {
+                                        return node;
+                                    }
+                                    // 否则只需要取当前节点值
+                                    else if (isSelected) {
+                                        rawValue.push(u.omit(node, 'children'));
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    else {
+                        var target = this.getRealTargetSelector();
+                        rawValue = target.getRawValue();
+                    }
+
+                    return u.map(
+                        rawValue,
+                        function (item) {
+                            return item.id || item.value;
+                        }
+                    );
                 },
 
                 /**
@@ -195,6 +241,25 @@ define(
                 }
             }
         );
+
+        function syncLeftRight() {
+            var source = this.getChild('source');
+            var target = this.getChild('target');
+
+            var newdata = source.getSelectedItemsFullStructure();
+            // 把所有节点的isSelected置false后传给另一个控件
+            newdata = traverseTree(
+                newdata,
+                function (node) {
+                    var newNode = u.clone(node);
+                    newNode.isSelected = false;
+                    return newNode;
+                }
+            );
+            target && target.setProperties({datasource: newdata});
+            this.fire('add');
+            this.fire('change');
+        }
 
         esui.register(RichSelectorGroup);
         return RichSelectorGroup;

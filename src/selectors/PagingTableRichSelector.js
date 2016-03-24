@@ -303,11 +303,13 @@ define(
             var indexData = control.isQuery() ? control.queriedIndexData : control.indexData;
             var helper = control.helper;
 
+            var datasource = control.isQuery() ? control.queriedDatasource : control.datasource;
+
             var tpl = [];
             var baseRowClasses = helper.getPartClassName('row');
             var moreRowClasses = helper.getPartClassName('row-more');
 
-            if (control.datasource.moreFlag) {
+            if (datasource.moreFlag) {
                 var lastRowId = data[data.length - 1].id;
                 var moreArea = lib.format(
                     control.rowTpl,
