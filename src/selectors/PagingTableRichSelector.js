@@ -195,6 +195,10 @@ define(
             htmlArray.push(createTable(this, data));
 
             var queryList = this.getQueryList();
+            // selector内的点击选择操作不会触发panel的content的修改，因此content从第一次渲染后便不会变化
+            // 如果一次refresh是由selectedData变化触发，并且selectedData的值刚好跟第一次渲染时相同，
+            // 直接setContent无法不会触发panel的repaint，因此这里先将content设置为空字符串
+            queryList.setContent('');
             queryList.setContent(htmlArray.join(''));
         };
 
