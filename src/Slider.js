@@ -353,7 +353,10 @@ define(
         function getLeftTopByValue(value) {
             var widthHeight = this.widthHeight;
 
-            var tmpwidthHeight = this[widthHeight];
+            var bodyElement = this.bodyElement;
+            // 获取滑块容器的位置
+            var bodyPos = lib.getOffset(bodyElement);
+            var tmpwidthHeight = bodyPos[widthHeight];
             var start = this.start;
             var end = this.end;
 
