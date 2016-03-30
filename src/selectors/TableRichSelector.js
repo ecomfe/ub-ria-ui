@@ -289,6 +289,7 @@ define(
 
                 /**
                  * 点击行为分发器
+                 *
                  * @param {Event} e 事件对象
                  * @ignore
                  */
@@ -346,6 +347,7 @@ define(
                 /**
                  * 选择全部
                  * 如果当前处于搜索状态，那么只把搜索结果中未选择的选过去
+                 *
                  * @public
                  */
                 selectAll: function () {
@@ -393,7 +395,7 @@ define(
                 },
 
                 /**
-                 * 搜索含有关键字的结果，默认以name为目标搜索
+                 * 搜索含有关键字的结果，更新显示区域内容
                  *
                  * 可重写
                  *
@@ -403,6 +405,20 @@ define(
                 queryItem: function (filters) {
                     // 查找过滤 [{ keys: ['xxx', 'yyy'], value: 'xxx' }]
                     filters = filters || [];
+
+                    this.queriedData = this.findQueriedData(filters);
+
+                    this.afterQueryHandler();
+                },
+
+                /**
+                 * 搜索含有关键字的结果，默认以name为目标搜索
+                 *
+                 * @param {Array} filters 过滤参数
+                 * @return {Array.<Object>}
+                 * @protected
+                 */
+                findQueriedData: function (filters) {
                     // 判断数据的某个field是命中
                     function checkHitByFilterItem(field, expectValue, data) {
                         var hit = false;
@@ -448,14 +464,11 @@ define(
                         );
                     }
 
-                    this.queriedData = u.filter(
+                    return u.filter(
                         this.allData,
                         checkRowHit,
                         this
                     );
-
-                    this.afterQueryHandler();
-
                 },
 
                 afterQueryHandler: function () {
@@ -649,6 +662,7 @@ define(
 
         /**
          * 下面的方法专属delete型table
+         *
          * @param {Object} control table
          * @param {DOMElement} row 行DOM
          * @param {Object} item 要删除的item
