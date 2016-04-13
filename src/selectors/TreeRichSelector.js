@@ -360,7 +360,6 @@ define(
                     if (stateNode.isSelected && this.allowUnselectNode) {
                         toBeSelected = false;
                     }
-                    this.setItemState(item.node.id, 'isSelected', toBeSelected);
                     // 如果是单选，需要将其他的已选项置为未选
                     if (!this.multi) {
                         // 如果以前选中了一个，要取消选择
@@ -377,6 +376,9 @@ define(
                     else {
                         trySyncParentAndChildrenStates(this, item, toBeSelected);
                     }
+
+                    // 先修改currentSelectedId的选中状态，再设置选中节点的选中状态
+                    this.setItemState(item.node.id, 'isSelected', toBeSelected);
                     this.fire('add', {item: item.node});
                     this.fire('change');
                 },
