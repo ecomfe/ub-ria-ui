@@ -18,7 +18,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.0.1/src',
+            'location': '../dep/etpl/3.1.1/src',
             'main': 'main'
         },
         {
@@ -33,7 +33,8 @@ require.config({
         },
         {
             'name': 'eoo',
-            'location': '../dep/eoo/0.1.4/src'
+            'location': '../dep/eoo/0.1.4/src',
+            'main': 'main'
         },
         {
             'name': 'jquery',
@@ -57,6 +58,16 @@ require.config({
             'name': 'mini-event',
             'location': '../dep/mini-event/1.0.2/src',
             'main': 'main'
-        }
+        },
+        {
+            name: 'echarts',
+            location: '../../dep/echarts/2.2.7/src',
+            main: 'echarts'
+        },
+        {
+            name: 'zrender',
+            location: '../../dep/zrender/2.1.1/src',
+            main: 'zrender'
+        },
     ]
 });

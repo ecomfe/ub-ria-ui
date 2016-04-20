@@ -23,7 +23,9 @@
             "moment": "~2.7.0",
             "underscore": "~1.5.2",
             "jquery": "~1.x",
-            "mini-event": "~1.0.2"
+            "mini-event": "~1.0.2",
+            "echarts": "2.x",
+            "zrender": "2.x"
         }
     }
 }
