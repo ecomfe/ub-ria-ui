@@ -127,9 +127,9 @@ define(
                     var head = [
                         '<div data-ui="type:Panel;childName:head;"',
                         ' class="${headClass}">',
+                        '${actionLink}',
                         '<span class="${headTitleClass}" data-ui="type:Label;childName:title;title:;">',
                         '${title}</span>${totalCount}',
-                        '${actionLink}',
                         '</div>'
                     ].join('\n');
 

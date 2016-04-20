@@ -60,7 +60,7 @@ define(function (require) {
             var arr = [];
 
             for (var i in obj) {
-                if (obj.hasOwnProperty(i)) {
+                if (obj.hasOwnProperty(i) && obj[i]) {
                     arr.push([
                         '<param name="', i,
                         '" value="', objectToArguments(obj[i]), '" />'

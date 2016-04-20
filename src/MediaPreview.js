@@ -60,6 +60,18 @@ define(function (require) {
                      */
                     height: 500,
                     /**
+                     * @property {number} [width=0]
+                     *
+                     * 预览media要显示的宽度
+                     */
+                    mediaWidth: 0,
+                    /**
+                     * @property {number} [width=0]
+                     *
+                     * 预览media要显示的高度
+                     */
+                    mediaHeight: 0,
+                    /**
                      * @property {String} [toolRole='']
                      *
                      * 用以标注添加工具icon的属性,要以','分隔,并由role生成相应的class
@@ -137,11 +149,13 @@ define(function (require) {
                 /**
                  * @property {String} sourceURL
                  * @property {String} sourceType
+                 * @property {number} mediaWidth
+                 * @property {number} mediaHeight
                  *
                  * 资源的路径以及type
                  */
                 {
-                    name: ['sourceURL', 'sourceType'],
+                    name: ['sourceURL', 'sourceType', 'mediaWidth', 'mediaHeight'],
                     paint: function (mediaPreview, sourceURL, sourceType) {
                         initBody.call(mediaPreview);
                     }
@@ -213,8 +227,8 @@ define(function (require) {
     function initBody() {
         var errorTpl = '<p class="${errorClass}">' + this.errorHTML + '</p>';
 
-        var width = this.width;
-        var height = this.height;
+        var width = u.min([this.mediaWidth || this.width, this.width]);
+        var height = u.min([this.mediaHeight || this.height, this.height]);
         if (this.sourceType === 'image') {
             width = '100%';
             height = 'auto';

@@ -326,6 +326,10 @@ define(function (require) {
              */
             previewFlash: function (options) {
                 var html = previewHelper.preview(options);
+                if (!html) {
+                    this.previewNotSupported();
+                    return;
+                }
                 this.hideLoading();
                 this.mediaContainer().innerHTML = '';
                 this.mediaContainer().appendChild(html);
@@ -349,6 +353,10 @@ define(function (require) {
                 }
                 options.swfPath = this.swfPath;
                 html = previewHelper.preview(options);
+                if (!html) {
+                    this.previewNotSupported();
+                    return;
+                }
                 var $container = $(this.mediaContainer());
                 this.hideLoading();
                 $container.html('');
