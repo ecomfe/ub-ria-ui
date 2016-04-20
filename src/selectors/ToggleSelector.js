@@ -67,6 +67,8 @@ define(
                     $text.addClass(controlHelper.getPrefixClass('select-text'));
                     $mainElement.append($caret);
                     $contentLayer.insertAfter($mainElement);
+
+                    this.layer.autoCloseExcludeElements = [$mainElement[0]];
                 },
 
                 /**

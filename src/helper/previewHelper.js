@@ -160,13 +160,17 @@ define(function (require) {
      */
     function getVideoHtml(options) {
         var video = document.createElement('VIDEO');
+        var source = document.createElement('SOURCE');
         $(video).attr('id', options.id || 'preview-video');
-        $(video).attr('title', options.title);
-        $(video).attr('src', options.url);
+        $(video).attr('title', (options.title || '') + '(提示：浏览器只支持H.264编码格式的MP4)');
         $(video).attr('autoplay', 'autoplay');
         $(video).attr('loop', 'loop');
+        $(video).attr('controls', 'controls');
         $(video).attr('width', options.width);
         $(video).attr('height', options.height);
+        $(source).attr('src', options.url);
+        $(source).attr('type', 'video/mp4');
+        $(video).append(source);
 
         return video;
     }
