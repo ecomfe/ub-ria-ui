@@ -23,7 +23,10 @@ function genNavigator() {
         + '<li><a href="TokenField.html">TokenField</a></li>'
         + '<li><a href="BarChart.html">BarChart</a></li>'
         + '<li><a href="LineChart.html">LineChart</a></li>'
-        + '<li><a href="RegionChart.html">RegionChart</a></li>';
+        + '<li><a href="RegionChart.html">RegionChart</a></li>'
+        + '<li><a href="CheckboxGroup.html">CheckboxGroup</a></li>'
+        + '<li><a href="CustomField.html">CustomField</a></li>'
+        + '<li><a href="Drawer.html">Drawer</a></li>';
 
     var navigator = document.getElementById('navigator');
     navigator.innerHTML = navItems;
