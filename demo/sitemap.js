@@ -20,7 +20,10 @@ function genNavigator() {
         + '<li><a href="Sticky.html">Sticky</a></li>'
         + '<li><a href="TogglePanel.html">TogglePanel</a></li>'
         + '<li><a href="ToggleSelectors.html">ToggleSelectors</a></li>'
-        + '<li><a href="TokenField.html">TokenField</a></li>';
+        + '<li><a href="TokenField.html">TokenField</a></li>'
+        + '<li><a href="BarChart.html">BarChart</a></li>'
+        + '<li><a href="LineChart.html">LineChart</a></li>'
+        + '<li><a href="RegionChart.html">RegionChart</a></li>';
 
     var navigator = document.getElementById('navigator');
     navigator.innerHTML = navItems;
