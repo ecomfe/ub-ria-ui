@@ -58,6 +58,16 @@ require.config({
         {
             'name': 'unit',
             'location': 'test/unit'
+        },
+        {
+            'name': 'echarts',
+            'location': '../dep/echarts/2.2.7/src',
+            'main': 'echarts'
+        },
+        {
+            'name': 'zrender',
+            'location': '../dep/zrender/2.1.1/src',
+            'main': 'zrender'
         }
     ],
     'paths': { 'jquery-simulate': 'test/third-party/jquery.simulate' },
