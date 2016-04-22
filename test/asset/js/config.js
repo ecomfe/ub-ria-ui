@@ -29,13 +29,12 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.1.1/src',
+            'location': '../dep/etpl/3.0.1/src',
             'main': 'main'
         },
         {
             'name': 'eoo',
-            'location': '../dep/eoo/0.1.4/src',
-            'main': 'main'
+            'location': '../dep/eoo/0.1.4/src'
         },
         {
             'name': 'jquery',
