@@ -9,6 +9,7 @@ function genNavigator() {
         + '<li><a href="AutoComplete.html">AutoComplete</a></li>'
         + '<li><a href="Carousel.html">Carousel</a></li>'
         + '<li><a href="ColorPicker.html">ColorPicker</a></li>'
+        + '<li><a href="ControlRepeater.html">ControlRepeater</a></li>'
         + '<li><a href="CopyButton.html">CopyButton</a></li>'
         + '<li><a href="Filter.html">Filter</a></li>'
         + '<li><a href="LightBox.html">LightBox</a></li>'
@@ -20,7 +21,8 @@ function genNavigator() {
         + '<li><a href="Sticky.html">Sticky</a></li>'
         + '<li><a href="TogglePanel.html">TogglePanel</a></li>'
         + '<li><a href="ToggleSelectors.html">ToggleSelectors</a></li>'
-        + '<li><a href="TokenField.html">TokenField</a></li>';
+        + '<li><a href="TokenField.html">TokenField</a></li>'
+        + '<li><a href="Uploader.html">Uploader</a></li>';
 
     var navigator = document.getElementById('navigator');
     navigator.innerHTML = navItems;
