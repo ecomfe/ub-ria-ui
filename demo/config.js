@@ -60,14 +60,14 @@ require.config({
             'main': 'main'
         },
         {
-            name: 'echarts',
-            location: '../../dep/echarts/2.2.7/src',
-            main: 'echarts'
+            'name': 'echarts',
+            'location': '../dep/echarts/2.2.7/src',
+            'main': 'echarts'
         },
         {
-            name: 'zrender',
-            location: '../../dep/zrender/2.1.1/src',
-            main: 'zrender'
-        },
+            'name': 'zrender',
+            'location': '../dep/zrender/2.1.1/src',
+            'main': 'zrender'
+        }
     ]
 });
