@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        require('esui/behavior/position');
+        require('esui/behavior/jquery-ui');
 
         var u = require('underscore');
         var eoo = require('eoo');

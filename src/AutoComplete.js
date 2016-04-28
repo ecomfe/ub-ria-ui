@@ -16,7 +16,7 @@ define(
         var eoo = require('eoo');
         var CursorPositionHelper = require('./helper/CursorPositionHelper');
         var keyboard = require('esui/behavior/keyboard');
-        require('esui/behavior/position');
+        require('esui/behavior/jquery-ui');
 
         var TEXT_LINE = 'TextLine';
         var TEXT_BOX = 'TextBox';

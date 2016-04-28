@@ -20,7 +20,7 @@ define(
         require('esui/TextBox');
         require('esui/Label');
 
-        require('esui/behavior/Mouse');
+        require('esui/behavior/mouseproxy');
 
         /**
          * 高级版拾色器
@@ -88,7 +88,7 @@ define(
                     var me = this;
                     // 画布点击
                     var canvas = this.helper.getPart('canvas');
-                    $(canvas).mouse(
+                    $(canvas).mouseproxy(
                         {
                             start: function (event) {
                                 syncValueByCanvas.call(me, event);
@@ -102,7 +102,7 @@ define(
                     // 色相改变
                     var hueSlider = this.helper.getPart('hue');
 
-                    $(hueSlider).mouse(
+                    $(hueSlider).mouseproxy(
                         {
                             start: function (event) {
                                 syncValueByHue.call(me, event);
@@ -138,7 +138,7 @@ define(
 
                     // Alpha滑动器改变
                     var alphaSlider = this.helper.getPart('alpha');
-                    $(alphaSlider).mouse(
+                    $(alphaSlider).mouseproxy(
                         {
                             start: function (event) {
                                 syncValueByAlpha.call(me, event);
