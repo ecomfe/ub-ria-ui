@@ -26,7 +26,7 @@
             <p>默认的Uploader: 简单模式</p>
             <div class="example">
                 <h3>
-                    待完成的Uploader
+                    由于本地mock，所以demo可能会有些问题。
                 </h3>
                 <div class="row">
                     <div data-ui="type:Uploader;multiple:true;id:uploader;progressContainer:iconUploaderContainerId;action:./uploadFile;"></div>
@@ -58,7 +58,7 @@
             var Uploader = controls[0];
             var previewer = ui.get('previewer');
             Uploader.on(
-                'complete',
+                'onecomplete',
                 function (e) {
                     previewer.addItems([{
                         src: 'http://pic.58pic.com/58pic/11/19/56/80d58PICzng.jpg',
