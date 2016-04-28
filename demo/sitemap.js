@@ -26,7 +26,13 @@ function genNavigator() {
         + '<li><a href="RegionChart.html">RegionChart</a></li>'
         + '<li><a href="CheckboxGroup.html">CheckboxGroup</a></li>'
         + '<li><a href="CustomField.html">CustomField</a></li>'
-        + '<li><a href="Drawer.html">Drawer</a></li>';
+        + '<li><a href="Drawer.html">Drawer</a></li>'
+        + '<li><a href="InlineEdit.html">InlineEdit</a></li>'
+        + '<li><a href="MultiSelect.html">MultiSelect</a></li>'
+        + '<li><a href="Radio.html">Radio</a></li>'
+        + '<li><a href="SidebarNav.html">SidebarNav</a></li>'
+        + '<li><a href="ImageList.html">ImageList</a></li>'
+        + '<li><a href="ImagePanel.html">ImagePanel</a></li>';
 
     var navigator = document.getElementById('navigator');
     navigator.innerHTML = navItems;
