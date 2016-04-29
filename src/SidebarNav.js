@@ -15,7 +15,7 @@ define(
         var etpl = require('etpl');
         var $ = require('jquery');
         var eoo = require('eoo');
-        // var tplHtml = require('html!./tpl/sidebarNav.tpl.html');
+        var listTemplate = require('esui/tplLoader!./tpl/sidebarNav.tpl.html');
         var painters = require('esui/painters');
 
         var SidebarNav = eoo.create(
