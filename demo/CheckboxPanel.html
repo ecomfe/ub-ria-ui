@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8" />
+        <title>CheckboxPanel - Demo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.css"/>
+        <link rel="stylesheet" href="assets/themes/standard.css" />
+        <!--[if lt IE 9]>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/ie8.css"/>
+        <![endif]-->
+    </head>
+<body>
+    <div class="header">
+        <h1 id="branding">Checkbox Toggle Panel</h1>
+    </div>
+    <div class="ui-g main-container">
+        <div id="side-bar" class="ui-u-1-5">
+            <ul id="navigator" class="ui-nav">
+            </ul>
+        </div>
+        <div id="main" class="ui-u-4-5">
+            <h2>皮肤</h2>
+            <div class="example" id="container">
+                <h3>默认展开</h3>
+                <div class="row">
+                    <div
+                        data-ui-type="CheckboxPanel"
+                        data-ui-name="test"
+                        data-ui-variants="angle"
+                        data-ui-expanded="true"
+                    >
+                        <div class="ui-checkbox-custom">
+                            <input class="ui-boxgroup-custom" id="checkboxPanel1" type="checkbox" value="1" />
+                            <label for="checkboxPanel1">点击展开</label>
+                        </div>
+                        <div>
+                            展开区域内容
+                        </div>
+                    </div>
+                </div>
+
+                <h3>disabled状态管理</h3>
+                <div class="row">
+                    <p>控件的disabled状态切换同时，panel内的控件联动切换,但是在恢复时要考虑控件初始状态</p>
+                    <p><button type="button" data-ui-id="toggle" data-ui-type="Button">disabled / enabled</button></p>
+                    <div
+                        data-ui-type="CheckboxPanel"
+                        data-ui-name="default_close"
+                        data-ui-variants="angle"
+                        data-ui-expanded="true"
+                        data-ui-disabled="true"
+                    >
+                        <div class="ui-checkbox-custom">
+                            <input class="ui-boxgroup-custom" id="checkboxPanel" type="checkbox" value="0" />
+                            <label for="checkboxPanel">点击展开呀</label>
+                        </div>
+                        <div>
+                            <esui-region data-ui-id="xx"></esui-region>
+                            <esui-region data-ui-id="yy" data-ui-disabled="true"></esui-region>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../../dep/esui/3.2.0-beta.2/demo/assets/loader/esl.js"></script>
+    <script src="config.js"></script>
+    <script src="../../../dep/esui/3.2.0-beta.2/demo/demo.js"></script>
+    <script src="../../../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.js"></script>
+    <script id="main-js">
+    require(
+        [
+            'esui',
+            'CheckboxPanel',
+            'esui/Region',
+            'esui/Button',
+            'demo'
+        ],
+        function (ui) {
+            var controls = ui.init(document.body);
+            var checkboxPanel = controls[2];
+            var button = controls[1];
+            button.on(
+                'click',
+                function () {
+                    var disabled = checkboxPanel.isDisabled();
+                    checkboxPanel.setProperties({disabled: !disabled})
+                }
+            );
+            
+
+        }
+    );
+    </script>
+    <script src="sitemap.js"></script>
+</body>
+</html>
