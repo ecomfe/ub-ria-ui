@@ -1,6 +1,5 @@
 /**
- * ESUI (Enterprise Simple UI)
- * Copyright 2015 Baidu Inc. All rights reserved.
+ * UB-RIA-UI 1.0
  *
  * @ignore
  * @file 二级checkbox
