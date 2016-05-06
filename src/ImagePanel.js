@@ -9,68 +9,12 @@
 
 define(
     function (require) {
-        // 模板
-        var imagePanelTpl = ''
-            + '<!-- if: ${datasource.length} === 0 -->'
-            + '<div class="${classPrefix}-image-noneTip">${noneTip}<\/div>'
-            + '<!-- else -->'
-            + ''
-            + '<!-- for: ${datasource} as ${image}, ${index} -->'
-            + '<!-- if: ${index} % ${column} === 0 -->'
-            + '<div class="${classPrefix}-image-row">'
-            + '<!-- \/if -->'
-            + ''
-            + '    <div class="${classPrefix}-image-item" data="${image.imageId}" style="width:${imageWidth}px;">'
-            + ''
-            + '    <!-- if: ${imageId} == ${image.imageId} -->'
-            + '        <div class="${classPrefix}-image-wrapper ${classPrefix}-selected">'
-            + '        <!-- else -->'
-            + '        <div class="${classPrefix}-image-wrapper">'
-            + '        <!-- \/if -->'
-            + ''
-            + '            <!-- if: ${image.imageType} !== "flash" -->'
-            + '            <img class="${classPrefix}-image" src="${image.imageUrl}" alt="" data="${image.imageId}"'
-            + ' data-type="${image.imageType}">'
-            + '            <!-- else -->'
-            + '            <embed class="${classPrefix}-image" name="${image.flashName}" errormessage="${image.erro'
-            + 'rMessage}" wmode="transparent" ver="9.0.0" align="middle" valign="middle" movie="${image.imageUrl}" '
-            + 'src="${image.imageUrl}" data="${image.imageId}" data-type="${image.imageType}">'
-            + '            <!-- \/if -->'
-            + ''
-            + '            <div class="${classPrefix}-image-operates">'
-            + '                <!-- if: !${image.noOperate} && ${operates.length} -->'
-            + '                <!-- for: ${operates} as ${operate} -->'
-            + '                <span data-name="${operate.name}" title="${operate.title || operate.name}" class="${'
-            + 'classPrefix}-image-operate ${iconPrefix}-${operate.name}"><\/span>'
-            + '                <!-- \/for -->'
-            + '                <!-- \/if -->'
-            + '            <\/div>'
-            + ''
-            + '            <!-- if: ${canSelect} -->'
-            + '            <span class="${classPrefix}-image-check ${iconPrefix}-check"><\/span>'
-            + '            <!-- \/if -->'
-            + ''
-            + '        <\/div>'
-            + ''
-            + '        <!-- if: ${needDesc} -->'
-            + '        <div class="${classPrefix}-caption-wrapper">'
-            + '            ${imageCaptionTpl}'
-            + '        <\/div>'
-            + '        <!-- \/if -->'
-            + '    <\/div>'
-            + ''
-            + '<!-- if: ${index} % ${column} === ${column}-1 || ${index} === ${datasource.length}-1 -->'
-            + '<\/div>'
-            + '<!-- \/if -->'
-            + '<!-- \/for -->'
-            + ''
-            + '<!-- \/if -->';
+        require('esui/tplLoader!./tpl/ImagePanel.tpl.html');
 
         var u = require('underscore');
         var $ = require('jquery');
         var esui = require('esui');
         var eoo = require('eoo');
-        var etpl = require('etpl');
         var painters = require('esui/painters');
         var InputControl = require('esui/InputControl');
 
@@ -102,8 +46,7 @@ define(
                         column: 5,                                      // 每行image数
                         datasource: [],                                 // 数据源
                         imageId: 0,                                      // 默认选中的图标ID
-                        noneTip: '抱歉，暂时还没有符合条件的图标',      // 没有数据时显示的tip
-                        itemCaptionTpl: null                            // 自定义描述，可以为"#"开头的id，或模板string
+                        noneTip: '抱歉，暂时还没有符合条件的图标'      // 没有数据时显示的tip
                     };
 
                     u.extend(properties, options);
@@ -160,31 +103,6 @@ define(
         );
 
         /**
-         * 编译自定义描述模板
-         *
-         * @return {string} html
-         */
-        function getCaptionTpl() {
-            var html = '';
-            var desc = this.itemCaptionTpl;
-            if (desc) {
-                if (desc.charAt(0) === '#') {
-                    html += $(desc).html();
-                }
-                else {
-                    html += desc;
-                }
-            }
-            else {
-                html += ''
-                    + '<!-- for: ${image.desc} as ${desc} -->'
-                    + '    <p>${desc}<\/p>'
-                    + '<!-- \/for -->';
-            }
-            return html;
-        }
-
-        /**
          * 刷新图标列表
          */
         function refresh() {
@@ -203,12 +121,7 @@ define(
             data.iconPrefix = this.helper.getIconClass();
             data.classPrefix = this.helper.getPrimaryClassName();
 
-            if (!this.imagePanelRender) {
-                var tpl = imagePanelTpl.replace('${imageCaptionTpl}', getCaptionTpl.call(this));
-                this.imagePanelRender = etpl.compile(tpl);
-            }
-
-            this.main.innerHTML = this.imagePanelRender(data);
+            this.main.innerHTML = this.helper.renderTemplate('ImagePanel', data);
         }
 
         /**

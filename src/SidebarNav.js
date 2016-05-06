@@ -8,14 +8,13 @@
 
 define(
     function (require) {
+        require('esui/tplLoader!./tpl/SidebarNav.tpl.html');
+
         var u = require('underscore');
-        var lib = require('esui/lib');
         var esui = require('esui');
         var Control = require('esui/Control');
-        var etpl = require('etpl');
         var $ = require('jquery');
         var eoo = require('eoo');
-        var listTemplate = require('esui/tplLoader!./tpl/sidebarNav.tpl.html');
         var painters = require('esui/painters');
 
         var SidebarNav = eoo.create(
@@ -32,14 +31,12 @@ define(
                     };
                     u.extend(properties, options);
                     this.setProperties(properties);
-                    this.complier = etpl.compile(listTemplate);
                 },
 
                 initEvents: function () {
                     var me = this;
                     var itemClass = me.helper.getPartClassName('item');
                     var leafClass = me.helper.getPartClassName('item-leaf');
-                    var expander = me.helper.getPartClassName('item-expander');
                     var activeClass = me.helper.getPartClassName('item-active');
 
                     me.$super(arguments);
@@ -79,7 +76,8 @@ define(
                         name: 'datasource',
                         paint: function (me, datasource) {
                             var data = prepareData.call(me, datasource);
-                            me.main.innerHTML = me.complier(
+                            me.main.innerHTML = me.helper.renderTemplate(
+                                'SidebarNav',
                                 {
                                     datasource: data,
                                     typeCls: me.helper.getPrimaryClassName(),
