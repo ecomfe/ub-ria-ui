@@ -22,7 +22,6 @@ function genNavigator() {
         + '<li><a href="LightBox.html">LightBox</a></li>'
         + '<li><a href="LineChart.html">LineChart</a></li>'
         + '<li><a href="MediaPreview.html">MediaPreview</a></li>'
-        + '<li><a href="MultiCalendar.html">MultiCalendar</a></li>'
         + '<li><a href="MultiSelect.html">MultiSelect</a></li>'
         + '<li><a href="Radio.html">Radio</a></li>'
         + '<li><a href="RegionChart.html">RegionChart</a></li>'
