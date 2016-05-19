@@ -12,7 +12,7 @@ define(
 
         var eoo = require('eoo');
         var painter = require('esui/painters');
-        var util = require('./util');
+        var util = require('../helper/util');
         var BaseChart = require('./BaseChart');
         var u = require('underscore');
 
