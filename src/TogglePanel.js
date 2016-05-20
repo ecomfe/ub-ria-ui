@@ -46,6 +46,7 @@ define(
                     var defaults = {
                         expanded: false,
                         position: 'layer',
+                        // 设置触发layer的元素，toggleSelector里面会定制一些样式
                         triggerElement: null
                     };
 
