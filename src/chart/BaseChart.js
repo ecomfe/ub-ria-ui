@@ -11,7 +11,7 @@ define(
         var eoo = require('eoo');
         var echarts = require('echarts');
         var painters = require('esui/painters');
-        var util = require('./util');
+        var util = require('../helper/util');
         var Control = require('esui/Control');
         var $ = require('jquery');
         var esui = require('esui');

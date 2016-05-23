@@ -12,7 +12,7 @@ define(
         var eoo = require('eoo');
         var painter = require('esui/painters');
         var BaseChart = require('./BaseChart');
-        var util = require('./util');
+        var colorUtil = require('../colorPicker/Color');
 
         /**
          * 线状图封装控件
@@ -76,7 +76,7 @@ define(
                 // 计算area的颜色
                 var areaStyle = {};
                 if (serie.color) {
-                    var areaColor = util.hexToRGB(serie.color);
+                    var areaColor = colorUtil.hexToRGB(serie.color);
                     areaStyle = {
                         color: 'rgba('
                             + areaColor.r

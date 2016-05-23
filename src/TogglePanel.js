@@ -45,7 +45,9 @@ define(
                 initOptions: function (options) {
                     var defaults = {
                         expanded: false,
-                        position: 'layer'
+                        position: 'layer',
+                        // 设置触发layer的元素，toggleSelector里面会定制一些样式
+                        triggerElement: null
                     };
 
                     var properties = u.extend(defaults, options);
@@ -71,7 +73,8 @@ define(
                     var position = this.position;
                     initContentPanel.call(this, contentElem);
                     if (position === 'layer') {
-                        initContentLayer.call(this, contentElem, titleElem);
+                        triggerElement = this.triggerElement || titleElem;
+                        initContentLayer.call(this, contentElem, triggerElement);
                     }
                 },
 
