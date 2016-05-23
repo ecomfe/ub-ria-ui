@@ -80,7 +80,6 @@ define(
                  */
                 toggleContent: function () {
                     this.toggleStates();
-                    this.fire('change');
                 },
 
                 toggleStates: function () {
@@ -96,6 +95,7 @@ define(
                         function () {
                             var checked = this.isChecked();
                             me.setProperties({expanded: checked});
+                            me.fire('change');
                         }
                     );
                 },
@@ -135,8 +135,6 @@ define(
 
                             method = expanded ? 'show' : 'hide';
                             panel.getChild('content')[method]();
-                            // 既然已经repaint，说明expanded发生了变化
-                            panel.fire('change');
                             // 联动切换content里的值
                             setDisabled.call(panel, !expanded);
 

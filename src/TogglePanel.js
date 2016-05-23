@@ -82,7 +82,6 @@ define(
                  */
                 toggleContent: function () {
                     this.toggleStates();
-                    this.fire('change');
                 },
 
                 toggleStates: function () {
@@ -232,7 +231,9 @@ define(
             if (e.isDefaultPrevented()) {
                 return;
             }
+
             this.toggleContent();
+            this.fire('change');
         }
 
         esui.register(TogglePanel);

@@ -168,11 +168,13 @@ define(
                         return !!input.name;
                     });
 
-                    rawValue = u.map(rawValue, function (val) {
+                    var strRawValue = u.map(rawValue, function (val) {
                         return val.toString();
                     });
+                    this.rawValue = rawValue;
+                    this.fire('rawvaluechanged');
                     u.each(subs, function (input) {
-                        if (u.contains(rawValue, input.value.toString())) {
+                        if (u.contains(strRawValue, input.value.toString())) {
                             input.checked = true;
                         }
                         else {
@@ -183,8 +185,6 @@ define(
                         checkSuper(inputs, name, input.checked);
                     }, this);
                     checkAll.call(this);
-
-                    this.fire('change');
                 },
 
                 /**

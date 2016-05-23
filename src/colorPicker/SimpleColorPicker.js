@@ -74,24 +74,7 @@ define(
                             syncValue(colorPicker);
                         }
                     }
-                ),
-
-                /**
-                 * 批量更新属性并重绘
-                 *
-                 * @fires SimpleColorPicker#change
-                 * @override
-                 * @public
-                 */
-                setProperties: function (properties) {
-                    var changes = this.$super(arguments);
-
-                    if (changes.hasOwnProperty('rawValue')) {
-                        this.fire('change');
-                    }
-
-                    return changes;
-                }
+                )
             }
         );
 
@@ -225,6 +208,7 @@ define(
                 var color = $t.attr('data-value');
                 this.setRawValue(color);
             }
+            this.fire('change');
         }
 
         esui.register(SimpleColorPicker);

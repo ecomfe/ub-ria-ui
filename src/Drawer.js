@@ -131,6 +131,7 @@ define(
                 show: function () {
                     document.body.style.overflowY = 'hidden';
                     $(this.main).addClass(this.helper.getPrimaryClassName('visible'));
+                    this.fire('show');
                 },
 
                 /**
@@ -143,6 +144,7 @@ define(
                         document.body.style.overflowY = '';
                     }, 200);
                     $(this.main).removeClass(this.helper.getPrimaryClassName('visible'));
+                    this.fire('hide');
                 },
 
                 /**

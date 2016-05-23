@@ -73,7 +73,7 @@ define(
                          *
                          * 折叠方式
                          */
-                        collapsible: false,
+                        collapsible: true,
 
                         /**
                          * @property {string} headerIcon
@@ -118,7 +118,6 @@ define(
                         // 激活的panel下标
                         name: 'activeIndex',
                         paint: function (accordion, index) {
-                            accordion.fire('change');
                             activateAccordion(accordion, index);
                         }
                     }
@@ -222,6 +221,10 @@ define(
             var activePanelClass = me.helper.getPartClassName('panel-active');
             var activeIndex = $accordion.children().index($panel);
 
+            var evt = me.fire('beforechange');
+            if (evt.isDefaultPrevented()) {
+                return;
+            }
             // 非互斥折叠
             if (me.collapsible) {
                 // 该元素内容已展开，折叠收缩
@@ -243,6 +246,7 @@ define(
                 // 只激活当前元素
                 this.set('activeIndex', activeIndex);
             }
+            me.fire('change');
         }
 
         /*
