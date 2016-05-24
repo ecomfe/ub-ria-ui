@@ -17,7 +17,7 @@ define(
         var CursorPositionHelper = require('./helper/CursorPositionHelper');
         var textHelper= require('./helper/TextHelper');
         var keyboard = require('esui/behavior/keyboard');
-        require('esui/behavior/jquery-ui');
+        // require('esui/behavior/jquery-ui');
 
         var TEXT_LINE = 'TextLine';
         var TEXT_BOX = 'TextBox';
@@ -467,8 +467,12 @@ define(
         /**
          * 检测是否需要显示数据面板，检测逻辑如下：
          *
+         * 一：局部替换，开闭符号都包含
          * - 包含触发符号 `{`
          * - 最后一个触发符号 `{` 需要出现在最后一个触发结束符号 `}` 后边
+         *
+         * 二：全部替换，只有开合(openAt)没有闭合(closeAt)
+         * - 这时候会在开始输入的时候就给提示并进行替换
          *
          * @param {string} val 光标前的数据
          * @return {boolean} 需要显示返回 true，否则返回 false
@@ -476,17 +480,23 @@ define(
         function canShowSelector (val) {
             var openIndex = -1;
             var closeIndex = -1;
-            var targetControl = this.control;
-            if (targetControl.openAt) {
-                openIndex = val.lastIndexOf(targetControl.openAt);
+            var openTag = this.control.openAt;
+            var closeTag = this.control.closeAt;
+
+            if (openTag) {
+                openIndex = val.lastIndexOf(openTag);
             }
-            if (targetControl.closeAt) {
-                closeIndex = val.lastIndexOf(targetControl.closeAt);
+            if (closeTag) {
+                closeIndex = val.lastIndexOf(closeTag);
             }
 
             if (openIndex >= 0 && openIndex > closeIndex) {
                 return true;
             }
+            else if (openTag && !closeTag) {
+                return true;
+            }
+
             return false;
         };
 
