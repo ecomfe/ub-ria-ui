@@ -4,7 +4,7 @@
  *
  * @file 输入控件自动提示扩展
  * @exports AutoComplete
- * @author maoquan(3610cn@gmail.com), liwei
+ * @author maoquan(3610cn@gmail.com), liwei, weifeng(weifeng@baidu.com)
  */
 define(
     function (require) {
@@ -14,8 +14,7 @@ define(
         var Layer = require('esui/Layer');
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
-        var CursorPositionHelper = require('./helper/CursorPositionHelper');
-        var textHelper= require('./helper/TextHelper');
+        var textCursorHelper= require('./helper/TextCursorHelper');
         var keyboard = require('esui/behavior/keyboard');
         // require('esui/behavior/jquery-ui');
 
@@ -188,36 +187,11 @@ define(
                      * @param {Event} event 事件对象
                      */
                     function onInput(event) {
-                        // var elementValue = inputElement.value;
-
-                        // 空格结尾忽略
-                        // if (!elementValue || /(?:\s)$/.test(elementValue)) {
-                        //     repaintHelperSlector.call(me, '');
-                        //     me.hide();
-                        //     return;
-                        // }
-
-                        // if (u.isFunction(target.extractWord)) {
-                        //     elementValue = target.extractWord(elementValue);
-                        // }
-                        // else {
-                        //     elementValue = extractMatchingWord(elementValue);
-                        // }
-
-                        // if (!elementValue) {
-                        //     return;
-                        // }
-
-                        // if (target.search && target.search(elementValue) === false) {
-                        //     return;
-                        // }
-                        // repaintHelperSlector.call(me, elementValue);
-
                         // 保留光标位置，待会儿插入时需要知道在哪儿插入
-                        me.caretPos = textHelper.getCaretPosition(inputElement);
+                        me.caretPos = textCursorHelper.getCaretPosition(inputElement);
 
                         // 获取光标前的字符
-                        var val = textHelper.getTextBeforeCaret(inputElement);
+                        var val = textCursorHelper.getTextBeforeCaret(inputElement);
 
                         // 进入数据面板触发逻辑
                         repaintHelperSlector.call(me, val);
@@ -281,8 +255,7 @@ define(
                     var input = this.inputElement;
                     var $ele = $(this.getElement(false));
                     if (input.nodeName.toLowerCase() === 'textarea') {
-                        var cursorInstance = CursorPositionHelper.getInstance(input);
-                        var pos = cursorInstance.getCaretPosition();
+                        var pos = textCursorHelper.getCaretPositionStyle(input);
                         $ele.position(
                             {
                                 of: input,
@@ -452,8 +425,8 @@ define(
             var input = this.getInput();
             var closeTag = this.control.closeAt ? this.control.closeAt : '';
             // 执行插入操作,先删除查询词然后插入提示词
-            textHelper.del(input, -this.query.length, this.caretPos);
-            textHelper.add(input, value + closeTag, this.caretPos - this.query.length);
+            textCursorHelper.del(input, -this.query.length, this.caretPos);
+            textCursorHelper.add(input, value + closeTag, this.caretPos - this.query.length);
         }
 
         function extractMatchingWord(value) {

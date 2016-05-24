@@ -3,14 +3,88 @@
  * Copyright 2016 Baidu Inc. All rights reserved.
  *
  * @ignore
- * @file 文本框辅助方法
- * @author zengxiaohui(zengxiaohui@baidu.com)
- *         weifeng(weifeng@baidu.com)
+ * @file 文本框焦点辅助函数
+ * @author weifeng(weifeng@baidu.com),liwei
+ *
  */
-
 define(
     function (require) {
-        var exports = {};
+
+        var TextCursorHelper = {};
+
+        var $ = require('jquery');
+        var u = require('underscore');
+
+        var DIV_PROPERTIES = {
+            left: -9999,
+            position: 'absolute',
+            top: 0,
+            whiteSpace: 'pre-wrap'
+        };
+
+        var COPY_PROPERTIES = [
+            'border-width', 'font-family', 'font-size', 'font-style', 'font-variant',
+            'font-weight', 'height', 'letter-spacing', 'word-spacing', 'line-height',
+            'text-decoration', 'text-align', 'width', 'padding-top', 'padding-right',
+            'padding-bottom', 'padding-left', 'margin-top', 'margin-right',
+            'margin-bottom', 'margin-left', 'border-style', 'box-sizing', 'tab-size'
+        ];
+
+        /**
+         * 复制css属性
+         *
+         * @param  {HTMLTextAreaElement} t 文本框
+         * @return {Object} 元素的css属性
+         */
+        function copyCss(t) {
+            var overflow = t.scrollHeight > t.offsetHeight ? 'scroll' : 'auto';
+            return u.extend(
+                {
+                    overflow: overflow
+                },
+                DIV_PROPERTIES,
+                getStyles(t)
+            );
+        }
+
+        /**
+         * 获取文件样式
+         *
+         * @param  {HTMLTextAreaElement} element 文本框
+         * @return {Object} 元素的css属性
+         */
+        function getStyles(element) {
+            var styles = {};
+            $.each(
+                COPY_PROPERTIES,
+                function (index, property) {
+                    styles[property] = $(element).css(property);
+                }
+            );
+            return styles;
+        }
+
+        /**
+         * 获取文本框t当前光标所在位置
+         *
+         * @param  {HTMLTextAreaElement} t 文本框
+         * @return {jQuery object} 光标所在位置
+         */
+        TextCursorHelper.getCaretPositionStyle = function (t) {
+            // 通过创建一个隐藏容器，将input value复制到div中，
+            // 以此推算光标位置
+            var $dummyDiv = $('<div></div>')
+                .css(copyCss(t))
+                .text(this.getTextBeforeCaret(t));
+            var $span = $('<span></span>').text('.').appendTo($dummyDiv);
+            var $element = $(t);
+            $element.before($dummyDiv);
+            var position = $span.position();
+            position.top += $span.height() - $element.scrollTop();
+            position.lineHeight = $span.height();
+            $dummyDiv.remove();
+            return position;
+        };
 
         /**
          * 获取文本框t当前光标所在位置
@@ -18,7 +92,7 @@ define(
          * @param  {HTMLTextAreaElement} t 文本框
          * @return {number} 光标所在位置
          */
-        exports.getCaretPosition = function (t) {
+        TextCursorHelper.getCaretPosition = function (t) {
             var value;
             var len;
             var textInputRange;
@@ -61,7 +135,7 @@ define(
          * @param  {HTMLTextAreaElement} t 文本框
          * @param  {number} p 光标位置
          */
-        exports.setCaretPosition = function (t, p) {
+        TextCursorHelper.setCaretPosition = function (t, p) {
             select(t, p, p);
         };
 
@@ -71,7 +145,7 @@ define(
          * @param  {HTMLTextAreaElement} t 文本框
          * @return {string} 光标前的字符串
          */
-        exports.getTextBeforeCaret = function (t) {
+        TextCursorHelper.getTextBeforeCaret = function (t) {
             var value = t.value;
             var str = value;
             var caretPos = this.getCaretPosition(t);
@@ -94,7 +168,7 @@ define(
          * @param {string} source 源字符串
          * @return {string} HTML编码后的字符串
          */
-        exports.encodeHTML = function (source) {
+        TextCursorHelper.encodeHTML = function (source) {
             source = source + '';
             return source
                 .replace(/&/g, '&amp;')
@@ -135,7 +209,7 @@ define(
          * @param {string} txt 待插入字符
          * @param {number} caretPos 光标位置
          */
-        exports.add = function (t, txt, caretPos) {
+        TextCursorHelper.add = function (t, txt, caretPos) {
             if (document.selection) {
                 t.focus();
                 this.setCaretPosition(t, caretPos);
@@ -157,7 +231,7 @@ define(
          * @param  {number}  n>0删除后面n字符，否则删除前面n字符
          * @param  {number} caretPos 光标位置
          */
-        exports.del = function (t, n, caretPos) {
+        TextCursorHelper.del = function (t, n, caretPos) {
             var p = caretPos || this.getCaretPosition(t);
             var val = t.value;
 
@@ -172,6 +246,6 @@ define(
             this.setCaretPosition(t, newPos);
         };
 
-        return exports;
+        return TextCursorHelper;
     }
 );
