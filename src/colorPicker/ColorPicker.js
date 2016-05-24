@@ -168,6 +168,22 @@ define(
                 ),
 
                 /**
+                 * 批量更新属性并重绘
+                 *
+                 * @override
+                 * @fires ColorPicker#change
+                 */
+                setProperties: function (properties) {
+                    var changes = this.$super(arguments);
+
+                    if (changes.hasOwnProperty('rawValue')) {
+                        this.fire('change');
+                    }
+
+                    return changes;
+                },
+
+                /**
                  * @override
                  * @return {Object}
                  */
@@ -337,7 +353,7 @@ define(
             this.setProperties({hex: fullColorPicker.getDisplayHex(), alpha: fullColorPicker.getDisplayAlpha()});
             pickerOverlay.hide();
             this.fire('submit');
-            this.fire('change');
+            this.fire('changed');
         }
 
         function hideOverlay() {

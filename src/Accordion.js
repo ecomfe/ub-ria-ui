@@ -131,6 +131,7 @@ define(
                  */
                 initStructure: function () {
                     renderAccordionEl(this);
+                    this.helper.initChildren();
                 },
 
                 /**

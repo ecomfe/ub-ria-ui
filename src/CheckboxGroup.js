@@ -94,6 +94,7 @@ define(
                                 checkAll.call(this);
 
                                 this.fire('change');
+                                this.fire('changed');
                             }
                         }, this)
                     );
@@ -172,7 +173,6 @@ define(
                         return val.toString();
                     });
                     this.rawValue = rawValue;
-                    this.fire('rawvaluechanged');
                     u.each(subs, function (input) {
                         if (u.contains(strRawValue, input.value.toString())) {
                             input.checked = true;
@@ -185,6 +185,8 @@ define(
                         checkSuper(inputs, name, input.checked);
                     }, this);
                     checkAll.call(this);
+
+                    this.fire('change');
                 },
 
                 /**

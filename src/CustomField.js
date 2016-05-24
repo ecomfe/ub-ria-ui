@@ -100,6 +100,7 @@ define(
                             value: value
                         });
                         this.fire('change');
+                        this.fire('changed');
                     }, this));
 
                     this.getChild('cancelCustom').on('click', u.bind(function (e) {
