@@ -15,6 +15,7 @@ define(
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
         var CursorPositionHelper = require('./helper/CursorPositionHelper');
+        var textHelper= require('./helper/TextHelper');
         var keyboard = require('esui/behavior/keyboard');
         require('esui/behavior/jquery-ui');
 
@@ -187,31 +188,41 @@ define(
                      * @param {Event} event 事件对象
                      */
                     function onInput(event) {
-                        var elementValue = inputElement.value;
+                        // var elementValue = inputElement.value;
 
-                        // 空格或逗号结尾都忽略
-                        if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
-                            repaintSuggest.call(me, '');
-                            me.hide();
-                            return;
-                        }
+                        // 空格结尾忽略
+                        // if (!elementValue || /(?:\s)$/.test(elementValue)) {
+                        //     repaintHelperSlector.call(me, '');
+                        //     me.hide();
+                        //     return;
+                        // }
 
-                        if (u.isFunction(target.extractWord)) {
-                            elementValue = target.extractWord(elementValue);
-                        }
-                        else {
-                            elementValue = extractMatchingWord(elementValue);
-                        }
+                        // if (u.isFunction(target.extractWord)) {
+                        //     elementValue = target.extractWord(elementValue);
+                        // }
+                        // else {
+                        //     elementValue = extractMatchingWord(elementValue);
+                        // }
 
-                        if (!elementValue) {
-                            return;
-                        }
+                        // if (!elementValue) {
+                        //     return;
+                        // }
 
-                        if (target.search && target.search(elementValue) === false) {
-                            return;
-                        }
+                        // if (target.search && target.search(elementValue) === false) {
+                        //     return;
+                        // }
+                        // repaintHelperSlector.call(me, elementValue);
 
-                        repaintSuggest.call(me, elementValue);
+                        // 保留光标位置，待会儿插入时需要知道在哪儿插入
+                        me.caretPos = textHelper.getCaretPosition(inputElement);
+
+                        // 获取光标前的字符
+                        var val = textHelper.getTextBeforeCaret(inputElement);
+
+                        // 进入数据面板触发逻辑
+                        repaintHelperSlector.call(me, val);
+
+                        this.fire('change', {args: val});
                     }
 
                 },
@@ -303,6 +314,17 @@ define(
                     return null;
                 },
 
+                /**
+                 * 获取查询词，也即 at 符号后边的词
+                 *
+                 * @param  {string} val 截取字符
+                 * @return {string} 查询词
+                 */
+                getQuery: function (val) {
+                    var lastAtIndex = val.lastIndexOf(this.control.openAt);
+                    return val.slice(lastAtIndex + 1);
+                },
+
                 nodeName: 'ol'
             }
         );
@@ -337,31 +359,46 @@ define(
         /**
          * 根据用户输入绘制下拉选择列表
          *
-         * @param {sttring} value 用户输入
+         * @param {string} value 用户输入
          */
-        function repaintSuggest(value) {
-            if (!value) {
-                renderSuggest.call(this);
-                return;
+        function repaintHelperSlector(value) {
+            // 判断是否需要弹出帮助面板
+            if (canShowSelector.call(this, value)) {
+
+                // 获取搜索词
+                this.query = this.getQuery(value);
+
+                var me = this;
+                var datasource = this.control.datasource;
+                if (typeof datasource === 'function') {
+                    datasource.call(
+                        this,
+                        value,
+                        function (data) {
+                            renderSlector.call(me, data, value);
+                        }
+                    );
+                }
+                else if (datasource && datasource.length) {
+                    // 根据搜索词，获取过滤后的优选词数据列表
+                    var list = filter(this.query, datasource);
+
+                    // 渲染帮助面板
+                    renderSlector.call(me, list, value);
+                }
             }
-            var me = this;
-            var datasource = this.control.datasource;
-            if (typeof datasource === 'function') {
-                datasource.call(
-                    this,
-                    value,
-                    function (data) {
-                        renderSuggest.call(me, data, value);
-                    }
-                );
-            }
-            else if (datasource && datasource.length) {
-                renderSuggest.call(me, filter(value, datasource), value);
+            else {
+                this.hide();
             }
         }
 
-        function renderSuggest(data, inputValue) {
-
+        /**
+         * 绘制下拉选择列表
+         *
+         * @param {Array} data 需要渲染的数据源
+         * @param {string} inputValue 需要检索的字符串
+         */
+        function renderSlector(data, inputValue) {
             var helper = this.control.helper;
 
             /**
@@ -406,7 +443,6 @@ define(
             ret ? this.show() : this.hide();
         }
 
-
         /**
          * 将用户选中值回填到input输入框
          *
@@ -414,23 +450,10 @@ define(
          */
         function setTargetValue(value) {
             var input = this.getInput();
-            var targetValue = input.value;
-            targetValue = lib.trim(targetValue);
-            var items = [];
-            if (/\n/.test(targetValue)) {
-                items = targetValue.split(/\n/);
-                targetValue = items && items.pop();
-            }
-
-            var words = targetValue.split(',');
-            words.pop();
-            words.push(value);
-
-            if (items) {
-                items.push(words.join(','));
-                value = items.join('\n');
-            }
-            this.control.setValue(value);
+            var closeTag = this.control.closeAt ? this.control.closeAt : '';
+            // 执行插入操作,先删除查询词然后插入提示词
+            textHelper.del(input, -this.query.length, this.caretPos);
+            textHelper.add(input, value + closeTag, this.caretPos - this.query.length);
         }
 
         function extractMatchingWord(value) {
@@ -440,6 +463,32 @@ define(
             var word = words && words.pop();
             return lib.trim(word);
         }
+
+        /**
+         * 检测是否需要显示数据面板，检测逻辑如下：
+         *
+         * - 包含触发符号 `{`
+         * - 最后一个触发符号 `{` 需要出现在最后一个触发结束符号 `}` 后边
+         *
+         * @param {string} val 光标前的数据
+         * @return {boolean} 需要显示返回 true，否则返回 false
+         */
+        function canShowSelector (val) {
+            var openIndex = -1;
+            var closeIndex = -1;
+            var targetControl = this.control;
+            if (targetControl.openAt) {
+                openIndex = val.lastIndexOf(targetControl.openAt);
+            }
+            if (targetControl.closeAt) {
+                closeIndex = val.lastIndexOf(targetControl.closeAt);
+            }
+
+            if (openIndex >= 0 && openIndex > closeIndex) {
+                return true;
+            }
+            return false;
+        };
 
         /**
          * 下拉建议列表中上下选择
