@@ -27,7 +27,10 @@
                 <input data-ui-type="TextBox"
                        data-ui-mode="text"
                        data-ui-id="test"
+                       data-ui-open-at=","
                        data-ui-extension-autocomplete-type="AutoComplete" />
+                <div data-ui="type:Button;id:getInputValue;content:点击获取RawValue;"></div>
+                <p id="inputValue"></p>
             </div>
 
             <h2>TextLine</h2>
@@ -36,8 +39,12 @@
                 <textarea data-ui-type="TextLine"
                        data-ui-id="test1"
                        data-ui-name="test1"
+                       data-ui-open-at="{"
+                       data-ui-close-at="}"
                        data-ui-extension-autocomplete-type="AutoComplete"
                 /></textarea>
+                <div data-ui="type:Button;id:getTextValue;content:点击获取RawValue;"></div>
+                <p id="textValue"></p>
             </div>
         </div>
     </div>
@@ -52,6 +59,7 @@
             'ub-ria-ui/AutoComplete',
             'esui/TextLine',
             'esui/TextBox',
+            'esui/Button',
             'demo',
             'esui/Tab'
         ],
@@ -116,24 +124,41 @@
             var datasource;
             for (var i = 0; i < controls.length; i++) {
                 control = controls[i];
+                var setFalg = false;
                 if (control.id === 'test1') {
                     datasource = data1;
+                    setFalg = true;
                 }
-                else {
+                else if (control.id === 'test') {
                     datasource = data;
+                    setFalg = true;
                 }
 
-                control.setProperties({
-                    datasource: datasource
-                });
+                if (setFalg) {
+                    control.setProperties({
+                        datasource: datasource
+                    });
 
-                control.on(
-                    'targetselect',
-                    function (e) {
-                        console.log('value: ' + e.value);
-                        console.log('id: ' + e.id);
-                    }
-                );
+                    control.on(
+                        'targetselect',
+                        function (e) {
+                            console.log('value: ' + e.value);
+                            console.log('id: ' + e.id);
+                        }
+                    );
+                }
+            }
+
+            var g = function (id) {
+                return document.getElementById(id);
+            }
+
+            ui.get('getInputValue').onclick = function (e) {
+                g('inputValue').innerHTML = ui.get('test').getRawValue();
+            };
+
+            ui.get('getTextValue').onclick = function (e) {
+                g('textValue').innerHTML = ui.get('test1').getRawValue();
             }
         }
     );
