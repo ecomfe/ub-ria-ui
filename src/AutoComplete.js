@@ -549,7 +549,7 @@ define(
 
                     if (layerMain) {
                         helper.removeDOMEvent(layerMain, 'click');
-                        layerMain.remove();
+                        $(layerMain).remove();
                     }
                     helper.removeDOMEvent(inputEle, 'keydown');
                     this.$super(arguments);
