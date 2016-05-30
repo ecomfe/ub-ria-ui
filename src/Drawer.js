@@ -81,6 +81,8 @@ define(
                             me.helper.addPartClasses(key, tempEle);
                         }
                     }
+
+                    this.helper.initChildren();
                 },
 
                 /**

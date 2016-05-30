@@ -372,13 +372,15 @@ define(
                             this.currentSeletedId = item.node.id;
                         }
                     }
+
+                    this.setItemState(item.node.id, 'isSelected', toBeSelected);
+
                     // 多选同步父子状态
-                    else {
+                    // 要先更新当前节点状态，再同步祖先与子孙
+                    if (this.multi) {
                         trySyncParentAndChildrenStates(this, item, toBeSelected);
                     }
 
-                    // 先修改currentSelectedId的选中状态，再设置选中节点的选中状态
-                    this.setItemState(item.node.id, 'isSelected', toBeSelected);
                     this.fire('add', {item: item.node});
                     this.fire('change');
                 },
@@ -830,29 +832,28 @@ define(
         function deleteItem(control, id) {
             // 完整数据
             var indexData = control.indexData;
-            var item = indexData[id];
-
-            var parentId = item.parentId;
-            var parentItem = indexData[parentId];
-            var node;
-            if (!parentItem) {
-                node = control.allData;
+            var topId = getTopId(control);
+            // 根节点
+            if (topId === id) {
+                control.setProperties({datasource: {}});
             }
             else {
-                node = parentItem.node;
-            }
+                var item = indexData[id];
 
-            var children = node.children || [];
-
-            // 从parentNode的children里删除
-            var newChildren = u.without(children, item.node);
-            // 没有孩子了，父节点也删了吧，遇到顶级父节点就不要往上走了，直接删掉
-            if (newChildren.length === 0 && parentId !== getTopId(control)) {
-                deleteItem(control, parentId);
-            }
-            else {
-                node.children = newChildren;
-                control.setProperties({datasource: control.allData});
+                var parentId = item.parentId;
+                var parentItem = indexData[parentId];
+                var node = parentItem.node;
+                var children = node.children || [];
+                // 从parentNode的children里删除
+                var newChildren = u.without(children, item.node);
+                // 没有孩子了，父节点也删了吧，遇到顶级父节点就不要往上走了，直接删掉
+                if (newChildren.length === 0 && parentId !== topId) {
+                    deleteItem(control, parentId);
+                }
+                else {
+                    node.children = newChildren;
+                    control.setProperties({datasource: control.allData});
+                }
             }
         }
 

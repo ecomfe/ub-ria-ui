@@ -211,6 +211,49 @@ define(
                 },
 
                 /**
+                 * 设置控件禁用状态
+                 *
+                 * @param {boolean} disabled 是否禁用
+                 */
+                setDisabled: function (disabled) {
+                    this[disabled ? 'addState' : 'removeState']('disabled');
+                    var action = disabled ? 'disable' : 'enable';
+                    var inputs = this.main.getElementsByTagName('input');
+                    u.each(inputs, function (input) {
+                        var checkbox = esui.getControlByDOM(input.parentNode);
+                        if (checkbox) {
+                            if (checkbox.alwaysDisabled == null) {
+                                checkbox.alwaysDisabled = checkbox.isDisabled();
+                            }
+                            !checkbox.alwaysDisabled && checkbox[action]();
+                        }
+                    });
+                },
+
+                /**
+                 * 设置控件状态为禁用
+                 */
+                disable: function () {
+                    this.setDisabled(true);
+                },
+
+                /**
+                 * 设置控件状态为启用
+                 */
+                enable: function () {
+                    this.setDisabled();
+                },
+
+                /**
+                 * 判断控件是否不可用
+                 *
+                 * @return {boolean}
+                 */
+                isDisabled: function () {
+                    return this.hasState('disabled');
+                },
+
+                /**
                  * 重渲染
                  *
                  * @method
@@ -224,6 +267,12 @@ define(
                         paint: function (checkboxGroup, datasource) {
                             buildHtml.call(checkboxGroup);
                             checkboxGroup.fire('change');
+                        }
+                    },
+                    {
+                        name: 'disabled',
+                        paint: function (checkboxGroup, disabled) {
+                            checkboxGroup.setDisabled(disabled);
                         }
                     },
                     {

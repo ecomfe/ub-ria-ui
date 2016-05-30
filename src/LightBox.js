@@ -13,7 +13,7 @@ define(function (require) {
     var painters = require('esui/painters');
     var $ = require('jquery');
     var previewHelper = require('./helper/previewHelper');
-    require('./helper/swfHelper');
+    require('./FlashObject');
 
     require('esui/Dialog');
 
@@ -281,6 +281,9 @@ define(function (require) {
              */
             preview: function (options) {
                 if (options) {
+                    if (options.type === 'flv') {
+                        options.type = 'video';
+                    }
                     var type = options.type;
                     options.id = options.id || 'preiew-' + Math.random();
                     options.width = options.width || this.width;
@@ -325,14 +328,15 @@ define(function (require) {
              * @protected
              */
             previewFlash: function (options) {
-                var html = previewHelper.preview(options);
-                if (!html) {
+                var flashObj = previewHelper.preview(options);
+                if (!flashObj) {
                     this.previewNotSupported();
                     return;
                 }
                 this.hideLoading();
                 this.mediaContainer().innerHTML = '';
-                this.mediaContainer().appendChild(html);
+                this.addChild(flashObj, 'FlashObject');
+                flashObj.appendTo(this.mediaContainer());
                 this.dialog.show();
             },
 
@@ -360,7 +364,13 @@ define(function (require) {
                 var $container = $(this.mediaContainer());
                 this.hideLoading();
                 $container.html('');
-                $container.append($(html));
+                if (typeof html === 'string') {
+                    $container.append($(html));
+                }
+                else if (html.getCategory) {
+                    this.addChild(html, 'VideoObject');
+                    html.appendTo($container[0]);
+                }
                 this.dialog.show();
             },
 
