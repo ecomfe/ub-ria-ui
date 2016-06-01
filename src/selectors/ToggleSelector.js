@@ -115,10 +115,8 @@ define(
                         if (u.isArray(rawValue)) {
                             rawValue = rawValue[0];
                         }
-                        if (rawValue && rawValue[this.textField]) {
-                            displayText = rawValue && rawValue[this.textField]
-                                ? rawValue[this.textField] : this.defaultText;
-                        }
+                        displayText = rawValue && rawValue[this.textField]
+                            ? rawValue[this.textField] : this.defaultText;
                     }
                     this.set('title', u.escape(displayText));
                 },
