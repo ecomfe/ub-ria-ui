@@ -38,9 +38,19 @@ define(
                 initOptions: function (options) {
                     var properties = {
                         textField: null,
-                        collapseAfterChange: true
+                        collapseAfterChange: true,
+                        defaultText: '请选择'
                     };
                     options = u.extend(properties, options);
+
+                    if (!options.title) {
+                        options.title = options.defaultText;
+                    }
+
+                    if (options.collapseAfterChange === 'false') {
+                        options.collapseAfterChange = false;
+                    }
+
                     this.$super(arguments);
                 },
 
@@ -105,9 +115,8 @@ define(
                         if (u.isArray(rawValue)) {
                             rawValue = rawValue[0];
                         }
-                        if (rawValue && rawValue[this.textField]) {
-                            displayText = rawValue[this.textField];
-                        }
+                        displayText = rawValue && rawValue[this.textField]
+                            ? rawValue[this.textField] : this.defaultText;
                     }
                     this.set('title', u.escape(displayText));
                 },
@@ -174,7 +183,7 @@ define(
          * @param {Object} e 事件对象
          */
         function addHandler(e) {
-            if (this.collapseAfterChange) {
+            if (this.collapseAfterChange && this.hasState('expanded')) {
                 this.toggleContent();
             }
         }
