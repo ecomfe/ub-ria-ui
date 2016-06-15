@@ -1,6 +1,6 @@
 {
     "name": "ub-ria-ui",
-    "version": "1.0.0-beta.2",
+    "version": "1.0.0-beta.3",
     "description": "UI components for UB RIA applications",
     "dependencies": {},
     "author": "otakustay@gmail.com",
