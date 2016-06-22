@@ -116,7 +116,7 @@ define(function (require) {
     function getFlashHtml(options) {
         return esui.create('FlashObject', {
             id: options.id || 'preview-fla',
-            swf: options.url,
+            url: options.url,
             width: parseInt(options.width, 10),
             height: parseInt(options.height, 10),
             wmode: 'transparent'
