@@ -72,13 +72,14 @@ define(
                          *
                          * 是否带提示图标
                          */
-                        name: ['url', 'flashvars', 'width', 'height'],
-                        paint: function (flash, url, flashvars, width, height) {
+                        name: ['url', 'flashvars', 'width', 'height', 'wmode'],
+                        paint: function (flash, url, flashvars, width, height, wmode) {
                             flash.main.innerHTML = flash.helper.renderTemplate('FlashObject', {
                                 url: url,
                                 flashvars: flashvars,
                                 width: width,
-                                height: height
+                                height: height,
+                                wmode: wmode
                             });
                         }
                     }
