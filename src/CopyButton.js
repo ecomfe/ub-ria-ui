@@ -77,7 +77,7 @@ define(
                     // 创建Flash页面元素
                     var flashObj = esui.create('FlashObject', {
                         id: this.flashId,
-                        swf: swfPath,
+                        url: swfPath,
                         width: '100%',
                         height: '100%',
                         wmode: 'transparent'
