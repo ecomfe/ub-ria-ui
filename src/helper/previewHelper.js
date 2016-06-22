@@ -136,7 +136,7 @@ define(function (require) {
     function getFlvHtml(options) {
         return esui.create('FlashObject', {
             id: options.id || 'preview-flv',
-            swf: options.swfPath,
+            url: options.swfPath,
             width: options.width,
             height: options.height,
             wmode: 'transparent',
