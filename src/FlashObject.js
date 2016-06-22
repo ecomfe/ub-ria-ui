@@ -36,7 +36,7 @@ define(
                  */
                 initOptions: function (options) {
                     var properties = {
-                        swf: '',
+                        url: '',
                         flashvars: '',
                         width: 214,
                         height: 137,
@@ -75,7 +75,7 @@ define(
                         name: ['url', 'flashvars', 'width', 'height'],
                         paint: function (flash, url, flashvars, width, height) {
                             flash.main.innerHTML = flash.helper.renderTemplate('FlashObject', {
-                                swf: url,
+                                url: url,
                                 flashvars: flashvars,
                                 width: width,
                                 height: height
