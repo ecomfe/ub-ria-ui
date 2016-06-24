@@ -7,6 +7,7 @@
  * @description 标签输入框，典型场景如邮件收件人输入框
  * @author maoquan(maoquan@baidu.com)
  */
+
 define(
     function (require) {
         var esui = require('esui');

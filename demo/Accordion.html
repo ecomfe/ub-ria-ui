@@ -26,7 +26,7 @@
             <div class="example">
                 <h3>Icon on Left Side</h3>
                 <div class="row">
-                    <esui-accordion data-ui-width="400">
+                    <esui-accordion data-ui-width="400" data-ui-id="accodion1">
                         <div data-role="panel">
                             <div data-role="header">1.一级条目</div>
                             <div data-role="content">
@@ -135,6 +135,15 @@
         ],
         function (ui, Accordion) {
             ui.init();
+            var acc1 = ui.get('accodion1');
+            acc1.on('change', function () {
+                console.log(this.activeIndex);
+            });
+            acc1.on('beforechange', function (e) {
+                if (!confirm('change active item?')) {
+                    e.preventDefault();
+                }
+            });
         }
     );
     </script>

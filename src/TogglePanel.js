@@ -85,7 +85,6 @@ define(
                  */
                 toggleContent: function () {
                     this.toggleStates();
-                    this.fire('change');
                 },
 
                 toggleStates: function () {
@@ -125,16 +124,21 @@ define(
                         name: 'expanded',
                         paint: function (panel, expanded) {
                             var layerMode = panel.position === 'layer';
-                            var method = expanded ?
-                                'addState' : 'removeState';
+                            var method = expanded ? 'addState' : 'removeState';
 
                             panel[method]('expanded');
                             panel[method]('active');
 
-                            method = expanded ?
-                                'show' : 'hide';
+                            method = expanded ? 'show' : 'hide';
                             if (layerMode) {
-                                panel.layer[method]();
+                                var layer = panel.layer;
+                                if (method === 'show') {
+                                    layer.show();
+                                    layer.isHide = false;
+                                }
+                                else if (!layer.isHide) {
+                                    layer.hide();
+                                }
                             }
                             else {
                                 panel.getChild('content')[method]();
@@ -215,6 +219,7 @@ define(
             me.layer = layer;
             layer.prepareLayer(contentElem);
             layer.on('hide', function () {
+                layer.isHide = true;
                 // 重复设置同样值不会触发repaint因此不用担心死循环
                 me.setProperties(
                     {
@@ -235,7 +240,9 @@ define(
             if (e.isDefaultPrevented()) {
                 return;
             }
+
             this.toggleContent();
+            this.fire('change');
         }
 
         esui.register(TogglePanel);

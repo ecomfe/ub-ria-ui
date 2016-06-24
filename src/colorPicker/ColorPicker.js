@@ -353,6 +353,7 @@ define(
             this.setProperties({hex: fullColorPicker.getDisplayHex(), alpha: fullColorPicker.getDisplayAlpha()});
             pickerOverlay.hide();
             this.fire('submit');
+            this.fire('changed');
         }
 
         function hideOverlay() {

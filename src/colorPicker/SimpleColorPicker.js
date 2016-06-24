@@ -224,6 +224,7 @@ define(
             if ($t.hasClass(blockClass)) {
                 var color = $t.attr('data-value');
                 this.setRawValue(color);
+                this.fire('changed');
             }
         }
 

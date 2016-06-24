@@ -6,6 +6,7 @@
  * @file 过滤器
  * @author yaofeifei@baidu.com; liwei47@baidu.com; lixiang05@baidu.com
  */
+
 define(
     function (require) {
         var u = require('underscore');
@@ -154,10 +155,6 @@ define(
                         this.removeItem(item);
 
                         this.fire('customitemremove', {item: item});
-                        /**
-                         * @deprecated
-                         */
-                        this.fire('custom-item-remove', {item: item});
                     }
                     else {
                         var itemClass = helper.getPartClassName('item');
@@ -168,10 +165,6 @@ define(
                         }
                         else if (selectedItem.hasClass(cmdItemClass)) {
                             this.fire('customlinkclick', {element: target});
-                            /**
-                             * @deprecated
-                             */
-                            this.fire('custom-link-click');
                         }
                     }
                 },
@@ -330,7 +323,7 @@ define(
          */
         function buildItem(item, style, index) {
             var template = ''
-                + '<div class="${item | class} ${style}"'
+                + '<div class="${.item} ${style}"'
                 + '  data-value="${value}" data-index="${index}" data-allow-delete="${allowDelete}">'
                 + '<span>${text | raw}</span>'
                 + '<!-- if: ${allowDelete}-->'
@@ -353,7 +346,7 @@ define(
          */
         function buildCustomItem() {
             var controlHelper = this.helper;
-            var template = '<div id="${custom-link | id}" class="${item-cmd | class}"><span>${text}</span></div>';
+            var template = '<div id="${#custom-link}" class="${.item-cmd}"><span>${text}</span></div>';
             var data = {
                 text: this.customBtnLabel
             };

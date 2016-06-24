@@ -2,7 +2,7 @@
 <html lang="zh-cn">
     <head>
         <meta charset="utf-8" />
-        <title>CopyButton - ESUI Demo</title>
+        <title>FlashObject - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.css"/>
@@ -13,7 +13,7 @@
     </head>
 <body>
     <div class="header">
-        <h1 id="branding">ESUI CopyButton</h1>
+        <h1 id="branding">ESUI FlashObject</h1>
     </div>
     <div class="ui-g main-container">
         <div id="side-bar" class="ui-u-1-5">
@@ -21,21 +21,12 @@
             </ul>
         </div>
         <div id="main" class="ui-u-4-5">
-            <h2>CopyButton</h2>
-            <p>Copy到剪切板,调试需要启动EDP Server才能完成flash的初始化。</p>
+            <div id="alert-container"></div>
+            <h2>FlashObject</h2>
+            <p>shockwave flash</p>
             <div class="example">
-                <div class="row">
-                    <div data-ui-id="copyText" data-ui-type="TextBox">
-                    </div>
-                    <div data-ui-id="copyButtonTest" data-ui-type="CopyButton" class="ui-button ui-button-primary">
-                        <span class="ui-icon-copy"></span> Copy
-                    </div>
-                    <div data-ui-type="TextBox">
-                    </div>
-                </div>
+                <div data-ui-id="flash" data-ui-type="FlashObject" data-ui-url="./assets/coco_tree.swf"></div>
             </div>
-            <script type="text/sample" data-refid="main-js">
-            </script>
         </div>
     </div>
     <script src="../dep/esui/3.2.0-beta.2/demo/assets/loader/esl.js"></script>
@@ -46,21 +37,13 @@
     require(
         [
             'esui',
-            'esui/Toast',
-            'ub-ria-ui/CopyButton',
-            'demo',
-            'esui/Tab',
-            'esui/TextBox'
+            'ub-ria-ui/FlashObject'
         ],
-        function (ui, toast) {
+        function (ui, FlashObject) {
             ui.init();
-            var cpButton = ui.get('copyButtonTest');
-            var textBox = ui.get('copyText');
-
-            cpButton.on('copy', function () {
-                this.content = textBox.getValue();
-                toast.success('拷贝成功：' + this.content).show();
-            });
+            setTimeout(function () {
+                ui.get('flash').setProperties({width: 300, height: 200});
+            }, 3000);
         }
     );
     </script>

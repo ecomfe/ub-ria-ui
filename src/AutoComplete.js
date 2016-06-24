@@ -4,7 +4,7 @@
  *
  * @file 输入控件自动提示扩展
  * @exports AutoComplete
- * @author maoquan(3610cn@gmail.com), liwei
+ * @author maoquan(3610cn@gmail.com), liwei, weifeng(weifeng@baidu.com)
  */
 define(
     function (require) {
@@ -14,7 +14,7 @@ define(
         var Layer = require('esui/Layer');
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
-        var CursorPositionHelper = require('./helper/CursorPositionHelper');
+        var textCursorHelper= require('./helper/TextCursorHelper');
         var keyboard = require('esui/behavior/keyboard');
         require('esui/behavior/jquery-ui');
 
@@ -187,31 +187,16 @@ define(
                      * @param {Event} event 事件对象
                      */
                     function onInput(event) {
-                        var elementValue = inputElement.value;
+                        // 保留光标位置，待会儿插入时需要知道在哪儿插入
+                        me.caretPos = textCursorHelper.getCaretPosition(inputElement);
 
-                        // 空格或逗号结尾都忽略
-                        if (!elementValue || /(?:\s|\,)$/.test(elementValue)) {
-                            repaintSuggest.call(me, '');
-                            me.hide();
-                            return;
-                        }
+                        // 获取光标前的字符
+                        var val = textCursorHelper.getTextBeforeCaret(inputElement);
 
-                        if (u.isFunction(target.extractWord)) {
-                            elementValue = target.extractWord(elementValue);
-                        }
-                        else {
-                            elementValue = extractMatchingWord(elementValue);
-                        }
+                        // 进入数据面板触发逻辑
+                        repaintHelperSlector.call(me, val);
 
-                        if (!elementValue) {
-                            return;
-                        }
-
-                        if (target.search && target.search(elementValue) === false) {
-                            return;
-                        }
-
-                        repaintSuggest.call(me, elementValue);
+                        this.fire('change', {args: val});
                     }
 
                 },
@@ -270,8 +255,7 @@ define(
                     var input = this.inputElement;
                     var $ele = $(this.getElement(false));
                     if (input.nodeName.toLowerCase() === 'textarea') {
-                        var cursorInstance = CursorPositionHelper.getInstance(input);
-                        var pos = cursorInstance.getCaretPosition();
+                        var pos = textCursorHelper.getCaretPositionStyle(input);
                         $ele.position(
                             {
                                 of: input,
@@ -301,6 +285,17 @@ define(
                         return control.getTextArea();
                     }
                     return null;
+                },
+
+                /**
+                 * 获取查询词，也即 at 符号后边的词
+                 *
+                 * @param  {string} val 截取字符
+                 * @return {string} 查询词
+                 */
+                getQuery: function (val) {
+                    var lastAtIndex = val.lastIndexOf(this.control.openAt);
+                    return val.slice(lastAtIndex + 1);
                 },
 
                 nodeName: 'ol'
@@ -337,31 +332,46 @@ define(
         /**
          * 根据用户输入绘制下拉选择列表
          *
-         * @param {sttring} value 用户输入
+         * @param {string} value 用户输入
          */
-        function repaintSuggest(value) {
-            if (!value) {
-                renderSuggest.call(this);
-                return;
+        function repaintHelperSlector(value) {
+            // 判断是否需要弹出帮助面板
+            if (canShowSelector.call(this, value)) {
+
+                // 获取搜索词
+                this.query = this.getQuery(value);
+
+                var me = this;
+                var datasource = this.control.datasource;
+                if (typeof datasource === 'function') {
+                    datasource.call(
+                        this,
+                        value,
+                        function (data) {
+                            renderSlector.call(me, data, value);
+                        }
+                    );
+                }
+                else if (datasource && datasource.length) {
+                    // 根据搜索词，获取过滤后的优选词数据列表
+                    var list = filter(this.query, datasource);
+
+                    // 渲染帮助面板
+                    renderSlector.call(me, list, value);
+                }
             }
-            var me = this;
-            var datasource = this.control.datasource;
-            if (typeof datasource === 'function') {
-                datasource.call(
-                    this,
-                    value,
-                    function (data) {
-                        renderSuggest.call(me, data, value);
-                    }
-                );
-            }
-            else if (datasource && datasource.length) {
-                renderSuggest.call(me, filter(value, datasource), value);
+            else {
+                this.hide();
             }
         }
 
-        function renderSuggest(data, inputValue) {
-
+        /**
+         * 绘制下拉选择列表
+         *
+         * @param {Array} data 需要渲染的数据源
+         * @param {string} inputValue 需要检索的字符串
+         */
+        function renderSlector(data, inputValue) {
             var helper = this.control.helper;
 
             /**
@@ -406,7 +416,6 @@ define(
             ret ? this.show() : this.hide();
         }
 
-
         /**
          * 将用户选中值回填到input输入框
          *
@@ -414,23 +423,10 @@ define(
          */
         function setTargetValue(value) {
             var input = this.getInput();
-            var targetValue = input.value;
-            targetValue = lib.trim(targetValue);
-            var items = [];
-            if (/\n/.test(targetValue)) {
-                items = targetValue.split(/\n/);
-                targetValue = items && items.pop();
-            }
-
-            var words = targetValue.split(',');
-            words.pop();
-            words.push(value);
-
-            if (items) {
-                items.push(words.join(','));
-                value = items.join('\n');
-            }
-            this.control.setValue(value);
+            var closeTag = this.control.closeAt ? this.control.closeAt : '';
+            // 执行插入操作,先删除查询词然后插入提示词
+            textCursorHelper.del(input, -this.query.length, this.caretPos);
+            textCursorHelper.add(input, value + closeTag, this.caretPos - this.query.length);
         }
 
         function extractMatchingWord(value) {
@@ -440,6 +436,42 @@ define(
             var word = words && words.pop();
             return lib.trim(word);
         }
+
+        /**
+         * 检测是否需要显示数据面板，检测逻辑如下：
+         *
+         * 一：局部替换，开闭符号都包含
+         * - 包含触发符号 `{`
+         * - 最后一个触发符号 `{` 需要出现在最后一个触发结束符号 `}` 后边
+         *
+         * 二：全部替换，只有开合(openAt)没有闭合(closeAt)
+         * - 这时候会在开始输入的时候就给提示并进行替换
+         *
+         * @param {string} val 光标前的数据
+         * @return {boolean} 需要显示返回 true，否则返回 false
+         */
+        function canShowSelector (val) {
+            var openIndex = -1;
+            var closeIndex = -1;
+            var openTag = this.control.openAt;
+            var closeTag = this.control.closeAt;
+
+            if (openTag) {
+                openIndex = val.lastIndexOf(openTag);
+            }
+            if (closeTag) {
+                closeIndex = val.lastIndexOf(closeTag);
+            }
+
+            if (openIndex >= 0 && openIndex > closeIndex) {
+                return true;
+            }
+            else if (openTag && !closeTag) {
+                return true;
+            }
+
+            return false;
+        };
 
         /**
          * 下拉建议列表中上下选择
@@ -549,7 +581,7 @@ define(
 
                     if (layerMain) {
                         helper.removeDOMEvent(layerMain, 'click');
-                        layerMain.remove();
+                        $(layerMain).remove();
                     }
                     helper.removeDOMEvent(inputEle, 'keydown');
                     this.$super(arguments);

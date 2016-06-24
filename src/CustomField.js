@@ -99,6 +99,8 @@ define(
                         this.fire('ok', {
                             value: value
                         });
+                        this.fire('change');
+                        this.fire('changed');
                     }, this));
 
                     this.getChild('cancelCustom').on('click', u.bind(function (e) {
@@ -122,12 +124,6 @@ define(
                  */
                 repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
-                    {
-                        name: 'rawValue',
-                        paint: function (customField, value) {
-                            customField.fire('change');
-                        }
-                    },
                     {
                         name: 'datasource',
                         paint: function (customField, datasource) {

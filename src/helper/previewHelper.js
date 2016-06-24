@@ -5,8 +5,9 @@
  */
 
 define(function (require) {
-    require('./swfHelper');
+    require('../FlashObject');
 
+    var esui = require('esui/main');
     var $ = require('jquery');
 
     var previewHelper = {
@@ -113,15 +114,13 @@ define(function (require) {
      * @return {ELement} 构造好的FLash节点对象
      */
     function getFlashHtml(options) {
-        return $.flash.create(
-            {
-                id: options.id || 'preview-fla',
-                swf: options.url,
-                width: options.width,
-                height: options.height,
-                wmode: 'transparent'
-            }
-        );
+        return esui.create('FlashObject', {
+            id: options.id || 'preview-fla',
+            url: options.url,
+            width: parseInt(options.width, 10),
+            height: parseInt(options.height, 10),
+            wmode: 'transparent'
+        });
     }
 
     /**
@@ -135,16 +134,14 @@ define(function (require) {
      * @return {ELement} 构造好的Flv视频节点对象
      */
     function getFlvHtml(options) {
-        return $.flash.create(
-            {
-                id: options.id || 'preview-flv',
-                swf: options.swfPath,
-                width: options.width,
-                height: options.height,
-                wmode: 'transparent',
-                flashvars: 'play_url=' + options.url
-            }
-        );
+        return esui.create('FlashObject', {
+            id: options.id || 'preview-flv',
+            url: options.swfPath,
+            width: options.width,
+            height: options.height,
+            wmode: 'transparent',
+            flashvars: 'play_url=' + options.url
+        });
     }
 
     /**

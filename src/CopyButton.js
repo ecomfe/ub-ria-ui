@@ -9,7 +9,7 @@
 define(
     function (require) {
         // 引用创建SWF元素的帮助类
-        require('./helper/swfHelper');
+        require('./FlashObject');
         var u = require('underscore');
         var Control = require('esui/Control');
         var eoo = require('eoo');
@@ -70,22 +70,18 @@ define(
                  */
                 initStructure: function () {
                     var helper = this.helper;
-                    this.flashId = helper.getId('flash');
                     var jqFlashWrapper = $('<span id="' + helper.getId('flash-wrapper') + '"></span>');
                     var jqMainElement = $(this.main);
 
                     // 创建Flash页面元素
-                    jqFlashWrapper.append(
-                        $.flash.create(
-                            {
-                                id: this.flashId,
-                                swf: swfPath,
-                                width: '100%',
-                                height: '100%',
-                                wmode: 'transparent'
-                            }
-                        )
-                    );
+                    var flashObj = esui.create('FlashObject', {
+                        url: swfPath,
+                        width: '100%',
+                        height: '100%',
+                        wmode: 'transparent'
+                    });
+                    this.addChild(flashObj, 'flashObj');
+                    flashObj.appendTo(jqFlashWrapper[0]);
 
                     // 对齐元素
                     jqMainElement.append(jqFlashWrapper);
@@ -171,8 +167,8 @@ define(
          */
         function checkFlashState(callback) {
             var me = this;
-            var flash = $('#' + me.flashId)[0];
-            if (flash.flashInit && flash.flashInit()) {
+            var flash = this.getChild('flashObj').main.firstElementChild;
+            if (flash && flash.flashInit && flash.flashInit()) {
                 flash.setHandCursor(me.setHandCursor);
                 flash.setContentFuncName(me.copyScriptFun);
 
