@@ -116,9 +116,10 @@ define(
                             // 先取消选择
                             var allData = control.allData;
 
+                            // 对于根节点隐藏的情况
                             // 因为取值也不会取根节点，赋值如果等于根节点
                             // 避免所有子孙都被选中，这里无视
-                            if (allData && selectedData.length === 1) {
+                            if (this.hideRoot && allData && selectedData.length === 1) {
                                 var selectedItem = selectedData[0];
                                 selectedItem = selectedItem.id || selectedItem.value || selectedItem;
                                 if (selectedItem === allData.id) {
@@ -392,15 +393,9 @@ define(
                  */
                 selectAll: function () {
                     var data = this.isQuery() ? this.queriedData : this.allData;
-                    var children = data.children;
-                    var control = this;
-                    this.walkTree(
-                        data,
-                        children,
-                        function (parent, child) {
-                            selectItem(control, child.id, true);
-                        }
-                    );
+                    var root = this.getStateNode(data.id);
+                    selectItem(this, root.node.id, true);
+                    trySyncChildrenStates(this, root, true);
                     this.fire('add');
                     this.fire('change');
                 },
@@ -687,6 +682,16 @@ define(
                     }
                     var count = getChildrenCount(this, node, true);
                     return count;
+                },
+
+                /**
+                 * 判断是否根节点
+                 *
+                 * @param {Object} node 节点对象
+                 * @return {boolean}
+                 */
+                isRoot: function (node) {
+                    return node.id === getTopId(this);
                 }
             }
         );
@@ -965,7 +970,7 @@ define(
          * @return {number}
          */
         function getTopId(control) {
-            return control.datasource.id;
+            return control.allData.id;
         }
 
         function toggleTreeState(selector, disabled) {
