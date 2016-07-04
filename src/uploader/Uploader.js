@@ -721,7 +721,14 @@ define(
             }
 
             var httpInstance = new HTTPRequest('POST', this.action);
-            httpInstance.setRequestHeader([{key: 'token', value: this.token}]);
+
+            // 修复Firefox上传文件的bug
+            // 上传时reponse会设置concent-type为application/octet-stream
+            // 但是request的accept没有这个取值
+            httpInstance.setRequestHeader([
+                {key: 'token', value: this.token},
+                {key: 'Accept', value: '*/*'}
+            ]);
 
             return httpInstance;
         }

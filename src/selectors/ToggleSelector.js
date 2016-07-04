@@ -47,10 +47,6 @@ define(
                         options.title = options.defaultText;
                     }
 
-                    if (options.collapseAfterChange === 'false') {
-                        options.collapseAfterChange = false;
-                    }
-
                     this.$super(arguments);
                 },
 
