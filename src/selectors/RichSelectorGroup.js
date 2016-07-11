@@ -210,6 +210,13 @@ define(
                                     if ((isValueExpand || isSomeSelected) && !u.isEmpty(node.children)) {
                                         return node;
                                     }
+                                    // 如果是根节点，且根节点隐藏
+                                    // 则继续递归展开子节点的值
+                                    else if (u.isFunction(source.isRoot)
+                                     && source.isRoot(node) && source.hideRoot
+                                    ) {
+                                     return node;
+                                    }
                                     // 否则只需要取当前节点值
                                     else if (isSelected) {
                                         rawValue.push(u.omit(node, 'children'));
