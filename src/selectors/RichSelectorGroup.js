@@ -151,11 +151,14 @@ define(
                             }
                             var source = me.getChild('source');
                             var target = me.getChild('target');
+
+                            var properties = {selectedData: rawValue};
+                            if (datasource) {
+                                properties.datasource = datasource;
+                            }
+
                             // 先设置左边，再同步右边
-                            source.setProperties({
-                                datasource: datasource,
-                                selectedData: rawValue
-                            });
+                            source.setProperties(properties);
                             syncLeftRight.call(me);
                         }
                     },
