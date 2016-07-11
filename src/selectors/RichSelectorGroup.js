@@ -144,15 +144,19 @@ define(
                 repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
                     {
-                        name: 'rawValue',
-                        paint: function (me, rawValue) {
-                            if (!u.isEmpty(rawValue)) {
-                                var source = me.getChild('source');
-                                var target = me.getChild('target');
-                                // 先设置左边，再同步右边
-                                source.setProperties({selectedData: rawValue});
-                                syncLeftRight.call(me);
+                        name: ['rawValue', 'datasource'],
+                        paint: function (me, rawValue, datasource) {
+                            if (u.isEmpty(rawValue)) {
+                                rawValue = [];
                             }
+                            var source = me.getChild('source');
+                            var target = me.getChild('target');
+                            // 先设置左边，再同步右边
+                            source.setProperties({
+                                datasource: datasource,
+                                selectedData: rawValue
+                            });
+                            syncLeftRight.call(me);
                         }
                     },
                     {
@@ -204,13 +208,6 @@ define(
                                     // 如果当前节点非叶节点，且允许展开或部分选中
                                     // 则返回该节点继续递归
                                     if ((isValueExpand || isSomeSelected) && !u.isEmpty(node.children)) {
-                                        return node;
-                                    }
-                                    // 如果是根节点，且根节点隐藏
-                                    // 则继续递归展开子节点的值
-                                    else if (u.isFunction(source.isRoot)
-                                        && source.isRoot(node) && source.hideRoot
-                                    ) {
                                         return node;
                                     }
                                     // 否则只需要取当前节点值
