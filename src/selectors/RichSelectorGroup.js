@@ -144,15 +144,19 @@ define(
                 repaint: painters.createRepaint(
                     InputControl.prototype.repaint,
                     {
-                        name: 'rawValue',
-                        paint: function (me, rawValue) {
-                            if (!u.isEmpty(rawValue)) {
-                                var source = me.getChild('source');
-                                var target = me.getChild('target');
-                                // 先设置左边，再同步右边
-                                source.setProperties({selectedData: rawValue});
-                                syncLeftRight.call(me);
+                        name: ['rawValue', 'datasource'],
+                        paint: function (me, rawValue, datasource) {
+                            if (u.isEmpty(rawValue)) {
+                                rawValue = [];
                             }
+                            var source = me.getChild('source');
+                            var target = me.getChild('target');
+                            // 先设置左边，再同步右边
+                            source.setProperties({
+                                datasource: datasource,
+                                selectedData: rawValue
+                            });
+                            syncLeftRight.call(me);
                         }
                     },
                     {

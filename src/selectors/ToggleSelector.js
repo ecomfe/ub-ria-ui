@@ -125,6 +125,11 @@ define(
                     }
                 },
 
+                getFullRawValue: function () {
+                    var target = this.viewContext.getSafely(this.targetControl);
+                    return target.getRawValue();
+                },
+
                 setRawValue: function (value) {
                     var target = this.viewContext.getSafely(this.targetControl);
                     target.setRawValue(value);
