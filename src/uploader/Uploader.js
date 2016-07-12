@@ -60,7 +60,7 @@ define(
                  */
                 type: 'Uploader',
 
-                /*
+                /**
                  * 文件上传队列
                  */
                 queue: {

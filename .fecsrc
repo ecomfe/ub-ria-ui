@@ -1,0 +1,12 @@
+{
+    "files": [
+        "src/**",
+        "!src/**/*.less"
+    ],
+    "eslint": {
+        "rules": {
+            "fecs-valid-var-jsdoc": false,
+            "fecs-max-statements": false
+        }
+    }
+}

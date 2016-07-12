@@ -85,11 +85,9 @@ define(
                 properties.multi = false;
             }
 
-            /*
-            if (properties.multi === false) {
-                properties.onlyLeafSelect = true;
-            }
-            */
+            // if (properties.multi === false) {
+            //     properties.onlyLeafSelect = true;
+            // }
 
             if (properties.needSyncParentChild === 'false') {
                 properties.needSyncParentChild  = false;
@@ -645,7 +643,7 @@ define(
 
             var toBeSelectItems = [];
 
-            function selectItemsWithoutDisabled (nodes) {
+            function selectItemsWithoutDisabled(nodes) {
                 u.each(nodes, function (node) {
                     if (!node.disabled) {
                         toBeSelectItems.push(node);

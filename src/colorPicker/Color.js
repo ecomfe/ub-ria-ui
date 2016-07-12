@@ -47,12 +47,24 @@ define(
                     var q = Math.round((bright * (60 - saturation * f)) / 60 * 255);
                     var t = Math.round((bright * (60 - saturation * (60 - f))) / 60 * 255);
                     switch (Math.floor(hue / 60)) {
-                        case 0: rgbArray = [br, t, p]; break;
-                        case 1: rgbArray = [q, br, p]; break;
-                        case 2: rgbArray = [p, br, t]; break;
-                        case 3: rgbArray = [p, q, br]; break;
-                        case 4: rgbArray = [t, p, br]; break;
-                        case 5: rgbArray = [br, p, q]; break;
+                        case 0:
+                            rgbArray = [br, t, p];
+                            break;
+                        case 1:
+                            rgbArray = [q, br, p];
+                            break;
+                        case 2:
+                            rgbArray = [p, br, t];
+                            break;
+                        case 3:
+                            rgbArray = [p, q, br];
+                            break;
+                        case 4:
+                            rgbArray = [t, p, br];
+                            break;
+                        case 5:
+                            rgbArray = [br, p, q];
+                            break;
                     }
 
                 }

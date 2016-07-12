@@ -155,8 +155,6 @@ define(
                     data = data.concat(this.ySeries[index + 1].data);
                 }
                 var splitNumber = this.splitNumber;
-                // index 只可能为0, 1   0为左边坐标  1为右边坐标
-                var labelAlign = index === 0 ? 'left' : 'right';
 
                 // 自动计算比例尺的逻辑先删掉，PM有反应再加上。。。
                 // 按从小到大排下序

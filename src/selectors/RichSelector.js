@@ -100,6 +100,7 @@ define(
 
                 /**
                  * 创建标题栏HTML
+                 *
                  * @return {string}
                  */
                 getHeadHTML: function () {
@@ -149,6 +150,7 @@ define(
 
                 /**
                  * 创建底部状态栏HTML
+                 *
                  * @return {string}
                  */
                 getFootHTML: function () {
@@ -178,6 +180,7 @@ define(
 
                 /**
                  * 创建搜索框HTML
+                 *
                  * @return {string}
                  */
                 getSearchBoxHTML: function () {
@@ -286,6 +289,7 @@ define(
 
                 /**
                  * 点击行为分发器
+                 *
                  * @param {Event} e 事件对象
                  * @return {boolean}
                  * @ignore
@@ -296,6 +300,7 @@ define(
 
                 /**
                  * 按条件搜索
+                 *
                  * @param {string | Object} args 搜索参数
                  */
                 search: function (args) {
@@ -362,6 +367,7 @@ define(
 
                 /**
                  * 获取结果列表承载容器控件，列表在它里面
+                 *
                  * @param {ui.RichSelector} richSelector 类实例
                  * @return {ui.Panel}
                  * @ignore
@@ -385,6 +391,7 @@ define(
 
                 /**
                  * 获取结果列表控件
+                 *
                  * @return {ui.TreeForSelector | ui.ListForSelector}
                  * @ignore
                  */
@@ -398,6 +405,7 @@ define(
 
                 /**
                  * 获取搜索控件
+                 *
                  * @return {ui.Panel}
                  * @ignore
                  */
@@ -410,6 +418,7 @@ define(
 
                 /**
                  * 获取腿部总个数容器
+                 *
                  * @param {ui.RichSelector} richSelector 类实例
                  * @return {ui.Panel}
                  * @ignore
@@ -424,6 +433,7 @@ define(
 
                 /**
                  * 获取头部总个数容器
+                 *
                  * @param {ui.RichSelector} richSelector 类实例
                  * @return {ui.Panel}
                  * @ignore
@@ -438,6 +448,7 @@ define(
 
                 /**
                  * 判断是否处于query状态
+                 *
                  * @return {boolean}
                  */
                 isQuery: function () {
@@ -601,6 +612,7 @@ define(
                 /**
                  * 获取已经选择的数据项
                  * 就是一个代理，最后从结果列表控件里获取
+                 *
                  * @return {Array}
                  * @public
                  */
@@ -610,6 +622,7 @@ define(
 
                 /**
                  * 获取已经选择的数据的完整数据结构
+                 *
                  * @return {*}
                  * @public
                  */
@@ -619,6 +632,7 @@ define(
 
                 /**
                  * 批量更新状态
+                 *
                  * @param {Array} items 需要更新的对象集合
                  * @param {boolean} toBeSelected 要选择还是取消选择
                  * @public
@@ -626,6 +640,7 @@ define(
 
                 /**
                  * 批量更新选择状态
+                 *
                  * @param {Array} items 需要更新的对象集合
                  * @param {boolean} toBeSelected 要选择还是取消选择
                  * @public
@@ -685,6 +700,7 @@ define(
 
         /**
          * 根据关键词搜索结果
+         *
          * @param {event} e SearchBox的点击事件对象
          * @ignore
          */

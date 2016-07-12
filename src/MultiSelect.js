@@ -75,7 +75,6 @@ define(
 
             initBehavior: function (element) {
                 var multiSelect = this.control;
-                var helper = multiSelect.helper;
 
                 // item点击事件
                 $(element).on('click', 'input', u.bind(itemClickHandler, multiSelect));
@@ -269,12 +268,14 @@ define(
 
             /**
              * 显示选中值的模板
+             *
              * @type {string}
              */
             displayTemplate: '${text}',
 
             /**
              * 获取选中值的内容
+             *
              * @param {meta.SelectItem | null} item 选中节点的数据项，
              * 如果{@link Select#emptyText}属性值不为空且未选中任何节点，则传递'null'
              * @return {string} 显示的HTML片段
@@ -301,6 +302,7 @@ define(
 
             /**
              * 初始化DOM结构
+             *
              * @protected
              * @override
              */
@@ -324,6 +326,7 @@ define(
 
             /**
              * 初始化事件交互
+             *
              * @protected
              * @override
              */
@@ -351,6 +354,7 @@ define(
 
             /**
              * 获取值
+             *
              * @return {Mixed}
              * @override
              */
@@ -371,6 +375,7 @@ define(
 
             /**
              * 重渲染
+             *
              * @method
              * @protected
              * @override
@@ -425,6 +430,7 @@ define(
 
             /**
              * 更新{@link Select#datasource}属性，无论传递的值是否变化都会进行更新
+             *
              * @param {meta.SelectItem[]} datasource 新的数据源对象
              */
             updateDatasource: function (datasource) {
@@ -438,6 +444,7 @@ define(
 
             /**
              * 批量更新属性并重绘
+             *
              * @param {Object} properties 需更新的属性
              * @override
              * @fires change
@@ -462,6 +469,7 @@ define(
 
             /**
              * 销毁控件
+             *
              * @override
              */
             dispose: function () {
@@ -479,6 +487,7 @@ define(
 
             /**
              * 获取当前选中的{@link meta.SelectItem}对象
+             *
              * @return {meta.SelectItem}
              */
             getSelectedItem: function () {
@@ -503,6 +512,7 @@ define(
 
         /**
          * 切换下拉框
+         *
          * @param {Event} e click事件对象
          */
         function toggle(e) {
@@ -568,6 +578,7 @@ define(
 
         /**
          * 根据控件的值更新其视图
+         *
          * @param {Select} select 控件实例
          * @ignore
          */

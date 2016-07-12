@@ -167,7 +167,6 @@ define(
          * @param {boolean} disabled 是否disable
          */
         function setDisabled(disabled) {
-            var contentMain = this.getChild('content').main;
             var controls = this.getChild('content').children;
             if (disabled === false) {
                 u.each(

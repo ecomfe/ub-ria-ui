@@ -476,7 +476,7 @@ define(
                 this.rawValue = u.filter(
                     this.rawValue,
                     function (item, index) {
-                        return index < this.limit
+                        return index < this.limit;
                     },
                     this
                 );

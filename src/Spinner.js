@@ -225,6 +225,7 @@ define(
 
                 /**
                  * 设置控件值
+                 *
                  * @param {string} value 控件值
                  */
                 setValue: function (value) {
@@ -235,6 +236,7 @@ define(
 
         /**
          * 解析数字类型方法
+         *
          * @param {string} value 要解析的值
          * @return {string}
          */
@@ -247,6 +249,7 @@ define(
 
         /**
          * 微调方向枚举值
+         *
          * @enum {string}
          */
         var Direct = {
@@ -256,6 +259,7 @@ define(
 
         /**
          * 更新日期类型方法
+         *
          * @param {Direct} direct up / down
          */
         function updateDate(direct) {
@@ -301,6 +305,7 @@ define(
 
         /**
          * 更新数值类型的方法
+         *
          * @param {Direct} direct up / down
          */
         function updateNumber(direct) {
@@ -336,6 +341,7 @@ define(
 
         /**
          * 更新值方法，用来判断值类型是数字类型还是时间类型
+         *
          * @param {Direct} direct 方向
          */
         function updateValue(direct) {
@@ -350,6 +356,7 @@ define(
         /**
          * 改变value方法，该方法会触发 scrollValue 事件
          * 如果用户想自定义方法，可以通过preventDefault()阻止默认行为
+         *
          * @param {Event} e 事件对象
          */
         function scrollValue(e) {
@@ -368,6 +375,7 @@ define(
         /**
          * 长按按钮自动更新方法
          * 长按3秒时，速度加倍
+         *
          * @param {Event} e 事件对象
          */
         function autoUpdate(e) {
@@ -394,6 +402,7 @@ define(
 
         /**
          * 鼠标滚轮方法
+         *
          * @param {Event} e 事件对象
          * @param {Direct} direct 方向
          */
@@ -405,6 +414,7 @@ define(
 
         /**
          * 鼠标点击方法
+         *
          * @param {Event} e 事件对象
          */
         function mouseDownHandler(e) {
@@ -423,6 +433,7 @@ define(
 
         /**
          * 取消事件方法
+         *
          * @param {Event} e 事件对象
          */
         function mouseUpHandler(e) {

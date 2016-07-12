@@ -73,6 +73,7 @@ define(function (require) {
 
             /**
              * 增加项
+             *
              * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @public
              */
@@ -86,6 +87,7 @@ define(function (require) {
 
             /**
              * 获取提示已选项Panel
+             *
              * @return {Panel} 提示已选项Panel
              * @private
              */
@@ -125,6 +127,7 @@ define(function (require) {
 
             /**
              * 移除选中项
+             *
              * @param {Object} item 选中项的数据 格式如: {value: '', text: ''}
              * @param {HtmlElement} target 取消选中的元素
              * @private
@@ -135,6 +138,7 @@ define(function (require) {
                 }
                 var selectedItem = this.getItemByValue(item.value);
                 this.datasource = u.without(this.datasource, selectedItem);
+
                 /**
                  * @event select
                  *
@@ -148,6 +152,7 @@ define(function (require) {
 
             /**
              * 根据值获取整个选择项的数据
+             *
              * @param {string} value 值
              * @param {Object=} datasource 数据源
              * @return {Object} item 选中项的数据 格式如: {value: '', text: ''}
@@ -189,6 +194,7 @@ define(function (require) {
 
             /**
              * 根据datasource生成选择项
+             *
              * @param {Array} datasource 选项列表数据源
              * @private
              */
@@ -219,6 +225,7 @@ define(function (require) {
 
             /**
              * 获取选中的
+             *
              * @return {Object} 选中的条件
              */
             getSelectedItems: function () {
@@ -233,6 +240,7 @@ define(function (require) {
 
             /**
              * 获取选中的值
+             *
              * @return {Object} 选中项
              */
             getValue: function () {

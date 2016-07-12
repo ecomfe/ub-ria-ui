@@ -25,6 +25,7 @@ define(
             {
                 /**
                  * 控件的类型
+                 *
                  * @override
                  * @type {String}
                  */
@@ -32,13 +33,16 @@ define(
 
                 /**
                  * 参数的初始化
+                 *
                  * @protected
                  * @override
                  * @param  {Object} options [初始化的参数]
                  */
                 initOptions: function (options) {
+
                     /**
                      * 默认的属性
+                     *
                      * @type {Object}
                      * @type {string} defaults.orientation 滑块的形式 横着为'' 竖着为’vertical‘
                      * @type {number} defaults.start 起始值 默认是0
@@ -116,6 +120,7 @@ define(
 
                 /**
                  * 批量设置控件的属性值
+                 *
                  * @param {Object} properties 属性值集合
                  * @override
                  */
@@ -137,6 +142,7 @@ define(
                  * 滑动杆可能有一个滑块或两个滑块，类型是区间时可能有两个滑块，最大值和最小值
                  * 任意一个是显示的起始值时显示一个滑块
                  * 放在原型里是为了可重写
+                 *
                  * @protected
                  */
                 createBody: function () {
@@ -174,6 +180,7 @@ define(
 
                 /**
                  * 初始化dom结构，仅在第一次渲染的时候使用
+                 *
                  * @protected
                  * @override
                  */
@@ -189,6 +196,7 @@ define(
 
                 /**
                  * 初始化事件的交互
+                 *
                  * @protected
                  * @override
                  */
@@ -199,6 +207,7 @@ define(
 
                 /**
                  * 获取滑动杆的值
+                 *
                  * @return {*} 滑动杆的值
                  */
                 getValue: function () {
@@ -216,6 +225,7 @@ define(
 
                 /**
                  * 重新渲染
+                 *
                  * @protected
                  * @override
                  * @type {Function} 重新渲染时要执行的函数
@@ -232,6 +242,7 @@ define(
 
                 /**
                  * 销毁控件
+                 *
                  * @protected
                  * @override
                  */
@@ -253,8 +264,9 @@ define(
 
         /**
          * 适配控件的value
+         *
          * @param  {Object} properties 参数
-         * @return {Object}            适配后的参数
+         * @return {Object} 适配后的参数
          */
         function adaptValue(properties) {
 
@@ -301,6 +313,7 @@ define(
 
         /**
          * 绑定滑块拖拽的事件
+         *
          * @private
          */
         function bindCursorEvents() {
@@ -323,8 +336,9 @@ define(
 
         /**
          * 根据滑块left或top的值来计算value
-         * @param  {number} cursorLeftTop 滑块位置left或top的值
-         * @return {number}      滑块的值
+         *
+         * @param {number} cursorLeftTop 滑块位置left或top的值
+         * @return {number} 滑块的值
          * @private
          */
         function getValueByLeftTop(cursorLeftTop) {
@@ -346,8 +360,9 @@ define(
 
         /**
          * 根据值获取滑块的位置
-         * @param  {number} value 滑块的值
-         * @return {number}       滑块的左侧位置
+         *
+         * @param {number} value 滑块的值
+         * @return {number} 滑块的左侧位置
          * @private
          */
         function getLeftTopByValue(value) {
@@ -368,6 +383,7 @@ define(
         /**
          * 根据值去做相应的调整，包括head里显示、赋值和微调滑块的位置
          * 为啥要微调位置，因为你不知道鼠标会停在哪，比如1，2之间跨度太大时 要落到值上
+         *
          * @param {Slider} slider 滑动杆控件
          * @param {number} value  滑动杆的值
          */
@@ -420,6 +436,7 @@ define(
 
         /**
          * 鼠标移动的事件
+         *
          * @param {Event} e 事件对象
          * @param {boolean=} isMouseUp 是否是鼠标松开的触发 是为true 不是为false
          * @param {Object} data 事件fire时的data
@@ -543,6 +560,7 @@ define(
 
         /**
          * 鼠标的松开事件
+         *
          * @param {Event} e 事件的对象
          * @private
          */
@@ -568,6 +586,7 @@ define(
 
         /**
          * 初始化body内元素的坐标和宽度
+         *
          * @param  {Slider}  slider 滑动杆控件
          */
         function initBodyElements(slider) {
@@ -602,6 +621,7 @@ define(
 
         /**
          * 根据鼠标位置，寻找离鼠标位置最近的handle
+         *
          * @private
          * @param {Event} e 事件对象
          * @return {Element}
@@ -628,6 +648,7 @@ define(
 
         /**
          * 鼠标的按下事件
+         *
          * @private
          * @param {Event} e 事件对象
          * @return {boolean}

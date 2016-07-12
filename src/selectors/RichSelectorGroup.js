@@ -150,7 +150,6 @@ define(
                                 rawValue = [];
                             }
                             var source = me.getChild('source');
-                            var target = me.getChild('target');
 
                             var properties = {selectedData: rawValue};
                             if (datasource) {

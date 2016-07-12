@@ -73,7 +73,7 @@ define(
                     var position = this.position;
                     initContentPanel.call(this, contentElem);
                     if (position === 'layer') {
-                        triggerElement = this.triggerElement || titleElem;
+                        var triggerElement = this.triggerElement || titleElem;
                         initContentLayer.call(this, contentElem, triggerElement);
                     }
                 },

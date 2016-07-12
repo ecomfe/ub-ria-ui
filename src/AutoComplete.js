@@ -14,7 +14,7 @@ define(
         var Layer = require('esui/Layer');
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
-        var textCursorHelper= require('./helper/TextCursorHelper');
+        var textCursorHelper = require('./helper/TextCursorHelper');
         var keyboard = require('esui/behavior/keyboard');
         require('esui/behavior/jquery-ui');
 
@@ -429,14 +429,6 @@ define(
             textCursorHelper.add(input, value + closeTag, this.caretPos - this.query.length);
         }
 
-        function extractMatchingWord(value) {
-            var lines = value.split(/\n/);
-            var line = lines.pop();
-            var words = line.split(',');
-            var word = words && words.pop();
-            return lib.trim(word);
-        }
-
         /**
          * 检测是否需要显示数据面板，检测逻辑如下：
          *
@@ -450,7 +442,7 @@ define(
          * @param {string} val 光标前的数据
          * @return {boolean} 需要显示返回 true，否则返回 false
          */
-        function canShowSelector (val) {
+        function canShowSelector(val) {
             var openIndex = -1;
             var closeIndex = -1;
             var openTag = this.control.openAt;
@@ -471,7 +463,7 @@ define(
             }
 
             return false;
-        };
+        }
 
         /**
          * 下拉建议列表中上下选择

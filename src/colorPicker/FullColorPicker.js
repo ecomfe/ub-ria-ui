@@ -84,7 +84,8 @@ define(
                     // 如果是可切换的，还要加上切换按钮
                     if (this.switchable) {
                         var switchClass = this.helper.getPartClassName('mode-switch');
-                        html.push('<div data-ui-variants="link fluid" data-ui-type="Button" data-ui-child-name="switch" ');
+                        html.push('<div data-ui-variants="link fluid" '
+                                + 'data-ui-type="Button" data-ui-child-name="switch" ');
                         html.push('class="' + switchClass + '">' + this.fullModeText + '</div>');
                     }
 

@@ -150,6 +150,7 @@ define(function (require) {
 
             /**
              * 设置选中项
+             *
              * @param {number} value 选中项的值
              * @public
              */
@@ -182,6 +183,7 @@ define(function (require) {
 
             /**
              * 设置page
+             *
              * @param {number} page 获取page的序号
              * @public
              */
@@ -210,6 +212,7 @@ define(function (require) {
 
             /**
              * 获取选择项的完整数据
+             *
              * @return {Object}
              * @public
              */
@@ -221,6 +224,7 @@ define(function (require) {
 
     /**
      * 拼接main的dom结构
+     *
      * @return {string} html片段
      * @inner
      */
@@ -243,6 +247,7 @@ define(function (require) {
 
     /**
      * 拼接内容项的dom结构
+     *
      * @param {Array} data 渲染数据
      * @param {number} itemWidth 单项的宽
      * @param {number} itemHeight 单项的高
@@ -281,6 +286,7 @@ define(function (require) {
 
     /**
      * 拼接底部分页条的dom结构
+     *
      * @param {Array} data 渲染所需的数据
      * @return {string} html片段
      * @inner
@@ -305,6 +311,7 @@ define(function (require) {
 
     /**
      * 获取page的序号根据选中项的index
+     *
      * @return {number} page的序号
      * @inner
      */
@@ -317,6 +324,7 @@ define(function (require) {
 
     /**
      * 设置左右箭头的样式
+     *
      * @inner
      */
     function setPointerStyle() {
@@ -338,6 +346,7 @@ define(function (require) {
 
     /**
      * 设置翻页的滚动位置
+     *
      * @inner
      */
     function setCarouseListPosition() {
@@ -348,6 +357,7 @@ define(function (require) {
 
     /**
      * 左右箭头点击后的处理函数
+     *
      * @param {number} n 区别方向  -1=left 1=right
      * @inner
      */
@@ -362,6 +372,7 @@ define(function (require) {
 
     /**
      * 单个选项处理handler
+     *
      * @param {number} index 选项的序号
      * @param {HTMLElement} $el dom对象
      * @inner
@@ -379,6 +390,7 @@ define(function (require) {
         this.selectedIndex = index;
         this.selectedItem = this.getSelectedItem();
         this.value = this.selectedItem.id;
+
         /**
          * @event change
          *
@@ -391,6 +403,7 @@ define(function (require) {
 
     /**
      * 翻页按钮点击处理函数
+     *
      * @param {number} nextPage 目标页的序号
      * @inner
      */
@@ -402,6 +415,7 @@ define(function (require) {
 
     /**
      * 选择项切换处理函数，采用事件委托的方式
+     *
      * @param {Event} e 事件对象
      * @inner
      */
@@ -413,6 +427,7 @@ define(function (require) {
 
     /**
      * 底部工具条处理函数，采用事件委托的方式
+     *
      * @param {Event} e 事件对象
      * @inner
      */

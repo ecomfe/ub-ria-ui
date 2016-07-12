@@ -207,7 +207,7 @@ define(
             });
         }
 
-        /*
+        /**
          * 点击时的切换逻辑
          *
          * @param {Event} e 触发事件的事件对象
@@ -250,11 +250,11 @@ define(
             me.fire('change');
         }
 
-        /*
+        /**
          * 激活指定位置的panel
          *
          * @param {accordion} accordion accordion控件实例
-         * @parma {number} index 待激活的panel下标
+         * @param {number} index 待激活的panel下标
          * @ignore
          */
         function activateAccordion(accordion, index) {
