@@ -51,7 +51,7 @@ define(
                 initOptions: function (options) {
                     var properties = {
                         // 数据源
-                        datasource: null,
+                        datasource: {id: 'root', text: 'root', children: []},
                         // 定向展开配置开关，true则可以根据需要默认展开指定的节点
                         orientExpand: false,
                         // 全节点点击触发展开的配置开关
@@ -453,7 +453,7 @@ define(
                     var event = this.fire('delete', {items: this.getSelectedItems()});
                     // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
                     if (!event.isDefaultPrevented()) {
-                        this.set('datasource', null);
+                        this.set('datasource', {id: 'root', text: 'root', children: []});
                         this.fire('change');
                     }
                 },
