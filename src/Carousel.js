@@ -173,7 +173,7 @@ define(function (require) {
                     var selector = this.helper.getPart('list');
                     var $lis = $(selector).children('li');
                     var selectedClass = this.helper.getPrimaryClassName('selected-item');
-                    $lis.find('.' + selectedClass).removeClass(selectedClass);
+                    $lis.parent().find('.' + selectedClass).removeClass(selectedClass);
                     var $li = $lis.eq(this.selectedIndex);
                     $li.addClass(selectedClass);
                 }

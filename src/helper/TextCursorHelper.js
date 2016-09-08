@@ -65,17 +65,17 @@ define(
         }
 
         /**
-         * 获取文本框t当前光标所在位置
+         * 获取文本框t当前光标所在的坐标
          *
-         * @param {HTMLTextAreaElement} t 文本框
-         * @return {jQuery} 光标所在位置
+         * @param  {HTMLTextAreaElement} t 文本框
+         * @return {jQuery object} 光标所在位置
          */
         TextCursorHelper.getCaretPositionStyle = function (t) {
             // 通过创建一个隐藏容器，将input value复制到div中，
             // 以此推算光标位置
             var $dummyDiv = $('<div></div>')
                 .css(copyCss(t))
-                .text(this.getTextBeforeCaret(t));
+                .html(this.getTextBeforeCaret(t));
             var $span = $('<span></span>').text('.').appendTo($dummyDiv);
             var $element = $(t);
             $element.before($dummyDiv);

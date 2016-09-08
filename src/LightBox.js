@@ -238,7 +238,7 @@ define(function (require) {
              * @protected
              */
             showMedia: function () {
-                var data = this.datasource[this.currentIndex];
+                var data = u.clone(this.datasource[this.currentIndex]);
                 this.showLoading();
 
                 if (!data.type) {
@@ -375,6 +375,9 @@ define(function (require) {
                 else if (html.getCategory) {
                     this.addChild(html, 'VideoObject');
                     html.appendTo($container[0]);
+                }
+                else if (html.nodeName === 'VIDEO') {
+                    $container.append(html);
                 }
                 this.dialog.show();
             },

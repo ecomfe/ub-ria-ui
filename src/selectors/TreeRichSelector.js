@@ -64,6 +64,9 @@ define(
                         // 有些需求场景是，父子节点除了概念上的从属关系外，交互上没有任何关联
                         // 选择父节点不代表其下的子节点全被选中；选择全部子节点也不代表父节点选中
                         needSyncParentChild: true,
+                        // 有些场景中，选择父节点要求其下的所有子节点被选中
+                        // 选中所有的子节点父节点不能被选中，因为子节点还有一些没有显示
+                        needSyncParentSelected: true,
                         // 树样式
                         treeVariants: 'icon angle hoverable',
                         // 大小写是否敏感。默认无视大小写
@@ -815,14 +818,22 @@ define(
                             || control.getItemState(brother.id, 'isSomeSelected');
                     }
                 );
-                if (!allSelected && someSelected) {
-                    control.setItemState(parentId, 'isSomeSelected', true);
+                // 子节点全部选中，而父节点不被选中时
+                // 把所有祖先节点强制置为'isSomeSelected'
+                if (toBeSelected && !control.needSyncParentSelected) {
+                     control.setItemState(parentId, 'isSomeSelected', true);
+                     trySyncParentStates(control, parentItem, false);
                 }
                 else {
-                    control.setItemState(parentId, 'isSomeSelected', false);
+                    if (!allSelected && someSelected) {
+                        control.setItemState(parentId, 'isSomeSelected', true);
+                    }
+                    else {
+                        control.setItemState(parentId, 'isSomeSelected', false);
+                    }
+                    selectItem(control, parentId, allSelected);
+                    trySyncParentStates(control, parentItem, allSelected);
                 }
-                selectItem(control, parentId, allSelected);
-                trySyncParentStates(control, parentItem, allSelected);
             }
         }
 
