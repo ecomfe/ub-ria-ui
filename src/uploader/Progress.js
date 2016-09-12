@@ -150,7 +150,6 @@ define(
             if (!file) {
                 return '';
             }
-            var template = this.template || template;
 
             return lib.format(
                 this.template,

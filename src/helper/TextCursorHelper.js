@@ -50,7 +50,7 @@ define(
         /**
          * 获取文件样式
          *
-         * @param  {HTMLTextAreaElement} element 文本框
+         * @param {HTMLTextAreaElement} element 文本框
          * @return {Object} 元素的css属性
          */
         function getStyles(element) {
