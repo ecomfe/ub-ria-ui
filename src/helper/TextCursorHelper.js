@@ -33,7 +33,7 @@ define(
         /**
          * 复制css属性
          *
-         * @param  {HTMLTextAreaElement} t 文本框
+         * @param {HTMLTextAreaElement} t 文本框
          * @return {Object} 元素的css属性
          */
         function copyCss(t) {
@@ -67,7 +67,7 @@ define(
         /**
          * 获取文本框t当前光标所在的坐标
          *
-         * @param  {HTMLTextAreaElement} t 文本框
+         * @param {HTMLTextAreaElement} t 文本框
          * @return {jQuery object} 光标所在位置
          */
         TextCursorHelper.getCaretPositionStyle = function (t) {
@@ -89,7 +89,7 @@ define(
         /**
          * 获取文本框t当前光标所在位置
          *
-         * @param  {HTMLTextAreaElement} t 文本框
+         * @param {HTMLTextAreaElement} t 文本框
          * @return {number} 光标所在位置
          */
         TextCursorHelper.getCaretPosition = function (t) {
@@ -132,8 +132,8 @@ define(
         /**
          * 在文本框t中，设置光标的位置为p
          *
-         * @param  {HTMLTextAreaElement} t 文本框
-         * @param  {number} p 光标位置
+         * @param {HTMLTextAreaElement} t 文本框
+         * @param {number} p 光标位置
          */
         TextCursorHelper.setCaretPosition = function (t, p) {
             select(t, p, p);
@@ -142,7 +142,7 @@ define(
         /**
          * 获取光标前的字符串
          *
-         * @param  {HTMLTextAreaElement} t 文本框
+         * @param {HTMLTextAreaElement} t 文本框
          * @return {string} 光标前的字符串
          */
         TextCursorHelper.getTextBeforeCaret = function (t) {
@@ -165,9 +165,9 @@ define(
         /**
          * 选中文本框t中，从s到e的字符
          *
-         * @param  {HTMLTextAreaElement} t 文本框
-         * @param  {number} s 开始位置
-         * @param  {number} e 结束位置
+         * @param {HTMLTextAreaElement} t 文本框
+         * @param {number} s 开始位置
+         * @param {number} e 结束位置
          */
         function select(t, s, e) {
             if (document.selection) {
@@ -211,9 +211,9 @@ define(
         /**
          * 删除光标前面或者后面的n个字符
          *
-         * @param  {HTMLTextAreaElement} t 文本框
-         * @param  {number}  n>0删除后面n字符，否则删除前面n字符
-         * @param  {number} caretPos 光标位置
+         * @param {HTMLTextAreaElement} t 文本框
+         * @param {number}  n>0删除后面n字符，否则删除前面n字符
+         * @param {number} caretPos 光标位置
          */
         TextCursorHelper.del = function (t, n, caretPos) {
             var p = caretPos || this.getCaretPosition(t);
