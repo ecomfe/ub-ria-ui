@@ -201,6 +201,10 @@ define(
 
                 },
 
+                initOptions: function (options) {
+                    u.extend(this.control, options);
+                },
+
                 repaint: function (value) {
                     var element = this.getElement(false);
                     if (element) {
@@ -254,6 +258,8 @@ define(
                     this.$super(arguments);
                     var input = this.inputElement;
                     var $ele = $(this.getElement(false));
+                    // 每次打开都滚动到最上面
+                    $ele.scrollTop(0);
                     if (input.nodeName.toLowerCase() === 'textarea') {
                         var pos = textCursorHelper.getCaretPositionStyle(input);
                         $ele.position(
@@ -307,13 +313,14 @@ define(
          *
          * @param {string} value 当前用户输入
          * @param {Array} datasource 数据源
+         * @param {string} textKey 需要匹配的数据源key
          * @return {Array}
          */
-        function filter(value, datasource) {
+        function filter(value, datasource, textKey) {
             return u.filter(
                 datasource,
                 function (data) {
-                    var text = u.isObject(data) ? data.text : data;
+                    var text = u.isObject(data) ? data[textKey] : data;
                     return (new RegExp(escapeRegex(value), 'i')).test(text);
                 }
             );
@@ -326,7 +333,8 @@ define(
          * @return {string}
          */
         function escapeRegex(value) {
-            return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+            return value;
+            // return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
         }
 
         /**
@@ -340,6 +348,8 @@ define(
 
                 // 获取搜索词
                 this.query = this.getQuery(value);
+                this.text = this.control.showText ? this.control.showText : 'text';
+                this.desc = this.control.showDesc ? this.control.showDesc : 'desc';
 
                 var me = this;
                 var datasource = this.control.datasource;
@@ -354,10 +364,10 @@ define(
                 }
                 else if (datasource && datasource.length) {
                     // 根据搜索词，获取过滤后的优选词数据列表
-                    var list = filter(this.query, datasource);
+                    var list = filter(this.query, datasource, this.text);
 
                     // 渲染帮助面板
-                    renderSlector.call(me, list, value);
+                    renderSlector.call(me, list, this.query);
                 }
             }
             else {
@@ -390,8 +400,8 @@ define(
             if (data && data.length) {
                 for (var i = 0, len = data.length; i < len; i++) {
                     var item = data[i];
-                    var text = u.isObject(item) && item.text || item;
-                    var desc = u.isObject(item) && item.desc || undefined;
+                    var text = u.isObject(item) && item[this.text] || item;
+                    var desc = u.isObject(item) && item[this.desc] || undefined;
                     var html = lib.format(
                         '<li tabindex="-1" ${dataId} class="${lineClasses}">'
                             + '<span class="${itemClasses}">${text}</span>${desc}</li>',
@@ -405,7 +415,7 @@ define(
                                 highlightWord
                             ),
                             desc: desc ? '<span class="' + helper.getPrefixClass('autocomplete-item-desc')
-                                + '">' + item.desc + '</span>' : ''
+                                + '">' + desc + '</span>' : ''
                         }
                     );
                     ret.push(html);
@@ -439,6 +449,9 @@ define(
          * 二：全部替换，只有开合(openAt)没有闭合(closeAt)
          * - 这时候会在开始输入的时候就给提示并进行替换
          *
+         * 三：仅作为提示，不含特殊标签
+         * - 此时开合标签索引相等
+         *
          * @param {string} val 光标前的数据
          * @return {boolean} 需要显示返回 true，否则返回 false
          */
@@ -459,6 +472,9 @@ define(
                 return true;
             }
             else if (openTag && !closeTag) {
+                return true;
+            }
+            else if (!openTag && !closeTag) {
                 return true;
             }
 
@@ -521,8 +537,18 @@ define(
                  * @class extension.AutoComplete
                  * @extends Extension
                  * @constructor
+                 * @param {Object} options 初始化参数
+                 *
                  */
-                constructor: function () {
+                constructor: function (options) {
+                    var defaultOption = {
+                        closeAt: null,
+                        openAt: null,
+                        showText: 'text',
+                        showDesc: 'desc',
+                        datasource: null
+                    };
+                    u.extend(defaultOption, options);
                     this.$super(arguments);
                 },
 
@@ -537,8 +563,10 @@ define(
                     this.$super(arguments);
 
                     var me = this;
+                    var options = u.pick(me, ['closeAt', 'openAt', 'showText', 'showDesc', 'datasource']);
                     setTimeout(function () {
                         me.layer = new AutoCompleteLayer(me.target);
+                        me.layer.initOptions(options);
                     }, 0);
                 },
 

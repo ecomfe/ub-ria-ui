@@ -41,6 +41,12 @@ define(function (require) {
              * @override
              */
             initOptions: function (options) {
+                // 如果传进来的是undefined的，这里默认设置为['']，默认添加一个
+                // 如果想要一个都不显示。设置为[]即可
+                if (u.isUndefined(options.rawValue) || u.isNull(options.rawValue)) {
+                    options.rawValue = [''];
+                }
+
                 var properties = {
                     /**
                      * @property {number} [maxCount=999]
@@ -122,8 +128,8 @@ define(function (require) {
                 {
                     name: ['rawValue'],
                     paint: function (controlRepeater, rawValue) {
-                        if (!rawValue || !rawValue.length) {
-                            rawValue = [''];
+                        if (!rawValue) {
+                            return;
                         }
 
                         // 当需要添加的时候，清空以前的重新添加
@@ -229,6 +235,16 @@ define(function (require) {
             },
 
             /**
+             * 暴露一个添加的接口以备用
+             *
+             * @param {valueObj} valueObj 模板的映射
+             *
+             */
+            addControl: function (valueObj) {
+                addControl.call(this, valueObj);
+            },
+
+            /**
              * 验证控件，当值不合法时显示错误信息
              *
              * @return {boolean}
@@ -239,7 +255,10 @@ define(function (require) {
                 var result = true;
                 u.each(getInputControls.call(this), function (controls) {
                     u.each(controls, function (control) {
-                        result = control.validate() && result;
+                        if (!control.isDisabled()) {
+                            // 不对disabled的控件进行验证
+                            result &= control.validate();
+                        }
                     });
                 });
                 this.fire('aftervalidate');
@@ -293,10 +312,6 @@ define(function (require) {
      *
      */
     function removeControl(index) {
-        // 至少保留一个
-        if (this.children.length <= 1) {
-            return;
-        }
         var panelContainer = this.getChild('panelName' + index);
 
         if (panelContainer) {
