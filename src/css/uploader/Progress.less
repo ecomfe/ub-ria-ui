@@ -2,26 +2,72 @@
     display: block;
 }
 
-.@{ui-class-prefix}-progress {
-    width: 400px;
-    padding: 5px 10px;
-    font-size: 12px;
-    margin-bottom: 0;
-}
+@esui-progress-container-width: 120px;
 
 .@{ui-class-prefix}-progress-file-info {
-    line-height: 30px;
+    .inline-block();
+
+    .@{ui-class-prefix}-progress-file-name {
+        overflow: hidden;
+        width: @esui-progress-container-width;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: bold;
+        padding: 0;
+        .inline-block();
+    }
+
     .@{ui-class-prefix}-progress-file-size {
-        float: right;
+        float: left;
         color: #999;
-        margin-right: 30px;
     }
 }
 
+.@{ui-class-prefix}-progress-card {
+    width: @esui-progress-container-width;
+    padding: 5px;
+    margin: 10px;
+    float: left;
+    border: 1px solid #fff;
+
+    .@{ui-class-prefix}-progress-image-template{
+        img {
+            width: 120px;
+            height: 120px;
+        }
+    }
+}
+
+.@{ui-class-prefix}-progress-list {
+    .@{ui-class-prefix}-progress-image-template{
+        float: left;
+        width: 60px;
+        img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    .@{ui-class-prefix}-progress-file-info {
+        .@{ui-class-prefix}-progress-file-name {
+            float: left;
+            width: 350px;
+        }
+        float: left;
+    }
+
+    .@{ui-class-prefix}-progress-status {
+        float: right;
+    }
+} 
+
+.@{ui-class-prefix}-progress-preview-reading {
+    opacity: .5;
+}
+
 .@{ui-class-prefix}-progress-status-info {
-    .inline-block();
     vertical-align: middle;
-    width: 240px;
+    width: 100%;
 }
 
 .@{ui-class-prefix}-progress-status-operation {
@@ -39,11 +85,14 @@
     .@{ui-class-prefix}-progress-general & {
         display: none;
     }
+
+    .@{ui-class-prefix}-progress-bar {
+        white-space: nowrap;
+    }
 }
 
 // 结果提示
 .@{ui-class-prefix}-progress-result {
-    line-height: 36px;
     display: none;
 
     .@{ui-class-prefix}-progress-client-error &,
@@ -69,14 +118,3 @@
         .inline-block();
     }
 }
-
-// 重新上传按钮
-.@{ui-class-prefix}-progress-restart {
-    display: none;
-
-    // 错误时显示
-    .@{ui-class-prefix}-progress-server-error & {
-        .inline-block();
-    }
-}
-

@@ -5,10 +5,10 @@
         <title>AutoComplete - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.css"/>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.6/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/ie8.css"/>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.6/demo/assets/ie8.css"/>
         <![endif]-->
     </head>
 <body>
@@ -27,8 +27,9 @@
                 <input data-ui-type="TextBox"
                        data-ui-mode="text"
                        data-ui-id="test"
-                       data-ui-open-at=","
-                       data-ui-extension-autocomplete-type="AutoComplete" />
+                       data-ui-extension-autocomplete-type="AutoComplete"
+                       data-ui-extension-autocomplete-open-at=","
+                />
                 <div data-ui="type:Button;id:getInputValue;content:点击获取RawValue;"></div>
                 <p id="inputValue"></p>
             </div>
@@ -39,19 +40,19 @@
                 <textarea data-ui-type="TextLine"
                        data-ui-id="test1"
                        data-ui-name="test1"
-                       data-ui-open-at="{"
-                       data-ui-close-at="}"
                        data-ui-extension-autocomplete-type="AutoComplete"
-                /></textarea>
+                       data-ui-extension-autocomplete-open-at="{"
+                       data-ui-extension-autocomplete-close-at="}"
+                ></textarea>
                 <div data-ui="type:Button;id:getTextValue;content:点击获取RawValue;"></div>
                 <p id="textValue"></p>
             </div>
         </div>
     </div>
-    <script src="../dep/esui/3.2.0-beta.2/demo/assets/loader/esl.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/assets/loader/esl.js"></script>
     <script src="config.js"></script>
-    <script src="../dep/esui/3.2.0-beta.2/demo/demo.js"></script>
-    <script src="../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
     require(
         [
@@ -63,7 +64,7 @@
             'demo',
             'esui/Tab'
         ],
-        function (ui, AutoComplete) {
+        function (ui, autoComplete) {
             window.ui = ui;
             var controls = ui.init();
             var data = [

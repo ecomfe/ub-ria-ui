@@ -4,7 +4,7 @@
  *
  * @ignore
  * @file File 文件封装类，保证FileInput中的数据一致性
- * @author maoquan(maoquan@baidu.com)
+ * @author maoquan(maoquan@baidu.com),weifeng(weifeng@baidu.com)
  */
 
 define(
@@ -21,7 +21,7 @@ define(
             // 文件上传失败
             FAILED: 2,
             // 文件上传完成
-            DONE: 3,
+            COMPLETE: 3,
             // 文件验证不通过
             ERROR: -1
         };
@@ -45,7 +45,7 @@ define(
                 this.name = options.name;
                 this.originalSize = options.size;
                 this.size = formatSize(options.size);
-                this.fileData = options;
+                this.sourceFile = options;
             }
             else if (options) {
                 u.extend(this, options);

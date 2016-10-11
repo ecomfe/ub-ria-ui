@@ -5,12 +5,21 @@
         <title>Uploader - ESUI Demo</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.css"/>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.6/demo/assets/google-code-prettify/prettify.css"/>
         <link rel="stylesheet" href="assets/themes/standard.css" />
 
         <!--[if lt IE 9]>
-        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.2/demo/assets/ie8.css"/>
+        <link rel="stylesheet" href="../dep/esui/3.2.0-beta.6/demo/assets/ie8.css"/>
         <![endif]-->
+        <style type="text/css">
+            #tag-list,
+            #tag-card {
+                margin: 10px 10px 0 0;
+                cursor: pointer;
+                display: inline-block;
+                color: #fff;
+            }
+        </style>
     </head>
 <body>
     <div class="header">
@@ -23,32 +32,42 @@
         </div>
         <div id="main" class="ui-u-4-5">
             <h2>Uploader</h2>
-            <p>默认的Uploader: 简单模式</p>
+            <p>
+                <h3>Uploader是一款强大通用的上传组件，目前该组件支持4种模式，即：简单模式、card模式、list模式以及复杂模式</h3>
+                另外还支持进度条显示、批量操作(开始/取消)、单个操作(开始/取消)、模板定制、状态筛选、图片预览以及拖拽上传等功能
+            </p>
             <div class="example">
-                <h3>
-                    由于本地mock，所以demo可能会有些问题。
-                </h3>
                 <div class="row">
-                    <div data-ui="type:Uploader;multiple:true;id:uploader;progressContainer:iconUploaderContainerId;action:./uploadFile;"></div>
-                    <div class="ui-form-uploader-process" id="iconUploaderContainerId"></div>
-                    <div data-ui="type:ImagePreviewer;id:previewer;mode:multiple;"></div>
-                    <p id="raw"><a href="javascript:">获取rawValue</a></p>
+                    <h4>简单模式</h4>
+                    <div data-ui="type:Uploader;multiple:true;id:simpleUploader;progressContainer:simpleUploaderContainerId;action:./uploadFile;width:85;mode:normal;"></div>
+                </div>
+                <div class="row">
+                    <h4>card模式</h4>
+                    <div data-ui="type:Uploader;multiple:true;id:cardUploader;progressContainer:cardUploaderContainerId;action:./uploadFile;width:930;mode:card;"></div>
+                </div>
+                <div class="row">
+                    <h4>List模式</h4>
+                    <div data-ui="type:Uploader;multiple:true;id:listUploader;progressContainer:listUploaderContainerId;action:./uploadFile;width:930;mode:list;"></div>
+                </div>
+                <div class="row">
+                    <h4>复杂模式</h4>
+                    <div data-ui="type:Uploader;multiple:true;id:complexUploader;progressContainer:complexUploaderContainerId;action:./uploadFile;width:930;mode:all;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="../dep/esui/3.2.0-beta.2/demo/assets/loader/esl.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/assets/loader/esl.js"></script>
     <script src="config.js"></script>
-    <script src="../dep/esui/3.2.0-beta.2/demo/demo.js"></script>
-    <script src="../dep/esui/3.2.0-beta.2/demo/assets/google-code-prettify/prettify.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/demo.js"></script>
+    <script src="../dep/esui/3.2.0-beta.6/demo/assets/google-code-prettify/prettify.js"></script>
     <script id="main-js">
     require(
         [
             'esui',
             'ub-ria-ui/uploader/Uploader',
             'ub-ria-ui/uploader/ImagePreviewer',
-            'jquery',
+            'ub-ria-ui/uploader/DragableUploader',
             'underscore',
             'demo',
             'esui/Tab'

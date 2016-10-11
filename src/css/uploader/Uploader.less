@@ -1,4 +1,33 @@
 .@{ui-class-prefix}-uploader {
     display: inline-block;
     vertical-align: middle;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+
+    .@{ui-class-prefix}-uploader-combox-header,
+    .@{ui-class-prefix}-uploader-combox-footer {
+        border-width: 0 0 1px 0;
+        background: -ms-linear-gradient(top, #39dc82, #2fdde0); /* IE 10 */
+        background: -moz-linear-gradient(top,  #39dc82, #2fdde0); /*火狐*/ 
+        background: -webkit-gradient(linear, 0% 0%, 0% 100%,from(#39dc82), to(#2fdde0)); /*谷歌*/ 
+        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#39dc82), to(#2fdde0)); /* Safari 4-5, Chrome 1-9*/
+        background: -webkit-linear-gradient(top, #39dc82, #2fdde0); /*Safari5.1 Chrome 10+*/
+        background: -o-linear-gradient(top,  #39dc82, #2fdde0);
+    }
+
+    .@{ui-class-prefix}-uploader-combox-header {
+        height: 60px;
+    }
+
+    .@{ui-class-prefix}-uploader-combox-body {
+        min-height: 300px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .@{ui-class-prefix}-uploader-combox-footer {
+        .state-selector-active {
+            color: #ea15a3;
+        }
+    }
 }

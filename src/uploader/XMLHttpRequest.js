@@ -47,6 +47,9 @@ define(
                 );
             }
 
+            // TODO
+            this.url = 'http://cq01-dan-ufs11.cq01.baidu.com:8455/upload';
+
             this.xhr.open(this.method, this.url, true);
 
             if (this.requestHeader) {

@@ -14,7 +14,7 @@ define(
         var Layer = require('esui/Layer');
         var Extension = require('esui/Extension');
         var eoo = require('eoo');
-        var textCursorHelper = require('./helper/TextCursorHelper');
+        var textCursorHelper= require('./helper/TextCursorHelper');
         var keyboard = require('esui/behavior/keyboard');
         require('esui/behavior/jquery-ui');
 
@@ -439,6 +439,14 @@ define(
             textCursorHelper.add(input, value + closeTag, this.caretPos - this.query.length);
         }
 
+        function extractMatchingWord(value) {
+            var lines = value.split(/\n/);
+            var line = lines.pop();
+            var words = line.split(',');
+            var word = words && words.pop();
+            return lib.trim(word);
+        }
+
         /**
          * 检测是否需要显示数据面板，检测逻辑如下：
          *
@@ -479,7 +487,7 @@ define(
             }
 
             return false;
-        }
+        };
 
         /**
          * 下拉建议列表中上下选择
@@ -537,8 +545,6 @@ define(
                  * @class extension.AutoComplete
                  * @extends Extension
                  * @constructor
-                 * @param {Object} options 初始化参数
-                 *
                  */
                 constructor: function (options) {
                     var defaultOption = {
