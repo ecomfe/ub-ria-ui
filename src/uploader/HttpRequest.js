@@ -125,8 +125,7 @@ define(
             }
         };
 
-        var EventTarget = require('mini-event/EventTarget');
-        var HttpRequest = require('eoo').create(EventTarget, exports);
+        var HttpRequest = require('esui/inheritEventTarget')(exports);
 
         return HttpRequest;
     }
