@@ -131,8 +131,8 @@ define(
                  * 显示Drawer
                  */
                 show: function () {
-                    document.body.style.overflowY = 'hidden';
                     $(this.main).addClass(this.helper.getPrimaryClassName('visible'));
+                    $(document.body).addClass(this.helper.getPrimaryClassName('hide-overflow'));
                     this.fire('show');
                 },
 
@@ -142,8 +142,9 @@ define(
                 hide: function () {
                     // 如果直接显示页面滚动，可能会出现content和页面双滚动
                     // 因此延迟一会儿
+                    var hiddenFlowClass = this.helper.getPrimaryClassName('hide-overflow');
                     setTimeout(function () {
-                        document.body.style.overflowY = '';
+                        $(document.body).removeClass(hiddenFlowClass);
                     }, 200);
                     $(this.main).removeClass(this.helper.getPrimaryClassName('visible'));
                     this.fire('hide');
@@ -162,6 +163,8 @@ define(
                  * @override
                  */
                 dispose: function () {
+                    // drawer里面可能存在link触发global redirect，这里手动隐藏一次
+                    $(document.body).removeClass(this.helper.getPrimaryClassName('hide-overflow'));
                     $(this.main).remove();
                     this.$super(arguments);
                 }
