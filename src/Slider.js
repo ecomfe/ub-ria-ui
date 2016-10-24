@@ -321,7 +321,7 @@ define(
 
             // 给滑块绑定事件
             if (body) {
-                $(body).mouse(
+                $(body).mouseproxy(
                     {
                         start: u.bind(mousedownHandler, this),
                         drag: u.bind(mousemoveHandler, this),
