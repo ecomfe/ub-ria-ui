@@ -27,7 +27,9 @@ define(
         var lib = require('esui/lib');
 
         var NORMAL = 'normal';
-
+        var LIST = 'list';
+        var CARD = 'card';
+        var ALL = 'all';
 
         var supportXHR = (window.File && window.XMLHttpRequest);
         var supportXHR2 = (supportXHR && new window.XMLHttpRequest().upload);
@@ -59,16 +61,16 @@ define(
             '<div class="${statusClass}">',
             '  <div class="${statusInfoClass}">',
             '    <div class="${barContainerClass}">',
-            '      <div class="${barClass}" id="${barId}">点击开始</div>',
+            '      <div class="${barClass}" id="${barId}"></div>',
             '    </div>',
-            '    <div class="${resultClass}" id="${resultId}"></div>',
             '  </div>',
             '  <div class="${operationClass}">',
             '    <esui-button class="${startButtonClass} ui-button-link" data-ui-child-name="start">',
             '        开始',
             '    </esui-button>',
-            '    <esui-button class="${cancelButtonClass} ui-button-info" data-ui-child-name="cancel">',
-            '        取消',
+            '    <div class="${resultClass}" id="${resultId}"></div>',
+            '    <esui-button class="${cancelButtonClass} ui-button-link" data-ui-child-name="cancel">',
+            '        <span class="ui-icon-remove ui-eicons-fw"></span>',
             '    </esui-button>',
             '  </div>',
             '</div>'
@@ -83,16 +85,16 @@ define(
             '<div class="${statusClass}">',
             '  <div class="${statusInfoClass}">',
             '    <div class="${barContainerClass}">',
-            '      <div class="${barClass}" id="${barId}">0%</div>',
+            '      <div class="${barClass}" id="${barId}"></div>',
             '    </div>',
-            '    <div class="${resultClass}" id="${resultId}"></div>',
             '  </div>',
             '  <div class="${operationClass}">',
             '    <esui-button class="${startButtonClass} ui-button-link" data-ui-child-name="start">',
             '        开始',
             '    </esui-button>',
-            '    <esui-button class="${cancelButtonClass} ui-button-info" data-ui-child-name="cancel">',
-            '        取消',
+            '    <div class="${resultClass}" id="${resultId}"></div>',
+            '    <esui-button class="${cancelButtonClass} ui-button-link" data-ui-child-name="cancel">',
+            '        <span class="ui-icon-remove ui-eicons-fw"></span>',
             '    </esui-button>',
             '  </div>',
             '</div>'
@@ -135,7 +137,7 @@ define(
                 initOptions: function (options) {
                     var properties = {
                         // 文件上传队列
-                        queue: lib.deepClone(defaultQueue),
+                        queue: lib.deepClone(defaultQueue)
                     };
                     u.extend(properties, this.$self.defaultProperties, options);
 
@@ -157,22 +159,21 @@ define(
                  * @override
                  */
                 initStructure: function () {
-                    // 
-                    if (!this.mode) {
-                        this.mode = 'all';
-                    }
                     var containerHtml = getContainerHtml.call(this, this.mode);
                     this.main.innerHTML = lib.format(
                         containerHtml,
                         {
                             uploadComboxClass: this.helper.getPartClassName('combox'),
                             uploadComboxHeaderClass: this.helper.getPartClassName('combox-header'),
+                            uploadHeaderTag: this.helper.getPartClassName('header-tag'),
+                            uploadHeaderTagOperation: this.helper.getPartClassName('tag-operation'),
+                            uploadHeaderOutline: this.helper.getPartClassName('header-outline'),
+                            totalCount: 0,
+                            uploadTotalCountId: this.helper.getId('total-count'),
+                            totalSize: 0,
+                            uploadTotalSizeId: this.helper.getId('total-size'),
+                            uploadRemoveAll: this.helper.getPartClassName('remove-all'),
                             uploadComboxBodyClass: this.helper.getPartClassName('combox-body'),
-                            accept: this.accept,
-                            multiple: this.multiple,
-                            text: this.text,
-                            variants: this.buttonVariants || '',
-                            paramKey: this.paramKey,
                             defaultProgressContainerId: this.helper.getId('default-progress-container'),
                             uploadComboxFooterClass: this.helper.getPartClassName('combox-footer'),
                             uploadComboxFooterId: this.helper.getId('combox-footer')
@@ -182,84 +183,32 @@ define(
                     // 创建控件树
                     this.helper.initChildren();
 
-                    // var tpl = [
-                    //     '<div class="${uploadComboxClass}">',
-                    //     // 上传input
-                    //     '   <div data-ui-child-name="fileInput"',
-                    //     '      data-ui="type:FileInput;accept:${accept};multiple:${multiple};name:${paramKey};"></div>',
-                    //     // 伪装ge按钮
-                    //     '   <div data-ui-child-name="submitButton" ',
-                    //     '      data-ui="type:Button;">${text}</div>',
-                    //     '</div>',
-                    //     '<div id="${defaultProgressContainerId}"></div>'
-                    // ].join('');
-                    // this.main.innerHTML = lib.format(
-                    //     tpl,
-                    //     {
-                    //         uploadComboxClass: this.helper.getPartClassName('combox'),
-                    //         accept: this.accept,
-                    //         multiple: this.multiple,
-                    //         text: this.text,
-                    //         variants: this.buttonVariants || '',
-                    //         paramKey: this.paramKey,
-                    //         defaultProgressContainerId: this.helper.getId('default-progress-container')
-                    //     }
-                    // );
-
-                    // // 创建控件树
-                    // this.helper.initChildren();
-
-                    // if (this.showProgress) {
-                    //     this.progressContainer = this.progressContainer || this.helper.getId('default-progress-container');
-                    //     var container;
-                    //     // 字符串处理
-                    //     if (u.isString(this.progressContainer)) {
-                    //         // 先作为DOM id寻找
-                    //         container = $('#' + this.progressContainer);
-                    //         // 如果没找到，找控件id
-                    //         if (!container[0] && this.viewContext.get(this.progressContainer)) {
-                    //             container = $(this.viewContext.get(this.progressContainer).main);
-                    //         }
-                    //     }
-                    //     // 只能认为扔了个控件进来
-                    //     else {
-                    //         container = $(this.progressContainer.main);
-                    //     }
-
-                    //     if (!container[0]) {
-                    //         return;
-                    //     }
-
-                    //     var progressContainer = $('<div></div>');
-
-                    //     var options = {
-                    //         main: progressContainer[0],
-                    //         progressMode: this.singleProgressMode
-                    //     };
-                    //     // 如果不支持进度，那就强制不展示进度详情
-                    //     if (!supportXHR) {
-                    //          options.singleProgressMode = 'general';
-                    //     }
-
                     // 创建主容器
                     if (this.mode !== NORMAL) {
+                        var queueMode = this.mode === LIST ? LIST : CARD;
                         var progressContainer = $('#' + this.helper.getId('default-progress-container'))[0];
                         var progressQueue = ui.create('ProgressQueue', {
                             main: progressContainer,
                             progressMode: this.mode,
                             progressTemplate: this.itemTemplate,
-                            // TODO
-                            showMode: 'card'
+                            showMode: queueMode
                         });
 
                         progressQueue.render();
                         this.progressQueue = progressQueue;
+
+                        var cardTag = this.getChild(queueMode + 'Tag');
+                        var tagClassName = this.helper.getPartClassName('tag-operation');
+                        addedTagClass($(this), tagClassName, cardTag.main);
                     }
                 },
+
                 /**
                  * @override
                  */
                 initEvents: function () {
+                    var fileInput = this.getChild('fileInput');
+
                     // 伪装button的点击事件
                     var submitButton = this.getChild('submitButton');
                     submitButton.on(
@@ -271,7 +220,6 @@ define(
                     );
 
                     // 监听上传input的变化
-                    var fileInput = this.getChild('fileInput');
                     fileInput.on('change', u.bind(inputChangeHandler, this));
 
                     var startAllBtn = this.getChild('startAll');
@@ -280,15 +228,19 @@ define(
                     var cancelAllBtn = this.getChild('cancelAll');
                     cancelAllBtn && cancelAllBtn.on('click', this.clear, this);
 
+                    var $main = $(this.main);
                     var cardTag = this.getChild('cardTag');
+                    var tagClassName = this.helper.getPartClassName('tag-operation');
                     cardTag && cardTag.on('click', function () {
+                        addedTagClass($main, tagClassName, cardTag.main);
                         this.progressQueue.setProperties({
                             showMode: 'card'
                         });
                     }, this);
 
                     var listTag = this.getChild('listTag');
-                     listTag && listTag.on('click', function () {
+                    listTag && listTag.on('click', function () {
+                        addedTagClass($main, tagClassName, listTag.main);
                         this.progressQueue.setProperties({
                             showMode: 'list'
                         });
@@ -322,10 +274,13 @@ define(
                             }
                             // 从等待队列中清除
                             removeFileFromWaiting.call(me, file);
-                            e.target.removeProgress(file);
+                            progressQueue.removeProgress(file);
+                            refreshStutas.call(me);
                         });
 
-                        $(this.main).on('click', '.state-selector', {progressQueue: progressQueue}, switchProgressByState);
+                        $(this.main).on('click', '.state-selector', {
+                            progressQueue: progressQueue
+                        }, switchProgressByState);
                     }
                 },
 
@@ -362,12 +317,6 @@ define(
                  * @public
                  */
                 receiveFile: function (files) {
-                    // TODO 注释掉的影响
-                    // 如果仍然在uploading，则不执行新的上传操作
-                    // if (this.stage === 'UPLOADING') {
-                    //     return;
-                    // }
-
                     var event = this.fire('beforeupload', {files: files});
                     if (event.isDefaultPrevented()) {
                         return;
@@ -394,12 +343,24 @@ define(
                         function (file, index) {
                             // 文件格式检查
                             if (!checkFileFormat.call(this, file)) {
-                                file.status = 'client-error';
+                                file.status = 'fail';
                                 file.message = this.message.ERROR_FILE_EXTENSIONS;
+                                if (this.multiple === false) {
+                                    this.queue.failedFiles = [file];
+                                }
+                                else {
+                                    this.queue.failedFiles.push(file);
+                                }
                             }
                             else if (!checkFileSize.call(this, file)) {
-                                file.status = 'client-error';
+                                file.status = 'fail';
                                 file.message = this.message.ERROR_FILE_MAX_SIEZ;
+                                if (this.multiple === false) {
+                                    this.queue.failedFiles = [file];
+                                }
+                                else {
+                                    this.queue.failedFiles.push(file);
+                                }
                             }
                             else {
                                 file.status = 'waiting';
@@ -480,11 +441,11 @@ define(
                     // 等待队列先置空
                     this.queue.waitingFiles = [];
                     // 上传队列中都取消
-                    u.each(this.queue.uploadingFiles, function(file) {
+                    u.each(this.queue.uploadingFiles, function (file) {
                         if (file.request) {
                             file.request.abort();
                         }
-                    }); 
+                    });
                     this.progressQueue.clearAllProgress();
                     this.queue = lib.deepClone(defaultQueue);
                     this.stage = 'COMPLETE';
@@ -507,7 +468,7 @@ define(
             // 后台接收时的key名
             paramKey: 'files',
             // 接收的文件类型
-            accept: '.gif,.jpg,.png,.swf,.xlsx,.flv',
+            accept: '.gif,.jpg,.png,.swf,.flv',
             // 默认为单文件上传控件
             // 单文件上传控件一次只能选择一个文件
             multiple: false,
@@ -522,7 +483,7 @@ define(
             // 文件类型不匹配,
             message: {
                 // 上传成功
-                SUCCESS_INFO: '上传成功',
+                SUCCESS_INFO: '已完成',
                 // 重新上传
                 RESTART_INFO: '正在重新上传',
                 // http错误，一般来说就是status返回不是200
@@ -563,10 +524,12 @@ define(
              * 此属性仅能在初始化时设置，运行期不能修改
              *
              */
-             mode: 'all',
-             // 容器模板,
-             containerTemplate: '',
-             itemTemplate: {
+            mode: 'all',
+
+            // 容器模板
+            containerTemplate: '',
+
+            itemTemplate: {
                 // card视图下的item的展示模板
                 card: cardTemplate,
                 /**
@@ -583,14 +546,14 @@ define(
                  *
                  */
                 list: listTemplate
-             },
+            },
 
-             // 是否可拖拽
-             dragable: true,
-             // 是否分片
-             chunk: true,
-             // 默认4M
-             chunkSize: 4194304
+            // 是否可拖拽
+            dragable: true,
+            // 是否分片
+            chunk: true,
+            // 默认4M
+            chunkSize: 4194304
         };
 
 
@@ -718,16 +681,15 @@ define(
          * 选择一个文件上传
          *
          * @param {Object|undefined} file 待上传的文件
+         * @param {boolean} singleFlag 是否单线上传
          */
         function chooseProgressFile(file, singleFlag) {
-            // TODO上传中影响
-            // this.stage = 'UPLOADING';
             if (!file) {
                 file = this.queue.waitingFiles.shift();
             }
             else {
                 this.queue.waitingFiles = u.filter(this.queue.waitingFiles, function (wFile) {
-                    return file.id !== wFile.id
+                    return file.id !== wFile.id;
                 });
             }
             // 等待队列中弹出
@@ -748,7 +710,7 @@ define(
         //         var chunkCount = Math.ceil(file.originalSize);
         //         if (chunkCount >= 2) {
         //             for (var i = 0; i < chunkCount; i++) {
-        //                 var chunFile = 
+        //                 var chunFile;
         //             }
         //         }
         //         else {
@@ -817,11 +779,11 @@ define(
 
                     if (error) {
                         me.fire('error', {file: file});
-                        if (this.mode !== NORMAL) {
+                        if (me.mode !== NORMAL) {
                             // 修改进度状态
                             me.progressQueue.notifyError({
                                 file: file,
-                                status: 'client-error',
+                                status: 'fail',
                                 message: error.message
                             });
                             me.removeFileFromUploading.call(me, file, 'error');
@@ -837,10 +799,10 @@ define(
                         'onecomplete',
                         {
                             file: file,
-                            data:response
+                            data: response
                         }
                     );
-                    if (this.mode !== NORMAL) {
+                    if (me.mode !== NORMAL) {
                         // 修改进度状态
                         removeFileFromUploading.call(me, file, 'load');
 
@@ -859,10 +821,10 @@ define(
                 'error',
                 function (event) {
                     me.fire('error', {file: file});
-                    if (this.mode !== NORMAL) {
+                    if (me.mode !== NORMAL) {
                         // 修改进度状态
                         removeFileFromUploading.call(me, file, 'error');
-                        me.progressQueue.notifyError(file, 'server-error', event.message || me.message.ERROR_HTTP);
+                        me.progressQueue.notifyError(file, 'fail', event.message || me.message.ERROR_HTTP);
 
                         addToErrorQueue.call(me, file);
 
@@ -880,8 +842,9 @@ define(
          * @param {ui.File} file 目标文件
          */
         function removeFileFromWaiting(file) {
-            var queue = this.queue.waitingQueue;
-            this.queue.waitingQueue = u.without(queue, file);
+            this.queue.waitingFiles = u.without(this.queue.waitingFiles, file);
+            this.queue.queueList = u.without(this.queue.queueList, file);
+            this.queue.failedFiles = u.without(this.queue.failedFiles, file);
         }
 
         /**
@@ -954,7 +917,7 @@ define(
          * @return {string}
          */
         function getContainerHtml(uploaderMode) {
-            switch(uploaderMode) {
+            switch (uploaderMode) {
                 case NORMAL:
                     return getNormalTemplate.call(this);
                 default:
@@ -974,37 +937,48 @@ define(
                 // 伪装ge按钮
                 '   <div data-ui-child-name="submitButton" ',
                 '      data-ui="type:Button;">${text}</div>',
-                '</div>',
+                '</div>'
             ].join('');
             return tpl;
         }
 
         function getContainerTemplate() {
+            var cardTagTemplate = '<a class="${uploadHeaderTagOperation}" '
+                + 'data-ui="type:Link;childName:cardTag;href:javascript:void(0);">卡片</a>';
+            var listTagTemplate = '<a class="${uploadHeaderTagOperation}" '
+                + 'data-ui="type:Link;childName:listTag;href:javascript:void(0);">列表</a>';
+            var opTemplate = '';
+
+            if (this.mode === ALL) {
+                opTemplate = cardTagTemplate + listTagTemplate;
+            }
+            else if (this.mode === CARD) {
+                opTemplate = cardTagTemplate;
+            }
+            else if (this.mode === LIST) {
+                opTemplate = listTagTemplate;
+            }
+
             var tpl = [
                 '<div class="${uploadComboxClass}">',
                 '   <div class="${uploadComboxHeaderClass}">',
-                '       <div data-ui-child-name="fileInput"', // 上传input
-                '       data-ui="type:FileInput;accept:${accept};multiple:${multiple};name:${paramKey};"></div>',
-                '       <esui-button data-ui-child-name="submitButton">', // 伪装ge按钮
-                '       ${text}',
-                '       </esui-button>',
-                '       <esui-button data-ui-child-name="startAll">',
-                '       全部开始',
-                '       </esui-button>',
-                '       <esui-button data-ui-child-name="cancelAll">',
-                '       全部取消',
-                '       </esui-button>',
-                    // TODO CSS
-                    this.mode === 'all' 
-                    ? '<div style="float:right;">'
-                    + '<a id="tag-list" data-ui="type:Link;childName:cardTag;href:javascript:void(0);">Card'
-                    + '</a><a id="tag-card" data-ui="type:Link;childName:listTag;href:javascript:void(0);">List</a></div>' : '',
+                '       <div class="${uploadHeaderTag}">',
+                '       ' + opTemplate,
+                '       </div>',
+                '       <div class="${uploadHeaderOutline}">',
+                '           <span id="${uploadTotalCountId}">总个数：${totalCount}</span>',
+                '           <span id="${uploadTotalSizeId}">总大小：${totalSize}</span>',
+                '           <esui-button data-ui-child-name="cancelAll" ',
+                '           class="ui-button ui-button-link ${uploadRemoveAll}">',
+                '           删除全部</esui-button>',
+                '       </div>',
                 '   </div>',
                 '   <div class="${uploadComboxBodyClass}">',
                 '       <div id="${defaultProgressContainerId}"></div>',
                 '   </div>',
                 '   <div class="${uploadComboxFooterClass}" id="${uploadComboxFooterId}">',
-                    getStatusOperationsHtml.call(this),
+                '   ' + getStatusOperationsHtml.call(this),
+                '   ' + getOperationHtml.call(this),
                 '   </div>',
                 '</div>'
             ].join('');
@@ -1012,23 +986,24 @@ define(
             return tpl;
         }
 
-        // 获取四种操作结构
+        // 获取四种状态操作结构
         function getStatusOperationsHtml() {
             // 完成，上传中，等待中，出错
             var statusTpl = [
-                '<div>',
-                '   <button type="button" data-state="complete" class="state-selector ui-button ui-button-success ui-button-circular">完成: ${completeFiles}个</button>',
-                '   <button type="button" data-state="uploading" class="state-selector ui-button ui-button-info ui-button-circular">上传中: ${uploadingFiles}个</button>',
-                '   <span style="float:right;">总个数：${totalCount}</span>',
-                '</div>',
-                '<div>',
-                '   <button type="button" data-state="waiting" class="state-selector ui-button ui-button-warning ui-button-circular">等待中: ${waitingFiles}个</button>',
-                '   <button type="button" data-state="fail" class="state-selector ui-button ui-button-circular ui-button-circular">出错: ${failedFiles}个</button>',
-                '   <span style="float:right;">总大小：${totalSize}</span>',
-                '</div>',
+                '<div class="ui-button-group" id="${uploadStatusList}">',
+                '   <button type="button" data-state="complete" class="state-selector ui-button-group-first ',
+                '   ui-button ui-button-primary-inverted">完成: ${completeFiles}个</button>',
+                '   <button type="button" data-state="uploading" class="state-selector ui-button ',
+                '   ui-button-primary-inverted">上传中: ${uploadingFiles}个</button>',
+                '   <button type="button" data-state="waiting" class="state-selector ui-button ',
+                '   ui-button-primary-inverted">等待中: ${waitingFiles}个</button>',
+                '   <button type="button" data-state="fail" class="state-selector ui-button-group-last',
+                '   ui-button ui-button-primary-inverted">出错: ${failedFiles}个</button>',
+                '</div>'
             ].join('');
 
             return lib.format(statusTpl, {
+                uploadStatusList: this.helper.getId('status-list'),
                 completeFiles: this.queue.completeFiles.length,
                 uploadingFiles: this.queue.uploadingFiles.length,
                 waitingFiles: this.queue.waitingFiles.length,
@@ -1038,8 +1013,46 @@ define(
             });
         }
 
+        // 获取操作项模板
+        function getOperationHtml() {
+            var operationHtml = [
+                '<div class="operation-list">',
+                '    <esui-button data-ui-child-name="startAll" class="ui-button ui-button-link">',
+                '       全部开始',
+                '    </esui-button>',
+                '     <esui-button data-ui-child-name="cancelAll" class="ui-button ui-button-link">',
+                '       全部取消',
+                '    </esui-button>',
+                '    <esui-button data-ui-child-name="submitButton" class="ui-button ui-button-primary">',
+                '       <span class="ui-icon-upload"></span>${text}', // 伪装ge按钮
+                '    </esui-button>',
+                '    <div data-ui-child-name="fileInput"', // 上传input
+                '    data-ui="type:FileInput;accept:${accept};multiple:${multiple};name:${paramKey};"></div>',
+                '</div>'
+            ].join('');
+
+            return lib.format(operationHtml, {
+                text: this.text,
+                accept: this.accept,
+                multiple: this.multiple,
+                paramKey: this.paramKey
+            });
+        }
+
         function refreshStutas() {
-            $('#' + this.helper.getId('combox-footer')).html(getStatusOperationsHtml.call(this));
+            var totalSize = u.reduce(this.queue.queueList, function (memo, file) {
+                var size = 0;
+                if (file.originalSize && u.isNumber(file.originalSize)) {
+                    size = file.originalSize;
+                }
+                return memo + size;
+            }, 0);
+
+            this.queue.queueSize = File.formatSize(totalSize);
+
+            $('#' + this.helper.getId('total-size')).html('总大小：' + this.queue.queueSize);
+            $('#' + this.helper.getId('total-count')).html('总个数：' + this.queue.queueList.length);
+            $('#' + this.helper.getId('status-list')).replaceWith(getStatusOperationsHtml.call(this));
         }
 
         function switchProgressByState(e) {
@@ -1049,6 +1062,11 @@ define(
             $('.state-selector').not($this).removeClass('state-selector-active');
             $this.toggleClass('state-selector-active');
             progressQueue.showSelectPrgress($this.hasClass('state-selector-active') ? state : 'all');
+        }
+
+        function addedTagClass($container, className, target) {
+            $container.find('.' + className).removeClass('tag-selected');
+            $(target).addClass('tag-selected');
         }
 
         esui.register(Uploader);

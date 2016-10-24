@@ -11,10 +11,8 @@ define(
         var $ = require('jquery');
         var lib = require('esui/lib');
         var u = require('underscore');
-
         var esui = require('esui');
         var Control = require('esui/Control');
-        var painters = require('esui/painters');
 
         var STATES = {
             WAITING: 'waiting',
@@ -35,7 +33,7 @@ define(
         // 模板
         var template = [
             '<div class="${fileClass}">',
-            '  <span class="${nameClass}">${fileName}</span>',
+            '  <span class="${nameClass}" title="${fileName}">${fileName}</span>',
             '  <span class="${sizeClass}">${fileSize}</span>',
             '</div>',
             '<div class="${statusClass}">',
@@ -43,12 +41,12 @@ define(
             '    <div class="${barContainerClass}">',
             '      <div class="${barClass}" id="${barId}">点击开始</div>',
             '    </div>',
-            '    <div class="${resultClass}" id="${resultId}"></div>',
             '  </div>',
             '  <div class="${operationClass}">',
             '    <esui-button class="${startButtonClass} ui-button-link" data-ui-child-name="start">',
             '        开始',
             '    </esui-button>',
+            '    <span class="${resultClass}" id="${resultId}"></span>',
             '    <esui-button class="${cancelButtonClass} ui-button-link" data-ui-child-name="cancel">',
             '        取消',
             '    </esui-button>',
@@ -75,13 +73,16 @@ define(
             // 是否展示进度详情
             this.addState(this.progressMode);
 
-            var progress = this;
-
             if (this.file.message) {
                 this.updateStatus(this.file.status, this.file.message);
             }
+
+            setIEPreiviewImage.call(this);
         };
 
+        /**
+         * @override
+         */
         exports.initEvents = function () {
             var startBtn = this.getChild('start');
             startBtn && startBtn.on(
@@ -102,23 +103,6 @@ define(
             );
         };
 
-        // /**
-        //  * 重新渲染视图
-        //  * 仅当生命周期处于RENDER时，该方法才重新渲染
-        //  *
-        //  * @param {Array=} 变更过的属性的集合
-        //  * @override
-        //  */
-        // exports.repaint = painters.createRepaint(
-        //     Control.prototype.repaint,
-        //     {
-        //         name: ['total', 'loaded'],
-        //         paint: function (progress, total, loaded) {
-        //             progress.setProgressing(loaded, total);
-        //         }
-        //     }
-        // );
-
         /**
          * @override
          */
@@ -135,8 +119,8 @@ define(
         /**
          * 设置当前进度
          *
-         * @param {number} loaded 已加载量
          * @param {number} total 总量
+         * @param {number} loaded 已加载量
          * @public
          */
         exports.setProgressing = function (total, loaded) {
@@ -147,7 +131,7 @@ define(
                 this.updateStatus(STATES.UPLOADING, '');
                 try {
                     var percent = (loaded / total * 100).toFixed(2) + '%';
-                    $('#' + this.helper.getId('bar')).css('width', percent).html(percent);
+                    $('#' + this.helper.getId('bar')).css('width', percent);
                 }
                 catch (e) {
                     // TODO
@@ -161,7 +145,7 @@ define(
         /**
          * 获取进度条html
          *
-         * @param {string} template 预留一个地方可以定制进度条信息
+         * @param {string} progressTemplate 预留一个地方可以定制进度条信息
          * @return {string}
          * @public
          */
@@ -205,28 +189,23 @@ define(
          * @public
          */
         exports.updateStatus = function (status, message) {
-            this.changeStatus(status);
-            $('#' + this.helper.getId('result')).html(message);
-        };
-
-        exports.complete = function () {
-            var startBtn = this.getChild('start');
-        };
-
-        /**
-         * 修改进度条状态样式
-         *
-         * @param {string} status 状态
-         * @public
-         */
-        exports.changeStatus = function (status) {
-            if (status) {
-                u.each(STATES, function (state) {
-                    this.removeState(state);
-                }, this);
+            if (!status) {
+                return;
             }
-            this.status = status;
-            this.addState(this.status);
+            u.each(STATES, function (state) {
+                this.removeState(state);
+            }, this);
+            this.states = status;
+            this.addState(status);
+            var $result = $('#' + this.helper.getId('result'));
+            if (status === STATES.FAIL) {
+                $result.addClass('ui-text-danger');
+            }
+            else {
+                $result.addClass('ui-text-success');
+            }
+            this.getChild('start').hide();
+            $result.html(message);
         };
 
         /**
@@ -247,6 +226,19 @@ define(
             );
         };
 
+        function setIEPreiviewImage() {
+            // 中低版本IE<=9
+            if (navigator.appName === 'Microsoft Internet Explorer') {
+                var imagePreview = lib.g(this.helper.getId('imageId'));
+                try {
+                    imagePreview.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = this.file.name;
+                }
+                catch (e) {
+                    // console.log(e);
+                }
+            }
+        }
+
         // 获取本地预览图片信息
         function getImageContainer() {
             // IE10+,以及chrome和FF
@@ -262,11 +254,7 @@ define(
             if (window.FileReader) {
                 var pFReader = new window.FileReader();
                 pFReader.onload = function (pFEvent) {
-                    var $imagePreview = $('#' +  me.helper.getId('imageId'));
-                    if ($imagePreview) {
-                        $imagePreview[0]
-                    }
-                    var imagePreview = getDom(me.helper.getId('imageId'));
+                    var imagePreview = lib.g(me.helper.getId('imageId'));
                     if (imagePreview) {
                         imagePreview.setAttribute('src', pFEvent.target.result);
                     }
@@ -279,21 +267,8 @@ define(
                 };
                 pFReader.readAsDataURL(me.file.sourceFile);
             }
-            // 中低版本IE<=9
-            else if (navigator.appName === 'Microsoft Internet Explorer') {
-                setInterval(function () {
-                    var imagePreview = getDom(me.helper.getId('imageId'));
-                    var imageInput = getDom('imageInput');
-                    imagePreview.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imageInput.value;
-                }, 0);
-            }
 
             return imageTemplate;
-
-        }
-
-        function getDom (id) {
-            return document.getElementById(id);
         }
 
         var Progress = require('eoo').create(Control, exports);

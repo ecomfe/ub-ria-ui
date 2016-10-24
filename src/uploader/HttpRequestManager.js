@@ -96,10 +96,13 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function delegateControlEvent(e) {
-            var event = require('mini-event').fromEvent(e, { preserveData: true, syncState: true });
+            var event = require('mini-event').fromEvent(e, {
+                preserveData: true,
+                syncState: true
+            });
             event.file = e.target.file;
             this.fire(event);
-        };
+        }
 
         var HttpRequestManager = require('eoo').create(exports);
 
