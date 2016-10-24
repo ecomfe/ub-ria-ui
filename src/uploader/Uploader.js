@@ -789,6 +789,7 @@ define(
                             me.removeFileFromUploading.call(me, file, 'error');
                             addToErrorQueue.call(me, file);
                         }
+                        refreshStutas.call(me);
                         event.preventDefault();
                         return;
                     }
@@ -812,7 +813,6 @@ define(
                         me.progressQueue.notifyError(file, 'complete', me.message.SUCCESS_INFO);
                         refreshStutas.call(me);
                     }
-
                 }
             );
 
@@ -831,6 +831,7 @@ define(
                         if ((me.autoStart && me.sequentialUploads) || !singleFlag) {
                             operationFileQueue.call(me);
                         }
+                        refreshStutas.call(me);
                     }
                 }
             );
@@ -856,7 +857,7 @@ define(
             var sameFile = u.filter(this.queue.failedFiles, function (rawFile) {
                 return rawFile.id === file.id;
             });
-            sameFile ? '' : this.queue.failedFiles.push(file);
+            sameFile.length ? '' : this.queue.failedFiles.push(file);
         }
 
         /**
