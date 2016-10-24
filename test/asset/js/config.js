@@ -9,7 +9,7 @@ require.config({
         },
         {
             'name': 'esui',
-            'location': '../dep/esui/3.2.0-beta.6/src',
+            'location': '../dep/esui/3.2.0-beta.26/src',
             'main': 'main'
         },
         {
@@ -29,7 +29,7 @@ require.config({
         },
         {
             'name': 'etpl',
-            'location': '../dep/etpl/3.2.0/src',
+            'location': '../dep/etpl/3.1.1/src',
             'main': 'main'
         },
         {
