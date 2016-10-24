@@ -73,8 +73,7 @@ define(
             return 'N/A';
         }
 
-        var EventTarget = require('mini-event/EventTarget');
-        var File = require('eoo').create(EventTarget, exports);
+        var File = require('esui/inheritEventTarget')(exports);
 
         File.formatSize = formatSize;
 

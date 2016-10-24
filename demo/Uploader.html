@@ -11,15 +11,6 @@
         <!--[if lt IE 9]>
         <link rel="stylesheet" href="../dep/esui/3.2.0-beta.6/demo/assets/ie8.css"/>
         <![endif]-->
-        <style type="text/css">
-            #tag-list,
-            #tag-card {
-                margin: 10px 10px 0 0;
-                cursor: pointer;
-                display: inline-block;
-                color: #fff;
-            }
-        </style>
     </head>
 <body>
     <div class="header">
@@ -43,15 +34,15 @@
                 </div>
                 <div class="row">
                     <h4>card模式</h4>
-                    <div data-ui="type:Uploader;multiple:true;id:cardUploader;progressContainer:cardUploaderContainerId;action:./uploadFile;width:930;mode:card;"></div>
+                    <div data-ui="type:Uploader;multiple:true;id:cardUploader;progressContainer:cardUploaderContainerId;action:./uploadFile;mode:card;"></div>
                 </div>
                 <div class="row">
                     <h4>List模式</h4>
-                    <div data-ui="type:Uploader;multiple:true;id:listUploader;progressContainer:listUploaderContainerId;action:./uploadFile;width:930;mode:list;"></div>
+                    <div data-ui="type:Uploader;multiple:true;id:listUploader;progressContainer:listUploaderContainerId;action:./uploadFile;mode:list;"></div>
                 </div>
                 <div class="row">
                     <h4>复杂模式</h4>
-                    <div data-ui="type:Uploader;multiple:true;id:complexUploader;progressContainer:complexUploaderContainerId;action:./uploadFile;width:930;mode:all;"></div>
+                    <div data-ui="type:Uploader;multiple:true;id:complexUploader;progressContainer:complexUploaderContainerId;action:./uploadFile;mode:all;"></div>
                 </div>
             </div>
         </div>
@@ -79,13 +70,13 @@
             Uploader.on(
                 'onecomplete',
                 function (e) {
-                    previewer.addItems([{
-                        src: 'http://pic.58pic.com/58pic/11/19/56/80d58PICzng.jpg',
-                        data: {
-                            width: 300,
-                            height: 150
-                        }
-                    }]);
+                    // previewer.addItems([{
+                    //     src: 'http://pic.58pic.com/58pic/11/19/56/80d58PICzng.jpg',
+                    //     data: {
+                    //         width: 300,
+                    //         height: 150
+                    //     }
+                    // }]);
                 }
             );
         }

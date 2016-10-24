@@ -1,8 +1,10 @@
+@esui-progress-container-width: 120px;
+@esui-progress-content-size: 60px;
+@esui-progress-select-font-color: #6ccdc0;
+
 .esui-progress {
     display: block;
 }
-
-@esui-progress-container-width: 120px;
 
 .@{ui-class-prefix}-progress-file-info {
     .inline-block();
@@ -12,79 +14,169 @@
         width: @esui-progress-container-width;
         text-overflow: ellipsis;
         white-space: nowrap;
+
         font-weight: bold;
         padding: 0;
         .inline-block();
     }
-
-    .@{ui-class-prefix}-progress-file-size {
-        float: left;
-        color: #999;
-    }
 }
 
 .@{ui-class-prefix}-progress-card {
-    width: @esui-progress-container-width;
-    padding: 5px;
-    margin: 10px;
+    width: 202px;
+    height: 258px;
+    box-sizing: border-box;
+    padding: 14px 14px 16px;
+    margin: 0 14px 14px 0;
     float: left;
-    border: 1px solid #fff;
+    border: 1px solid @esui-palette-neutral-shadow-color;
+    background-color: #fff;
 
-    .@{ui-class-prefix}-progress-image-template{
+    .@{ui-class-prefix}-progress-image-template {
         img {
-            width: 120px;
-            height: 120px;
+            .size(176px);
         }
     }
-}
 
-.@{ui-class-prefix}-progress-list {
-    .@{ui-class-prefix}-progress-image-template{
-        float: left;
-        width: 60px;
-        img {
-            width: 60px;
-            height: 60px;
+    // 复写掉progress在list当中的样式
+    .@{ui-class-prefix}-progress-bar-container {
+        font-size: 12px;
+        left: 14px;
+        position: absolute;
+        top: 184px;
+        width: 176px;
+
+        .@{ui-class-prefix}-progress-bar {
+            height: 6px;
+            background-color: @esui-progress-select-font-color;
         }
     }
 
     .@{ui-class-prefix}-progress-file-info {
+        margin-top: 10px;
+
         .@{ui-class-prefix}-progress-file-name {
-            float: left;
-            width: 350px;
+            width: 113px;
         }
+    }
+
+    .@{ui-class-prefix}-progress-file-size {
+        float: right;
+    }
+
+    .@{ui-class-prefix}-progress-status-operation {
+        color: @esui-palette-muted-color;
+        font-size: 13px;
+    }
+
+    .@{ui-class-prefix}-progress-start {
+        padding-left: 0;
+    }
+}
+
+
+.@{ui-class-prefix}-progress-card.@{ui-class-prefix}-progress-complete {
+    .@{ui-class-prefix}-progress-result {
+        margin-top: 7px;
+    }
+}
+
+.@{ui-class-prefix}-progress-list {
+    display: block;
+    padding: 20px 0;
+    border-bottom: @esui-progress-border-color;
+    background-color: #fff;
+    .box-shadow(none);
+
+    height: @esui-progress-content-size;
+    line-height: @esui-progress-content-size;
+
+    // 复写掉progress在list当中的样式
+    .@{ui-class-prefix}-progress-bar-container {
+        font-size: 12px;
+        left: 0;
+        position: absolute;
+        top: 74px;
+        width: @esui-progress-content-size;
+
+        .@{ui-class-prefix}-progress-bar {
+            height: 6px;
+            background-color: @esui-progress-select-font-color;
+        }
+    }
+
+    .@{ui-class-prefix}-progress-image-template{
         float: left;
+        // 莫名多了3px，这里重新设置一下高度
+        height: @esui-progress-content-size;
+        img {
+            .size(@esui-progress-content-size);
+        }
+    }
+
+    .@{ui-class-prefix}-progress-file-size {
+        float: left;
+    }
+
+    .@{ui-class-prefix}-progress-file-info {
+        color: @esui-palette-muted-color;
+        float: left;
+        font-size: 14px;
+        padding: 0 20px;
+        .@{ui-class-prefix}-progress-file-name {
+            color: @esui-palette-dark-color;
+            float: left;
+            width: 300px;
+        }
     }
 
     .@{ui-class-prefix}-progress-status {
         float: right;
     }
-} 
+
+    // 开始
+    .@{ui-class-prefix}-progress-start {
+        color: @esui-progress-select-font-color;
+    }
+
+    // 取消上传按钮
+    .@{ui-class-prefix}-progress-cancel {
+        font-size: 17px;
+        margin-top: 23px;
+    }
+}
+
+
+.@{ui-class-prefix}-progress-list.@{ui-class-prefix}-progress-complete {
+    .@{ui-class-prefix}-progress-result {
+        margin-top: 2px;
+        margin-right: 15px;
+    }
+}
+
+.@{ui-class-prefix}-progress-list.@{ui-class-prefix}-progress-fail {
+    .@{ui-class-prefix}-progress-result {
+        margin-top: 16px;
+    }
+}
+
+
+.@{ui-class-prefix}-progress-cancel {
+    color: @esui-palette-muted-color;
+    border-left: 1px solid #c1b5b5;
+}
+
+.@{ui-class-prefix}-progress-cancel:hover {
+    color: #f3a738;
+}
 
 .@{ui-class-prefix}-progress-preview-reading {
     opacity: .5;
-}
-
-.@{ui-class-prefix}-progress-status-info {
-    vertical-align: middle;
-    width: 100%;
-}
-
-.@{ui-class-prefix}-progress-status-operation {
-    .inline-block();
-    vertical-align: middle;
 }
 
 // 进度条
 .@{ui-class-prefix}-progress-bar-container {
     // 这个因为esf把progress bar设置为float，得清除下浮动
     .clearfix();
-    .@{ui-class-prefix}-progress-server-error & ,
-    .@{ui-class-prefix}-progress-client-error & ,
-    .@{ui-class-prefix}-progress-done &,
-    .@{ui-class-prefix}-progress-general & {
-        display: none;
-    }
 
     .@{ui-class-prefix}-progress-bar {
         white-space: nowrap;
@@ -95,26 +187,47 @@
 .@{ui-class-prefix}-progress-result {
     display: none;
 
-    .@{ui-class-prefix}-progress-client-error &,
-    .@{ui-class-prefix}-progress-server-error & {
-        display: block;
-        color: #f00;
-    }
-    .@{ui-class-prefix}-progress-done &,
-    .@{ui-class-prefix}-progress-general & {
-        display: block;
-        color: #00f;
+    .@{ui-class-prefix}-progress-fail & {
+        font-size: 12px;
+        line-height: 1.3;
+        width: 120px;
+        .inline-block();
     }
 }
 
 // 取消上传按钮
 .@{ui-class-prefix}-progress-cancel {
-    display: none;
+    float: right;
+    font-size: 14px;
+    height: 16px;
+    line-height: 16px;
+    min-height: 16px;
+    margin-top: 4px;
+    min-width: 16px;
+    width: 16px;
 
     // 错误时和上传进行中时显示
-    .@{ui-class-prefix}-progress-server-error &,
-    .@{ui-class-prefix}-progress-client-error &,
+    .@{ui-class-prefix}-progress-fail &,
     .@{ui-class-prefix}-progress-progressing & {
         .inline-block();
     }
+}
+
+.@{ui-class-prefix}-progress-complete {
+    .@{ui-class-prefix}-progress-result {
+        .inline-block();
+    }
+}
+
+.@{ui-class-prefix}-progress-uploading {
+    .@{ui-class-prefix}-progress-image-template {
+        img {
+            .opacity(70);
+        }
+    }
+}
+
+.@{ui-class-prefix}-progress-file-size {
+    color: #999;
+    margin-left: 12px;
 }

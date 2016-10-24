@@ -1,33 +1,85 @@
-.@{ui-class-prefix}-uploader {
-    display: inline-block;
-    vertical-align: middle;
-    border: 1px solid #aaa;
-    border-radius: 5px;
+@esui-uploader-ends-background-color: @esui-palette-neutral-highlight-color;
+@esui-uploader-border-color: 1px solid @esui-palette-neutral-shadow-color;
+@esui-uploader-default-font-color: @esui-palette-color;
+@esui-uploader-select-font-color: #6ccdc0;
 
-    .@{ui-class-prefix}-uploader-combox-header,
-    .@{ui-class-prefix}-uploader-combox-footer {
-        border-width: 0 0 1px 0;
-        background: -ms-linear-gradient(top, #39dc82, #2fdde0); /* IE 10 */
-        background: -moz-linear-gradient(top,  #39dc82, #2fdde0); /*火狐*/ 
-        background: -webkit-gradient(linear, 0% 0%, 0% 100%,from(#39dc82), to(#2fdde0)); /*谷歌*/ 
-        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#39dc82), to(#2fdde0)); /* Safari 4-5, Chrome 1-9*/
-        background: -webkit-linear-gradient(top, #39dc82, #2fdde0); /*Safari5.1 Chrome 10+*/
-        background: -o-linear-gradient(top,  #39dc82, #2fdde0);
-    }
+.@{ui-class-prefix}-uploader {
+    width: 680px;
+    max-height: 684px;
+    border: @esui-uploader-border-color;
 
     .@{ui-class-prefix}-uploader-combox-header {
-        height: 60px;
+        background-color: @esui-uploader-ends-background-color;
+        border-bottom: @esui-uploader-border-color;
+        color: @esui-palette-color;
+        height: 50px;
+        line-height: 50px;
+
+        .@{ui-class-prefix}-uploader-header-tag {
+            .inline-block();
+        }
+
+        .@{ui-class-prefix}-uploader-header-outline {
+            float: right;
+            .inline-block();
+
+            span {
+                font-size: 12px;
+                margin-left: 12px;
+                color: @esui-palette-muted-color;
+            }
+
+            .@{ui-class-prefix}-uploader-remove-all {
+                margin-left: 42px;
+                margin-right: 6px;
+            }
+        }
+
+        .@{ui-class-prefix}-uploader-tag-operation {
+            color: @esui-uploader-default-font-color;
+            float: left;
+            font-size: 14px;
+            height: 48px;
+            line-height: 48px;
+            // 干掉a点击后的虚线框
+            outline: none;
+            text-align: center;
+            text-decoration: none;
+            width: 130px;
+        }
+
+        .tag-selected {
+            color: @esui-uploader-select-font-color;
+            border-bottom: 2px solid @esui-uploader-select-font-color;
+        }
     }
 
     .@{ui-class-prefix}-uploader-combox-body {
-        min-height: 300px;
-        max-height: 500px;
-        overflow-y: auto;
     }
 
     .@{ui-class-prefix}-uploader-combox-footer {
+        background-color: @esui-uploader-ends-background-color;
+        border-top: @esui-uploader-border-color;
+        height: 60px;
+        line-height: 60px;
+        padding: 0 20px;
+
+        .operation-list {
+            float: right;
+            .inline-block()
+        }
+
+        .state-selector {
+            font-size: 12px;
+            height: 28px;
+            width: 70px;
+            padding: 0;
+            color: @esui-palette-muted-color;
+        }
+
         .state-selector-active {
-            color: #ea15a3;
+            color: @esui-uploader-select-font-color;
+            background-color: #ecf6f5;
         }
     }
 }
