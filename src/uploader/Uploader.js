@@ -1021,9 +1021,10 @@ define(
                 '    <esui-button data-ui-child-name="startAll" class="ui-button ui-button-link">',
                 '       全部开始',
                 '    </esui-button>',
-                '     <esui-button data-ui-child-name="cancelAll" class="ui-button ui-button-link">',
-                '       全部取消',
-                '    </esui-button>',
+                // 断点续传没有实现，取消功能先注释掉
+                // '     <esui-button data-ui-child-name="cancelAll" class="ui-button ui-button-link">',
+                // '       全部取消',
+                // '    </esui-button>',
                 '    <esui-button data-ui-child-name="submitButton" class="ui-button ui-button-primary">',
                 '       <span class="ui-icon-upload"></span>${text}', // 伪装ge按钮
                 '    </esui-button>',
