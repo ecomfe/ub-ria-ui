@@ -1,12 +1,13 @@
 @esui-uploader-ends-background-color: @esui-palette-neutral-highlight-color;
 @esui-uploader-border-color: 1px solid @esui-palette-neutral-shadow-color;
 @esui-uploader-default-font-color: @esui-palette-color;
-@esui-uploader-select-font-color: #6ccdc0;
+@esui-uploader-select-font-color: @esui-palette-primary-color;
 
 .@{ui-class-prefix}-uploader {
-    width: 680px;
-    max-height: 684px;
     border: @esui-uploader-border-color;
+    max-height: 684px;
+    width: 680px;
+    .inline-block();
 
     .@{ui-class-prefix}-uploader-combox-header {
         background-color: @esui-uploader-ends-background-color;
