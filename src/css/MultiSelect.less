@@ -18,6 +18,8 @@
 @esui-multiselect-layer-item-padding: 1.8em;
 @esui-multiselect-layer-footer-height: 4em;
 
+@esui-multiselect-layer-border: 1px solid #e8e8e8;
+
 
 .@{ui-class-prefix}-multiselect {
     cursor: pointer;
@@ -80,6 +82,8 @@
             }
         }
     }
+    border: @esui-multiselect-layer-border;
+    .box-sizing(border-box);
 }
 .@{ui-class-prefix}-multiselect-item-disabled {
     .esui-disabled();
