@@ -4,6 +4,7 @@
 @esui-autocomplete-selected-item-background: @esui-dropdown-item-highlight-background;
 
 @esui-autocomplete-item-char-selected-font-weight: bold;
+@esui-autocomplete-layer-border: 1px solid @esui-palette-neutral-shadow-color;
 
 .esui-autocomplete-item-hover-theme() {
     background: @esui-autocomplete-selected-item-background;
@@ -12,4 +13,8 @@
 
 .esui-autocomplete-item-char-selected-theme() {
     font-weight: @esui-autocomplete-item-char-selected-font-weight;
+}
+
+.esui-autocomplete-layer-theme() {
+	border: @esui-autocomplete-layer-border;
 }

@@ -18,8 +18,6 @@
 @esui-multiselect-layer-item-padding: 1.8em;
 @esui-multiselect-layer-footer-height: 4em;
 
-@esui-multiselect-layer-border: 1px solid #e8e8e8;
-
 
 .@{ui-class-prefix}-multiselect {
     cursor: pointer;
@@ -82,8 +80,9 @@
             }
         }
     }
-    border: @esui-multiselect-layer-border;
     .box-sizing(border-box);
+    .esui-multiselect-layer-theme();
+
 }
 .@{ui-class-prefix}-multiselect-item-disabled {
     .esui-disabled();
@@ -111,3 +110,4 @@
 // hooks
 .esui-multiselect-theme() {}
 .esui-multiselect-primary-theme() {}
+.esui-multiselect-layer-theme() {}

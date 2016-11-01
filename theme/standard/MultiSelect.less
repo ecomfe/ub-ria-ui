@@ -13,6 +13,8 @@
 @esui-multiselect-item-multiselected-color: @esui-palette-color;
 @esui-multiselect-item-multiselected-background: @esui-palette-neutral-highlight-color;
 
+@esui-multiselect-layer-border: 1px solid @esui-palette-neutral-shadow-color;
+
 .esui-multiselect-theme() {
     .esui-multiselect-variant(
         @esui-multiselect-background,
@@ -68,4 +70,8 @@
     &.@{ui-state-prefix}-active {
         background: @multiselect-active-color;
     }
+}
+
+.esui-multiselect-layer-theme() {
+    border: @esui-multiselect-layer-border;
 }
