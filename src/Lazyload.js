@@ -74,7 +74,7 @@ define(
         function lazyload() {
             var me = this;
             var containers = $('.' + this.containerClass);
-            var items = $('.' + this.itemClass);
+            var items = containers.find('.' + this.itemClass);
             if (items.length) {
                 if (!containers.length) {
                     containers = $(window);
@@ -85,9 +85,9 @@ define(
                 });
                 containers.each(function () {
                     var container = $(this);
+                    var handler = u.bind(loadItem, me, container);
                     if (!container.data('inited')) {
                         container.data('inited', true);
-                        var handler = u.bind(loadItem, me, container);
                         me.helper.addDOMEvent(container[0], 'scroll.lazyload', handler);
                     }
                     handler();
