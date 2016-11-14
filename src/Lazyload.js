@@ -65,6 +65,7 @@ define(
                  */
                 dispose: function () {
                     if (!this.helper.isInStage('DISPOSED')) {
+                        $('.' + this.containerClass).data('inited', false);
                         dispose.call(this);
                     }
                 }
