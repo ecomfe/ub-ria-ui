@@ -1,0 +1,24 @@
+.@{ui-class-prefix}-fileinput {
+    // 不能设置成none，safri下由于安全策略隐藏的file input不能被触发点击
+    display: inline;
+    position: relative;
+    overflow: hidden;
+}
+
+.@{ui-class-prefix}-fileinput-form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.@{ui-class-prefix}-fileinput-input {
+    font-size: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .opacity(0);
+}

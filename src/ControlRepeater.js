@@ -317,9 +317,10 @@ define(function (require) {
         if (panelContainer) {
             this.removeChild(panelContainer);
             // 要移除panel元素,消除子控件以及容器控件
+            // dispose会断开于main的联系，如果要删除需要放到前面
+            $(panelContainer.main).remove();
             panelContainer.disposeChildren();
             panelContainer.dispose();
-            $(panelContainer.main).remove();
 
             this.fire('controldeleted');
         }

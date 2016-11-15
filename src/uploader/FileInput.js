@@ -126,8 +126,9 @@ define(
             var style = '';
 
             if (supportInputMultiple()) {
+                // Safari下面上传按钮不能隐藏，这里先注释掉
                 // HTML5的input外部没有form包裹，会冲出边界，所以隐藏掉
-                style = 'style="display:none;"';
+                // style = 'style="display:none;"';
                 if (this.multiple) {
                     multiple = 'multiple="multiple"';
                 }
@@ -273,7 +274,9 @@ define(
         exports.triggerUploadOutside = function () {
             var input = getInput.call(this);
             if (input && !input.disabled) {
-                input.click();
+                // input.click();
+                // 火狐下上面方式无法触发点击
+                $(input).trigger('click');
             }
         };
 

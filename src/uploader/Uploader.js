@@ -307,7 +307,8 @@ define(
                             button.setProperties({readOnly: readOnly});
                         }
                     },
-                    painters.style('width')
+                    painters.style('width'),
+                    painters.style('height')
                 ),
 
                 /**
@@ -843,9 +844,12 @@ define(
          * @param {ui.File} file 目标文件
          */
         function removeFileFromWaiting(file) {
+            // TDDO 优化，移出队列方法
             this.queue.waitingFiles = u.without(this.queue.waitingFiles, file);
             this.queue.queueList = u.without(this.queue.queueList, file);
             this.queue.failedFiles = u.without(this.queue.failedFiles, file);
+            this.queue.uploadingFiles = u.without(this.queue.uploadingFiles, file);
+            this.queue.completeFiles = u.without(this.queue.completeFiles, file);
         }
 
         /**
@@ -968,7 +972,7 @@ define(
                 '       </div>',
                 '       <div class="${uploadHeaderOutline}">',
                 '           <span id="${uploadTotalCountId}">总个数：${totalCount}</span>',
-                '           <span id="${uploadTotalSizeId}">总大小：${totalSize}</span>',
+                '           <span id="${uploadTotalSizeId}">总大小：${totalSize}KB</span>',
                 '           <esui-button data-ui-child-name="cancelAll" ',
                 '           class="ui-button ui-button-link ${uploadRemoveAll}">',
                 '           删除全部</esui-button>',

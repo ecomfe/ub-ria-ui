@@ -5,9 +5,14 @@
 
 .@{ui-class-prefix}-uploader {
     border: @esui-uploader-border-color;
-    max-height: 684px;
     width: 680px;
     .inline-block();
+
+    .@{ui-class-prefix}-uploader-combox {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
 
     .@{ui-class-prefix}-uploader-combox-header {
         background-color: @esui-uploader-ends-background-color;
@@ -56,6 +61,11 @@
     }
 
     .@{ui-class-prefix}-uploader-combox-body {
+        position: absolute;
+        overflow: auto;
+        top: 50px;
+        bottom: 60px;
+        width: 100%;
     }
 
     .@{ui-class-prefix}-uploader-combox-footer {
@@ -63,10 +73,17 @@
         border-top: @esui-uploader-border-color;
         height: 60px;
         line-height: 60px;
-        padding: 0 20px;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+
+        .@{ui-class-prefix}-button-group {
+            margin-left: 20px;
+        }
 
         .operation-list {
             float: right;
+            margin-right: 20px;
             .inline-block()
         }
 

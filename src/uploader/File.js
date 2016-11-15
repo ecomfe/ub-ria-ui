@@ -68,7 +68,7 @@ define(
                 if (m >= 1) {
                     return m.toFixed(1) + 'MB';
                 }
-                return k.toFixed(1) + 'KB';
+                return (k === 0 ? k : k.toFixed(1)) + 'KB';
             }
             return 'N/A';
         }
