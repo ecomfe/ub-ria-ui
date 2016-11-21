@@ -445,6 +445,9 @@ define(
          */
         function mousemoveHandler(e, isMouseUp, data) {
 
+            if (this.disabled === true) {
+                return false;
+            }
             if (!u.isBoolean(isMouseUp)) {
                 data = isMouseUp;
                 isMouseUp = false;
@@ -565,6 +568,9 @@ define(
          * @private
          */
         function mouseupHandler(e) {
+            if (this.disabled === true) {
+                return false;
+            }
             // 去掉active的样式
             $(this.activeCursorElement).removeClass(
                 this.helper.getPartClassName('body-cursor-active')
