@@ -27,8 +27,9 @@
                 <input data-ui-type="TextBox"
                        data-ui-mode="text"
                        data-ui-id="test"
-                       data-ui-open-at=","
-                       data-ui-extension-autocomplete-type="AutoComplete" />
+                       data-ui-extension-autocomplete-type="AutoComplete"
+                       data-ui-extension-autocomplete-open-at=","
+                />
                 <div data-ui="type:Button;id:getInputValue;content:点击获取RawValue;"></div>
                 <p id="inputValue"></p>
             </div>
@@ -39,10 +40,10 @@
                 <textarea data-ui-type="TextLine"
                        data-ui-id="test1"
                        data-ui-name="test1"
-                       data-ui-open-at="{"
-                       data-ui-close-at="}"
                        data-ui-extension-autocomplete-type="AutoComplete"
-                /></textarea>
+                       data-ui-extension-autocomplete-open-at="{"
+                       data-ui-extension-autocomplete-close-at="}"
+                ></textarea>
                 <div data-ui="type:Button;id:getTextValue;content:点击获取RawValue;"></div>
                 <p id="textValue"></p>
             </div>
@@ -63,7 +64,7 @@
             'demo',
             'esui/Tab'
         ],
-        function (ui, AutoComplete) {
+        function (ui) {
             window.ui = ui;
             var controls = ui.init();
             var data = [

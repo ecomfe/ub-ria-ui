@@ -1,4 +1,103 @@
+@esui-uploader-ends-background-color: @esui-palette-neutral-highlight-color;
+@esui-uploader-border-color: 1px solid @esui-palette-neutral-shadow-color;
+@esui-uploader-default-font-color: @esui-palette-color;
+@esui-uploader-select-font-color: @esui-palette-primary-color;
+
 .@{ui-class-prefix}-uploader {
-    display: inline-block;
-    vertical-align: middle;
+    border: @esui-uploader-border-color;
+    width: 680px;
+    .inline-block();
+
+    .@{ui-class-prefix}-uploader-combox {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+
+    .@{ui-class-prefix}-uploader-combox-header {
+        background-color: @esui-uploader-ends-background-color;
+        border-bottom: @esui-uploader-border-color;
+        color: @esui-palette-color;
+        height: 50px;
+        line-height: 50px;
+
+        .@{ui-class-prefix}-uploader-header-tag {
+            .inline-block();
+        }
+
+        .@{ui-class-prefix}-uploader-header-outline {
+            float: right;
+            .inline-block();
+
+            span {
+                font-size: 12px;
+                margin-left: 12px;
+                color: @esui-palette-muted-color;
+            }
+
+            .@{ui-class-prefix}-uploader-remove-all {
+                margin-left: 42px;
+                margin-right: 6px;
+            }
+        }
+
+        .@{ui-class-prefix}-uploader-tag-operation {
+            color: @esui-uploader-default-font-color;
+            float: left;
+            font-size: 14px;
+            height: 48px;
+            line-height: 48px;
+            // 干掉a点击后的虚线框
+            outline: none;
+            text-align: center;
+            text-decoration: none;
+            width: 130px;
+        }
+
+        .tag-selected {
+            color: @esui-uploader-select-font-color;
+            border-bottom: 2px solid @esui-uploader-select-font-color;
+        }
+    }
+
+    .@{ui-class-prefix}-uploader-combox-body {
+        position: absolute;
+        overflow: auto;
+        top: 50px;
+        bottom: 60px;
+        width: 100%;
+    }
+
+    .@{ui-class-prefix}-uploader-combox-footer {
+        background-color: @esui-uploader-ends-background-color;
+        border-top: @esui-uploader-border-color;
+        height: 60px;
+        line-height: 60px;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+
+        .@{ui-class-prefix}-button-group {
+            margin-left: 20px;
+        }
+
+        .operation-list {
+            float: right;
+            margin-right: 20px;
+            .inline-block()
+        }
+
+        .state-selector {
+            font-size: 12px;
+            height: 28px;
+            width: 70px;
+            padding: 0;
+            color: @esui-palette-muted-color;
+        }
+
+        .state-selector-active {
+            color: @esui-uploader-select-font-color;
+            background-color: #ecf6f5;
+        }
+    }
 }

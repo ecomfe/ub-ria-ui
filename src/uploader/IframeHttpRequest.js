@@ -33,17 +33,20 @@ define(
             this.status = null;
             this.response = null;
 
-            this.size = data.size;
+            var paramKey = u.keys(data)[0];
+            var sendData = data[paramKey];
+
+            this.size = sendData.size;
 
             // uid关联iframe,form,input
             // 如果没有uid，则iframe,form等无法重用
-            var uid = data.id;
+            var uid = sendData.id;
             if (!uid) {
                 return;
             }
 
             var container = options.container || document.body;
-            var input = lib.g(uid);
+            var input = lib.g(uid + 'input');
             // 这里放个占位符，一会input上传完了还要放回来
             var placeholder = $('<div id="' + uid + '_placeholder" style="display:none;"></div>');
             lib.insertBefore(placeholder[0], input);
@@ -66,11 +69,13 @@ define(
             // 上传的数据通过hidden input实现
             // 现增加header，iframe里，header的信息追加到表单中
             if (this.requestHeader) {
-                data = u.extend(data, this.requestHeader);
+                sendData = u.extend(sendData, this.requestHeader);
             }
 
+            u.omit(sendData, ['request']);
+
             u.each(
-                data,
+                sendData,
                 function (value, name) {
                     var hidden = document.createElement('input');
                     u.extend(
